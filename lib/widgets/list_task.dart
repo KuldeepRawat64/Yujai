@@ -73,9 +73,9 @@ class _ListItemTaskState extends State<ListItemTask> {
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                //side: BorderSide(color: Colors.grey[300])
-                ),
+              borderRadius: BorderRadius.circular(12.0),
+              //side: BorderSide(color: Colors.grey[300])
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -117,7 +117,7 @@ class _ListItemTaskState extends State<ListItemTask> {
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
-                       //   side: BorderSide(color: Colors.grey[200]),
+                          //   side: BorderSide(color: Colors.grey[200]),
                         ),
                       ),
                       child: IconButton(
@@ -146,9 +146,11 @@ class _ListItemTaskState extends State<ListItemTask> {
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: screenSize.height * 0.016,
-                        backgroundImage: widget
-                                    .documentSnapshot.data['assignedPhoto'] !=
-                                '' 
+                        backgroundImage: widget.documentSnapshot
+                                        .data['assignedPhoto'] !=
+                                    '' &&
+                                widget.documentSnapshot.data['assignedPhoto'] !=
+                                    null
                             ? CachedNetworkImageProvider(
                                 widget.documentSnapshot.data['assignedPhoto'])
                             : AssetImage('assets/images/no_image.png'),

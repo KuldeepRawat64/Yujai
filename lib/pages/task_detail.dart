@@ -117,10 +117,8 @@ class _TaskDetailState extends State<TaskDetail> {
     if (_isEditingText)
       return Center(
         child: TextField(
-          decoration: InputDecoration(
-            filled:true,
-            fillColor:const Color(0xffffffff)
-          ),
+          decoration:
+              InputDecoration(filled: true, fillColor: const Color(0xffffffff)),
           style: TextStyle(
               fontFamily: FontNameDefault, fontSize: textHeader(context)),
           onChanged: (newValue) {
@@ -180,7 +178,8 @@ class _TaskDetailState extends State<TaskDetail> {
                   CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: screenSize.height * 0.02,
-                    backgroundImage: snapshot.data['assignedPhoto'] != ''
+                    backgroundImage: snapshot.data['assignedPhoto'] != '' &&
+                            snapshot.data['assignedPhoto'] != null
                         ? NetworkImage(snapshot.data['assignedPhoto'])
                         : AssetImage('assets/images/no_image.png'),
                   ),
@@ -242,10 +241,8 @@ class _TaskDetailState extends State<TaskDetail> {
     if (_isEditingDesc)
       return Expanded(
         child: TextField(
-            decoration: InputDecoration(
-            filled:true,
-            fillColor:const Color(0xffffffff)
-          ),
+          decoration:
+              InputDecoration(filled: true, fillColor: const Color(0xffffffff)),
           style: TextStyle(
               fontFamily: FontNameDefault, fontSize: textBody1(context)),
           textInputAction: TextInputAction.next,
@@ -403,7 +400,7 @@ class _TaskDetailState extends State<TaskDetail> {
               controller: _scrollController,
               slivers: [
                 SliverAppBar(
-                 elevation: 0.5,
+                  elevation: 0.5,
                   actions: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -1151,7 +1148,7 @@ class _TaskDetailState extends State<TaskDetail> {
                             fontFamily: FontNameDefault,
                             color: Colors.black,
                             fontSize: textBody1(context),
-                          //  fontWeight: FontWeight.bold,
+                            //  fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
