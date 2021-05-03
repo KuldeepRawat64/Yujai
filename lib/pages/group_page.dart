@@ -399,12 +399,13 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                               EdgeInsets.only(top: screenSize.height * 0.02),
                           child: CircleAvatar(
                             radius: screenSize.height * 0.04,
-                            backgroundColor: Colors.black,
+                            backgroundColor: Colors.grey,
                             backgroundImage:
                                 _group != null && _group.groupProfilePhoto != ''
                                     ? CachedNetworkImageProvider(
                                         _group.groupProfilePhoto)
-                                    : AssetImage('assets/images/no_image.png'),
+                                    : AssetImage(
+                                        'assets/images/group_no-image.png'),
                           ),
                         ),
                         accountName: Text(
@@ -569,12 +570,13 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                   top: screenSize.height * 0.02),
                               child: CircleAvatar(
                                 radius: screenSize.height * 0.04,
-                                backgroundColor: Colors.black,
+                                backgroundColor: Colors.grey,
                                 backgroundImage: _group != null &&
                                         _group.groupProfilePhoto != ''
                                     ? CachedNetworkImageProvider(
                                         _group.groupProfilePhoto)
-                                    : AssetImage('assets/images/no_image.png'),
+                                    : AssetImage(
+                                        'assets/images/group_no-image.png'),
                               ),
                             ),
                             accountName: Text(
