@@ -250,7 +250,7 @@ class _InstaProfileScreenState extends State<InstaProfileScreen> {
                           color: Colors.white,
                         ),
                         title: Text(
-                          'About us',
+                          'Information',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               color: Colors.white,

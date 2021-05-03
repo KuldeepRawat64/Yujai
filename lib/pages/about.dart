@@ -54,7 +54,7 @@ class About extends StatelessWidget {
         appBar: AppBar(
           elevation: 0.5,
           title: Text(
-            'About',
+            'Information',
             style: TextStyle(
               fontFamily: FontNameDefault,
               fontSize: textAppTitle(context),
@@ -78,35 +78,20 @@ class About extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                _openPolicyDialog(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyWebView(
+                              title: 'Privacy Policy',
+                              selectedUrl:
+                                  'https://sites.google.com/view/yujai/privacy-policy',
+                            )));
               },
               child: ListTile(
                 tileColor: const Color(0xffffffff),
-                leading: Icon(Icons.policy_outlined),
+                leading: Icon(Icons.privacy_tip_outlined),
                 title: Text(
-                  'Data Policy',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                trailing: Icon(
-                  Icons.keyboard_arrow_right,
-                  size: screenSize.height * 0.05,
-                ),
-              ),
-            ),
-            Divider(
-              height: 0,
-            ),
-            InkWell(
-              onTap: () {
-                _openAgreeDialog(context);
-              },
-              child: ListTile(
-                tileColor: const Color(0xffffffff),
-                leading: Icon(Icons.account_box_outlined),
-                title: Text(
-                  'Terms of Use',
+                  'Privacy Policy',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context)),
@@ -126,16 +111,103 @@ class About extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MyWebView(
-                              title: 'FAQs',
+                              title: 'Help Centre',
                               selectedUrl:
-                                  'https://animusitmanagement.blogspot.com/',
+                                  'https://sites.google.com/view/yujai/help-centre',
                             )));
               },
               child: ListTile(
                 tileColor: const Color(0xffffffff),
-                leading: Icon(MdiIcons.frequentlyAskedQuestions),
+                leading: Icon(Icons.help_center_outlined),
                 title: Text(
-                  'FAQs',
+                  'Help Centre',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context)),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: screenSize.height * 0.05,
+                ),
+              ),
+            ),
+            Divider(
+              height: 0,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyWebView(
+                              title: 'DMCA',
+                              selectedUrl:
+                                  'https://sites.google.com/view/yujai/dmca',
+                            )));
+              },
+              child: ListTile(
+                tileColor: const Color(0xffffffff),
+                leading: Icon(Icons.copyright_outlined),
+                title: Text(
+                  'DMCA',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context)),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: screenSize.height * 0.05,
+                ),
+              ),
+            ),
+            Divider(
+              height: 0,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyWebView(
+                              title: 'About Us',
+                              selectedUrl:
+                                  'https://sites.google.com/view/yujai/about-us',
+                            )));
+              },
+              child: ListTile(
+                tileColor: const Color(0xffffffff),
+                leading: Icon(Icons.account_box_outlined),
+                title: Text(
+                  'About Us',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context)),
+                ),
+                trailing: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: screenSize.height * 0.05,
+                ),
+              ),
+            ),
+            Divider(
+              height: 0,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyWebView(
+                              title: 'Contact Us',
+                              selectedUrl:
+                                  'https://sites.google.com/view/yujai/contact-us',
+                            )));
+              },
+              child: ListTile(
+                tileColor: const Color(0xffffffff),
+                leading: Icon(MdiIcons.contactsOutline),
+                title: Text(
+                  'Contact Us',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context)),
