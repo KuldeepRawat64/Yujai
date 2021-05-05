@@ -177,7 +177,7 @@ class _NestedTabBarState extends State<NestedTabBar>
             fontSize: textSubTitle(context),
             // fontWeight: FontWeight.bold,
           ),
-          labelPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 25.0),
           controller: _nestedTabController,
           indicatorColor: Colors.purpleAccent,
           labelColor: Theme.of(context).primaryColor,
