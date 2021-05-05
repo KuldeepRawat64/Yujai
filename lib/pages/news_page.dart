@@ -367,6 +367,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                                 fontFamily: FontNameDefault,
                                 fontSize: textSubTitle(context),
                                 color: Colors.black54,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             trailing: Icon(Icons.work_outline)),

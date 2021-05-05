@@ -244,9 +244,9 @@ class _NetstedTabbarWorkApplicationState
                 child: ListView.builder(
                     controller: _scrollController3,
                     //shrinkWrap: true,
-                    itemCount: listJob.length,
+                    itemCount: listPromotion.length,
                     itemBuilder: ((context, index) => ListItemPromotion(
-                        documentSnapshot: listJob[index],
+                        documentSnapshot: listPromotion[index],
                         index: index,
                         user: _user,
                         currentuser: _user))));
