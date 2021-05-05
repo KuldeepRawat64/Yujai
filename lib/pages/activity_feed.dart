@@ -4,6 +4,7 @@ import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_job.dart';
+import 'package:Yujai/widgets/nested_tab_bar_promotion.dart';
 import 'package:Yujai/widgets/search_company.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -139,7 +140,7 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                           // },
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Search jobs',
+                              hintText: 'Search',
                               hintStyle: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textBody1(context))),
@@ -152,7 +153,10 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
             ),
           ),
         ),
-        body: ButtonBarJob(context: context, tabController: _tabController),
+        body: currentUser != null && currentUser.accountType == 'Company'
+            ? ButtonBarWorkApplication(
+                context: context, tabController: _tabController)
+            : ButtonBarJob(context: context, tabController: _tabController),
       ),
     );
   }
@@ -179,6 +183,34 @@ class ButtonBarJob extends StatelessWidget {
           Container(
               height: MediaQuery.of(context).size.height,
               child: NestedTabBarJob()),
+        ],
+        controller: _tabController,
+      ),
+    );
+  }
+}
+
+class ButtonBarWorkApplication extends StatelessWidget {
+  const ButtonBarWorkApplication({
+    Key key,
+    @required this.context,
+    @required TabController tabController,
+  })  : _tabController = tabController,
+        super(key: key);
+
+  final BuildContext context;
+  final TabController _tabController;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          Container(
+              height: MediaQuery.of(context).size.height,
+              child: NetstedTabbarWorkApplication()),
         ],
         controller: _tabController,
       ),
