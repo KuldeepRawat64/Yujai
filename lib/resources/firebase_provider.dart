@@ -1282,7 +1282,7 @@ class FirebaseProvider {
         .collection('users')
         .document(userId)
         .collection('followers')
-        .orderBy('timestamp', descending: true)
+        .orderBy('ownerName')
         .getDocuments();
     return querySnapshot.documents;
   }
@@ -1292,7 +1292,7 @@ class FirebaseProvider {
         .collection('users')
         .document(userId)
         .collection('following')
-        .orderBy('timestamp', descending: true)
+        .orderBy('ownerName')
         .getDocuments();
     return querySnapshot.documents;
   }
@@ -1599,7 +1599,7 @@ class FirebaseProvider {
       querySnapshot = await list[i]
           .reference
           .collection('following')
-          .orderBy('timestamp', descending: true)
+          .orderBy('ownerName')
           .getDocuments();
       for (var i = 0; i < querySnapshot.documents.length; i++) {
         updatedList.add(querySnapshot.documents[i]);
