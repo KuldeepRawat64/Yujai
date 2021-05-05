@@ -468,6 +468,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
                                         InstaFriendProfileScreen(
+                                          uid: widget.documentSnapshot
+                                              .data['ownerUid'],
                                           name: widget.documentSnapshot
                                               .data['promotionOwnerName'],
                                         )));
