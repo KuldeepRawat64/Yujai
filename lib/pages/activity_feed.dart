@@ -44,6 +44,7 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
           currentUser = user;
         });
       });
+
       print("USER : ${user.displayName}");
 
       _repository.fetchAllCompanies(user).then((list) {
@@ -53,6 +54,7 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
         });
       });
     });
+
     _tabController = new TabController(length: 1, vsync: this);
     _scrollController = ScrollController()
       ..addListener(() {
@@ -81,83 +83,89 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
 
   @override
   Widget build(BuildContext context) {
+    //  currentUser != null ? checkForCompanyAccount(currentUser) : null;
     var screenSize = MediaQuery.of(context).size;
     print("INSIDE BUILD");
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: new Color(0xffffffff),
-        appBar: AppBar(
-          elevation: 0.5,
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          title: GestureDetector(
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => SearchTabs()));
-            },
-            child: Container(
-              decoration: ShapeDecoration(
-                  color: const Color(0xFFf6f6f6),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(60.0))),
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: screenSize.width / 11),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SearchTabs()));
-                      },
-                      child: Icon(
-                        Icons.search,
-                        size: screenSize.height * 0.04,
-                        color: Colors.black54,
+      child: currentUser == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Scaffold(
+              backgroundColor: new Color(0xffffffff),
+              appBar: AppBar(
+                elevation: 0.5,
+                automaticallyImplyLeading: false,
+                centerTitle: true,
+                backgroundColor: Colors.white,
+                title: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => SearchTabs()));
+                  },
+                  child: Container(
+                    decoration: ShapeDecoration(
+                        color: const Color(0xFFf6f6f6),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(60.0))),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width / 11),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SearchTabs()));
+                            },
+                            child: Icon(
+                              Icons.search,
+                              size: screenSize.height * 0.04,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          SizedBox(
+                            width: screenSize.height * 0.025,
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => SearchTabs()));
+                              },
+                              child: TextField(
+                                readOnly: true,
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SearchTabs()));
+                                },
+                                // onChanged: (val) {
+                                //   setState(() {
+                                //     _searchTerm = val;
+                                //   });
+                                // },
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Search',
+                                    hintStyle: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context))),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: screenSize.height * 0.025,
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SearchTabs()));
-                        },
-                        child: TextField(
-                          readOnly: true,
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SearchTabs()));
-                          },
-                          // onChanged: (val) {
-                          //   setState(() {
-                          //     _searchTerm = val;
-                          //   });
-                          // },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Search',
-                              hintStyle: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context))),
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
               ),
+              body: currentUser.accountType == 'Company'
+                  ? ButtonBarWorkApplication(
+                      context: context, tabController: _tabController)
+                  : ButtonBarJob(
+                      context: context, tabController: _tabController),
             ),
-          ),
-        ),
-        body: currentUser != null && currentUser.accountType == 'Company'
-            ? ButtonBarWorkApplication(
-                context: context, tabController: _tabController)
-            : ButtonBarJob(context: context, tabController: _tabController),
-      ),
     );
   }
 }
