@@ -87,7 +87,7 @@ class _NestedTabBarState extends State<NestedTabBar>
       });
     });
     _nestedTabController =
-        new TabController(length: 4, vsync: this, initialIndex: 0);
+        new TabController(length: 3, vsync: this, initialIndex: 0);
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -161,7 +161,7 @@ class _NestedTabBarState extends State<NestedTabBar>
     _listFuture = _repository.retrievePosts(currentUser);
     _eventFuture = _repository.retrieveEvents(currentUser);
     _newsFuture = _repository.retrieveNews(currentUser);
-    _promotionFuture = _repository.retrievePromotion(currentUser);
+    //  _promotionFuture = _repository.retrievePromotion(currentUser);
   }
 
   @override
@@ -175,7 +175,7 @@ class _NestedTabBarState extends State<NestedTabBar>
           unselectedLabelStyle: TextStyle(
             fontFamily: FontNameDefault,
             fontSize: textSubTitle(context),
-           // fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
           ),
           labelPadding: const EdgeInsets.symmetric(horizontal: 10.0),
           controller: _nestedTabController,
@@ -185,7 +185,7 @@ class _NestedTabBarState extends State<NestedTabBar>
           labelStyle: TextStyle(
             fontFamily: FontNameDefault,
             fontSize: textSubTitle(context),
-          //  fontWeight: FontWeight.bold,
+            //  fontWeight: FontWeight.bold,
           ),
           isScrollable: true,
           tabs: <Widget>[
@@ -198,9 +198,9 @@ class _NestedTabBarState extends State<NestedTabBar>
             Tab(
               text: 'Articles',
             ),
-            Tab(
-              text: 'Applications',
-            ),
+            // Tab(
+            //   text: 'Applications',
+            // ),
           ],
         ),
         Container(
@@ -212,7 +212,7 @@ class _NestedTabBarState extends State<NestedTabBar>
               eventImagesWidget(),
               postImagesWidgetFuture(),
               newsImageWidget(),
-              promotionImagesWidget(),
+              //  promotionImagesWidget(),
             ],
           ),
         )
@@ -482,27 +482,27 @@ class _NestedTabBarState extends State<NestedTabBar>
         });
   }
 
-  Widget promotionImagesWidget() {
-    return FutureBuilder(
-        future: _promotionFuture,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: shimmerEvent());
-          } else {
-            return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    controller: _scrollController2,
-                    itemCount: listPromotion.length,
-                    itemBuilder: ((context, index) => ListItemPromotion(
-                        documentSnapshot: listPromotion[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
-          }
-        });
-  }
+  // Widget promotionImagesWidget() {
+  //   return FutureBuilder(
+  //       future: _promotionFuture,
+  //       builder: (context, snapshot) {
+  //         if (!snapshot.hasData) {
+  //           return Center(child: shimmerEvent());
+  //         } else {
+  //           return SizedBox(
+  //               height: MediaQuery.of(context).size.height,
+  //               child: ListView.builder(
+  //                   physics: AlwaysScrollableScrollPhysics(),
+  //                   controller: _scrollController2,
+  //                   itemCount: listPromotion.length,
+  //                   itemBuilder: ((context, index) => ListItemPromotion(
+  //                       documentSnapshot: listPromotion[index],
+  //                       index: index,
+  //                       user: _user,
+  //                       currentuser: _user))));
+  //         }
+  //       });
+  // }
 
   Widget newsImageWidget() {
     return FutureBuilder(
