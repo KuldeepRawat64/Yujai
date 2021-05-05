@@ -1,5 +1,6 @@
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
+import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_job.dart';
@@ -91,13 +92,12 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
           backgroundColor: Colors.white,
           title: GestureDetector(
             onTap: () {
-              showSearch(
-                  context: context,
-                  delegate: CompanySearch(userList: companyList));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => SearchTabs()));
             },
             child: Container(
               decoration: ShapeDecoration(
-                color: const Color(0xFFf6f6f6),
+                  color: const Color(0xFFf6f6f6),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(60.0))),
               child: Padding(
@@ -108,9 +108,8 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                   children: [
                     GestureDetector(
                       onTap: () {
-                        showSearch(
-                            context: context,
-                            delegate: CompanySearch(userList: companyList));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SearchTabs()));
                       },
                       child: Icon(
                         Icons.search,
@@ -124,16 +123,14 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          showSearch(
-                              context: context,
-                              delegate: CompanySearch(userList: companyList));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SearchTabs()));
                         },
                         child: TextField(
                           readOnly: true,
                           onTap: () {
-                            showSearch(
-                                context: context,
-                                delegate: CompanySearch(userList: companyList));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SearchTabs()));
                           },
                           // onChanged: (val) {
                           //   setState(() {
