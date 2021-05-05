@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Yujai/models/industry.dart';
+import 'package:Yujai/models/location.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/progress.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
@@ -395,12 +396,17 @@ class _JobPostState extends State<JobPost> {
   GlobalKey<AutoCompleteTextFieldState<Industry>> inkey = new GlobalKey();
   static List<Industry> industries = new List<Industry>();
   AutoCompleteTextField industryTextField;
+  TextEditingController _locationController = new TextEditingController();
+  GlobalKey<AutoCompleteTextFieldState<Location>> lkey = new GlobalKey();
+  static List<Location> locations = new List<Location>();
+  AutoCompleteTextField locationTextField;
   bool loading = true;
 
   @override
   void initState() {
     super.initState();
     getIndustry();
+    getLocation();
     _dropDownMenuCategory = buildDropDownMenuCategory(_category);
     _selectedCategory = _dropDownMenuCategory[0].value;
     //  _dropDownMenuEventType = buildDropDownMenuEventType(_eventType);
@@ -427,6 +433,49 @@ class _JobPostState extends State<JobPost> {
     });
   }
 
+  void getLocation() async {
+    try {
+      final response =
+          await http.get("https://kuldeeprawat64.github.io/data/location.json");
+      if (response.statusCode == 200) {
+        locations = loadLocation(response.body);
+        //  print('Industry: ${industries.length}');
+        setState(() {
+          loading = false;
+        });
+      } else {
+        //   print("Error getting Industry.");
+      }
+    } catch (e) {
+      //  print("Error getting Industry.");
+    }
+  }
+
+  static List<Location> loadLocation(String jsonString) {
+    final parsed = json.decode(jsonString).cast<Map<String, dynamic>>();
+    return parsed.map<Location>((json) => Location.fromJson(json)).toList();
+  }
+
+  Widget irow(Industry industry) {
+    return Wrap(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          industry.name,
+          style: TextStyle(fontSize: 14.0),
+        ),
+        SizedBox(
+          width: 10.0,
+          // height: 10.0,
+        ),
+        Divider()
+        // Text(
+        //   user.email,
+        // ),
+      ],
+    );
+  }
+
   void getIndustry() async {
     try {
       final response =
@@ -450,12 +499,12 @@ class _JobPostState extends State<JobPost> {
     return parsed.map<Industry>((json) => Industry.fromJson(json)).toList();
   }
 
-  Widget irow(Industry industry) {
+  Widget lrow(Location locations) {
     return Wrap(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
-          industry.name,
+          locations.name,
           style: TextStyle(fontSize: 14.0),
         ),
         SizedBox(
@@ -557,7 +606,7 @@ class _JobPostState extends State<JobPost> {
 
   submit() {
     if (jobTitleController.text.isNotEmpty &&
-        locationController.text.isNotEmpty &&
+        _locationController.text.isNotEmpty &&
         salaryController.text.isNotEmpty &&
         aboutController.text.isNotEmpty) {
       //To show CircularProgressIndicator
@@ -570,7 +619,7 @@ class _JobPostState extends State<JobPost> {
                 .addJobToDb(
                     user,
                     jobTitleController.text,
-                    locationController.text,
+                    _locationController.text,
                     _industryController.text,
                     salaryController.text + ' ' + _selectedSalary.name,
                     _selectedTiming.name,
@@ -596,7 +645,7 @@ class _JobPostState extends State<JobPost> {
   @override
   void dispose() {
     jobTitleController?.dispose();
-    locationController?.dispose();
+    _locationController?.dispose();
     salaryController?.dispose();
     aboutController?.dispose();
     websiteController?.dispose();
@@ -696,24 +745,54 @@ class _JobPostState extends State<JobPost> {
                     ),
                   ),
                 ),
-                Container(
-                  height: screenSize.height * 0.09,
-                  child: TextFormField(
-                    autocorrect: true,
-                    textCapitalization: TextCapitalization.sentences,
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context)),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xffffffff),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0)),
-                      hintText: 'Eg. Mumbai, Delhi etc.',
-                    ),
-                    controller: locationController,
-                  ),
-                ),
+                loading
+                    ? CircularProgressIndicator()
+                    : Padding(
+                        padding:
+                            EdgeInsets.only(top: screenSize.height * 0.012),
+                        child: Container(
+                          height: screenSize.height * 0.09,
+                          child: locationTextField =
+                              AutoCompleteTextField<Location>(
+                            controller: _locationController,
+                            key: lkey,
+                            clearOnSubmit: false,
+                            suggestions: locations,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              color: Colors.black,
+                              fontSize: textBody1(context),
+                            ),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xffffffff),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              hintText: "Enter the location e.g. Mumbai",
+                              //  labelText: 'Location',
+                            ),
+                            itemFilter: (item, query) {
+                              return item.name
+                                  .toLowerCase()
+                                  .startsWith(query.toLowerCase());
+                            },
+                            itemSorter: (a, b) {
+                              return a.name.compareTo(b.name);
+                            },
+                            itemSubmitted: (item) {
+                              setState(() {
+                                locationTextField.textField.controller.text =
+                                    item.name;
+                              });
+                            },
+                            itemBuilder: (context, item) {
+                              // ui for the autocompelete row
+                              return lrow(item);
+                            },
+                          ),
+                        ),
+                      ),
                 Padding(
                   padding: EdgeInsets.only(top: screenSize.height * 0.012),
                   child: Text(
@@ -785,7 +864,7 @@ class _JobPostState extends State<JobPost> {
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
                               hintText: "Enter your field e.g. Finance",
-                              labelText: 'Industry',
+                              //labelText: 'Industry',
                             ),
                             itemFilter: (item, query) {
                               return item.name
@@ -946,6 +1025,6 @@ class _JobPostState extends State<JobPost> {
         '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
     print(completeAddress);
     String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    locationController.text = formattedAddress;
+    _locationController.text = formattedAddress;
   }
 }
