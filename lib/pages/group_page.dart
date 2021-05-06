@@ -687,7 +687,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                           },
                                           child: ListTile(
                                               leading: Icon(
-                                                Icons.settings,
+                                                Icons.report_outlined,
                                                 color: Colors.white,
                                               ),
                                               title: Text(
@@ -702,7 +702,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                         onTap: leaveGroup,
                                         child: ListTile(
                                             leading: Icon(
-                                              Icons.account_circle_outlined,
+                                              Icons.exit_to_app_rounded,
                                               color: Colors.white,
                                             ),
                                             title: Text(

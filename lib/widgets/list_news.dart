@@ -85,6 +85,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                   context,
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
+                            commentType: 'commentArticle',
                             snapshot: widget.documentSnapshot,
                             followingUser: widget.user,
                             documentReference: reference,
@@ -399,6 +400,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                                 context,
                                 MaterialPageRoute(
                                     builder: ((context) => CommentsScreen(
+                                          commentType: 'commentArticle',
                                           snapshot: widget.documentSnapshot,
                                           followingUser: widget.user,
                                           documentReference:

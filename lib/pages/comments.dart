@@ -12,8 +12,13 @@ class CommentsScreen extends StatefulWidget {
   final DocumentSnapshot snapshot;
   final User user;
   final User followingUser;
+  final String commentType;
   CommentsScreen(
-      {this.documentReference, this.user, this.followingUser, this.snapshot});
+      {this.documentReference,
+      this.user,
+      this.followingUser,
+      this.snapshot,
+      this.commentType});
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -145,20 +150,20 @@ class _CommentsScreenState extends State<CommentsScreen> {
     var _feed = Feed(
       ownerName: currentUser.displayName,
       ownerUid: currentUser.uid,
-      type: 'comment',
+      type: widget.commentType == null ? 'comment' : widget.commentType,
       ownerPhotoUrl: currentUser.photoUrl,
-      imgUrl: snapshot['imgUrl'],
-      postId: snapshot['postId'],
+      imgUrl: snapshot.data['imgUrl'],
+      postId: snapshot.data['postId'],
       timestamp: FieldValue.serverTimestamp(),
       commentData: _commentController.text,
     );
     Firestore.instance
         .collection('users')
-        .document(snapshot['ownerUid'])
+        .document(snapshot.data['ownerUid'])
         .collection('items')
         // .document(currentUser.uid)
         // .collection('comment')
-        .document(snapshot['postId'])
+        .document(snapshot.data['postId'])
         .setData(_feed.toMap(_feed))
         .then((value) {
       print('Comment Feed added');
@@ -230,7 +235,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Text(timeago.format(snapshot.data['timestamp'].toDate()),
+            child: Text(
+                timeago.format(snapshot.data['timestamp'].toDate()) != null
+                    ? timeago.format(snapshot.data['timestamp'].toDate())
+                    : '',
                 style: TextStyle(
                   fontSize: textbody2(context),
                   fontFamily: FontNameDefault,

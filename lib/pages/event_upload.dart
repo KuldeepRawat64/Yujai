@@ -358,7 +358,9 @@ class _EventUploadState extends State<EventUpload> {
           backgroundColor: const Color(0xffffffff),
           // centerTitle: true,
           actions: [
-            _visibility
+            _visibility &&
+                    isSelectedStatusLocation == false &&
+                    websiteController.text.isNotEmpty
                 ? Padding(
                     padding: EdgeInsets.only(right: screenSize.width / 30),
                     child: GestureDetector(
@@ -368,7 +370,15 @@ class _EventUploadState extends State<EventUpload> {
                       onTap: submit,
                     ),
                   )
-                : Container(),
+                : Padding(
+                    padding: EdgeInsets.only(right: screenSize.width / 30),
+                    child: GestureDetector(
+                      child: Icon(MdiIcons.send,
+                          size: screenSize.height * 0.04,
+                          color: Theme.of(context).accentColor),
+                      onTap: () {},
+                    ),
+                  ),
           ],
         ),
         body: ListView(

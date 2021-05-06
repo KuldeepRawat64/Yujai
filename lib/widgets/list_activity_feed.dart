@@ -1,3 +1,5 @@
+import 'package:Yujai/pages/article_screen.dart';
+import 'package:Yujai/pages/event_screen.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/post_screen.dart';
 import 'package:Yujai/pages/team_page.dart';
@@ -40,6 +42,48 @@ class ListItemActivityFeed extends StatelessWidget {
           ),
         ),
       );
+    } else if (documentSnapshot.data['type'] == 'commentEvent') {
+      mediaPreview = GestureDetector(
+        onTap: () => showEvent(context),
+        child: Container(
+          height: 50.0,
+          width: 50.0,
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: CachedNetworkImageProvider(
+                    documentSnapshot.data['imgUrl'],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else if (documentSnapshot.data['type'] == 'commentArticle') {
+      mediaPreview = GestureDetector(
+        onTap: () => showArticle(context),
+        child: Container(
+          height: 50.0,
+          width: 50.0,
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: CachedNetworkImageProvider(
+                    documentSnapshot.data['imgUrl'],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
     } else {
       mediaPreview = Text('');
     }
@@ -49,7 +93,11 @@ class ListItemActivityFeed extends StatelessWidget {
       activityItemText = 'is following you';
     } else if (documentSnapshot.data['type'] == 'comment') {
       activityItemText = 'commented on your post';
-    }  else {
+    } else if (documentSnapshot.data['type'] == 'commentEvent') {
+      activityItemText = 'commented on your event';
+    } else if (documentSnapshot.data['type'] == 'commentArticle') {
+      activityItemText = 'commented on your article';
+    } else {
       activityItemText = 'Error:Unknown type ${documentSnapshot.data['type']}';
     }
   }
@@ -61,6 +109,20 @@ class ListItemActivityFeed extends StatelessWidget {
             postId: documentSnapshot.data['postId'])));
   }
 
+  showEvent(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => EventScreen(
+            userId: documentSnapshot.data['ownerUid'],
+            postId: documentSnapshot.data['postId'])));
+  }
+
+  showArticle(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ArticleScreen(
+            userId: documentSnapshot.data['ownerUid'],
+            postId: documentSnapshot.data['postId'])));
+  }
+
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => InstaFriendProfileScreen(
@@ -68,7 +130,6 @@ class ListItemActivityFeed extends StatelessWidget {
               uid: documentSnapshot.data['ownerUid'],
             )));
   }
-
 
   @override
   Widget build(BuildContext context) {

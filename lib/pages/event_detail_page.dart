@@ -572,6 +572,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => CommentsScreen(
+                                        commentType: 'commentEvent',
+                                        snapshot: widget.documentSnapshot,
                                         documentReference:
                                             widget.documentSnapshot.reference,
                                         user: widget.currentuser,
