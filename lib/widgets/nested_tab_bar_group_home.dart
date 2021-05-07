@@ -720,14 +720,12 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                             CircleAvatar(
                               radius: screenSize.height * 0.07,
                               backgroundColor: Colors.white,
-                              backgroundImage:
-                                  //  _group.groupProfilePhoto != '' &&
-                                  //         _group != null
-                                  //     ? CachedNetworkImageProvider(
-                                  //         _group.groupProfilePhoto)
-                                  //     :
-                                  AssetImage(
-                                      'assets/images/group_no-image.png'),
+                              backgroundImage: NetworkImage(_group
+                                              .groupProfilePhoto !=
+                                          null &&
+                                      _group.groupProfilePhoto != ''
+                                  ? _group.groupProfilePhoto
+                                  : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                             ),
                           ],
                         ),
@@ -1002,8 +1000,12 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         CircleAvatar(
                           radius: screenSize.height * 0.07,
                           backgroundColor: Colors.white,
-                          backgroundImage:
-                              AssetImage('assets/group_no-image.png'),
+                          backgroundImage: NetworkImage(_group
+                                          .groupProfilePhoto !=
+                                      null &&
+                                  _group.groupProfilePhoto != ''
+                              ? _group.groupProfilePhoto
+                              : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                         ),
                       ],
                     ),

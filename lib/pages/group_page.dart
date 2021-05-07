@@ -185,19 +185,18 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
               elevation: 0.5,
               title: Row(
                 children: <Widget>[
-                  _group != null && _group.groupProfilePhoto != ''
+                  _group != null
                       ? CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: screenSize.height * 0.03,
-                          backgroundImage: CachedNetworkImageProvider(
-                              _group.groupProfilePhoto),
+                          backgroundImage: NetworkImage(_group
+                                          .groupProfilePhoto !=
+                                      null &&
+                                  _group.groupProfilePhoto != ''
+                              ? _group.groupProfilePhoto
+                              : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                         )
-                      : CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: screenSize.height * 0.03,
-                          backgroundImage:
-                              AssetImage('assets/images/group_no-image.png'),
-                        ),
+                      : Container(),
                   _group != null
                       ? Padding(
                           padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -408,13 +407,13 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                               EdgeInsets.only(top: screenSize.height * 0.02),
                           child: CircleAvatar(
                             radius: screenSize.height * 0.04,
-                            backgroundColor: Colors.grey,
-                            backgroundImage:
-                                _group != null && _group.groupProfilePhoto != ''
-                                    ? CachedNetworkImageProvider(
-                                        _group.groupProfilePhoto)
-                                    : AssetImage(
-                                        'assets/images/group_no-image.png'),
+                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(_group
+                                            .groupProfilePhoto !=
+                                        null &&
+                                    _group.groupProfilePhoto != ''
+                                ? _group.groupProfilePhoto
+                                : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                           ),
                         ),
                         accountName: Text(
@@ -579,13 +578,13 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                   top: screenSize.height * 0.02),
                               child: CircleAvatar(
                                 radius: screenSize.height * 0.04,
-                                backgroundColor: Colors.grey,
-                                backgroundImage: _group != null &&
+                                backgroundColor: Colors.white,
+                                backgroundImage: NetworkImage(_group
+                                                .groupProfilePhoto !=
+                                            null &&
                                         _group.groupProfilePhoto != ''
-                                    ? CachedNetworkImageProvider(
-                                        _group.groupProfilePhoto)
-                                    : AssetImage(
-                                        'assets/images/group_no-image.png'),
+                                    ? _group.groupProfilePhoto
+                                    : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                               ),
                             ),
                             accountName: Text(
