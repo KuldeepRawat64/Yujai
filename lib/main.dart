@@ -1,13 +1,13 @@
-import 'package:Yujai/pages/home.dart';
-import 'package:Yujai/pages/login_page.dart';
-import 'package:Yujai/resources/repository.dart';
+// import 'package:Yujai/pages/home.dart';
+// import 'package:Yujai/pages/login_page.dart';
+// import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/splash_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/app_localizations.dart';
-import 'style.dart';
+// import 'style.dart';
 
 void main() async {
   // add these lines
