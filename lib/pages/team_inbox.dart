@@ -179,8 +179,8 @@ class _TeamInboxState extends State<TeamInbox> {
           .collection('teams')
           .document(widget.gid)
           .collection('inbox')
-          .where('assigned' ,arrayContains:widget.currentuser.uid)
-          .orderBy('timestamp')
+          .where('assigned', arrayContains: widget.currentuser.uid)
+          .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
         if (snapshot.hasData) {
@@ -226,4 +226,3 @@ class _TeamInboxState extends State<TeamInbox> {
     );
   }
 }
- 

@@ -181,7 +181,7 @@ class _GroupInboxState extends State<GroupInbox> {
           .document(widget.gid)
           .collection('inbox')
           .where('postOwnerUid', isEqualTo: widget.currentuser.uid)
-          .orderBy('timestamp')
+          .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
         if (snapshot.hasData) {
