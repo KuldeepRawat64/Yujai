@@ -1,5 +1,6 @@
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/feed.dart';
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,15 +11,20 @@ import 'package:timeago/timeago.dart' as timeago;
 class CommentsScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final DocumentSnapshot snapshot;
+  final Group group;
   final User user;
   final User followingUser;
   final String commentType;
-  CommentsScreen(
-      {this.documentReference,
-      this.user,
-      this.followingUser,
-      this.snapshot,
-      this.commentType});
+  final bool isGroupFeed;
+  CommentsScreen({
+    this.documentReference,
+    this.user,
+    this.followingUser,
+    this.snapshot,
+    this.commentType,
+    this.isGroupFeed,
+    this.group,
+  });
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -148,6 +154,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   void addCommentToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
     var _feed = Feed(
+      postOwnerUid: snapshot.data['ownerUid'],
       ownerName: currentUser.displayName,
       ownerUid: currentUser.uid,
       type: widget.commentType == null ? 'comment' : widget.commentType,
@@ -158,9 +165,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
       commentData: _commentController.text,
     );
     Firestore.instance
-        .collection('users')
-        .document(snapshot.data['ownerUid'])
-        .collection('items')
+        .collection(widget.isGroupFeed ? 'groups' : 'users')
+        .document(
+            widget.isGroupFeed ? widget.group.uid : snapshot.data['ownerUid'])
+        .collection(widget.isGroupFeed ? 'inbox' : 'items')
         // .document(currentUser.uid)
         // .collection('comment')
         .document(snapshot.data['postId'])
@@ -235,14 +243,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Text(
-                timeago.format(snapshot.data['timestamp'].toDate()) != null
-                    ? timeago.format(snapshot.data['timestamp'].toDate())
-                    : '',
-                style: TextStyle(
-                  fontSize: textbody2(context),
-                  fontFamily: FontNameDefault,
-                )),
+            child: snapshot.data['timestamp'] != null
+                ? Text(timeago.format(snapshot.data['timestamp'].toDate()),
+                    style: TextStyle(
+                      fontSize: textbody2(context),
+                      fontFamily: FontNameDefault,
+                    ))
+                : Text(''),
           )
         ],
       ),

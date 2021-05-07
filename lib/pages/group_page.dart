@@ -4,6 +4,7 @@ import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/group_activity.dart';
 import 'package:Yujai/pages/group_chat.dart';
+import 'package:Yujai/pages/group_inbox.dart';
 import 'package:Yujai/pages/group_settings.dart';
 import 'package:Yujai/pages/group_upload_ad.dart';
 import 'package:Yujai/pages/group_upload_discussion.dart';
@@ -490,17 +491,29 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.notifications,
-                                color: Colors.white,
-                              ),
-                              title: Text(
-                                'Inbox',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.white,
-                                    fontSize: textSubTitle(context)),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => GroupInbox(
+                                            gid: _group.uid,
+                                            name: _group.groupName,
+                                            group: _group,
+                                            currentuser: currentuser)));
+                              },
+                              child: ListTile(
+                                leading: Icon(
+                                  Icons.notifications,
+                                  color: Colors.white,
+                                ),
+                                title: Text(
+                                  'Inbox',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
                               ),
                             ),
                           ],
@@ -663,17 +676,29 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                     ),
                                   ),
                                 ),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.notifications,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    'Inbox',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.white,
-                                        fontSize: textSubTitle(context)),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => GroupInbox(
+                                                gid: _group.uid,
+                                                name: _group.groupName,
+                                                group: _group,
+                                                currentuser: currentuser)));
+                                  },
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.notifications,
+                                      color: Colors.white,
+                                    ),
+                                    title: Text(
+                                      'Inbox',
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.white,
+                                          fontSize: textSubTitle(context)),
+                                    ),
                                   ),
                                 ),
                               ],

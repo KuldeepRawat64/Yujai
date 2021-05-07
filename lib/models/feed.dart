@@ -12,6 +12,7 @@ class Feed {
   String gname;
   String groupProfilePhoto;
   FieldValue timestamp;
+  String postOwnerUid;
 
   Feed(
       {this.ownerName,
@@ -24,7 +25,8 @@ class Feed {
       this.gid,
       this.gname,
       this.groupProfilePhoto,
-      this.timestamp});
+      this.timestamp,
+      this.postOwnerUid});
 
   Map toMap(Feed feed) {
     var data = Map<String, dynamic>();
@@ -39,6 +41,7 @@ class Feed {
     data['gname'] = feed.gname;
     data['groupProfilePhoto'] = feed.groupProfilePhoto;
     data['timestamp'] = feed.timestamp;
+    data['postOwnerUid'] = feed.postOwnerUid;
     return data;
   }
 
@@ -54,5 +57,6 @@ class Feed {
     this.gname = mapData['gname'];
     this.groupProfilePhoto = mapData['groupProfilePhoto'];
     this.timestamp = mapData['timestamp'];
+    this.postOwnerUid = mapData['postOwnerUid'];
   }
 }

@@ -1470,6 +1470,8 @@ class _ListPostForumState extends State<ListPostForum> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => CommentsScreen(
+                                        group: widget.group,
+                                        isGroupFeed: true,
                                         snapshot: widget.documentSnapshot,
                                         followingUser: widget.currentuser,
                                         documentReference:
@@ -2048,6 +2050,7 @@ class _ListPostForumState extends State<ListPostForum> {
       return print('Owner liked');
     } else {
       var _feed = Feed(
+        postOwnerUid: snapshot.data['ownerUid'],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
         type: 'like',
@@ -2058,15 +2061,15 @@ class _ListPostForumState extends State<ListPostForum> {
         commentData: '',
       );
       Firestore.instance
-          .collection('users')
-          .document(snapshot.data['ownerUid'])
-          .collection('items')
+          .collection('groups')
+          .document(widget.gid)
+          .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
           .document(snapshot.data['postId'])
           .setData(_feed.toMap(_feed))
           .then((value) {
-        print('Feed added');
+        print('Group Feed added');
       });
     }
   }
@@ -2087,9 +2090,9 @@ class _ListPostForumState extends State<ListPostForum> {
       return print('Owner feed');
     } else {
       Firestore.instance
-          .collection('users')
-          .document(snapshot.data['ownerUid'])
-          .collection('items')
+          .collection('groups')
+          .document(widget.gid)
+          .collection('inbox')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')

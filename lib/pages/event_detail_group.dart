@@ -1,3 +1,4 @@
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/friend_profile.dart';
@@ -13,8 +14,10 @@ import 'webview.dart';
 class EventDetailGroup extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final User user, currentuser;
+  final Group group;
 
-  EventDetailGroup({this.documentSnapshot, this.user, this.currentuser});
+  EventDetailGroup(
+      {this.documentSnapshot, this.user, this.currentuser, this.group});
 
   @override
   _EventDetailGroupState createState() => _EventDetailGroupState();
@@ -532,9 +535,12 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                           context,
                           MaterialPageRoute(
                               builder: ((context) => CommentsScreen(
+                                    group: widget.group,
+                                    isGroupFeed: true,
                                     documentReference:
                                         widget.documentSnapshot.reference,
                                     user: widget.currentuser,
+                                    snapshot: widget.documentSnapshot,
                                   ))));
                     },
                   ),
@@ -573,8 +579,11 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                   context,
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
+                            group: widget.group,
+                            isGroupFeed: true,
                             documentReference: reference,
                             user: widget.currentuser,
+                            snapshot: widget.documentSnapshot,
                           ))));
             },
           );

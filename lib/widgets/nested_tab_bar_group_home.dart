@@ -72,25 +72,25 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   StreamSubscription<DocumentSnapshot> subscription;
   bool isPrivate = false;
 
-  // fetchUidBySearchedName(String name) async {
-  //   print("NAME : $name");
-  //   String uid = await _repository.fetchUidBySearchedName(name);
-  //   if (!mounted) return;
-  //   setState(() {
-  //     followingUserId = uid;
-  //   });
-  //   fetchUserDetailsById(uid);
-  // }
+  fetchUidBySearchedName(String name) async {
+    print("NAME : $name");
+    String uid = await _repository.fetchUidBySearchedName(name);
+    if (!mounted) return;
+    setState(() {
+      followingUserId = uid;
+    });
+    fetchUserDetailsById(uid);
+  }
 
-  // fetchUserDetailsById(String userId) async {
-  //   Group group = await _repository.fetchGroupDetailsById(widget.gid);
-  //   if (!mounted) return;
-  //   setState(() {
-  //     _group = group;
-  //     // isPrivate = user.isPrivate;
-  //     print("USER : ${_user.displayName}");
-  //   });
-  // }
+  fetchUserDetailsById(String userId) async {
+    Group group = await _repository.fetchGroupDetailsById(widget.gid);
+    if (!mounted) return;
+    setState(() {
+      _group = group;
+      // isPrivate = user.isPrivate;
+      print("USER : ${_user.displayName}");
+    });
+  }
 
   retrieveGroupDetails() async {
     //FirebaseUser currentUser = await _repository.getCurrentUser();
@@ -105,19 +105,19 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   void initState() {
     super.initState();
     retrieveGroupDetails();
-    // _repository.getCurrentUser().then((user) {
-    //   if (!mounted) return;
-    //   setState(() {
-    //     user = user;
-    //   });
-    //   _repository.fetchUserDetailsById(user.uid).then((currentUser) {
-    //     if (!mounted) return;
-    //     setState(() {
-    //       currentuser = currentUser;
-    //     });
-    //   });
-    // });
-    // fetchUidBySearchedName(widget.gid);
+    _repository.getCurrentUser().then((user) {
+      if (!mounted) return;
+      setState(() {
+        user = user;
+      });
+      _repository.fetchUserDetailsById(user.uid).then((currentUser) {
+        if (!mounted) return;
+        setState(() {
+          currentuser = currentUser;
+        });
+      });
+    });
+    fetchUidBySearchedName(widget.gid);
     _nestedTabController =
         new TabController(length: 5, vsync: this, initialIndex: 0);
     _scrollController = ScrollController()
@@ -386,6 +386,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               //shrinkWrap: true,
               itemCount: snapshot.data.documents.length,
               itemBuilder: ((context, index) => ListItemEventForum(
+                  group: _group,
                   documentSnapshot: snapshot.data.documents[index],
                   index: index,
                   currentuser: currentuser,

@@ -1,3 +1,4 @@
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class ListItemEventForum extends StatefulWidget {
   final int index;
   final String gid;
   final String name;
+  final Group group;
 
   ListItemEventForum({
     this.user,
@@ -22,6 +24,7 @@ class ListItemEventForum extends StatefulWidget {
     this.documentSnapshot,
     this.gid,
     this.name,
+    this.group,
   });
 
   @override
@@ -129,25 +132,26 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => EventDetailGroup(
+                                              group: widget.group,
                                               user: widget.currentuser,
                                               currentuser: widget.currentuser,
                                               documentSnapshot:
                                                   widget.documentSnapshot,
                                             )));
                               },
-                              child:  Container(
-                                  width: screenSize.width * 0.5,
-                                  child: Text(
-                                      widget.documentSnapshot.data['caption'],
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textSubTitle(context),
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).primaryColor),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                  ),
+                              child: Container(
+                                width: screenSize.width * 0.5,
+                                child: Text(
+                                  widget.documentSnapshot.data['caption'],
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textSubTitle(context),
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
+                              ),
                             ),
                             SizedBox(
                               height: screenSize.height * 0.01,
@@ -322,6 +326,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
             context,
             MaterialPageRoute(
                 builder: ((context) => EventDetailGroup(
+                      group: widget.group,
                       user: widget.currentuser,
                       currentuser: widget.currentuser,
                       documentSnapshot: widget.documentSnapshot,
