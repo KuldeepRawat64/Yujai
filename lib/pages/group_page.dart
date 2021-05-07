@@ -89,18 +89,26 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     Navigator.pop(context);
   }
 
-  fetchUidBySearchedName(String name) async {
-    print("NAME : $name");
-    String uid = await _repository.fetchUidBySearchedName(name);
-    if (!mounted) return;
-    setState(() {
-      followingUserId = uid;
-    });
-    fetchUserDetailsById(uid);
-  }
+  // fetchUidBySearchedName(String name) async {
+  //   print("NAME : $name");
+  //   String uid = await _repository.fetchUidBySearchedName(name);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     followingUserId = uid;
+  //   });
+  //   fetchUserDetailsById(uid);
+  // }
 
-  fetchUserDetailsById(String userId) async {
-    Group group = await _repository.fetchGroupDetailsById(widget.gid);
+  // fetchUserDetailsById(String userId) async {
+  //   Group group = await _repository.fetchGroupDetailsById(widget.gid);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _group = group;
+  //   });
+  // }
+  retrieveGroupDetails() async {
+    //FirebaseUser currentUser = await _repository.getCurrentUser();
+    Group group = await _repository.retreiveGroupDetails(widget.gid);
     if (!mounted) return;
     setState(() {
       _group = group;
@@ -112,7 +120,8 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     super.initState();
     isMember = false;
     isRequested = false;
-    fetchUidBySearchedName(widget.gid);
+    //fetchUidBySearchedName(widget.gid);
+    retrieveGroupDetails();
     _repository.getCurrentUser().then((user) {
       if (!mounted) return;
       setState(() {
@@ -1383,8 +1392,8 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                       group: _group,
                       currentUser: widget.currentUser,
                       isMember: isMember,
-                      gid: widget.gid,
-                      name: widget.name,
+                      gid: _group.uid,
+                      name: _group.groupName,
                     )
                   : Container()),
         ],

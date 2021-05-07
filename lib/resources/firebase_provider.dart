@@ -1180,9 +1180,9 @@ class FirebaseProvider {
     return User.fromMap(_documentSnapshot.data);
   }
 
-  Future<Group> retrieveGroupDetails(FirebaseUser group) async {
+  Future<Group> retrieveGroupDetails(String group) async {
     DocumentSnapshot _documentSnapshot =
-        await _firestore.collection('groups').document(group.uid).get();
+        await _firestore.collection('groups').document(group).get();
     return Group.fromMap(_documentSnapshot.data);
   }
 

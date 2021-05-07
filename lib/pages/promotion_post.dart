@@ -911,7 +911,7 @@ class _PromotionState extends State<Promotion> {
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                     hintText: "Enter your field e.g. Finance",
-                                    labelText: 'Industry',
+                                    // labelText: 'Industry',
                                   ),
                                   itemFilter: (item, query) {
                                     return item.name

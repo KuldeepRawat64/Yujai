@@ -12,6 +12,7 @@ import 'package:cupertino_tabbar/cupertino_tabbar.dart' as CupertinoTabBar;
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 final usersRef = Firestore.instance.collection('users');
+final groupsRef = Firestore.instance.collection('groups');
 
 class Home extends StatefulWidget {
   @override

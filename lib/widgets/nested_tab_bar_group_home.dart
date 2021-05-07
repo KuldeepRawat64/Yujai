@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/pages/group_settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
@@ -70,42 +72,52 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   StreamSubscription<DocumentSnapshot> subscription;
   bool isPrivate = false;
 
-  fetchUidBySearchedName(String name) async {
-    print("NAME : $name");
-    String uid = await _repository.fetchUidBySearchedName(name);
-    if (!mounted) return;
-    setState(() {
-      followingUserId = uid;
-    });
-    fetchUserDetailsById(uid);
-  }
+  // fetchUidBySearchedName(String name) async {
+  //   print("NAME : $name");
+  //   String uid = await _repository.fetchUidBySearchedName(name);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     followingUserId = uid;
+  //   });
+  //   fetchUserDetailsById(uid);
+  // }
 
-  fetchUserDetailsById(String userId) async {
-    Group group = await _repository.fetchGroupDetailsById(widget.gid);
+  // fetchUserDetailsById(String userId) async {
+  //   Group group = await _repository.fetchGroupDetailsById(widget.gid);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _group = group;
+  //     // isPrivate = user.isPrivate;
+  //     print("USER : ${_user.displayName}");
+  //   });
+  // }
+
+  retrieveGroupDetails() async {
+    //FirebaseUser currentUser = await _repository.getCurrentUser();
+    Group group = await _repository.retreiveGroupDetails(widget.gid);
     if (!mounted) return;
     setState(() {
       _group = group;
-      // isPrivate = user.isPrivate;
-      print("USER : ${_user.displayName}");
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _repository.getCurrentUser().then((user) {
-      if (!mounted) return;
-      setState(() {
-        user = user;
-      });
-      _repository.fetchUserDetailsById(user.uid).then((currentUser) {
-        if (!mounted) return;
-        setState(() {
-          currentuser = currentUser;
-        });
-      });
-    });
-    fetchUidBySearchedName(widget.gid);
+    retrieveGroupDetails();
+    // _repository.getCurrentUser().then((user) {
+    //   if (!mounted) return;
+    //   setState(() {
+    //     user = user;
+    //   });
+    //   _repository.fetchUserDetailsById(user.uid).then((currentUser) {
+    //     if (!mounted) return;
+    //     setState(() {
+    //       currentuser = currentUser;
+    //     });
+    //   });
+    // });
+    // fetchUidBySearchedName(widget.gid);
     _nestedTabController =
         new TabController(length: 5, vsync: this, initialIndex: 0);
     _scrollController = ScrollController()
@@ -146,6 +158,39 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
     _scrollController6?.dispose();
     subscription?.cancel();
     super.dispose();
+  }
+
+  Widget getTextWidgets(List<dynamic> strings) {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      children: strings.isNotEmpty
+          ? strings
+              .map((items) => Padding(
+                    padding: EdgeInsets.all(screenSize.height * 0.01),
+                    child: chip(items, Colors.white),
+                  ))
+              .toList()
+          : Container(),
+    );
+  }
+
+  Widget chip(String label, Color color) {
+    var screenSize = MediaQuery.of(context).size;
+    return Chip(
+      labelPadding: EdgeInsets.all(screenSize.height * 0.005),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontFamily: FontNameDefault,
+          color: Colors.black,
+          fontSize: textbody2(context),
+        ),
+      ),
+      backgroundColor: color,
+      elevation: 0.0,
+      shadowColor: Colors.grey[60],
+      padding: EdgeInsets.all(screenSize.height * 0.01),
+    );
   }
 
   @override
@@ -195,7 +240,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           child: TabBarView(
             controller: _nestedTabController,
             children: <Widget>[
-              widget.isMember == true || widget.group.isPrivate == false
+              widget.isMember == true || _group.isPrivate == false
                   ? forumWidget()
                   : Center(
                       child: Column(
@@ -214,7 +259,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         Icon(Icons.lock_outline),
                       ],
                     )),
-              widget.isMember == true || widget.group.isPrivate == false
+              widget.isMember == true || _group.isPrivate == false
                   ? groupMemberWidget()
                   : Center(
                       child: Column(
@@ -233,7 +278,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         Icon(Icons.lock_outline),
                       ],
                     )),
-              widget.isMember == true || widget.group.isPrivate == false
+              widget.isMember == true || _group.isPrivate == false
                   ? eventWidget()
                   : Center(
                       child: Column(
@@ -252,8 +297,10 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         Icon(Icons.lock_outline),
                       ],
                     )),
-              widget.isMember == true || widget.group.isPrivate == false
-                  ? marketPlaceWidget()
+              widget.isMember == true || _group.isPrivate == false
+                  ? _group != null
+                      ? marketPlaceWidget()
+                      : Container()
                   : Center(
                       child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -271,7 +318,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         Icon(Icons.lock_outline),
                       ],
                     )),
-              widget.group.isPrivate == false
+              _group.isPrivate == false
                   ? groupInfoPublic()
                   : widget.isMember == true
                       ? widget.isMember == true
@@ -307,7 +354,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   documentSnapshot: snapshot.data.documents[index],
                   index: index,
                   currentuser: widget.currentUser,
-                  group: widget.group,
+                  group: _group,
                   gid: widget.gid,
                   name: widget.name)),
             ),
@@ -497,7 +544,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => GroupRequest(
-                                              group: widget.group,
+                                              group: _group,
                                               currentuser: currentuser,
                                               gid: widget.gid,
                                               name: widget.name)));
@@ -520,7 +567,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => GroupPostReview(
-                                          group: widget.group,
+                                          group: _group,
                                           currentuser: currentuser,
                                           gid: widget.gid,
                                           name: widget.name)));
@@ -550,7 +597,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => GroupInvite(
-                                                  group: widget.group,
+                                                  group: _group,
                                                   currentuser: currentuser,
                                                   gid: widget.gid,
                                                   name: widget.name)));
@@ -573,7 +620,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   itemBuilder: ((context, index) => InkWell(
                       onTap: () {
                         if (currentuser.uid !=
-                            snapshot.data.documents[index].data['uid']) {
+                            snapshot.data.documents[index].data['ownerUid']) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -657,42 +704,103 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: screenSize.width / 30,
-                    top: screenSize.height * 0.07,
-                  ),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        CircleAvatar(
-                          radius: screenSize.height * 0.07,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: widget.group.groupProfilePhoto !=
-                                      '' &&
-                                  widget.group != null
-                              ? CachedNetworkImageProvider(
-                                  widget.group.groupProfilePhoto)
-                              : AssetImage('assets/images/group_no-image.png'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: screenSize.width / 30,
+                        top: screenSize.height * 0.07,
+                      ),
+                      child: InkWell(
+                        onTap: () {},
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CircleAvatar(
+                              radius: screenSize.height * 0.07,
+                              backgroundColor: Colors.white,
+                              backgroundImage:
+                                  //  _group.groupProfilePhoto != '' &&
+                                  //         _group != null
+                                  //     ? CachedNetworkImageProvider(
+                                  //         _group.groupProfilePhoto)
+                                  //     :
+                                  AssetImage(
+                                      'assets/images/group_no-image.png'),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    widget.currentUser.uid == _group.currentUserUid
+                        ? InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GroupSettings(
+                                            gid: _group.uid,
+                                            name: _group.groupName,
+                                            description: _group.description,
+                                            rules: _group.rules,
+                                            isPrivate: _group.isPrivate,
+                                            isHidden: _group.isHidden,
+                                            group: _group,
+                                            currentuser: currentuser,
+                                          ))).then((val) {
+                                retrieveGroupDetails();
+                                if (!mounted) return;
+                                setState(() {
+                                  _group = _group;
+                                });
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: screenSize.width / 30,
+                                top: screenSize.height * 0.15,
+                              ),
+                              child: Container(
+                                height: screenSize.height * 0.045,
+                                width: screenSize.width / 6,
+                                child: Center(
+                                    child: Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    color: Colors.black,
+                                    fontSize: textButton(context),
+                                  ),
+                                )),
+                                decoration: ShapeDecoration(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        width: 1.5, color: Colors.black54),
+                                    borderRadius: BorderRadius.circular(60.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
               ],
             ),
             Padding(
               padding: EdgeInsets.only(
                 left: screenSize.width / 30,
+                //  right: screenSize.width / 30,
                 // top: screenSize.height * 0.012,
               ),
               child: Chip(
                 backgroundColor: Colors.white,
                 avatar: Icon(Icons.public),
                 label: Text(
-                  widget.group.groupName,
+                  _group.groupName != null ? _group.groupName : '',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -711,7 +819,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                 backgroundColor: Colors.white,
                 avatar: Icon(Icons.location_on),
                 label: Text(
-                  widget.group.location,
+                  _group.location != null ? _group.location : '',
                   style: TextStyle(
                     color: Colors.black54,
                     fontWeight: FontWeight.normal,
@@ -725,7 +833,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               padding: EdgeInsets.only(
                   left: screenSize.width / 30, top: screenSize.height * 0.012),
               child: Text(
-                widget.group.description,
+                _group.description != null ? _group.description : '',
                 style: TextStyle(fontSize: screenSize.height * 0.022),
               ),
             ),
@@ -750,18 +858,28 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: screenSize.width / 30, top: screenSize.height * 0.012),
-              child: Text(
-                '- ${widget.group.rules.join('\n')}',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
-                ),
-              ),
-            ),
+            _group.rules != null && _group.rules.isEmpty
+                ? Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: screenSize.width / 4,
+                        vertical: screenSize.height * 0.01),
+                    child: Text(
+                      'No rules added',
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context),
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: [
+                      _group != null
+                          ? getTextWidgets(_group.rules)
+                          : Container(),
+                    ],
+                  ),
             Padding(
               padding: EdgeInsets.only(
                 top: screenSize.height * 0.01,
@@ -786,37 +904,49 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
             SizedBox(
               height: screenSize.height * 0.01,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey[200],
-                          offset: Offset(1.0, 1.0),
-                          spreadRadius: 1.0,
-                          blurRadius: 1.0),
-                      BoxShadow(
-                          color: Colors.white,
-                          offset: Offset.zero,
-                          spreadRadius: 0.0,
-                          blurRadius: 0.0)
-                    ]),
-                child: ListTile(
-                  trailing:
-                      IconButton(icon: Icon(Icons.message), onPressed: null),
-                  title: Text(
-                    widget.group.groupOwnerName,
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
+            InkWell(
+              onTap: () {
+                if (currentuser.uid != _group.currentUserUid) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InstaFriendProfileScreen(
+                              uid: _group.currentUserUid,
+                              name: _group.groupOwnerName)));
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey[200],
+                            offset: Offset(1.0, 1.0),
+                            spreadRadius: 1.0,
+                            blurRadius: 1.0),
+                        BoxShadow(
+                            color: Colors.white,
+                            offset: Offset.zero,
+                            spreadRadius: 0.0,
+                            blurRadius: 0.0)
+                      ]),
+                  child: ListTile(
+                    title: Text(
+                      _group.groupOwnerName != null
+                          ? _group.groupOwnerName
+                          : '',
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
+                      ),
                     ),
-                  ),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(
-                        widget.group.groupOwnerPhotoUrl),
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                          CachedNetworkImageProvider(_group.groupOwnerPhotoUrl),
+                    ),
                   ),
                 ),
               ),
@@ -871,11 +1001,9 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                       children: [
                         CircleAvatar(
                           radius: screenSize.height * 0.07,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: widget.group.groupProfilePhoto != ''
-                              ? CachedNetworkImageProvider(
-                                  widget.group.groupProfilePhoto)
-                              : AssetImage('assets/images/group_no-image.png'),
+                          backgroundColor: Colors.white,
+                          backgroundImage:
+                              AssetImage('assets/group_no-image.png'),
                         ),
                       ],
                     ),
@@ -891,7 +1019,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                 backgroundColor: Colors.white,
                 avatar: Icon(Icons.public),
                 label: Text(
-                  widget.group.groupName,
+                  _group.groupName != null ? _group.groupName : '',
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -907,7 +1035,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                 backgroundColor: Colors.white,
                 avatar: Icon(Icons.location_on),
                 label: Text(
-                  widget.group.location,
+                  _group.location != null ? _group.location : '',
                   style: TextStyle(
                     color: Colors.black54,
                     fontWeight: FontWeight.normal,
@@ -921,7 +1049,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               padding: EdgeInsets.only(
                   left: screenSize.width / 30, top: screenSize.height * 0.012),
               child: Text(
-                widget.group.description,
+                _group.description != null ? _group.description : '',
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textBody1(context),
@@ -953,7 +1081,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                     });
                     compressImage();
                     _repository.uploadImageToStorage(imageFile).then((url) {
-                      _repository.updatePhoto(url, widget.group.uid).then((v) {
+                      _repository.updatePhoto(url, _group.uid).then((v) {
                         Navigator.pop(context);
                       });
                     });
@@ -969,7 +1097,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               //       });
               //       compressImage();
               //       _repository.uploadImageToStorage(imageFile).then((url) {
-              //         _repository.updatePhoto(url, widget.group.uid).then((v) {
+              //         _repository.updatePhoto(url, _group.uid).then((v) {
               //           Navigator.pop(context);
               //         });
               //       });

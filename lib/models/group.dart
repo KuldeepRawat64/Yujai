@@ -1,5 +1,3 @@
-
-
 class Group {
   String uid;
   String groupName;
@@ -16,7 +14,6 @@ class Group {
   List<dynamic> rules;
   String customRules;
 
-
   Group({
     this.uid,
     this.groupName,
@@ -32,7 +29,6 @@ class Group {
     this.groupOwnerEmail,
     this.rules,
     this.customRules,
- 
   });
 
   Map toMap(Group group) {
@@ -51,7 +47,7 @@ class Group {
     data['groupOwnerEmail'] = group.groupOwnerEmail;
     data['rules'] = group.rules;
     data['customRules'] = group.customRules;
- 
+
     return data;
   }
 
@@ -70,6 +66,5 @@ class Group {
     this.groupOwnerEmail = mapData['groupOwnerEmail'];
     this.rules = mapData['rules'];
     this.customRules = mapData['customRules'];
-  
   }
 }

@@ -7,9 +7,15 @@ import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 
+import 'create_group.dart';
+
 class GroupSettings extends StatefulWidget {
   final String gid;
   final String name;
+  final String description;
+  final List<dynamic> rules;
+  final bool isPrivate;
+  final bool isHidden;
   final Group group;
   final Team team;
   final User currentuser;
@@ -19,38 +25,172 @@ class GroupSettings extends StatefulWidget {
     this.group,
     this.currentuser,
     this.team,
+    this.description,
+    this.rules,
+    this.isPrivate,
+    this.isHidden,
   });
   @override
   _GroupSettingsState createState() => _GroupSettingsState();
 }
 
 class _GroupSettingsState extends State<GroupSettings> {
+  Group _group;
   bool isPrivate = false;
   bool isHidden = false;
   User _user;
   var _repository = Repository();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  List<String> reportList = [
+    "Be Kind and Courteous",
+    "No Hate Speech or Bullying",
+    "No Promotions or Spam",
+    "Respect Everyone's Privacy",
+    "No 18+ content",
+    "It’s OK to agree to disagree",
+    "Confidentiality"
+  ];
+
+  List<dynamic> selectedReportList = List();
+
+  _showReportDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Select Group Rules",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: FontNameDefault,
+                  fontSize: textHeader(context)),
+            ),
+            content: MultiSelectChip(
+              reportList,
+              onSelectionChanged: (selectedList) {
+                setState(() {
+                  selectedReportList = selectedList;
+                });
+                submit();
+              },
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context),
+                      color: Colors.black),
+                ),
+                onPressed: () {
+                  //  print('$selectedReportList');
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40.0)),
+                color: Theme.of(context).primaryColor,
+                child: Text(
+                  "Submit",
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context),
+                      color: Colors.white),
+                ),
+                onPressed: () {
+                  print('$selectedReportList');
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }).then((val) {
+      retrieveGroupDetails();
+      if (!mounted) return;
+      setState(() {
+        _group = _group;
+      });
+    });
+  }
+
+  retrieveGroupDetails() async {
+    //FirebaseUser currentUser = await _repository.getCurrentUser();
+    Group group = await _repository.retreiveGroupDetails(widget.gid);
+    if (!mounted) return;
+    setState(() {
+      _group = group;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    retrieveUserDetails();
+    retrieveGroupDetails();
+    if (!mounted) return;
+    _nameController.text = widget.name;
+    _descriptionController.text = widget.description;
+    selectedReportList = widget.rules;
+    if (!mounted) return;
+    setState(() {
+      isPrivate = widget.isPrivate;
+      isHidden = widget.isHidden;
+    });
   }
 
   submit() {
-    usersRef.document(_user.uid).updateData({
+    groupsRef.document(_group.uid).updateData({
       "isPrivate": isPrivate,
       "isHidden": isHidden,
+      "groupName": _nameController.text,
+      "description": _descriptionController.text,
+      "rules": selectedReportList,
     });
   }
 
-  retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
-    if (!mounted) return;
-    setState(() {
-      _user = user;
-      isPrivate = user.isPrivate;
-      isHidden = user.isHidden;
-    });
+  // retrieveGroupDetails() async {
+  //   FirebaseUser currentUser = await _repository.getCurrentUser();
+  //   Group group = await _repository.retreiveGroupDetails(currentUser);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _group = group;
+  //     isPrivate = user.isPrivate;
+  //     isHidden = user.isHidden;
+  //   });
+  // }
+  Widget getTextWidgets(List<dynamic> strings) {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      children: strings.isNotEmpty
+          ? strings
+              .map((items) => Padding(
+                    padding: EdgeInsets.only(top: screenSize.height * 0.01),
+                    child: chip(items, Colors.white),
+                  ))
+              .toList()
+          : Container(),
+    );
+  }
+
+  Widget chip(String label, Color color) {
+    var screenSize = MediaQuery.of(context).size;
+    return Chip(
+      // labelPadding: EdgeInsets.all(screenSize.height * 0.005),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontFamily: FontNameDefault,
+          color: Colors.black,
+          fontSize: textbody2(context),
+        ),
+      ),
+      backgroundColor: color,
+      elevation: 0.0,
+      shadowColor: Colors.grey[60],
+      // padding: EdgeInsets.only(screenSize.height * 0.01),
+    );
   }
 
   @override
@@ -83,28 +223,273 @@ class _GroupSettingsState extends State<GroupSettings> {
         body: ListView(
             padding: EdgeInsets.fromLTRB(
               screenSize.width / 11,
-              screenSize.height * 0.055,
+              screenSize.height * 0.025,
               screenSize.width / 11,
               screenSize.height * 0.025,
             ),
             children: [
-              _user != null && _user.accountType != 'Company'
+              _group != null
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Group Info',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                              fontSize: textHeader(context)),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Text(
+                            'Basic Info',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold,
+                                fontSize: textHeader(context)),
+                          ),
                         ),
                         Container(
+                          //   color: const Color(0xffffffff),
+                          child: TextField(
+                            onSubmitted: (val) {
+                              submit();
+                            },
+                            textCapitalization: TextCapitalization.words,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textBody1(context),
+                            ),
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xffffffff),
+                              hintText: 'Name',
+                              labelText: 'Name',
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenSize.height * 0.02,
+                        ),
+                        Container(
+                          //      color: const Color(0xffffffff),
+                          child: TextField(
+                            onSubmitted: (val) {
+                              submit();
+                            },
+                            autocorrect: true,
+                            textCapitalization: TextCapitalization.sentences,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textBody1(context),
+                            ),
+                            controller: _descriptionController,
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                                filled: true,
+                                fillColor: const Color(0xffffffff),
+                                hintText: 'Description',
+                                labelText: 'Description'),
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenSize.height * 0.02,
+                        ),
+                        _group.rules.isEmpty
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenSize.height * 0.02),
+                                    child: Text(
+                                      'Group Rules',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textSubTitle(context),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                "Select Group Rules",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: FontNameDefault,
+                                                    fontSize:
+                                                        textHeader(context)),
+                                              ),
+                                              content: MultiSelectChip(
+                                                reportList,
+                                                onSelectionChanged:
+                                                    (selectedList) {
+                                                  setState(() {
+                                                    selectedReportList =
+                                                        selectedList;
+                                                  });
+                                                  submit();
+                                                },
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            FontNameDefault,
+                                                        fontSize: textSubTitle(
+                                                            context),
+                                                        color: Colors.black),
+                                                  ),
+                                                  onPressed: () {
+                                                    //  print('$selectedReportList');
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                FlatButton(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              40.0)),
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  child: Text(
+                                                    "Submit",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            FontNameDefault,
+                                                        fontSize: textSubTitle(
+                                                            context),
+                                                        color: Colors.white),
+                                                  ),
+                                                  onPressed: () {
+                                                    print(
+                                                        '$selectedReportList');
+                                                    Navigator.pop(context);
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          }).then((val) {
+                                        retrieveGroupDetails();
+                                        if (!mounted) return;
+                                        setState(() {
+                                          _group = _group;
+                                        });
+                                      });
+                                    },
+                                    child: Container(
+                                      height: screenSize.height * 0.045,
+                                      width: screenSize.width / 6,
+                                      child: Center(
+                                          child: Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.black,
+                                          fontSize: textButton(context),
+                                        ),
+                                      )),
+                                      decoration: ShapeDecoration(
+                                        color: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              width: 1.5,
+                                              color: Colors.black54),
+                                          borderRadius:
+                                              BorderRadius.circular(60.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: screenSize.height * 0.02),
+                                        child: Text(
+                                          'Group Rules',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textSubTitle(context),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: _showReportDialog,
+                                        child: Container(
+                                          height: screenSize.height * 0.045,
+                                          width: screenSize.width / 6,
+                                          child: Center(
+                                              child: Text(
+                                            'Edit',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: FontNameDefault,
+                                              color: Colors.black,
+                                              fontSize: textButton(context),
+                                            ),
+                                          )),
+                                          decoration: ShapeDecoration(
+                                            color: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  width: 1.5,
+                                                  color: Colors.black54),
+                                              borderRadius:
+                                                  BorderRadius.circular(60.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      _group != null
+                                          ? getTextWidgets(_group.rules)
+                                          : Container(),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                        SizedBox(
+                          height: screenSize.height * 0.02,
+                        ),
+                        Divider(),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: Text(
+                            'Privacy Info',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold,
+                                fontSize: textHeader(context)),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0)),
                           height: screenSize.height * 0.07,
                           width: screenSize.width,
-                          color: Colors.white,
                           padding: EdgeInsets.only(
+                              left: screenSize.width / 30,
                               top: screenSize.height * 0.012,
                               bottom: screenSize.height * 0.012),
                           child: Row(
@@ -169,10 +554,13 @@ class _GroupSettingsState extends State<GroupSettings> {
                   //       fontSize: textAppTitle(context)),
                   // ),
                   Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0)),
                     height: screenSize.height * 0.07,
                     width: screenSize.width,
-                    color: Colors.white,
                     padding: EdgeInsets.only(
+                        left: screenSize.width / 30,
                         top: screenSize.height * 0.012,
                         bottom: screenSize.height * 0.012),
                     child: Row(
