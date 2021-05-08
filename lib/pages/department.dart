@@ -1244,7 +1244,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                 .collection('teams')
                                 .document(widget.gid)
                                 .collection('departments')
-                                .document(_department.departmentName)
+                                .document(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -1356,7 +1356,8 @@ class _DepartmentPageState extends State<DepartmentPage>
                                                   newTaskId,
                                                   user,
                                                   _taskNameController.text,
-                                                  _taskDescriptionController.text,
+                                                  _taskDescriptionController
+                                                      .text,
                                                   _team.uid,
                                                   _department.uid,
                                                   _currentProject,
@@ -2320,7 +2321,7 @@ class _DepartmentPageState extends State<DepartmentPage>
       return print('owner activity');
     } else {
       var _feed = TeamFeed(
-        assigned: [_team.currentUserUid,_department.currentUserUid],
+        assigned: [_team.currentUserUid, _department.currentUserUid],
         ownerName: currentuser.displayName,
         ownerUid: currentUser.uid,
         type: type,
