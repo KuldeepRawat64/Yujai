@@ -100,7 +100,42 @@ class _ListItemTaskState extends State<ListItemTask> {
                                     Icons.check_circle_outline,
                                     color: Colors.green,
                                   ),
-                            onPressed: () {}),
+                            onPressed: () {
+                              if (widget.documentSnapshot.data['isCompleted'] ==
+                                      null ||
+                                  widget.documentSnapshot.data['isCompleted'] ==
+                                      false) {
+                                Firestore.instance
+                                    .collection('teams')
+                                    .document(widget.team.uid)
+                                    .collection('departments')
+                                    .document(widget.department.uid)
+                                    .collection('projects')
+                                    .document(widget.project.uid)
+                                    .collection('list')
+                                    .document(widget
+                                        .documentSnapshotList.data['listId'])
+                                    .collection('tasks')
+                                    .document(
+                                        widget.documentSnapshot.data['taskId'])
+                                    .updateData({'isCompleted': true});
+                              } else {
+                                Firestore.instance
+                                    .collection('teams')
+                                    .document(widget.team.uid)
+                                    .collection('departments')
+                                    .document(widget.department.uid)
+                                    .collection('projects')
+                                    .document(widget.project.uid)
+                                    .collection('list')
+                                    .document(widget
+                                        .documentSnapshotList.data['listId'])
+                                    .collection('tasks')
+                                    .document(
+                                        widget.documentSnapshot.data['taskId'])
+                                    .updateData({'isCompleted': false});
+                              }
+                            }),
                         Text(
                           widget.documentSnapshot['taskName'],
                           style: TextStyle(

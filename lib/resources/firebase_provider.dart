@@ -393,7 +393,21 @@ class FirebaseProvider {
         .document(departmentUid)
         .collection('projects')
         .document(pId)
-        .setData(project.toMap(project));
+        .setData(project.toMap(project))
+        .then((value) {
+      addListToProject(
+          '1', currentUser, 'To Do', teamUid, departmentUid, pId, 4284513675);
+      addListToProject('2', currentUser, 'In Progress', teamUid, departmentUid,
+          pId, 4278238420);
+      addListToProject('3', currentUser, 'Completed', teamUid, departmentUid,
+          pId, 4278228616);
+      addTaskToList('1', currentUser, 'Meeting with the Team', '', teamUid,
+          departmentUid, pId, '1');
+      addTaskToList('2', currentUser, 'Call with Technician', '', teamUid,
+          departmentUid, pId, '2');
+      addTaskToList('3', currentUser, 'Submit the Project report', '', teamUid,
+          departmentUid, pId, '3');
+    });
 
     // var member = Member(
     //     ownerName: currentUser.displayName,
@@ -1859,6 +1873,14 @@ class FirebaseProvider {
       ownerPhotoUrl: followerPhotoUrl,
       timestamp: FieldValue.serverTimestamp(),
     );
+    // await _firestore
+    //       .collection('teams')
+    //       .document(currentTeam.uid)
+    //       .collection('departments')
+    //       .document(currentDeptId)
+    //       .updateData({
+    //        "members" : [followerId]
+    //       });
     return _firestore
         .collection('teams')
         .document(currentTeam.uid)
@@ -1866,7 +1888,17 @@ class FirebaseProvider {
         .document(currentDeptId)
         .collection('members')
         .document(followerId)
-        .setData(member.toMap(member));
+        .setData(member.toMap(member))
+        .then((val) {
+      _firestore
+          .collection('teams')
+          .document(currentTeam.uid)
+          .collection('departments')
+          .document(currentDeptId)
+          .updateData({
+        "members": FieldValue.arrayUnion([followerId])
+      });
+    });
 
     // var team = Team(
     //     uid: currentTeam.uid,
@@ -2027,7 +2059,17 @@ class FirebaseProvider {
         .document(currentDeptId)
         .collection('members')
         .document(followerId)
-        .setData(member.toMap(member));
+        .setData(member.toMap(member))
+        .then((val) {
+      _firestore
+          .collection('teams')
+          .document(currentTeam.uid)
+          .collection('departments')
+          .document(currentDeptId)
+          .updateData({
+        "members": FieldValue.arrayUnion([followerId])
+      });
+    });
 
     // var team = Team(
     //   uid: currentTeam.uid,

@@ -1643,7 +1643,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                 .collection('teams')
                                 .document(widget.gid)
                                 .collection('departments')
-                                .document(_department.departmentName)
+                                .document(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -2073,7 +2073,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                 .collection('teams')
                                 .document(widget.gid)
                                 .collection('departments')
-                                .document(_department.departmentName)
+                                .document(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
