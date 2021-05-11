@@ -4,6 +4,7 @@ import 'package:Yujai/pages/create_group.dart';
 import 'package:Yujai/pages/create_team.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/team_page.dart';
+import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_group.dart';
@@ -111,10 +112,10 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    showSearch(
-                                        context: context,
-                                        delegate:
-                                            GroupSearch(groupList: groupList));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchTabs()));
                                   },
                                   child: Icon(
                                     Icons.search,
@@ -128,18 +129,18 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      showSearch(
-                                          context: context,
-                                          delegate: GroupSearch(
-                                              groupList: groupList));
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SearchTabs()));
                                     },
                                     child: TextField(
                                       readOnly: true,
                                       onTap: () {
-                                        showSearch(
-                                            context: context,
-                                            delegate: GroupSearch(
-                                                groupList: groupList));
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SearchTabs()));
                                       },
                                       // onChanged: (val) {
                                       //   setState(() {

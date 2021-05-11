@@ -173,6 +173,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                 _team != null &&
                 widget.currentUser.uid == _team.currentUserUid
             ? FloatingActionButton(
+                heroTag: null,
                 child: Icon(
                   Icons.add,
                   size: screenSize.height * 0.05,

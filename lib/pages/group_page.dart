@@ -383,6 +383,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: null,
           child: Icon(
             Icons.add,
             size: screenSize.height * 0.05,
@@ -539,6 +540,9 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                                       name: widget.name,
                                                       group: _group,
                                                       currentuser: currentuser,
+                                                      isPrivate:
+                                                          _group.isPrivate,
+                                                      isHidden: _group.isHidden,
                                                     )));
                                       },
                                       child: ListTile(

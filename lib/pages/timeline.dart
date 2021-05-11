@@ -225,6 +225,7 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
               ),
         floatingActionButton: currentuser != null
             ? FloatingActionButton(
+                heroTag: null,
                 child: Icon(
                   Icons.add,
                   size: MediaQuery.of(context).size.height * 0.04,

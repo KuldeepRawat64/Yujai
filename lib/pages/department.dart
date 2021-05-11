@@ -370,6 +370,7 @@ class _DepartmentPageState extends State<DepartmentPage>
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: null,
           child: Icon(
             Icons.add,
             size: screenSize.height * 0.05,

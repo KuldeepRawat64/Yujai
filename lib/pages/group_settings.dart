@@ -2,7 +2,7 @@ import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/style.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
@@ -607,10 +607,152 @@ class _GroupSettingsState extends State<GroupSettings> {
                               color: Colors.black54,
                               fontSize: textBody1(context)),
                         ),
+
+                  SizedBox(
+                    height: screenSize.height * 0.02,
+                  ),
+                  Divider(),
+                  InkWell(
+                    onTap: deleteDialog,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: Text(
+                        'Delete Group',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textHeader(context)),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ]),
       ),
     );
+  }
+
+  deleteDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Group',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this group? This action will delete this group and all the data in this group permanently!',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Firestore.instance
+                                  .collection('groups')
+                                  .document(widget.gid)
+                                  .delete()
+                                  .then((value) {
+                                Firestore.instance
+                                    .collection('users')
+                                    .document(widget.currentuser.uid)
+                                    .collection('groups')
+                                    .document(widget.gid)
+                                    .delete();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Home()));
+                              });
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.grey[600],
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 }

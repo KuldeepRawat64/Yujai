@@ -282,7 +282,7 @@ class _ProjectPageState extends State<ProjectPage>
     super.initState();
     isMember = false;
     isRequested = false;
-   fetchUidBySearchedName(widget.projectId);
+    fetchUidBySearchedName(widget.projectId);
 
     _repository.getCurrentUser().then((user) {
       if (!mounted) return;
@@ -423,6 +423,7 @@ class _ProjectPageState extends State<ProjectPage>
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: null,
           child: Icon(
             Icons.add,
             size: screenSize.height * 0.05,
@@ -2058,7 +2059,8 @@ class _ProjectPageState extends State<ProjectPage>
                                                   newTaskId,
                                                   user,
                                                   _taskNameController.text,
-                                                  _taskDescriptionController.text,
+                                                  _taskDescriptionController
+                                                      .text,
                                                   _team.uid,
                                                   _department.uid,
                                                   _currentProject != null
@@ -2440,7 +2442,7 @@ class _ProjectPageState extends State<ProjectPage>
         assigned: [_team.currentUserUid],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
-        type:type,
+        type: type,
         ownerPhotoUrl: currentUser.photoUrl,
         imgUrl: '',
         postId: actId,
