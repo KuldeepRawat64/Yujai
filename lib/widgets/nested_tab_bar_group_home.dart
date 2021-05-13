@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/pages/group_settings.dart';
+import 'package:empty_widget/empty_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
@@ -23,6 +25,7 @@ import 'list_ad.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Yujai/widgets/list_event_forum.dart';
 import 'package:Yujai/pages/group_requests.dart';
+import 'package:Yujai/widgets/no_content.dart';
 
 class NestedTabBarGroupHome extends StatefulWidget {
   final String gid;
@@ -163,7 +166,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget getTextWidgets(List<dynamic> strings) {
     var screenSize = MediaQuery.of(context).size;
     return Column(
-      children: strings.isNotEmpty
+      children: strings != null && strings.isNotEmpty
           ? strings
               .map((items) => Padding(
                     padding: EdgeInsets.all(screenSize.height * 0.01),
@@ -197,8 +200,8 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     var screenSize = MediaQuery.of(context).size;
-    return Wrap(
-      //  physics: NeverScrollableScrollPhysics(),
+    return ListView(
+      physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
         TabBar(
           unselectedLabelStyle: TextStyle(
@@ -236,7 +239,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
         ),
         Container(
           color: const Color(0xfff6f6f6),
-          height: screenHeight * 0.89,
+          height: screenHeight * 0.8,
           child: TabBarView(
             controller: _nestedTabController,
             children: <Widget>[
@@ -343,7 +346,18 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: shimmerPromotion(),
+          );
+        } else {
+          if (snapshot.data.documents.isEmpty) {
+            return _group.members.contains(currentuser.uid)
+                ? NoContent('No posts', 'assets/images/picture.png', true,
+                    'Create a Post', '')
+                : NoContent('No posts', 'assets/images/picture.png', false,
+                    'When a post is created it will show up in this tab', '');
+          }
           return SizedBox(
             height: screenSize.height * 0.9,
             child: ListView.builder(
@@ -358,10 +372,6 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   gid: widget.gid,
                   name: widget.name)),
             ),
-          );
-        } else {
-          return Center(
-            child: shimmerPromotion(),
           );
         }
       }),
@@ -378,26 +388,33 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          return SizedBox(
-            height: screenSize.height * 0.9,
-            child: ListView.builder(
-              controller: _scrollController1,
-              //shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: ((context, index) => ListItemEventForum(
-                  group: _group,
-                  documentSnapshot: snapshot.data.documents[index],
-                  index: index,
-                  currentuser: currentuser,
-                  gid: widget.gid,
-                  name: widget.name)),
-            ),
-          );
-        } else {
+        if (!snapshot.hasData) {
           return Center(
             child: shimmerPromotion(),
           );
+        } else {
+          if (snapshot.data.documents.length > 0) {
+            return SizedBox(
+              height: screenSize.height * 0.9,
+              child: ListView.builder(
+                controller: _scrollController1,
+                //shrinkWrap: true,
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: ((context, index) => ListItemEventForum(
+                    group: _group,
+                    documentSnapshot: snapshot.data.documents[index],
+                    index: index,
+                    currentuser: currentuser,
+                    gid: widget.gid,
+                    name: widget.name)),
+              ),
+            );
+          }
+          return currentuser.uid == _group.currentUserUid
+              ? NoContent('No events', 'assets/images/calendar.png', true,
+                  'Create an Event', '')
+              : NoContent('No events', 'assets/images/calendar.png', false,
+                  'When an event is created it will show up in this tab', '');
         }
       }),
     );
@@ -413,7 +430,22 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: shimmerPromotion(),
+          );
+        } else {
+          if (snapshot.data.documents.isEmpty) {
+            return _group.members.contains(currentuser.uid)
+                ? NoContent('No products', 'assets/images/marketplace.png',
+                    true, 'Post an ad', '')
+                : NoContent(
+                    'No products',
+                    'assets/images/marketplace.png',
+                    false,
+                    'When the products are added for selling it will show up in this tab',
+                    '');
+          }
           return SizedBox(
             height: screenSize.height * 0.9,
             child: GridView.builder(
@@ -432,10 +464,6 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   gid: widget.gid,
                   name: widget.name)),
             ),
-          );
-        } else {
-          return Center(
-            child: shimmerPromotion(),
           );
         }
       }),
@@ -722,9 +750,8 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                               radius: screenSize.height * 0.07,
                               backgroundColor: Colors.white,
                               backgroundImage: NetworkImage(_group
-                                              .groupProfilePhoto !=
-                                          null &&
-                                      _group.groupProfilePhoto != ''
+                                          .groupProfilePhoto !=
+                                      null
                                   ? _group.groupProfilePhoto
                                   : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
                             ),

@@ -9,7 +9,7 @@ class Team {
   bool isPrivate;
   bool isHidden;
   List<dynamic> department;
-  List<String> memberList;
+  List<dynamic> members;
 
   Team({
     this.uid,
@@ -22,7 +22,7 @@ class Team {
     this.isHidden,
     this.teamOwnerEmail,
     this.department,
-    this.memberList,
+    this.members,
   });
 
   Map toMap(Team team) {
@@ -38,7 +38,7 @@ class Team {
     data['isHidden'] = team.isHidden;
     data['teamOwnerEmail'] = team.teamOwnerEmail;
     data['department'] = team.department;
-    data['memberList'] = team.memberList;
+    data['members'] = team.members;
     return data;
   }
 
@@ -54,6 +54,6 @@ class Team {
     this.isPrivate = mapData['isPrivate'];
     this.teamOwnerEmail = mapData['teamOwnerEmail'];
     this.department = mapData['department'];
-    this.memberList = mapData['memberList'];
+    this.members = mapData['members'];
   }
 }

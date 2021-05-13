@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';

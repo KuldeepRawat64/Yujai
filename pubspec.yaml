@@ -95,6 +95,7 @@ dependencies:
   fl_chart: ^0.8.1
   expandable_text: 1.2.0
   transparent_image:
+  empty_widget: ^0.0.2
  
   
 

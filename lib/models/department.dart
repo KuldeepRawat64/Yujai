@@ -14,6 +14,7 @@ class Department {
   List<dynamic> rules;
   String customRules;
   int color;
+  List<dynamic> members;
 
   Department({
     this.uid,
@@ -31,6 +32,7 @@ class Department {
     this.rules,
     this.customRules,
     this.color,
+    this.members,
   });
 
   Map toMap(Department department) {
@@ -50,6 +52,7 @@ class Department {
     data['rules'] = department.rules;
     data['customRules'] = department.customRules;
     data['color'] = department.color;
+    data['members'] = department.members;
 
     return data;
   }
@@ -70,5 +73,6 @@ class Department {
     this.rules = mapData['rules'];
     this.customRules = mapData['customRules'];
     this.color = mapData['color'];
+    this.members = mapData['members'];
   }
 }

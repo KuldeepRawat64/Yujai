@@ -343,9 +343,10 @@ class Repository {
           String departmentUid,
           String departmentName,
           bool isPrivate,
-          int img) =>
-      _firebaseProvider.addDepartmentToTeam(
-          currentUser, teamUid, departmentUid, departmentName, isPrivate, img);
+          int img,
+          int color) =>
+      _firebaseProvider.addDepartmentToTeam(currentUser, teamUid, departmentUid,
+          departmentName, isPrivate, img, color);
 
   Future<void> addTeamToDb(User currentUser, String teamName,
           List<String> department, int color) =>
@@ -747,6 +748,12 @@ class Repository {
 
   Future<List<Group>> fetchAllGroups(FirebaseUser user) =>
       _firebaseProvider.fetchAllGroups(user);
+
+  Future<List<Group>> fetchMyGroups(FirebaseUser user) =>
+      _firebaseProvider.fetchMyGroups(user);
+
+  Future<List<Team>> fetchMyTeams(FirebaseUser user) =>
+      _firebaseProvider.fetchMyTeams(user);
 
   Future<List<User>> fetchAllCompanies(FirebaseUser user) =>
       _firebaseProvider.fetchAllCompanies(user);

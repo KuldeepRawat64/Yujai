@@ -17,6 +17,7 @@ class Project {
   String customRules;
   FieldValue timestamp;
   int color;
+  List<dynamic> members;
 
   Project({
     this.uid,
@@ -35,6 +36,7 @@ class Project {
     this.customRules,
     this.timestamp,
     this.color,
+    this.members,
   });
 
   Map toMap(Project project) {
@@ -55,6 +57,7 @@ class Project {
     data['customRules'] = project.customRules;
     data['timestamp'] = project.customRules;
     data['color'] = project.color;
+    data['members'] = project.members;
     return data;
   }
 
@@ -75,5 +78,6 @@ class Project {
     this.customRules = mapData['customRules'];
     this.timestamp = mapData['time'];
     this.color = mapData['color'];
+    this.members = mapData['members'];
   }
 }

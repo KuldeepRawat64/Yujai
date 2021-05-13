@@ -209,7 +209,8 @@ class FirebaseProvider {
     team = Team(
       uid: teamId,
       teamName: teamName,
-      teamProfilePhoto: '',
+      teamProfilePhoto:
+          'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/team_no-image.png?alt=media&token=aa43c6f9-3bd2-4647-b7f5-68824a943630',
       currentUserUid: currentUser.uid,
       teamOwnerEmail: currentUser.email,
       teamOwnerName: currentUser.displayName,
@@ -236,14 +237,12 @@ class FirebaseProvider {
     team = Team(
       uid: teamId,
       teamName: teamName,
-      teamProfilePhoto: '',
+      teamProfilePhoto:
+          'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/team_no-image.png?alt=media&token=aa43c6f9-3bd2-4647-b7f5-68824a943630',
     );
-    await _firestore
-        .collection('users')
-        .document(currentUser.uid)
-        .collection('teams')
-        .document(teamId)
-        .setData(team.toMap(team));
+    await _firestore.collection('teams').document(teamId).updateData({
+      'members': FieldValue.arrayUnion([currentUser.uid])
+    });
 
     String dId = Uuid().v4();
     for (var i = 0; i < department.length; i++) {
@@ -282,7 +281,8 @@ class FirebaseProvider {
     group = Group(
       uid: groupId,
       groupName: groupName,
-      groupProfilePhoto: '',
+      groupProfilePhoto:
+          'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0',
       currentUserUid: currentUser.uid,
       groupOwnerEmail: currentUser.email,
       groupOwnerName: currentUser.displayName,
@@ -314,22 +314,19 @@ class FirebaseProvider {
         .document(currentUser.uid)
         .setData(member.toMap(member));
 
-    group = Group(
-      uid: groupId,
-      groupName: groupName,
-      groupProfilePhoto: '',
-      isPrivate: isPrivate,
-    );
-    return _firestore
-        .collection('users')
-        .document(currentUser.uid)
-        .collection('groups')
-        .document(groupId)
-        .setData(group.toMap(group));
+    await _firestore.collection('groups').document(groupId).updateData({
+      'members': FieldValue.arrayUnion([currentUser.uid])
+    });
   }
 
-  Future<void> addDepartmentToTeam(User currentUser, String teamUid,
-      String departmentUid, String departmentName, bool isPrivate, int img) {
+  Future<void> addDepartmentToTeam(
+      User currentUser,
+      String teamUid,
+      String departmentUid,
+      String departmentName,
+      bool isPrivate,
+      int img,
+      int color) {
     departments = Department(
       uid: departmentUid,
       departmentName: departmentName,
@@ -347,7 +344,17 @@ class FirebaseProvider {
         .document(teamUid)
         .collection('departments')
         .document(departmentUid)
-        .setData(departments.toMap(departments));
+        .setData(departments.toMap(departments))
+        .then((val) {
+      _firestore
+          .collection('teams')
+          .document(teamUid)
+          .collection('departments')
+          .document(departmentUid)
+          .updateData({
+        "members": FieldValue.arrayUnion([currentUser.uid])
+      });
+    });
 
     // var member = Member(
     //     ownerName: currentUser.displayName,
@@ -1846,17 +1853,9 @@ class FirebaseProvider {
         .document(followerId)
         .setData(member.toMap(member));
 
-    var team = Team(
-      uid: currentTeam.uid,
-      teamName: currentTeam.teamName,
-      teamProfilePhoto: currentTeam.teamProfilePhoto,
-    );
-    return _firestore
-        .collection('users')
-        .document(followerId)
-        .collection('teams')
-        .document(currentTeam.uid)
-        .setData(team.toMap(team));
+    await _firestore.collection('teams').document(currentTeam.uid).updateData({
+      'members': FieldValue.arrayUnion([followerId])
+    });
   }
 
   Future<void> addDeptMember(
@@ -1936,7 +1935,19 @@ class FirebaseProvider {
         .document(currentProjectId)
         .collection('members')
         .document(followerId)
-        .setData(member.toMap(member));
+        .setData(member.toMap(member))
+        .then((val) {
+      _firestore
+          .collection('teams')
+          .document(currentTeam.uid)
+          .collection('departments')
+          .document(currentDeptId)
+          .collection('projects')
+          .document(currentProjectId)
+          .updateData({
+        "members": FieldValue.arrayUnion([followerId])
+      });
+    });
 
     // var team = Team(
     //     uid: currentTeam.uid,
@@ -2001,7 +2012,19 @@ class FirebaseProvider {
         .document(currentProjectId)
         .collection('members')
         .document(followerId)
-        .setData(member.toMap(member));
+        .setData(member.toMap(member))
+        .then((val) {
+      _firestore
+          .collection('teams')
+          .document(currentTeam.uid)
+          .collection('departments')
+          .document(currentDeptId)
+          .collection('projects')
+          .document(currentProjectId)
+          .updateData({
+        "members": FieldValue.arrayUnion([followerId])
+      });
+    });
 
     // var team = Team(
     //   uid: currentTeam.uid,
@@ -2374,6 +2397,38 @@ class FirebaseProvider {
     }
     print('Grouplist : ${groupList.length}');
     return groupList;
+  }
+
+  Future<List<Team>> fetchMyTeams(FirebaseUser user) async {
+    List<Team> myTeamList = List<Team>();
+    QuerySnapshot querySnapshot = await _firestore.collection('teams')
+        //   .where('isPrivate', isEqualTo: false)
+        .where('members', arrayContainsAny: [user.uid]).getDocuments();
+    for (var i = 0; i < querySnapshot.documents.length; i++) {
+      if (querySnapshot.documents[i].documentID != user.uid) {
+        myTeamList.add(Team.fromMap(querySnapshot.documents[i].data));
+        //userList.add(querySnapshot.doucments[i].data[User.fromMap(
+        // mapData)]);
+      }
+    }
+    print('Teamlist : ${myTeamList.length}');
+    return myTeamList;
+  }
+
+  Future<List<Group>> fetchMyGroups(FirebaseUser user) async {
+    List<Group> myGroupList = List<Group>();
+    QuerySnapshot querySnapshot = await _firestore.collection('groups')
+        //   .where('isPrivate', isEqualTo: false)
+        .where('members', arrayContainsAny: [user.uid]).getDocuments();
+    for (var i = 0; i < querySnapshot.documents.length; i++) {
+      if (querySnapshot.documents[i].documentID != user.uid) {
+        myGroupList.add(Group.fromMap(querySnapshot.documents[i].data));
+        //userList.add(querySnapshot.doucments[i].data[User.fromMap(
+        // mapData)]);
+      }
+    }
+    print('My Grouplist : ${myGroupList.length}');
+    return myGroupList;
   }
 
   Future<List<Group>> fetchAllGroupSuggestions(FirebaseUser user) async {

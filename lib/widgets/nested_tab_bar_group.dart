@@ -1,4 +1,5 @@
 import 'package:Yujai/models/group.dart';
+import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/group_page.dart';
 import 'package:Yujai/pages/team_page.dart';
@@ -29,6 +30,8 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   User _user = User();
   User currentUser;
   List<Group> groupList = List<Group>();
+  List<Group> myGroupList = List<Group>();
+  List<Team> myTeamList = List<Team>();
   List<User> companyList = List<User>();
   String query = '';
   ScrollController _scrollController;
@@ -60,6 +63,18 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
         if (!mounted) return;
         setState(() {
           groupList = list;
+        });
+      });
+      _repository.fetchMyGroups(user).then((list) {
+        if (!mounted) return;
+        setState(() {
+          myGroupList = list;
+        });
+      });
+      _repository.fetchMyTeams(user).then((list) {
+        if (!mounted) return;
+        setState(() {
+          myTeamList = list;
         });
       });
     });
@@ -152,9 +167,9 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
           child: TabBarView(
             controller: _nestedTabController,
             children: <Widget>[
-              _user != null ? groupWidget() : Container(),
-              _user != null ? teamWidget() : Container(),
-              groupsList()
+              myGroupsList(),
+              myTeamsList(),
+              groupsList(),
             ],
           ),
         )
@@ -162,171 +177,128 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
     );
   }
 
-  Widget groupWidget() {
+  Widget myGroupsList() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
-        stream: Firestore.instance
-            .collection('users')
-            .document(_user.uid)
-            .collection('groups')
-            // .orderBy('time', descending: true)
-            .snapshots(),
-        builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return ListView.builder(
-                controller: _scrollController1,
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: ((context, index) {
-                  return Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GroupPage(
-                                        currentUser: _user,
-                                        isMember: false,
-                                        gid: snapshot
-                                            .data.documents[index].data['uid'],
-                                        name: snapshot.data.documents[index]
-                                            .data['groupName'],
-                                      )));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            top: 8.0,
-                          ),
-                          child: Container(
-                            decoration: ShapeDecoration(
-                              color: const Color(0xffffffff),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                //   side: BorderSide(color: Colors.grey[300]),
-                              ),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                snapshot
-                                    .data.documents[index].data['groupName'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                ),
-                              ),
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                backgroundImage: snapshot.data.documents[index]
-                                            .data['groupProfilePhoto'] ==
-                                        ''
-                                    ? AssetImage(
-                                        'assets/images/group_no-image.png')
-                                    : CachedNetworkImageProvider(snapshot
-                                        .data
-                                        .documents[index]
-                                        .data['groupProfilePhoto']),
-                              ),
-                              trailing: snapshot.data.documents[index]
-                                          .data['isPrivate'] ==
-                                      false
-                                  ? Icon(Icons.public)
-                                  : Icon(Icons.lock_outline),
-                            ),
-                          ),
-                        ),
+    return ListView.builder(
+      controller: _scrollController3,
+      itemCount: myGroupList.length,
+      itemBuilder: ((context, index) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GroupPage(
+                              currentUser: _user,
+                              isMember: false,
+                              gid: myGroupList[index].uid,
+                              name: myGroupList[index].groupName,
+                            )));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                  right: 8.0,
+                  top: 8.0,
+                ),
+                child: Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0xffffffff),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      //  side: BorderSide(color: Colors.grey[300]),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          NetworkImage(myGroupList[index].groupProfilePhoto),
+                    ),
+                    title: Text(
+                      // userList[index].toString(),
+                      myGroupList[index].groupName,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
                       ),
-                      //Divider()
-                    ],
-                  );
-                }));
-          }
-        }));
+                    ),
+                    trailing: myGroupList[index].isPrivate == true
+                        ? Icon(Icons.lock_outline)
+                        : Icon(Icons.public),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 
-  Widget teamWidget() {
+  Widget myTeamsList() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
-        stream: Firestore.instance
-            .collection('users')
-            .document(_user.uid)
-            .collection('teams')
-            // .orderBy('time', descending: true)
-            .snapshots(),
-        builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return ListView.builder(
-                controller: _scrollController1,
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: ((context, index) {
-                  return Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeamPage(
-                                        currentUser: _user,
-                                        isMember: false,
-                                        gid: snapshot
-                                            .data.documents[index].data['uid'],
-                                        name: snapshot.data.documents[index]
-                                            .data['teamName'],
-                                      )));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                            right: 8.0,
-                            top: 8.0,
-                          ),
-                          child: Container(
-                            decoration: ShapeDecoration(
-                              color: const Color(0xffffffff),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                //    side: BorderSide(color: Colors.grey[300]),
-                              ),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                snapshot.data.documents[index].data['teamName'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                ),
-                              ),
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                backgroundImage: snapshot.data.documents[index]
-                                                .data['teamProfilePhoto'] ==
-                                            '' ||
-                                        snapshot.data.documents[index]
-                                                .data['teamProfilePhoto'] ==
-                                            null
-                                    ? AssetImage(
-                                        'assets/images/team_no-image.png')
-                                    : CachedNetworkImageProvider(snapshot
-                                        .data
-                                        .documents[index]
-                                        .data['teamProfilePhoto']),
-                              ),
-                              trailing: Icon(Icons.work_outline),
-                            ),
-                          ),
-                        ),
+    return ListView.builder(
+      controller: _scrollController3,
+      itemCount: myTeamList.length,
+      itemBuilder: ((context, index) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TeamPage(
+                              currentUser: _user,
+                              isMember: false,
+                              gid: myTeamList[index].uid,
+                              name: myTeamList[index].teamName,
+                            )));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                  right: 8.0,
+                  top: 8.0,
+                ),
+                child: Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0xffffffff),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      //  side: BorderSide(color: Colors.grey[300]),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          NetworkImage(myTeamList[index].teamProfilePhoto),
+                    ),
+                    title: Text(
+                      // userList[index].toString(),
+                      myTeamList[index].teamName,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
                       ),
-                    ],
-                  );
-                }));
-          }
-        }));
+                    ),
+                    trailing: myTeamList[index].isPrivate == true
+                        ? Icon(Icons.lock_outline)
+                        : Icon(Icons.public),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 
   Widget shimmerPromotion() {
@@ -433,17 +405,14 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
                     color: const Color(0xffffffff),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                    //  side: BorderSide(color: Colors.grey[300]),
+                      //  side: BorderSide(color: Colors.grey[300]),
                     ),
                   ),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.white,
                       backgroundImage:
-                          groupList[index].groupProfilePhoto.isEmpty
-                              ? AssetImage('assets/images/group_no-image.png')
-                              : CachedNetworkImageProvider(
-                                  groupList[index].groupProfilePhoto),
+                          NetworkImage(groupList[index].groupProfilePhoto),
                     ),
                     title: Text(
                       // userList[index].toString(),

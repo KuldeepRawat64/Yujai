@@ -26,6 +26,7 @@ import '../style.dart';
 import 'list_ad.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Yujai/widgets/list_event_forum.dart';
+import 'package:Yujai/widgets/no_content.dart';
 
 //import 'package:Yujai/pages/group_requests.dart';
 
@@ -167,6 +168,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
   @override
   Widget build(BuildContext context) {
     return ListView(
+      // mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         forumWidget(),
       ],
@@ -339,9 +341,37 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                 .collection('departments')
                 .snapshots(),
             builder: ((context, snapshot) {
-              if (snapshot.hasData) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                if (snapshot.data.documents.isEmpty) {
+                  return _team != null &&
+                          _team.currentUserUid == currentuser.uid
+                      ? Padding(
+                          padding:
+                              EdgeInsets.only(top: screenSize.height * 0.25),
+                          child: NoContent(
+                              'No posts',
+                              'assets/images/picture.png',
+                              true,
+                              'Create a Post',
+                              ''),
+                        )
+                      : Padding(
+                          padding:
+                              EdgeInsets.only(top: screenSize.height * 0.25),
+                          child: NoContent(
+                              'No posts',
+                              'assets/images/picture.png',
+                              false,
+                              'When a post is created it will show up in this tab',
+                              ''),
+                        );
+                }
                 return SizedBox(
-                  height: screenSize.height * 0.9,
+                  height: screenSize.height,
                   child: ListView.builder(
                     controller: _scrollController,
                     shrinkWrap: true,
@@ -420,10 +450,6 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                           ),
                         )),
                   ),
-                );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
                 );
               }
             }),
@@ -436,9 +462,24 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                 .where('members',
                     arrayContainsAny: [widget.currentUser.uid]).snapshots(),
             builder: ((context, snapshot) {
-              if (snapshot.hasData) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                if (snapshot.data.documents.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: screenSize.height * 0.25),
+                    child: NoContent(
+                        'No departments',
+                        'assets/images/picture.png',
+                        false,
+                        'Departments in which you are a member will appear here',
+                        '\nContact your Team Supervisor or Team Admin for further information.'),
+                  );
+                }
                 return SizedBox(
-                  height: screenSize.height * 0.9,
+                  height: screenSize.height,
                   child: ListView.builder(
                     controller: _scrollController,
                     shrinkWrap: true,
@@ -517,10 +558,6 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                           ),
                         )),
                   ),
-                );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
                 );
               }
             }),

@@ -141,13 +141,10 @@ class _GroupChatState extends State<GroupChat> {
             title: Row(
               children: <Widget>[
                 CircleAvatar(
+                  backgroundColor: Colors.white,
                   radius: screenSize.height * 0.035,
                   backgroundImage:
-                      widget.recieverGroup.groupProfilePhoto != '' ||
-                              widget.recieverGroup.groupProfilePhoto != null
-                          ? CachedNetworkImageProvider(
-                              widget.recieverGroup.groupProfilePhoto)
-                          : AssetImage('assets/images/group_no-image.png'),
+                      NetworkImage(widget.recieverGroup.groupProfilePhoto),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -384,7 +381,7 @@ class _GroupChatState extends State<GroupChat> {
                               expandText: 'Read more',
                               collapseText: 'Less',
                               style: TextStyle(
-                                fontFamily: FontNameDefault,
+                                  fontFamily: FontNameDefault,
                                   fontSize: textBody1(context),
                                   color: Colors.white),
                             ),
@@ -497,7 +494,7 @@ class _GroupChatState extends State<GroupChat> {
                                       expandText: 'Read more',
                                       collapseText: 'Less',
                                       style: TextStyle(
-                                        fontFamily: FontNameDefault,
+                                          fontFamily: FontNameDefault,
                                           fontSize: textBody1(context),
                                           color: Colors.black),
                                     ),
@@ -541,7 +538,7 @@ class _GroupChatState extends State<GroupChat> {
                       Text(
                         snapshot['senderName'],
                         style: TextStyle(
-                          fontFamily: FontNameDefault,
+                            fontFamily: FontNameDefault,
                             fontSize: textbody2(context),
                             color: Colors.black),
                       )
@@ -603,7 +600,7 @@ class _GroupChatState extends State<GroupChat> {
                             Text(
                               snapshot['senderName'],
                               style: TextStyle(
-                                fontFamily: FontNameDefault,
+                                  fontFamily: FontNameDefault,
                                   fontSize: textbody2(context),
                                   color: Colors.black),
                             )

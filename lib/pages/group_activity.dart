@@ -107,7 +107,7 @@ class _GroupActivityState extends State<GroupActivity> {
           title: Text(
             'Activity',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -213,7 +213,16 @@ class _GroupActivityState extends State<GroupActivity> {
           );
         } else {
           if (snapshot.data.documents.isEmpty) {
-            return NoContent('No activity');
+            if (snapshot.data.documents.isEmpty) {
+              return NoContent(
+                  'No activity',
+                  'assets/images/picture.png',
+                  false,
+                  'Posts, polls and Discussions created by you will appear here',
+                  '\n<-- To Create Post -->\n<-- Go to Group -->\n<-- Press the + button -->\n<-- Upload Post --> or \n<-- Start Discussion --> or \n<-- Create Poll -->');
+            }
+
+            //NoContent('assets/images/no_content.svg', 'No activity');
           }
           return SizedBox(
             height: screenSize.height * 0.9,

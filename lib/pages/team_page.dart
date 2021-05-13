@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'dart:math';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/member.dart';
@@ -78,9 +78,11 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
         key: _scaffoldKey,
         backgroundColor: const Color(0xfff6f6f6),
         body: CustomScrollView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
             SliverAppBar(
+              stretch: false,
               elevation: 0.5,
               actions: [
                 widget.currentUser != null &&
@@ -465,7 +467,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
 
   buildButtonBar() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.96,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
@@ -860,7 +862,13 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                                   _departmentNameController
                                                       .text,
                                                   isPrivate,
-                                                  60152)
+                                                  60152,
+                                                  Colors
+                                                      .primaries[Random()
+                                                          .nextInt(Colors
+                                                              .primaries
+                                                              .length)]
+                                                      .value)
                                               .then((value) {
                                             _departmentNameController.text = '';
                                             valueFirst = false;

@@ -13,6 +13,7 @@ class Group {
   bool isHidden;
   List<dynamic> rules;
   String customRules;
+  List<dynamic> members;
 
   Group({
     this.uid,
@@ -29,6 +30,7 @@ class Group {
     this.groupOwnerEmail,
     this.rules,
     this.customRules,
+    this.members,
   });
 
   Map toMap(Group group) {
@@ -47,7 +49,7 @@ class Group {
     data['groupOwnerEmail'] = group.groupOwnerEmail;
     data['rules'] = group.rules;
     data['customRules'] = group.customRules;
-
+    data['members'] = group.members;
     return data;
   }
 
@@ -66,5 +68,6 @@ class Group {
     this.groupOwnerEmail = mapData['groupOwnerEmail'];
     this.rules = mapData['rules'];
     this.customRules = mapData['customRules'];
+    this.members = mapData['members'];
   }
 }

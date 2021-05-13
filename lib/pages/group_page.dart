@@ -22,6 +22,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'dart:async';
 import 'package:Yujai/pages/group_upload_event.dart';
+import 'package:Yujai/widgets/new_post_screen.dart';
 
 class GroupPage extends StatefulWidget {
   final String gid;
@@ -180,6 +181,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         key: _scaffoldKey,
         backgroundColor: new Color(0xffffffff),
         body: CustomScrollView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
             SliverAppBar(
@@ -958,7 +960,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) {
           return Container(
-            height: screenSize.height * 0.34,
+            height: screenSize.height * 0.42,
             child: Column(
               children: [
                 ListTile(
@@ -1029,6 +1031,21 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                   gid: widget.gid,
                                   name: widget.name,
                                 )));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.cancel_outlined,
+                    size: screenSize.height * 0.04,
+                  ),
+                  title: Text(
+                    'Cancel',
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context)),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
                   },
                 ),
               ],
@@ -1315,7 +1332,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) {
           return Container(
-            height: screenSize.height * 0.42,
+            height: screenSize.height * 0.5,
             child: Column(
               children: [
                 ListTile(
@@ -1391,14 +1408,40 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         fontSize: textSubTitle(context)),
                   ),
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadPoll(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                )));
+                    Navigator.pop(context);
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20.0))),
+                        backgroundColor: Colors.white,
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: NewPostScreen()));
+                    // Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => GroupUploadPoll(
+                    //               group: _group,
+                    //               gid: widget.gid,
+                    //               name: widget.name,
+                    //             )));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.cancel_outlined,
+                    size: screenSize.height * 0.04,
+                  ),
+                  title: Text(
+                    'Cancel',
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context)),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
                   },
                 ),
               ],
@@ -1409,7 +1452,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
 
   buildButtonBar() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.96,
+      height: MediaQuery.of(context).size.height * 0.9,
       child: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
