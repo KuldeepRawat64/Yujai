@@ -307,13 +307,10 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
     //
     if (_formKey.currentState.validate()) {
       _repository.getCurrentUser().then((currentUser) {
-        if (currentUser != null &&
-                currentUser.uid == widget.group.currentUserUid ||
-            widget.group.isPrivate == false) {
+        if (currentUser != null) {
           if (imageFile == null) {
             _repository
-                .addDiscussionToForum(widget.group.uid, widget.currentUser,
-                    _captionController.text)
+                .addDiscussionToDb(widget.currentUser, _captionController.text)
                 .catchError(
                     (e) => print("Error adding current discussion to group$e"));
           } else {
@@ -321,29 +318,7 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
             _repository.retreiveUserDetails(currentUser).then((user) {
               _repository.uploadImageToStorage(imageFile).then((url) {
                 _repository
-                    .addPostToForum(widget.group.uid, user, url,
-                        _captionController.text, location)
-                    .catchError(
-                        (e) => print("Error adding current post to db : $e"));
-              }).catchError((e) {
-                print("Error uploading image to storage : $e");
-              });
-            });
-          }
-        } else {
-          if (imageFile == null) {
-            _repository
-                .addDiscussionToForum(widget.group.uid, widget.currentUser,
-                    _captionController.text)
-                .catchError(
-                    (e) => print("Error adding current discussion to group$e"));
-          } else {
-            compressImage();
-            _repository.retreiveUserDetails(currentUser).then((user) {
-              _repository.uploadImageToStorage(imageFile).then((url) {
-                _repository
-                    .addPostToReview(widget.group.uid, user, url,
-                        _captionController.text, location, 'post')
+                    .addPostToDb(user, url, _captionController.text, location)
                     .catchError(
                         (e) => print("Error adding current post to db : $e"));
               }).catchError((e) {

@@ -170,6 +170,9 @@ class Repository {
       _firebaseProvider.addDiscussionToForum(
           currentGroupId, currentUser, caption);
 
+  Future<void> addDiscussionToDb(User currentUser, String caption) =>
+      _firebaseProvider.addDiscussionToDb(currentUser, caption);
+
   Future<void> addDiscussionToDept(String currentTeamId, String currentDeptId,
           User currentUser, String caption, String discussId) =>
       _firebaseProvider.addDiscussionToDept(

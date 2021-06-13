@@ -522,6 +522,28 @@ class FirebaseProvider {
     return _collectionRef.document(postId).setData(post.toMap(post));
   }
 
+  Future<void> addDiscussionToDb(
+    User currentUser,
+    String caption,
+  ) {
+    CollectionReference _collectionRef = _firestore
+        .collection('users')
+        .document(currentUser.uid)
+        .collection('posts');
+
+    discussion = Discussion(
+      postId: postId,
+      currentUserUid: currentUser.uid,
+      caption: caption,
+      postOwnerName: currentUser.displayName,
+      postOwnerPhotoUrl: currentUser.photoUrl,
+      time: FieldValue.serverTimestamp(),
+    );
+    return _collectionRef
+        .document(postId)
+        .setData(discussion.toMap(discussion));
+  }
+
   Future<void> addPostToForum(String currentGroupId, User currentUser,
       String imgUrl, String caption, String location) {
     CollectionReference _collectionRef = _firestore
