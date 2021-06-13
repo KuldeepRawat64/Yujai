@@ -195,7 +195,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         Container(
                           width: screenSize.width * 0.5,
                           child: Text(
-                            widget.documentSnapshot.data['location'] == ''
+                            widget.documentSnapshot.data['location'] == '' ||
+                                    widget.documentSnapshot.data['location'] ==
+                                        null
                                 ? 'Online'
                                 : widget.documentSnapshot.data['location'],
                             style: TextStyle(

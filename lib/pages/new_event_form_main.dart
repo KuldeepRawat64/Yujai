@@ -36,10 +36,6 @@ class _NewEventFormState extends State<NewEventFormMain> {
   File imageFile;
   var _locationController;
   var _captionController;
-  var _dateStartController;
-  var _timeStartController;
-  var _dateEndController;
-  var _timeEndController;
   var _descriptionController;
   var _hostController;
   var _eventWebsiteController;
@@ -83,10 +79,6 @@ class _NewEventFormState extends State<NewEventFormMain> {
     super.initState();
     _captionController = TextEditingController();
     _locationController = TextEditingController();
-    _dateStartController = TextEditingController();
-    _timeStartController = TextEditingController();
-    _dateEndController = TextEditingController();
-    _timeEndController = TextEditingController();
     _descriptionController = TextEditingController();
     _hostController = TextEditingController();
     _eventWebsiteController = TextEditingController();
@@ -908,13 +900,31 @@ class _NewEventFormState extends State<NewEventFormMain> {
           compressImage();
           _repository.retreiveUserDetails(currentUser).then((user) {
             _repository.uploadImageToStorage(imageFile).then((url) {
-              _repository
-                  .addEventToDb(
+              if (!widget.isOnline) {
+                _repository
+                    .addOfflineEventToDb(
+                        user,
+                        url,
+                        _captionController.text,
+                        location,
+                        _locationController.text,
+                        _hostController.text,
+                        _descriptionController.text,
+                        selectedEventList,
+                        startDate,
+                        endDate,
+                        startTime,
+                        endTime,
+                        _ticketWebsiteController.text,
+                        GeoPoint(lat, lng) ?? GeoPoint(0, 0))
+                    .catchError(
+                        (e) => print('Error adding offline event to db : $e'));
+              } else {
+                _repository
+                    .addOnlineEventToDb(
                       user,
                       url,
                       _captionController.text,
-                      location,
-                      _locationController.text,
                       _hostController.text,
                       _eventWebsiteController.text,
                       _descriptionController.text,
@@ -924,9 +934,10 @@ class _NewEventFormState extends State<NewEventFormMain> {
                       startTime,
                       endTime,
                       _ticketWebsiteController.text,
-                      GeoPoint(lat, lng))
-                  .catchError(
-                      (e) => print('Error adding current event to db : $e'));
+                    )
+                    .catchError(
+                        (e) => print('Error adding online event to db : $e'));
+              }
             }).catchError((e) {
               print('Error uploading image to storage : $e');
             });

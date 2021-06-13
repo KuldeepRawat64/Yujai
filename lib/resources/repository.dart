@@ -340,14 +340,13 @@ class Repository {
           List<String> department, int color) =>
       _firebaseProvider.addTeamToDb(currentUser, teamName, department, color);
 
-  Future<void> addEventToDb(
+  Future<void> addOfflineEventToDb(
     User currentUser,
     String imgUrl,
     String caption,
     String city,
     String venue,
     String host,
-    String website,
     String description,
     String category,
     int startDate,
@@ -357,14 +356,13 @@ class Repository {
     String ticketWebsite,
     GeoPoint geoPoint,
   ) =>
-      _firebaseProvider.addEventToDb(
+      _firebaseProvider.addOfflineEventToDb(
           currentUser,
           imgUrl,
           caption,
           city,
           venue,
           host,
-          website,
           description,
           category,
           startDate,
@@ -373,6 +371,35 @@ class Repository {
           endTime,
           ticketWebsite,
           geoPoint);
+
+  Future<void> addOnlineEventToDb(
+    User currentUser,
+    String imgUrl,
+    String caption,
+    String host,
+    String website,
+    String description,
+    String category,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
+    String ticketWebsite,
+  ) =>
+      _firebaseProvider.addOnlineEventToDb(
+        currentUser,
+        imgUrl,
+        caption,
+        host,
+        website,
+        description,
+        category,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        ticketWebsite,
+      );
 
   Future<void> addEventToForum(
     String currentGroupId,

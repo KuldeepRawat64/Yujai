@@ -54,7 +54,7 @@ class _EventUpdatesState extends State<EventUpdates> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-           backgroundColor:const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xfff6f6f6),
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
@@ -65,12 +65,12 @@ class _EventUpdatesState extends State<EventUpdates> {
                 size: screenSize.height * 0.045,
               ),
               onPressed: () => Navigator.pop(context)),
-       //   centerTitle: true,
+          //   centerTitle: true,
           backgroundColor: Colors.white,
           title: Text(
             'Events',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -158,14 +158,14 @@ class _EventUpdatesState extends State<EventUpdates> {
   }
 
   Widget postImagesWidget() {
-      var screenSize = MediaQuery.of(context).size;
+    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
       future: _future,
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.connectionState == ConnectionState.done) {
             return SizedBox(
-                height:screenSize.height,
+                height: screenSize.height,
                 child: ListView.builder(
                     controller: _scrollController,
                     //shrinkWrap: true,
@@ -173,7 +173,7 @@ class _EventUpdatesState extends State<EventUpdates> {
                     itemBuilder: ((context, index) => ListItemEvent(
                         documentSnapshot: snapshot.data[index],
                         index: index,
-                        user: _user))));
+                        currentuser: _user))));
           } else {
             return Center(
               child: shimmerEvent(),
