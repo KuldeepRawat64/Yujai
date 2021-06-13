@@ -90,8 +90,8 @@ class _CreateTeamState extends State<CreateTeam> {
     });
   }
 
-  List<String> selectedReportList = List();
-  _showReportDialog() {
+  List<String> selectedDepartmentList = List();
+  _showDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -108,7 +108,7 @@ class _CreateTeamState extends State<CreateTeam> {
               reportList,
               onSelectionChanged: (selectedList) {
                 setState(() {
-                  selectedReportList = selectedList;
+                  selectedDepartmentList = selectedList;
                 });
               },
             ),
@@ -122,7 +122,7 @@ class _CreateTeamState extends State<CreateTeam> {
                       color: Colors.black),
                 ),
                 onPressed: () {
-                  //  print('$selectedReportList');
+                  //  print('$selectedDepartmentList');
                   Navigator.of(context).pop();
                 },
               ),
@@ -138,7 +138,7 @@ class _CreateTeamState extends State<CreateTeam> {
                       color: Colors.white),
                 ),
                 onPressed: () {
-                  print('$selectedReportList');
+                  print('$selectedDepartmentList');
                   Navigator.of(context).pop();
                 },
               )
@@ -199,7 +199,7 @@ class _CreateTeamState extends State<CreateTeam> {
               .addTeamToDb(
                   user,
                   displayNameController.text,
-                  selectedReportList,
+                  selectedDepartmentList,
                   Colors.primaries[Random().nextInt(Colors.primaries.length)]
                       .value)
               .then((value) {
@@ -315,7 +315,7 @@ class _CreateTeamState extends State<CreateTeam> {
                         ),
                         // Text('Add Departments'),
                         InkWell(
-                          onTap: _showReportDialog,
+                          onTap: _showDialog,
                           child: Chip(
                             label: Text(
                               'Add Departments +',
@@ -327,7 +327,7 @@ class _CreateTeamState extends State<CreateTeam> {
                             backgroundColor: Theme.of(context).primaryColor,
                           ),
                         ),
-                        getTextWidgets(selectedReportList)
+                        getTextWidgets(selectedDepartmentList)
                       ],
                     ),
                   ),

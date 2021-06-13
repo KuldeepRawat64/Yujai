@@ -125,7 +125,7 @@ class ListItemActivityFeed extends StatelessWidget {
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => InstaFriendProfileScreen(
+        builder: (context) => FriendProfileScreen(
               name: documentSnapshot.data['ownerName'],
               uid: documentSnapshot.data['ownerUid'],
             )));

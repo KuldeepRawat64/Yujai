@@ -13,7 +13,9 @@ class Promotion {
   String category;
   String description;
   String locations;
-  String skills;
+  List<dynamic> skills;
+  List<dynamic> experience;
+  List<dynamic> education;
 
   Promotion({
     this.postId,
@@ -29,6 +31,8 @@ class Promotion {
     this.description,
     this.locations,
     this.skills,
+    this.experience,
+    this.education,
   });
 
   Map toMap(Promotion promotion) {
@@ -46,6 +50,8 @@ class Promotion {
     data['description'] = promotion.description;
     data['locations'] = promotion.locations;
     data['skills'] = promotion.skills;
+    data['experience'] = promotion.experience;
+    data['education'] = promotion.education;
     return data;
   }
 
@@ -63,5 +69,7 @@ class Promotion {
     this.description = mapData['description'];
     this.locations = mapData['locations'];
     this.skills = mapData['skills'];
+    this.experience = mapData['experience'];
+    this.education = mapData['education'];
   }
 }

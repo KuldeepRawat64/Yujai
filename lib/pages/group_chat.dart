@@ -18,7 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:expandable_text/expandable_text.dart';
+// import 'package:expandable_text/expandable_text.dart';
 
 class GroupChat extends StatefulWidget {
   final String photoUrl;
@@ -51,6 +51,7 @@ class _GroupChatState extends State<GroupChat> {
   bool _needsScroll = true;
   Timer _timer;
   bool isExpanded = false;
+  bool seeMore = false;
 
   @override
   void initState() {
@@ -375,16 +376,39 @@ class _GroupChatState extends State<GroupChat> {
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            ExpandableText(
-                              snapshot['message'],
-                              maxLines: 6,
-                              expandText: 'Read more',
-                              collapseText: 'Less',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.white),
-                            ),
+                            seeMore
+                                ? Text(
+                                    snapshot['message'],
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                        color: Colors.white),
+                                  )
+                                : Text(
+                                    snapshot['message'],
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                        color: Colors.white),
+                                  ),
+                            snapshot['message'].length > 200
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        seeMore = !seeMore;
+                                      });
+                                    },
+                                    child: Text(
+                                      seeMore ? 'See less' : 'See more',
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textBody1(context),
+                                          color: Colors.deepPurple[300]),
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ),
                       )),
@@ -396,7 +420,7 @@ class _GroupChatState extends State<GroupChat> {
                           timeago.format(snapshot['timestamp'].toDate()),
                           style: TextStyle(
                             fontFamily: FontNameDefault,
-                            fontSize: textbody2(context),
+                            //  fontSize: textbody2(context),
                             color: Colors.grey,
                           ),
                         )
@@ -488,16 +512,42 @@ class _GroupChatState extends State<GroupChat> {
                                 padding: const EdgeInsets.all(5.0),
                                 child: Wrap(
                                   children: [
-                                    ExpandableText(
-                                      snapshot['message'],
-                                      maxLines: 6,
-                                      expandText: 'Read more',
-                                      collapseText: 'Less',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black),
-                                    ),
+                                    seeMore
+                                        ? Text(
+                                            snapshot['message'],
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textBody1(context),
+                                              // color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            snapshot['message'],
+                                            maxLines: 6,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textBody1(context),
+                                              //   color: Colors.white,
+                                            ),
+                                          ),
+                                    snapshot['message'].length > 200
+                                        ? InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                seeMore = !seeMore;
+                                              });
+                                            },
+                                            child: Text(
+                                              seeMore ? 'See less' : 'See more',
+                                              style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  fontSize: textBody1(context),
+                                                  color:
+                                                      Colors.deepPurple[300]),
+                                            ),
+                                          )
+                                        : Container()
                                   ],
                                 ),
                               ),

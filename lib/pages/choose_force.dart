@@ -15,6 +15,9 @@ class _ChooseForceState extends State<ChooseForce> {
   String military;
   bool isLoading = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool selectedFirst = false;
+  bool selectedSecond = false;
+  bool selectedThird = false;
 
   @override
   void initState() {
@@ -27,7 +30,7 @@ class _ChooseForceState extends State<ChooseForce> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         body: ListView(
           padding: EdgeInsets.only(
             top: screenSize.height * 0.055,
@@ -40,14 +43,29 @@ class _ChooseForceState extends State<ChooseForce> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Center(
-                    child: Text(
-                      'Choose your Military Force',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textAppTitle(context)),
-                    ),
+                  Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 30.0),
+                        child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Icon(
+                              Icons.keyboard_arrow_left,
+                              color: Colors.black54,
+                              size: screenSize.height * 0.04,
+                            )),
+                      ),
+                      Center(
+                        child: Text(
+                          'Choose your Military Force',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: FontNameDefault,
+                              fontSize: textAppTitle(context)),
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -56,6 +74,9 @@ class _ChooseForceState extends State<ChooseForce> {
                       onTap: () async {
                         FirebaseUser currentUser = await _auth.currentUser();
                         setState(() {
+                          selectedFirst = true;
+                          selectedSecond = false;
+                          selectedThird = false;
                           military = "Indian Army";
                         });
                         usersRef.document(currentUser.uid).updateData({
@@ -68,8 +89,10 @@ class _ChooseForceState extends State<ChooseForce> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(60.0),
+                          color: selectedFirst
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         height: screenSize.height * 0.09,
                         child: Center(
@@ -77,7 +100,8 @@ class _ChooseForceState extends State<ChooseForce> {
                             "Indian Army",
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              color: Colors.white,
+                              color:
+                                  selectedFirst ? Colors.white : Colors.black54,
                               fontSize: textSubTitle(context),
                             ),
                           ),
@@ -89,6 +113,9 @@ class _ChooseForceState extends State<ChooseForce> {
                     onTap: () async {
                       FirebaseUser currentUser = await _auth.currentUser();
                       setState(() {
+                        selectedSecond = true;
+                        selectedFirst = false;
+                        selectedThird = false;
                         military = "Indian Air Force";
                       });
                       usersRef.document(currentUser.uid).updateData({
@@ -101,8 +128,10 @@ class _ChooseForceState extends State<ChooseForce> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(60.0),
+                        color: selectedSecond
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
                       height: screenSize.height * 0.09,
                       child: Center(
@@ -110,7 +139,8 @@ class _ChooseForceState extends State<ChooseForce> {
                           "Indian Air Force",
                           style: TextStyle(
                             fontFamily: FontNameDefault,
-                            color: Colors.white,
+                            color:
+                                selectedSecond ? Colors.white : Colors.black54,
                             fontSize: textSubTitle(context),
                           ),
                         ),
@@ -124,6 +154,9 @@ class _ChooseForceState extends State<ChooseForce> {
                       onTap: () async {
                         FirebaseUser currentUser = await _auth.currentUser();
                         setState(() {
+                          selectedThird = true;
+                          selectedFirst = false;
+                          selectedSecond = false;
                           military = "Indian Navy";
                         });
                         usersRef.document(currentUser.uid).updateData({
@@ -136,8 +169,10 @@ class _ChooseForceState extends State<ChooseForce> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(60.0),
+                          color: selectedThird
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         height: screenSize.height * 0.09,
                         child: Center(
@@ -145,7 +180,8 @@ class _ChooseForceState extends State<ChooseForce> {
                             "Indian Navy",
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              color: Colors.white,
+                              color:
+                                  selectedThird ? Colors.white : Colors.black54,
                               fontSize: textSubTitle(context),
                             ),
                           ),
@@ -159,6 +195,7 @@ class _ChooseForceState extends State<ChooseForce> {
           ],
         ),
         bottomSheet: Container(
+          color: Color(0xffffffff),
           height: screenSize.height * 0.09,
           alignment: Alignment.center,
           width: MediaQuery.of(context).size.width,

@@ -71,11 +71,12 @@ class _ListItemJobState extends State<ListItemJob> {
       },
       child: Padding(
         padding: EdgeInsets.only(
-          top: 8.0,
-          left: 8.0,
-          right: 8.0,
+          top: screenSize.height * 0.01,
+          // left: screenSize.width * 0.05,
+          right: screenSize.width * 0.05,
         ),
         child: Container(
+          width: screenSize.width * 0.8,
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
@@ -86,205 +87,97 @@ class _ListItemJobState extends State<ListItemJob> {
             ),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(
-                  left: screenSize.width * 0.23,
-                  right: screenSize.width / 30,
-                  top: screenSize.height * 0.01,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
+              ListTile(
+                  leading: CircleAvatar(
+                    radius: screenSize.height * 0.03,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: CachedNetworkImageProvider(
+                        widget.documentSnapshot.data['jobOwnerPhotoUrl']),
+                  ),
+                  trailing: Chip(
+                    backgroundColor: Colors.grey[200],
+                    label: Text(
                       widget.documentSnapshot.data['timing'],
                       style: TextStyle(
                         fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                        color: Colors.black54,
+                        // fontSize: textBody1(context),
+                        color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    widget.currentuser.uid ==
-                            widget.documentSnapshot.data['ownerUid']
-                        ? InkWell(
-                            onTap: () {
-                              showDelete(widget.documentSnapshot);
-                            },
-                            child: Container(
-                                decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              showReport(widget.documentSnapshot, context);
-                            },
-                            child: Container(
-                                decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
-                          )
-                  ],
-                ),
-              ),
+                  )),
               Padding(
-                padding: EdgeInsets.only(
-                    left: screenSize.width / 30,
-                    bottom: screenSize.height * 0.012),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                          decoration: ShapeDecoration(
-                            color: Colors.grey[100],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  screenSize.height * 0.01),
+                padding: EdgeInsets.only(left: screenSize.width * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => JobDetailScreen(
+                              user: widget.user,
+                              currentuser: widget.user,
+                              documentSnapshot: widget.documentSnapshot,
                             ),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(screenSize.height * 0.02),
-                            child: CircleAvatar(
-                              radius: screenSize.height * 0.03,
-                              backgroundColor: Colors.grey,
-                              backgroundImage: CachedNetworkImageProvider(widget
-                                  .documentSnapshot.data['jobOwnerPhotoUrl']),
-                            ),
-                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding:
+                            EdgeInsets.only(top: screenSize.height * 0.012),
+                        child: new Text(
+                          widget.documentSnapshot.data['caption'],
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontWeight: FontWeight.bold,
+                              fontSize: textSubTitle(context),
+                              color: Theme.of(context).primaryColor),
                         ),
-                        new SizedBox(
-                          width: screenSize.width / 50,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => JobDetailScreen(
-                                      user: widget.user,
-                                      currentuser: widget.user,
-                                      documentSnapshot: widget.documentSnapshot,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: screenSize.height * 0.012),
-                                child: new Text(
-                                  widget.documentSnapshot.data['caption'],
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context),
-                                      color: Theme.of(context).primaryColor),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.01),
-                              child: new Text(
-                                widget.documentSnapshot.data['jobOwnerName'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                ),
-                              ),
-                            ),
-                            widget.documentSnapshot.data['location'] != null ||
-                                    widget.documentSnapshot.data['location']
-                                ? Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenSize.height * 0.01),
-                                    child: new Text(
-                                      widget.documentSnapshot.data['location'],
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.grey,
-                                        fontSize: textBody1(context),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ],
-                    ),
-                    new IconButton(
-                      icon: Icon(
-                        Icons.bookmark_border,
-                        color: Colors.white,
-                        size: screenSize.height * 0.04,
                       ),
-                      onPressed: () {},
-                    )
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: screenSize.height * 0.01),
+                      child: new Text(
+                        widget.documentSnapshot.data['jobOwnerName'],
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              // Divider()
-              //    SizedBox(height: screenSize.height * 0.02)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  timeago.format(widget.documentSnapshot.data['time'].toDate()),
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textbody2(context),
-                    color: Colors.black54,
+              ListTile(
+                  leading: new Text(
+                    widget.documentSnapshot.data['location'] != null ||
+                            widget.documentSnapshot.data['location']
+                        ? widget.documentSnapshot.data['location']
+                        : '',
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.grey,
+                      //     fontSize: textBody1(context),
+                    ),
                   ),
-                ),
-              )
+                  trailing: widget.documentSnapshot.data['time'] != null
+                      ? Text(
+                          timeago.format(
+                              widget.documentSnapshot.data['time'].toDate()),
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //   fontSize: textbody2(context),
+                            color: Colors.grey,
+                          ),
+                        )
+                      : Text('')),
             ],
           ),
         ),

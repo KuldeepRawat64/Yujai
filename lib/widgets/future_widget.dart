@@ -22,12 +22,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-            child: futureWidget()));
-            // decoration: BoxDecoration(
-            //   color: Color(0xffffffff),
-            // )));
+    return SafeArea(
+      child: Scaffold(body: Container(child: futureWidget())),
+    );
+    // decoration: BoxDecoration(
+    //   color: Color(0xffffffff),
+    // )));
   }
 
   Widget futureWidget() {

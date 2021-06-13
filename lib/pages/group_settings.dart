@@ -198,7 +198,7 @@ class _GroupSettingsState extends State<GroupSettings> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
           title: Text(
             'Group Settings',
@@ -238,7 +238,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                             'Basic Info',
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                color: Colors.black54,
+//color: Colors.black54,
                                 fontWeight: FontWeight.bold,
                                 fontSize: textHeader(context)),
                           ),
@@ -251,16 +251,21 @@ class _GroupSettingsState extends State<GroupSettings> {
                             },
                             textCapitalization: TextCapitalization.words,
                             style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                            ),
+                                fontFamily: FontNameDefault,
+                                fontSize: textBody1(context),
+                                fontWeight: FontWeight.bold),
                             controller: _nameController,
                             decoration: InputDecoration(
-                              filled: true,
-                              fillColor: const Color(0xffffffff),
-                              hintText: 'Name',
-                              labelText: 'Name',
-                            ),
+                                border: InputBorder.none,
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                                hintText: 'Name',
+                                labelText: 'Name',
+                                labelStyle: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    color: Colors.grey,
+                                    //   fontWeight: FontWeight.bold,
+                                    fontSize: textSubTitle(context))),
                           ),
                         ),
                         SizedBox(
@@ -275,16 +280,22 @@ class _GroupSettingsState extends State<GroupSettings> {
                             autocorrect: true,
                             textCapitalization: TextCapitalization.sentences,
                             style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                            ),
+                                fontFamily: FontNameDefault,
+                                fontSize: textBody1(context),
+                                fontWeight: FontWeight.bold),
                             controller: _descriptionController,
                             maxLines: 3,
                             decoration: InputDecoration(
+                                border: InputBorder.none,
                                 filled: true,
-                                fillColor: const Color(0xffffffff),
+                                fillColor: Colors.grey[100],
                                 hintText: 'Description',
-                                labelText: 'Description'),
+                                labelText: 'Description',
+                                labelStyle: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    color: Colors.grey,
+                                    //   fontWeight: FontWeight.bold,
+                                    fontSize: textSubTitle(context))),
                           ),
                         ),
                         SizedBox(
@@ -301,7 +312,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                     child: Text(
                                       'Group Rules',
                                       style: TextStyle(
-                                        color: Colors.black54,
+//color: Colors.black54,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: FontNameDefault,
                                         fontSize: textSubTitle(context),
@@ -385,20 +396,15 @@ class _GroupSettingsState extends State<GroupSettings> {
                                       height: screenSize.height * 0.045,
                                       width: screenSize.width / 6,
                                       child: Center(
-                                          child: Text(
-                                        'Edit',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.black,
-                                          fontSize: textButton(context),
-                                        ),
+                                          child: Icon(
+                                        Icons.edit_outlined,
+                                        color: Colors.black54,
                                       )),
                                       decoration: ShapeDecoration(
                                         color: Colors.white,
                                         shape: RoundedRectangleBorder(
                                           side: BorderSide(
-                                              width: 1.5,
+                                              width: 0.1,
                                               color: Colors.black54),
                                           borderRadius:
                                               BorderRadius.circular(60.0),
@@ -421,7 +427,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                         child: Text(
                                           'Group Rules',
                                           style: TextStyle(
-                                            color: Colors.black54,
+                                            //      color: Colors.black54,
                                             fontWeight: FontWeight.bold,
                                             fontFamily: FontNameDefault,
                                             fontSize: textSubTitle(context),
@@ -477,7 +483,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                             'Privacy Info',
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                color: Colors.black54,
+                                //       color: Colors.black54,
                                 fontWeight: FontWeight.bold,
                                 fontSize: textHeader(context)),
                           ),
@@ -731,7 +737,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                   'Cancel',
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
-                                      color: Colors.grey[600],
+                                      color: Colors.black,
                                       fontSize: textSubTitle(context)),
                                 ),
                               ),

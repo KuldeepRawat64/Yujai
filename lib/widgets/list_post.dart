@@ -10,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:transparent_image/transparent_image.dart';
 
@@ -47,7 +48,7 @@ class _ListItemPostState extends State<ListItemPost> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              '${snapshot.data.length}',
               style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -127,11 +128,10 @@ class _ListItemPostState extends State<ListItemPost> {
     //  print('build list');
     var screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        // bottom: 5.0,
-        left: 8.0,
-        right: 8.0,
+      padding: EdgeInsets.only(
+        bottom: screenSize.height * 0.025,
+        left: screenSize.width * 0.05,
+        right: screenSize.width * 0.05,
       ),
       child: Container(
         decoration: ShapeDecoration(
@@ -145,162 +145,135 @@ class _ListItemPostState extends State<ListItemPost> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          //   mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                screenSize.width * 0.02,
-                screenSize.height * 0.012,
-                screenSize.width * 0.02,
-                screenSize.height * 0.012,
+            ListTile(
+              leading: CircleAvatar(
+                  radius: screenSize.height * 0.03,
+                  backgroundImage: CachedNetworkImageProvider(
+                      widget.documentSnapshot.data['postOwnerPhotoUrl'])),
+              title: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfileScreen(
+                              uid: widget.documentSnapshot.data['ownerUid'],
+                              name: widget
+                                  .documentSnapshot.data['postOwnerName'])));
+                },
+                child: new Text(
+                  widget.documentSnapshot.data['postOwnerName'],
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context),
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      children: <Widget>[
-                        new CircleAvatar(
-                            radius: screenSize.height * 0.03,
-                            backgroundImage: CachedNetworkImageProvider(
-                              widget.documentSnapshot.data['postOwnerPhotoUrl'],
-                            )),
-                        new SizedBox(
-                          width: screenSize.width / 30,
+              subtitle: widget.documentSnapshot.data['location'] != '' &&
+                      widget.documentSnapshot.data['location'] != null
+                  ? Row(
+                      children: [
+                        new Text(
+                          widget.documentSnapshot.data['location'],
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //    fontSize: textBody1(context),
+                              color: Colors.grey),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            InstaFriendProfileScreen(
-                                                uid: widget.documentSnapshot
-                                                    .data['ownerUid'],
-                                                name: widget.documentSnapshot
-                                                    .data['postOwnerName'])));
-                              },
-                              child: new Text(
-                                widget.documentSnapshot.data['postOwnerName'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            widget.documentSnapshot.data['location'] != null
-                                ? new Text(
-                                    widget.documentSnapshot.data['location'],
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textbody2(context),
-                                        color: Colors.grey),
-                                  )
-                                : Container(),
-                          ],
-                        )
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Icon(
+                          Icons.circle,
+                          size: 6.0,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            //   left: screenSize.width / 30,
+                            top: screenSize.height * 0.002,
+                          ),
+                          child: Text(
+                              widget.documentSnapshot.data['time'] != null
+                                  ? timeago.format(widget
+                                      .documentSnapshot.data['time']
+                                      .toDate())
+                                  : '',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  //   fontSize: textbody2(context),
+                                  color: Colors.grey)),
+                        ),
                       ],
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(
+                        //   left: screenSize.width / 30,
+                        top: screenSize.height * 0.002,
+                      ),
+                      child: Text(
+                          widget.documentSnapshot.data['time'] != null
+                              ? timeago.format(
+                                  widget.documentSnapshot.data['time'].toDate())
+                              : '',
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //   fontSize: textbody2(context),
+                              color: Colors.grey)),
                     ),
-                  ),
-                  widget.currentuser.uid ==
-                          widget.documentSnapshot.data['ownerUid']
-                      ? InkWell(
-                          onTap: () {
-                            showDelete(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
+              trailing: widget.currentuser.uid ==
+                      widget.documentSnapshot.data['ownerUid']
+                  ? InkWell(
+                      onTap: () {
+                        //    showDelete(widget.documentSnapshot);
+                        //    deleteDialog(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
-                                ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textButton(context),
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            showReport(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
+                              child: Icon(Icons.more_horiz_outlined))),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        showReport(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.purple)),
+                            //  color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
-                                ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textButton(context),
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
-                        )
-                ],
-              ),
+                              child: Icon(Icons.more_horiz_outlined))),
+                    ),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ImageDetail(
-                              image: widget.documentSnapshot.data['imgUrl'],
-                            )));
-              },
-              child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
+            Center(
+              child: FadeInImage.assetNetwork(
+                fadeInDuration: const Duration(milliseconds: 300),
+                placeholder: 'assets/images/placeholder.png',
+                placeholderScale: 10,
                 image: widget.documentSnapshot.data['imgUrl'],
               ),
-              // child: CachedNetworkImage(
-              //   filterQuality: FilterQuality.medium,
-              //   fadeInCurve: Curves.easeIn,
-              //   fadeOutCurve: Curves.easeOut,
-              //   imageUrl: widget.documentSnapshot.data['imgUrl'],
-              //   placeholder: ((context, s) => Container(
-              //         decoration: BoxDecoration(
-              //           color: Colors.grey,
-              //           image: DecorationImage(
-              //             image: AssetImage('assets/images/placeholder.png'),
-              //           ),
-              //         ),
-              //       )),
-              //   width: screenSize.width,
-              //   height: screenSize.height * 0.4,
-              //   fit: BoxFit.cover,
-              // ),
             ),
             widget.documentSnapshot.data['caption'] != ''
                 ? Column(
@@ -323,195 +296,396 @@ class _ListItemPostState extends State<ListItemPost> {
                     ],
                   )
                 : Container(),
-            Padding(
-              padding: EdgeInsets.all(screenSize.height * 0.012),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                          child: _isLiked
-                              ? Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Liked',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ))
-                              : Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Like',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                          onTap: () {
-                            if (!_isLiked) {
-                              setState(() {
-                                _isLiked = true;
-                              });
-
-                              postLike(widget.documentSnapshot.reference);
-                              addLikeToActivityFeed(
-                                  widget.documentSnapshot, widget.user);
-                            } else {
-                              setState(() {
-                                _isLiked = false;
-                              });
-                              postUnlike(widget.documentSnapshot.reference);
-                              removeLikeFromActivityFeed(
-                                  widget.documentSnapshot, widget.user);
-                            }
-                          }),
-                      new SizedBox(
-                        width: screenSize.width / 30,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
-                                        snapshot: widget.documentSnapshot,
-                                        followingUser: widget.user,
-                                        documentReference:
-                                            widget.documentSnapshot.reference,
-                                        user: widget.currentuser,
-                                      ))));
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
-                                  side: BorderSide(
-                                      width: 1.5, color: Colors.deepPurple)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
+            ListTile(
+              leading: GestureDetector(
+                  child: _isLiked
+                      ? Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.purple)),
+                            //  color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 8.0,
                                 right: 8.0,
                                 top: 6.0,
                                 bottom: 6.0,
                               ),
-                              child: Text(
-                                'Comment',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textButton(context),
-                                    color: Colors.deepPurple,
-                                    fontWeight: FontWeight.bold),
+                              child: Icon(Icons.thumb_up_alt)))
+                      : Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.purple)),
+                            //  color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                                right: 8.0,
+                                top: 6.0,
+                                bottom: 6.0,
                               ),
-                            )),
+                              child: Icon(Icons.thumb_up_alt_outlined))),
+                  onTap: () {
+                    if (!_isLiked) {
+                      setState(() {
+                        _isLiked = true;
+                      });
+
+                      postLike(widget.documentSnapshot.reference);
+                      addLikeToActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    } else {
+                      setState(() {
+                        _isLiked = false;
+                      });
+
+                      postUnlike(widget.documentSnapshot.reference);
+                      removeLikeFromActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    }
+                  }),
+              title: FutureBuilder(
+                future: _repository
+                    .fetchPostLikes(widget.documentSnapshot.reference),
+                builder: ((context,
+                    AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+                  if (likesSnapshot.hasData) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => LikesScreen(
+                                      user: widget.currentuser,
+                                      documentReference:
+                                          widget.documentSnapshot.reference,
+                                    ))));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: likesSnapshot.data.length > 0
+                              ? SizedBox(
+                                  height: screenSize.height * 0.06,
+                                  width: screenSize.width * 0.2,
+                                  child: Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 15.0,
+                                        backgroundColor: Colors.black,
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                likesSnapshot.data[0]
+                                                    .data['ownerPhotoUrl']),
+                                      ),
+                                      likesSnapshot.data.length > 1
+                                          ? Positioned(
+                                              left: 15.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[1].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 2
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[2].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 3
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[3].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 4
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                child: Text(
+                                                    '${likesSnapshot.data.length}'),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                )
+
+                              //  Text(
+                              //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              //     style: TextStyle(
+                              //         fontFamily: FontNameDefault,
+                              //         fontSize: textBody1(context),
+                              //         fontWeight: FontWeight.bold),
+                              //   )
+                              : Text(
+                                  "0 ",
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                        ),
                       ),
-                    ],
-                  ),
-                ],
+                    );
+                  } else {
+                    return Center(child: Container());
+                  }
+                }),
               ),
-            ),
-            FutureBuilder(
-              future:
-                  _repository.fetchPostLikes(widget.documentSnapshot.reference),
-              builder: ((context,
-                  AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-                if (likesSnapshot.hasData) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => LikesScreen(
-                                    user: widget.user,
-                                    documentReference:
-                                        widget.documentSnapshot.reference,
-                                  ))));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenSize.width / 30),
-                      child: likesSnapshot.data.length > 1
-                          ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : Text(
-                              likesSnapshot.data.length == 1
-                                  ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
-                                  : "0 Likes",
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+              trailing: SizedBox(
+                height: 40,
+                width: 50,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => CommentsScreen(
+                                  //   group: widget.group,
+                                  //  isGroupFeed: true,
+                                  snapshot: widget.documentSnapshot,
+                                  followingUser: widget.currentuser,
+                                  documentReference:
+                                      widget.documentSnapshot.reference,
+                                  user: widget.currentuser,
+                                ))));
+                  },
+                  child: Container(
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(60.0),
+                    //       side: BorderSide(width: 0.1, color: Colors.black54)),
+                    //   //color: Theme.of(context).accentColor,
+                    // ),
+                    child: Row(
+                      children: [
+                        commentWidget(widget.documentSnapshot.reference),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Icon(Icons.messenger_outline_sharp),
+                      ],
                     ),
-                  );
-                } else {
-                  return Center(child: Container());
-                }
-              }),
-            ),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width / 30,
-                  vertical: screenSize.height * 0.005,
+                  ),
                 ),
-                child: commentWidget(widget.documentSnapshot.reference)),
-            Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                bottom: screenSize.height * 0.012,
               ),
-              child: Text(
-                  timeago.format(widget.documentSnapshot.data['time'].toDate()),
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textbody2(context),
-                      color: Colors.grey)),
             ),
+            // Padding(
+            //   padding: EdgeInsets.all(screenSize.height * 0.012),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: <Widget>[
+            //       new Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: <Widget>[
+            //           GestureDetector(
+            //               child: _isLiked
+            //                   ? Container(
+            //                       decoration: ShapeDecoration(
+            //                         shape: RoundedRectangleBorder(
+            //                             borderRadius:
+            //                                 BorderRadius.circular(60.0),
+            //                             side: BorderSide(
+            //                                 width: 1.5,
+            //                                 color: Colors.deepPurple)),
+            //                         //color: Theme.of(context).accentColor,
+            //                       ),
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.only(
+            //                           left: 8.0,
+            //                           right: 8.0,
+            //                           top: 6.0,
+            //                           bottom: 6.0,
+            //                         ),
+            //                         child: Text(
+            //                           'Liked',
+            //                           style: TextStyle(
+            //                               fontFamily: FontNameDefault,
+            //                               fontSize: textButton(context),
+            //                               color: Colors.deepPurple,
+            //                               fontWeight: FontWeight.bold),
+            //                         ),
+            //                       ))
+            //                   : Container(
+            //                       decoration: ShapeDecoration(
+            //                         shape: RoundedRectangleBorder(
+            //                             borderRadius:
+            //                                 BorderRadius.circular(60.0),
+            //                             side: BorderSide(
+            //                                 width: 1.5,
+            //                                 color: Colors.deepPurple)),
+            //                         //color: Theme.of(context).accentColor,
+            //                       ),
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.only(
+            //                           left: 8.0,
+            //                           right: 8.0,
+            //                           top: 6.0,
+            //                           bottom: 6.0,
+            //                         ),
+            //                         child: Text(
+            //                           'Like',
+            //                           style: TextStyle(
+            //                               fontFamily: FontNameDefault,
+            //                               fontSize: textButton(context),
+            //                               color: Colors.deepPurple,
+            //                               fontWeight: FontWeight.bold),
+            //                         ),
+            //                       )),
+            //               onTap: () {
+            //                 if (!_isLiked) {
+            //                   setState(() {
+            //                     _isLiked = true;
+            //                   });
+
+            //                   postLike(widget.documentSnapshot.reference);
+            //                   addLikeToActivityFeed(
+            //                       widget.documentSnapshot, widget.user);
+            //                 } else {
+            //                   setState(() {
+            //                     _isLiked = false;
+            //                   });
+            //                   postUnlike(widget.documentSnapshot.reference);
+            //                   removeLikeFromActivityFeed(
+            //                       widget.documentSnapshot, widget.user);
+            //                 }
+            //               }),
+            //           new SizedBox(
+            //             width: screenSize.width / 30,
+            //           ),
+            //           GestureDetector(
+            //             onTap: () {
+            //               Navigator.push(
+            //                   context,
+            //                   MaterialPageRoute(
+            //                       builder: ((context) => CommentsScreen(
+            //                             snapshot: widget.documentSnapshot,
+            //                             followingUser: widget.user,
+            //                             documentReference:
+            //                                 widget.documentSnapshot.reference,
+            //                             user: widget.currentuser,
+            //                           ))));
+            //             },
+            //             child: Container(
+            //                 decoration: ShapeDecoration(
+            //                   shape: RoundedRectangleBorder(
+            //                       borderRadius: BorderRadius.circular(60.0),
+            //                       side: BorderSide(
+            //                           width: 1.5, color: Colors.deepPurple)),
+            //                   //color: Theme.of(context).accentColor,
+            //                 ),
+            //                 child: Padding(
+            //                   padding: const EdgeInsets.only(
+            //                     left: 8.0,
+            //                     right: 8.0,
+            //                     top: 6.0,
+            //                     bottom: 6.0,
+            //                   ),
+            //                   child: Text(
+            //                     'Comment',
+            //                     style: TextStyle(
+            //                         fontFamily: FontNameDefault,
+            //                         fontSize: textButton(context),
+            //                         color: Colors.deepPurple,
+            //                         fontWeight: FontWeight.bold),
+            //                   ),
+            //                 )),
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // FutureBuilder(
+            //   future:
+            //       _repository.fetchPostLikes(widget.documentSnapshot.reference),
+            //   builder: ((context,
+            //       AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+            //     if (likesSnapshot.hasData) {
+            //       return GestureDetector(
+            //         onTap: () {
+            //           Navigator.push(
+            //               context,
+            //               MaterialPageRoute(
+            //                   builder: ((context) => LikesScreen(
+            //                         user: widget.user,
+            //                         documentReference:
+            //                             widget.documentSnapshot.reference,
+            //                       ))));
+            //         },
+            //         child: Padding(
+            //           padding: EdgeInsets.symmetric(
+            //               horizontal: screenSize.width / 30),
+            //           child: likesSnapshot.data.length > 1
+            //               ? Text(
+            //                   "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+            //                   style: TextStyle(
+            //                       fontFamily: FontNameDefault,
+            //                       fontSize: textBody1(context),
+            //                       fontWeight: FontWeight.bold),
+            //                 )
+            //               : Text(
+            //                   likesSnapshot.data.length == 1
+            //                       ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+            //                       : "0 Likes",
+            //                   style: TextStyle(
+            //                     fontFamily: FontNameDefault,
+            //                     fontSize: textBody1(context),
+            //                     fontWeight: FontWeight.bold,
+            //                   ),
+            //                 ),
+            //         ),
+            //       );
+            //     } else {
+            //       return Center(child: Container());
+            //     }
+            //   }),
+            // ),
+            // Padding(
+            //     padding: EdgeInsets.symmetric(
+            //       horizontal: screenSize.width / 30,
+            //       vertical: screenSize.height * 0.005,
+            //     ),
+            //     child: commentWidget(widget.documentSnapshot.reference)),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     left: screenSize.width / 30,
+            //     bottom: screenSize.height * 0.012,
+            //   ),
+            //   child: Text(
+            //       timeago.format(widget.documentSnapshot.data['time'].toDate()),
+            //       style: TextStyle(
+            //           fontFamily: FontNameDefault,
+            //           fontSize: textbody2(context),
+            //           color: Colors.grey)),
+            // ),
           ],
         ),
       ),

@@ -15,6 +15,7 @@ import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/pages/project_inbox.dart';
 import 'package:Yujai/resources/repository.dart';
+import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:Yujai/widgets/nested_tab_bar_project.dart';
 import 'package:Yujai/widgets/nested_tab_department.dart';
 import 'package:Yujai/widgets/nested_tab_team_home.dart';
@@ -159,6 +160,12 @@ class _ProjectPageState extends State<ProjectPage>
   String newPId = Uuid().v4();
   String actId = Uuid().v4();
   final GlobalKey<ScaffoldState> _scaffold1Key = new GlobalKey<ScaffoldState>();
+  var _currentDate = DateTime.now();
+  var threeHoursFromNow = DateTime.now().add(new Duration(hours: 3));
+  var sixHoursFromNow = DateTime.now().add(new Duration(hours: 6));
+  var oneDayFromNow = DateTime.now().add(new Duration(days: 1));
+  var twoDaysFromNow = DateTime.now().add(new Duration(days: 2));
+  List<RadioModel> sampleData = List<RadioModel>();
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -277,6 +284,30 @@ class _ProjectPageState extends State<ProjectPage>
     });
   }
 
+  checkSelected(RadioModel _item) {
+    if (_item.subText == '3h') {
+      setState(() {
+        _currentDate = threeHoursFromNow;
+      });
+    } else if (_item.subText == '6h') {
+      setState(() {
+        _currentDate = sixHoursFromNow;
+      });
+    } else if (_item.subText == '1d') {
+      setState(() {
+        _currentDate = oneDayFromNow;
+      });
+    } else if (_item.subText == '2d') {
+      setState(() {
+        _currentDate = twoDaysFromNow;
+      });
+    } else {
+      setState(() {
+        _currentDate = sixHoursFromNow;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -333,6 +364,10 @@ class _ProjectPageState extends State<ProjectPage>
     _dropDownMenuProjectType = buildDropDownMenuProjectType(_projectType);
     _selectedProjectType = _dropDownMenuProjectType[0].value;
     //_projectList();
+    sampleData.add(RadioModel(false, '3 h', '3h'));
+    sampleData.add(RadioModel(true, '6 h', '6h'));
+    sampleData.add(RadioModel(false, '1 d', '1d'));
+    sampleData.add(RadioModel(false, '2 d', '2d'));
   }
 
   @override
@@ -357,6 +392,20 @@ class _ProjectPageState extends State<ProjectPage>
             SliverAppBar(
               elevation: 0.5,
               actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    radius: screenSize.height * 0.023,
+                    child: InkWell(
+                      onTap: widget.currentUser != null && _team != null
+                          ? checkUser
+                          : null,
+                      child: Icon(
+                        Icons.add,
+                      ),
+                    ),
+                  ),
+                ),
                 InkWell(
                   onTap: () {
                     optionProject();
@@ -422,15 +471,15 @@ class _ProjectPageState extends State<ProjectPage>
                     [_team != null ? buildButtonBar() : Container()]))
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          heroTag: null,
-          child: Icon(
-            Icons.add,
-            size: screenSize.height * 0.05,
-          ),
-          onPressed:
-              widget.currentUser != null && _team != null ? checkUser : null,
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   heroTag: null,
+        //   child: Icon(
+        //     Icons.add,
+        //     size: screenSize.height * 0.05,
+        //   ),
+        //   onPressed:
+        //       widget.currentUser != null && _team != null ? checkUser : null,
+        // ),
       ),
     );
   }
@@ -1172,54 +1221,48 @@ class _ProjectPageState extends State<ProjectPage>
                             controller: _pollTitleController,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: DropdownButton(
-                                  hint: Text('Type'),
-                                  underline: Container(color: Colors.white),
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black87,
-                                  ),
-                                  // iconSize: screenSize.height * 0.05,
-                                  icon: Icon(Icons.keyboard_arrow_down,
-                                      color: Theme.of(context).primaryColor),
-                                  value: _selectedPollType,
-                                  items: _dropDownMenuPollType,
-                                  onChanged: (PollType selectedPollType) {
-                                    setState(() {
-                                      _selectedPollType = selectedPollType;
-                                    });
-                                  }),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: DropdownButton(
-                                  hint: Text('Category'),
-                                  underline: Container(color: Colors.white),
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black87,
-                                  ),
-                                  //  iconSize: screenSize.height * 0.05,
-                                  icon: Icon(Icons.keyboard_arrow_down,
-                                      color: Theme.of(context).primaryColor),
-                                  value: _selectedPollLength,
-                                  items: _dropDownMenuPollLength,
-                                  onChanged: (PollLength selectedPollLength) {
-                                    setState(() {
-                                      _selectedPollLength = selectedPollLength;
-                                    });
-                                  }),
-                            )
-                          ],
+                        Container(
+                          height: screenSize.height * 0.12,
+                          width: screenSize.width,
+                          // padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.045),
+                                child: Divider(
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.horizontal,
+                                //   physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: sampleData.length,
+                                itemExtent: screenSize.height * 0.12,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    // height: 60.0,
+                                    width: screenSize.width * 0.22,
+                                    child: InkWell(
+                                      //highlightColor: Colors.red,
+                                      splashColor: Colors.transparent,
+                                      onTap: () {
+                                        setState(() {
+                                          sampleData.forEach((element) =>
+                                              element.isSelected = false);
+                                          sampleData[index].isSelected = true;
+                                        });
+                                        checkSelected(sampleData[index]);
+                                      },
+                                      child: RadioItem(sampleData[index]),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: screenSize.height * 0.01,
@@ -1457,8 +1500,8 @@ class _ProjectPageState extends State<ProjectPage>
                                                   _department.uid,
                                                   user,
                                                   _pollTitleController.text,
-                                                  _selectedPollLength.name,
-                                                  _selectedPollType.name,
+                                                  _currentDate
+                                                      .millisecondsSinceEpoch,
                                                   'poll',
                                                   _option1Controller.text,
                                                   _option2Controller.text,
@@ -1487,8 +1530,8 @@ class _ProjectPageState extends State<ProjectPage>
                                                       : _project.uid,
                                                   user,
                                                   _pollTitleController.text,
-                                                  _selectedPollLength.name,
-                                                  _selectedPollType.name,
+                                                  _currentDate
+                                                      .millisecondsSinceEpoch,
                                                   'poll',
                                                   _option1Controller.text,
                                                   _option2Controller.text,

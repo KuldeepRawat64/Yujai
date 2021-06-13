@@ -24,10 +24,10 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^4.3.2+2
-  cloud_firestore: ^0.13.4+2
+  cloud_firestore: 
   firebase_analytics: ^5.0.11
   image_picker: ^0.6.5
-  firebase_storage: ^3.1.5
+  firebase_storage: 
   firebase_auth: ^0.15.5+3
   google_sign_in: ^4.5.1
   geolocator: ^5.3.1
@@ -40,7 +40,7 @@ dependencies:
   firebase_messaging: ^6.0.13
   timeago: ^2.0.26
   cached_network_image: ^2.0.0
-  flutter_svg: ^0.18.0
+  flutter_svg: ^0.19.3
   groovin_material_icons:
   http: ^0.12.0+2
   firebase_dynamic_links: ^0.5.0+1
@@ -48,15 +48,15 @@ dependencies:
   flutter_secure_storage: ^3.2.1+1
   country_code_picker: ^1.1.7
   pin_view: ^1.0.1
-  firebase_core: ^0.4.4+3
-  intl: ^0.16.1
+  firebase_core:
+  intl: 0.17.0
   flutter_datetime_picker:
     git:
       url: https://github.com/derohimat/flutter_datetime_picker.git
   autocomplete_textfield: ^1.7.3
   #dash_chat: ^1.0.19
   material_design_icons_flutter: ^4.0.5145
-  file_picker: ^1.1.1
+  file_picker: ^2.1.7
   flutter_email_sender: ^3.0.1
   share: ^0.6.4+3
   shared_preferences: ^0.5.6+3
@@ -82,22 +82,24 @@ dependencies:
   in_app_review: ^1.0.4
   countdown_flutter: ^0.1.2
   multi_image_picker: ^4.7.14
-  carousel_pro: ^1.0.0
+  carousel_slider: ^3.0.0
   currency_textfield: ^1.0.3
   flutter_cache_manager: ^1.1.3
   adobe_xd:
   flutter_colorpicker: ^0.3.5
-  date_range_form_field: ^0.0.5
+  date_range_form_field: ^1.0.1
   select_dialog:
   icon_picker: "^1.1.0"
-  charts_flutter: ^0.9.0
   flutter_staggered_grid_view: ^0.3.3
-  fl_chart: ^0.8.1
-  expandable_text: 1.2.0
+  # expandable_text: 1.2.0
   transparent_image:
   empty_widget: ^0.0.2
- 
-  
+  flutter_fab_dialer: ^0.1.1
+  flutter_boom_menu:
+  date_field: ^1.0.0
+  percent_indicator: 
+  flutter_slidable: ^0.6.0
+  new_version: ^0.0.6
 
 dev_dependencies:
   flutter_test:

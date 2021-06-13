@@ -58,7 +58,7 @@ class CompanySearch extends SearchDelegate<String> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: ((context) => InstaFriendProfileScreen(
+                        builder: ((context) => FriendProfileScreen(
                             uid: suggestionsList[index].uid,
                             name: suggestionsList[index].displayName))));
               },
@@ -116,7 +116,7 @@ class CompanySearch extends SearchDelegate<String> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => InstaFriendProfileScreen(
+                          builder: ((context) => FriendProfileScreen(
                               uid: suggestionsList[index].uid,
                               name: suggestionsList[index].displayName))));
                 },

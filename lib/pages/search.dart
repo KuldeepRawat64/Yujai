@@ -11,12 +11,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../style.dart';
 
-class InstaSearchScreen extends StatefulWidget {
+class SearchScreen extends StatefulWidget {
   @override
-  _InstaSearchScreenState createState() => _InstaSearchScreenState();
+  _SearchScreenState createState() => _SearchScreenState();
 }
 
-class _InstaSearchScreenState extends State<InstaSearchScreen>
+class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   var _repository = Repository();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
@@ -93,7 +93,7 @@ class _InstaSearchScreenState extends State<InstaSearchScreen>
             },
             child: Container(
               decoration: ShapeDecoration(
-               color:const Color(0xFFf6f6f6),
+                color: const Color(0xFFf6f6f6),
                 shape: RoundedRectangleBorder(
                     // side: BorderSide(
                     //   color: Colors.grey[300],
@@ -229,7 +229,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           name: suggestionsList[index].displayName))));
             },
             leading: CircleAvatar(
@@ -254,7 +254,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           name: suggestionsList[index].displayName))));
             },
             leading: CircleAvatar(

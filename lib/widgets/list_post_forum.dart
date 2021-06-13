@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/like.dart';
@@ -14,9 +15,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:transparent_image/transparent_image.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class ListPostForum extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
@@ -59,6 +62,8 @@ class _ListPostForumState extends State<ListPostForum> {
   List<DocumentSnapshot> listVotes5 = [];
   List<DocumentSnapshot> listVotes6 = [];
   List<DocumentSnapshot> totalVotes = [];
+  bool _displayFront;
+  bool _flipXAxis;
 
   Widget commentWidget(DocumentReference reference) {
     var screenSize = MediaQuery.of(context).size;
@@ -68,9 +73,10 @@ class _ListPostForumState extends State<ListPostForum> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              '${snapshot.data.length}',
               style: TextStyle(
                   fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
                   fontSize: textBody1(context),
                   color: Colors.grey),
             ),
@@ -173,26 +179,7 @@ class _ListPostForumState extends State<ListPostForum> {
         _selected4 = value;
       });
     });
-    _repository
-        .checkIfUserVotedOrNot(widget.currentuser.uid,
-            widget.documentSnapshot.reference, 'option5')
-        .then((value) {
-      print("VALUE : $value");
-      if (!mounted) return;
-      setState(() {
-        _selected5 = value;
-      });
-    });
-    _repository
-        .checkIfUserVotedOrNot(widget.currentuser.uid,
-            widget.documentSnapshot.reference, 'option6')
-        .then((value) {
-      print("VALUE : $value");
-      if (!mounted) return;
-      setState(() {
-        _selected6 = value;
-      });
-    });
+
     _repository
         .fetchPerVotes(widget.documentSnapshot.reference, 'option1')
         .then((value) {
@@ -234,26 +221,7 @@ class _ListPostForumState extends State<ListPostForum> {
         });
       }
     });
-    _repository
-        .fetchPerVotes(widget.documentSnapshot.reference, 'option5')
-        .then((value) {
-      if (value != null) {
-        if (!mounted) return;
-        setState(() {
-          listVotes5 = value;
-        });
-      }
-    });
-    _repository
-        .fetchPerVotes(widget.documentSnapshot.reference, 'option6')
-        .then((value) {
-      if (value != null) {
-        if (!mounted) return;
-        setState(() {
-          listVotes6 = value;
-        });
-      }
-    });
+
     _repository
         .fetchPerVotes(widget.documentSnapshot.reference, 'votes')
         .then((value) {
@@ -271,6 +239,17 @@ class _ListPostForumState extends State<ListPostForum> {
     super.initState();
     selectedSubject = 'Spam';
     buildPollDetail();
+    _displayFront = true;
+    _flipXAxis = true;
+    _repository
+        .checkIfUserLikedOrNot(
+            widget.currentuser.uid, widget.documentSnapshot.reference)
+        .then((value) {
+      if (!mounted) return;
+      setState(() {
+        _isLiked = value;
+      });
+    });
   }
 
   setSelectedSubject(String val) {
@@ -314,12 +293,8 @@ class _ListPostForumState extends State<ListPostForum> {
     return InkWell(
       onTap: () {},
       child: Text(
-          _getPercentage() == double.nan
-              ? ''
-              : '${_getPercentage()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
+          '${_getPercentage().toString().substring(0, 2)} %'
+              .replaceAll('Na', '0'),
           style: TextStyle(
               fontFamily: FontNameDefault,
               fontWeight: FontWeight.bold,
@@ -333,12 +308,8 @@ class _ListPostForumState extends State<ListPostForum> {
     return InkWell(
       onTap: () {},
       child: Text(
-          _getPercentage2() == double.nan
-              ? ''
-              : '${_getPercentage2()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
+          '${_getPercentage2().toString().substring(0, 2)} %'
+              .replaceAll('Na', '0'),
           style: TextStyle(
               fontFamily: FontNameDefault,
               fontWeight: FontWeight.bold,
@@ -352,12 +323,8 @@ class _ListPostForumState extends State<ListPostForum> {
     return InkWell(
       onTap: () {},
       child: Text(
-          _getPercentage3() == double.nan
-              ? ''
-              : '${_getPercentage3()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
+          '${_getPercentage3().toString().substring(0, 2)} %'
+              .replaceAll('Na', '0'),
           style: TextStyle(
               fontFamily: FontNameDefault,
               fontWeight: FontWeight.bold,
@@ -371,50 +338,8 @@ class _ListPostForumState extends State<ListPostForum> {
     return InkWell(
       onTap: () {},
       child: Text(
-          _getPercentage4() == double.nan
-              ? ''
-              : '${_getPercentage4()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
-    );
-  }
-
-  Widget option5Widget() {
-    var screenSize = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: () {},
-      child: Text(
-          _getPercentage5() == double.nan
-              ? ''
-              : '${_getPercentage5()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
-    );
-  }
-
-  Widget option6Widget() {
-    var screenSize = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: () {},
-      child: Text(
-          _getPercentage6() == double.nan
-              ? ''
-              : '${_getPercentage6()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
+          '${_getPercentage4().toString().substring(0, 2)} %'
+              .replaceAll('Na', '0'),
           style: TextStyle(
               fontFamily: FontNameDefault,
               fontWeight: FontWeight.bold,
@@ -446,19 +371,526 @@ class _ListPostForumState extends State<ListPostForum> {
   _getPercentage() => (listVotes.length / totalVotes.length) * 100;
   _getPercentage2() => (listVotes2.length / totalVotes.length) * 100;
   _getPercentage3() => (listVotes3.length / totalVotes.length) * 100;
-  _getPercentage5() => (listVotes5.length / totalVotes.length) * 100;
-  _getPercentage6() => (listVotes6.length / totalVotes.length) * 100;
+
+  _percent1() {
+    if (totalVotes.length != 0) {
+      if (listVotes.length / totalVotes.length * 1.0 == double.nan) {
+      } else {
+        return listVotes.length / totalVotes.length * 1.0;
+      }
+    } else {
+      return 0.0;
+    }
+  }
+
+  _percent2() {
+    if (totalVotes.length != 0) {
+      return listVotes2.length / totalVotes.length * 1.0;
+    } else {
+      return 0.0;
+    }
+  }
+
+  _percent3() {
+    if (totalVotes.length != 0) {
+      return listVotes3.length / totalVotes.length * 1.0;
+    } else {
+      return 0.0;
+    }
+  }
+
+  _percent4() {
+    if (totalVotes.length != 0) {
+      return listVotes4.length / totalVotes.length * 1.0;
+    } else {
+      return 0.0;
+    }
+  }
+
+  checkPollStatus(int time) {
+    if (DateTime.now().millisecondsSinceEpoch >= time) {
+      setState(() {
+        _isVoted = true;
+      });
+      return Text(
+        'Expired',
+        style: TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontFamily: FontNameDefault,
+            fontSize: textBody1(context)),
+      );
+    } else {
+      return Text(
+        'Ends ${convertDate(time)}',
+        style: TextStyle(
+            color: Colors.black54,
+            fontWeight: FontWeight.bold,
+            fontFamily: FontNameDefault,
+            fontSize: textBody1(context)),
+      );
+    }
+  }
+
+  convertDate(int timeinMilis) {
+    var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
+    var formattedDate = DateFormat.MMMd().add_jm().format(date);
+    return formattedDate;
+  }
+
+  Widget _buildLayout({
+    Key key,
+    Color backgroundColor,
+    Color containerColor,
+  }) {
+    var screenSize = MediaQuery.of(context).size;
+    return Container(
+      key: key,
+      margin: const EdgeInsets.fromLTRB(
+        12.0,
+        0.0,
+        12.0,
+        8.0,
+      ),
+      decoration: ShapeDecoration(
+
+          // borderRadius: BorderRadius.circular(12.0),
+          color: backgroundColor,
+          shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.black54, width: 0.1),
+              borderRadius: BorderRadius.circular(12.0))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          //     Divider(),
+          Padding(
+            padding: EdgeInsets.only(
+              top: screenSize.height * 0.01,
+              left: screenSize.width * 0.025,
+              right: screenSize.width * 0.025,
+            ),
+            child: Container(
+              decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40.0))),
+              padding: EdgeInsets.only(
+                  //    bottom: screenSize.height * 0.01,
+                  top: screenSize.height * 0.01,
+                  left: screenSize.width / 30),
+              child: Text(
+                widget.documentSnapshot.data['caption'],
+                style: TextStyle(
+                    //   color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: FontNameDefault,
+                    fontSize: textAppTitle(context)),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              screenSize.width / 30,
+              0,
+              screenSize.width / 30,
+              screenSize.height * 0.01,
+            ),
+            child: Column(
+              children: [
+                widget.documentSnapshot.data['option1'] != ''
+                    ? Column(
+                        children: [
+                          //     SizedBox(height: screenSize.height * 0.01),
+                          InkWell(
+                            onTap: () {
+                              if (!_isVoted && !_selected1) {
+                                setState(() {
+                                  _isVoted = true;
+                                });
+                                postVote(widget.documentSnapshot.reference);
+                                addVoteToSelectedOption(
+                                    widget.documentSnapshot.reference,
+                                    widget.currentuser,
+                                    'option1');
+                                buildPollDetail();
+                              }
+                            },
+                            child: Container(
+                                height: screenSize.height * 0.05,
+                                width: screenSize.width / 1.2,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.deepPurple[50]),
+                                  color: _selected1
+                                      ? containerColor
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child: !_isVoted
+                                    ? Center(
+                                        child: Text(
+                                        widget.documentSnapshot.data['option1'],
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context),
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontWeight: FontWeight.bold),
+                                      ))
+                                    : Container(
+                                        margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                        width: double.infinity,
+                                        child: LinearPercentIndicator(
+                                          backgroundColor:
+                                              Colors.deepPurple[50],
+                                          animation: true,
+                                          lineHeight: 38.0,
+                                          animationDuration: 500,
+                                          percent: _percent1(),
+                                          center: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                widget.documentSnapshot
+                                                    .data['option1'],
+                                                style: TextStyle(
+                                                    fontFamily: FontNameDefault,
+                                                    color: Colors.black54,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        textBody1(context)),
+                                              ),
+                                              option1Widget()
+                                            ],
+                                          ),
+                                          linearStrokeCap:
+                                              LinearStrokeCap.roundAll,
+                                          progressColor: _selected1
+                                              ? Colors.deepPurple[300]
+                                              : Colors.deepPurple[100],
+                                        ),
+                                      )),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                widget.documentSnapshot.data['option2'] != ''
+                    ? Column(
+                        children: [
+                          SizedBox(height: screenSize.height * 0.01),
+                          InkWell(
+                            onTap: () {
+                              if (!_isVoted && !_selected2) {
+                                setState(() {
+                                  _isVoted = true;
+                                });
+
+                                postVote(widget.documentSnapshot.reference);
+                                addVoteToSelectedOption(
+                                    widget.documentSnapshot.reference,
+                                    widget.currentuser,
+                                    'option2');
+                                buildPollDetail();
+                              }
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.05,
+                              width: screenSize.width / 1.2,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.deepPurple[50]),
+                                color:
+                                    _selected2 ? containerColor : Colors.white,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              child: !_isVoted
+                                  ? Center(
+                                      child: Text(
+                                      widget.documentSnapshot.data['option2'],
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: textBody1(context)),
+                                    ))
+                                  : Container(
+                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                      width: double.infinity,
+                                      child: LinearPercentIndicator(
+                                        backgroundColor: Colors.deepPurple[50],
+                                        animation: true,
+                                        lineHeight: 38.0,
+                                        animationDuration: 500,
+                                        percent: _percent2(),
+                                        center: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              widget.documentSnapshot
+                                                  .data['option2'],
+                                              style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: textBody1(context)),
+                                            ),
+                                            option2Widget()
+                                          ],
+                                        ),
+                                        linearStrokeCap:
+                                            LinearStrokeCap.roundAll,
+                                        progressColor: _selected2
+                                            ? Colors.deepPurple[300]
+                                            : Colors.deepPurple[100],
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                widget.documentSnapshot.data['option3'] != ''
+                    ? Column(
+                        children: [
+                          SizedBox(height: screenSize.height * 0.01),
+                          InkWell(
+                            onTap: () {
+                              if (!_isVoted && !_selected3) {
+                                setState(() {
+                                  _isVoted = true;
+                                });
+
+                                postVote(widget.documentSnapshot.reference);
+                                addVoteToSelectedOption(
+                                    widget.documentSnapshot.reference,
+                                    widget.currentuser,
+                                    'option3');
+                                buildPollDetail();
+                              }
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.05,
+                              width: screenSize.width / 1.2,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.deepPurple[50]),
+                                color:
+                                    _selected3 ? containerColor : Colors.white,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              child: !_isVoted
+                                  ? Center(
+                                      child: Text(
+                                      widget.documentSnapshot.data['option3'],
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: textBody1(context)),
+                                    ))
+                                  : Container(
+                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                      width: double.infinity,
+                                      child: LinearPercentIndicator(
+                                        backgroundColor: Colors.deepPurple[50],
+                                        animation: true,
+                                        lineHeight: 38.0,
+                                        animationDuration: 500,
+                                        percent: _percent3(),
+                                        center: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              widget.documentSnapshot
+                                                  .data['option3'],
+                                              style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: textBody1(context)),
+                                            ),
+                                            option3Widget()
+                                          ],
+                                        ),
+                                        linearStrokeCap:
+                                            LinearStrokeCap.roundAll,
+                                        progressColor: _selected3
+                                            ? Colors.deepPurple[300]
+                                            : Colors.deepPurple[100],
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                widget.documentSnapshot.data['option4'] != ''
+                    ? Column(
+                        children: [
+                          SizedBox(height: screenSize.height * 0.01),
+                          InkWell(
+                            onTap: () {
+                              if (!_isVoted && !_selected4) {
+                                setState(() {
+                                  _isVoted = true;
+                                });
+
+                                postVote(widget.documentSnapshot.reference);
+                                addVoteToSelectedOption(
+                                    widget.documentSnapshot.reference,
+                                    widget.currentuser,
+                                    'option4');
+                                buildPollDetail();
+                              }
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.05,
+                              width: screenSize.width / 1.2,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.deepPurple[50]),
+                                color:
+                                    _selected4 ? containerColor : Colors.white,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              child: !_isVoted
+                                  ? Center(
+                                      child: Text(
+                                      widget.documentSnapshot.data['option4'],
+                                      style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textBody1(context)),
+                                    ))
+                                  : Container(
+                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                      width: double.infinity,
+                                      child: LinearPercentIndicator(
+                                        backgroundColor: Colors.deepPurple[50],
+                                        animation: true,
+                                        lineHeight: 38.0,
+                                        animationDuration: 500,
+                                        percent: _percent4(),
+                                        center: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              widget.documentSnapshot
+                                                  .data['option4'],
+                                              style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: textBody1(context)),
+                                            ),
+                                            option4Widget()
+                                          ],
+                                        ),
+                                        linearStrokeCap:
+                                            LinearStrokeCap.roundAll,
+                                        progressColor: _selected4
+                                            ? Colors.deepPurple[300]
+                                            : Colors.deepPurple[100],
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                SizedBox(
+                  height: screenSize.height * 0.005,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenSize.height * 0.01,
+                      horizontal: screenSize.width / 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      checkPollStatus(
+                        widget.documentSnapshot.data['pollLength'],
+                      ),
+                      Text(
+                        '${totalVotes.length} Total votes',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          //  Divider(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFront() {
+    return _buildLayout(
+        key: ValueKey(_isVoted),
+        backgroundColor: Colors.white,
+        containerColor: Colors.deepPurple[200]);
+  }
+
+  Widget _buildRear() {
+    return _buildLayout(
+        key: ValueKey(_isVoted),
+        backgroundColor: Colors.white,
+        containerColor: Colors.white);
+  }
+
+  Widget _buildFlipAnimation() {
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 600),
+      transitionBuilder: __transitionBuilder,
+      layoutBuilder: (widget, list) => Stack(
+        children: [widget, ...list],
+      ),
+      child: _isVoted ? _buildFront() : _buildRear(),
+      switchInCurve: Curves.easeInBack,
+      switchOutCurve: Curves.easeInBack.flipped,
+    );
+  }
+
+  Widget __transitionBuilder(Widget widget, Animation<double> animation) {
+    final rotateAnim = Tween(begin: pi, end: 0.0).animate(animation);
+    return AnimatedBuilder(
+      animation: rotateAnim,
+      child: widget,
+      builder: (context, widget) {
+        final isUnder = (ValueKey(_isVoted) != widget.key);
+        var tilt = ((animation.value - 0.5).abs() - 0.5) * 0.003;
+        tilt *= isUnder ? -1.0 : 1.0;
+        final value =
+            isUnder ? min(rotateAnim.value, pi / 2) : rotateAnim.value;
+        return Transform(
+          transform: _flipXAxis
+              ? (Matrix4.rotationY(value)..setEntry(3, 0, tilt))
+              : (Matrix4.rotationX(value)..setEntry(3, 1, tilt)),
+          child: widget,
+          alignment: Alignment.center,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     print('build list');
     var screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        left: 8.0,
-        right: 8.0,
-      ),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
       child: Container(
         decoration: ShapeDecoration(
           color: const Color(0xffffffff),
@@ -469,1118 +901,610 @@ class _ListPostForumState extends State<ListPostForum> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                screenSize.width / 30,
-                screenSize.height * 0.012,
-                screenSize.width / 50,
-                0,
+            ListTile(
+              leading: CircleAvatar(
+                  radius: screenSize.height * 0.03,
+                  backgroundImage: CachedNetworkImageProvider(
+                      widget.documentSnapshot.data['postOwnerPhotoUrl'])),
+              title: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FriendProfileScreen(
+                              uid: widget.documentSnapshot.data['ownerUid'],
+                              name: widget
+                                  .documentSnapshot.data['postOwnerName'])));
+                },
+                child: new Text(
+                  widget.documentSnapshot.data['postOwnerName'],
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context),
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      new CircleAvatar(
-                          radius: screenSize.height * 0.03,
-                          backgroundImage: CachedNetworkImageProvider(widget
-                              .documentSnapshot.data['postOwnerPhotoUrl'])),
-                      new SizedBox(
-                        width: screenSize.width / 30,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InstaFriendProfileScreen(
-                                              uid: widget.documentSnapshot
-                                                  .data['ownerUid'],
-                                              name: widget.documentSnapshot
-                                                  .data['postOwnerName'])));
-                            },
-                            child: new Text(
-                              widget.documentSnapshot.data['postOwnerName'],
+              subtitle: widget.documentSnapshot.data['location'] != '' &&
+                      widget.documentSnapshot.data['location'] != null
+                  ? Row(
+                      children: [
+                        new Text(
+                          widget.documentSnapshot.data['location'],
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //    fontSize: textBody1(context),
+                              color: Colors.grey),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Icon(
+                          Icons.circle,
+                          size: 6.0,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            //   left: screenSize.width / 30,
+                            top: screenSize.height * 0.002,
+                          ),
+                          child: Text(
+                              widget.documentSnapshot.data['time'] != null
+                                  ? timeago.format(widget
+                                      .documentSnapshot.data['time']
+                                      .toDate())
+                                  : '',
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          widget.documentSnapshot.data['location'] != null
-                              ? new Text(
-                                  widget.documentSnapshot.data['location'],
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.grey),
-                                )
-                              : Container(),
-                        ],
+                                  //   fontSize: textbody2(context),
+                                  color: Colors.grey)),
+                        ),
+                      ],
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(
+                        //   left: screenSize.width / 30,
+                        top: screenSize.height * 0.002,
                       ),
-                    ],
-                  ),
-                  widget.currentuser.uid ==
-                              widget.documentSnapshot.data['ownerUid'] ||
-                          widget.group != null &&
-                              widget.group.currentUserUid ==
-                                  widget.currentuser.uid
-                      ? InkWell(
-                          onTap: () {
-                            showDelete(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
+                      child: Text(
+                          widget.documentSnapshot.data['time'] != null
+                              ? timeago.format(
+                                  widget.documentSnapshot.data['time'].toDate())
+                              : '',
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //   fontSize: textbody2(context),
+                              color: Colors.grey)),
+                    ),
+              trailing: widget.currentuser.uid ==
+                          widget.documentSnapshot.data['ownerUid'] ||
+                      widget.group != null &&
+                          widget.group.currentUserUid == widget.currentuser.uid
+                  ? InkWell(
+                      onTap: () {
+                        //    showDelete(widget.documentSnapshot);
+                        deleteDialog(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                //          borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
-                                ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontSize: textButton(context),
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            showReport(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
+                              child: Icon(Icons.more_horiz_outlined))),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        showReport(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                //          borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
-                                ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontSize: textButton(context),
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
-                        )
-                ],
-              ),
+                              child: Icon(Icons.more_horiz_outlined))),
+                    ),
             ),
             widget.documentSnapshot.data['postType'] == 'poll'
-                ? _isVoted == false
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: screenSize.height * 0.005,
-                          ),
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              showCategory(widget.documentSnapshot, context),
-                              Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Chip(
-                                  backgroundColor: Colors.blue[50],
-                                  label: Text(
-                                    widget.documentSnapshot.data['pollType'],
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: screenSize.height * 0.01,
-                            ),
-                            child: Container(
-                              decoration: ShapeDecoration(
-                                  color: Colors.grey[50],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(40.0))),
-                              padding: EdgeInsets.only(
-                                  bottom: screenSize.height * 0.01,
-                                  top: screenSize.height * 0.01,
-                                  left: screenSize.width / 30),
-                              child: Text(
-                                widget.documentSnapshot.data['caption'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              screenSize.width / 30,
-                              screenSize.height * 0.01,
-                              screenSize.width / 30,
-                              screenSize.height * 0.01,
-                            ),
-                            child: Column(
-                              children: [
-                                widget.documentSnapshot.data['option1'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option1');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option1'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context),
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option2'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option2');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option2'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option3'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option3');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option3'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option4'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option4');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option4'],
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option5'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option5');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option5'],
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option6'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
-
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option6');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option6'],
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          ),
-                          Divider(),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            height: screenSize.height * 0.005,
-                          ),
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              showCategory(widget.documentSnapshot, context),
-                              Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Chip(
-                                  backgroundColor: Colors.blue[50],
-                                  label: Text(
-                                    widget.documentSnapshot.data['pollType'],
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: screenSize.height * 0.01,
-                            ),
-                            child: Container(
-                              decoration: ShapeDecoration(
-                                  color: Colors.grey[50],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(40.0))),
-                              padding: EdgeInsets.only(
-                                  bottom: screenSize.height * 0.01,
-                                  top: screenSize.height * 0.01,
-                                  left: screenSize.width / 30),
-                              child: Text(
-                                widget.documentSnapshot.data['caption'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              screenSize.width / 30,
-                              screenSize.height * 0.01,
-                              screenSize.width / 30,
-                              screenSize.height * 0.01,
-                            ),
-                            child: Column(
-                              children: [
-                                widget.documentSnapshot.data['option1'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              // setState(() {
-                                              //   _isVoted = false;
-                                              // });
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: _selected1 == false
-                                                    ? Colors.white
-                                                    : Colors.deepPurple[200],
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left:
-                                                              screenSize.width /
-                                                                  30),
-                                                      child: Text(
-                                                        widget.documentSnapshot
-                                                            .data['option1'],
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontFamily:
-                                                                FontNameDefault,
-                                                            fontSize: textBody1(
-                                                                context)),
-                                                      )),
-                                                  option1Widget()
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option2'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected2 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: screenSize.width /
-                                                          30),
-                                                  child: Text(
-                                                    widget.documentSnapshot
-                                                        .data['option2'],
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .primaryColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily:
-                                                            FontNameDefault,
-                                                        fontSize:
-                                                            textBody1(context)),
-                                                  ),
-                                                ),
-                                                option2Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option3'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected3 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option3'],
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context)),
-                                                    )),
-                                                option3Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option4'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected4 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option4'],
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context)),
-                                                    )),
-                                                option4Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option5'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected5 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option5'],
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context)),
-                                                    )),
-                                                option5Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot.data['option6'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected6 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option6'],
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context)),
-                                                    )),
-                                                option6Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          ),
-                          Divider(),
-                        ],
-                      )
-                : widget.documentSnapshot.data['imgUrl'] != null
-                    ? Padding(
-                        padding: EdgeInsets.only(top: screenSize.height * 0.01),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ImageDetail(
-                                          image: widget
-                                              .documentSnapshot.data['imgUrl'],
-                                        )));
-                          },
-                          child: FadeInImage.memoryNetwork(
-                            placeholder: kTransparentImage,
-                            image: widget.documentSnapshot.data['imgUrl'],
-                          ),
+                ? Container(
+                    // constraints: BoxConstraints.tight(Size.square(screenSize.height)),
+                    child: _buildFlipAnimation())
+                : widget.documentSnapshot.data['imgUrl'] == null ||
+                        widget.documentSnapshot.data['imgUrl'] == ''
+                    ? Container()
+                    : Center(
+                        child: FadeInImage.assetNetwork(
+                          fadeInDuration: const Duration(milliseconds: 300),
+                          placeholder: 'assets/images/placeholder.png',
+                          placeholderScale: 10,
+                          image: widget.documentSnapshot.data['imgUrl'],
                         ),
-                      )
-                    : Container(),
-            widget.documentSnapshot.data['caption'] != '' &&
-                    widget.documentSnapshot.data['postType'] != 'poll'
-                ? widget.documentSnapshot.data['imgUrl'] != null
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: screenSize.height * 0.01,
-                                left: screenSize.width / 30),
-                            child: Text(
-                              widget.documentSnapshot.data['caption'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context)),
-                            ),
-                          ),
-                          // commentWidget(widget.documentSnapshot.reference)
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: screenSize.height * 0.01,
-                            ),
-                            child: Container(
-                              decoration: ShapeDecoration(
-                                  color: Colors.grey[50],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(40.0))),
-                              padding: EdgeInsets.only(
-                                  bottom: screenSize.height * 0.01,
-                                  top: screenSize.height * 0.01,
-                                  left: screenSize.width / 30),
-                              child: Text(
-                                widget.documentSnapshot.data['caption'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                : Container(),
-            Padding(
-              padding: EdgeInsets.all(screenSize.height * 0.012),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                          child: _isLiked
-                              ? Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Liked',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ))
-                              : Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Like',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                          onTap: () {
-                            if (!_isLiked) {
-                              setState(() {
-                                _isLiked = true;
-                              });
-
-                              postLike(widget.documentSnapshot.reference);
-                              addLikeToActivityFeed(
-                                  widget.documentSnapshot, widget.currentuser);
-                            } else {
-                              setState(() {
-                                _isLiked = false;
-                              });
-
-                              postUnlike(widget.documentSnapshot.reference);
-                              removeLikeFromActivityFeed(
-                                  widget.documentSnapshot, widget.currentuser);
-                            }
-                          }),
-                      new SizedBox(
-                        width: screenSize.width / 30,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
-                                        group: widget.group,
-                                        isGroupFeed: true,
-                                        snapshot: widget.documentSnapshot,
-                                        followingUser: widget.currentuser,
-                                        documentReference:
-                                            widget.documentSnapshot.reference,
-                                        user: widget.currentuser,
-                                      ))));
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
-                                  side: BorderSide(
-                                      width: 1.5, color: Colors.deepPurple)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
+            widget.documentSnapshot.data['postType'] == 'poll'
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.only(
+                      top: screenSize.height * 0.01,
+                    ),
+                    child: Container(
+                      // decoration: ShapeDecoration(
+                      //     color: Colors.grey[50],
+                      //     shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(40.0))),
+                      padding: EdgeInsets.only(
+                          bottom: screenSize.height * 0.01,
+                          top: screenSize.height * 0.01,
+                          left: screenSize.width * 0.05),
+                      child: Text(
+                        widget.documentSnapshot.data['caption'],
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                    ),
+                  ),
+            ListTile(
+              leading: GestureDetector(
+                  child: _isLiked
+                      ? Container(
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 8.0,
                                 right: 8.0,
                                 top: 6.0,
                                 bottom: 6.0,
                               ),
-                              child: Text(
-                                'Comment',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.deepPurple,
-                                    fontWeight: FontWeight.bold),
+                              child: Icon(Icons.thumb_up_alt)))
+                      : Container(
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                                right: 8.0,
+                                top: 6.0,
+                                bottom: 6.0,
                               ),
-                            )),
+                              child: Icon(Icons.thumb_up_alt_outlined))),
+                  onTap: () {
+                    if (!_isLiked) {
+                      setState(() {
+                        _isLiked = true;
+                      });
+
+                      postLike(widget.documentSnapshot.reference);
+                      addLikeToActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    } else {
+                      setState(() {
+                        _isLiked = false;
+                      });
+
+                      postUnlike(widget.documentSnapshot.reference);
+                      removeLikeFromActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    }
+                  }),
+              title: FutureBuilder(
+                future: _repository
+                    .fetchPostLikes(widget.documentSnapshot.reference),
+                builder: ((context,
+                    AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+                  if (likesSnapshot.hasData) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => LikesScreen(
+                                      user: widget.currentuser,
+                                      documentReference:
+                                          widget.documentSnapshot.reference,
+                                    ))));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 6.0),
+                          child: likesSnapshot.data.length > 0
+                              ? SizedBox(
+                                  height: screenSize.height * 0.06,
+                                  width: screenSize.width * 0.2,
+                                  child: Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 15.0,
+                                        backgroundColor: Colors.black,
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                likesSnapshot.data[0]
+                                                    .data['ownerPhotoUrl']),
+                                      ),
+                                      likesSnapshot.data.length > 1
+                                          ? Positioned(
+                                              left: 15.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[1].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 2
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[2].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 3
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot
+                                                                .data[3].data[
+                                                            'ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 4
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                child: Text(
+                                                    '${likesSnapshot.data.length}'),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                )
+
+                              //  Text(
+                              //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              //     style: TextStyle(
+                              //         fontFamily: FontNameDefault,
+                              //         fontSize: textBody1(context),
+                              //         fontWeight: FontWeight.bold),
+                              //   )
+                              : Text(
+                                  "0 ",
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                        ),
                       ),
-                      new SizedBox(
-                        width: screenSize.width / 30,
-                      ),
-                    ],
-                  ),
-                  new Icon(
-                    MdiIcons.bookmark,
-                    color: Colors.white,
-                    size: screenSize.height * 0.035,
-                  )
-                ],
+                    );
+                  } else {
+                    return Center(child: Container());
+                  }
+                }),
               ),
-            ),
-            FutureBuilder(
-              future:
-                  _repository.fetchPostLikes(widget.documentSnapshot.reference),
-              builder: ((context,
-                  AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-                if (likesSnapshot.hasData) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => LikesScreen(
-                                    user: widget.currentuser,
-                                    documentReference:
-                                        widget.documentSnapshot.reference,
-                                  ))));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenSize.width / 30),
-                      child: likesSnapshot.data.length > 1
-                          ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : Text(
-                              likesSnapshot.data.length == 1
-                                  ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
-                                  : "0 Likes",
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                            ),
+              trailing: SizedBox(
+                height: 40,
+                width: 50,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => CommentsScreen(
+                                  group: widget.group,
+                                  isGroupFeed: true,
+                                  snapshot: widget.documentSnapshot,
+                                  followingUser: widget.currentuser,
+                                  documentReference:
+                                      widget.documentSnapshot.reference,
+                                  user: widget.currentuser,
+                                ))));
+                  },
+                  child: Container(
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(60.0),
+                    //       side: BorderSide(width: 0.1, color: Colors.black54)),
+                    //   //color: Theme.of(context).accentColor,
+                    // ),
+                    child: Row(
+                      children: [
+                        commentWidget(widget.documentSnapshot.reference),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Icon(Icons.messenger_outline_sharp),
+                      ],
                     ),
-                  );
-                } else {
-                  return Center(child: Container());
-                }
-              }),
-            ),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width / 30,
-                  vertical: screenSize.height * 0.005,
+                  ),
                 ),
-                child: commentWidget(widget.documentSnapshot.reference)),
-            Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                bottom: screenSize.height * 0.012,
               ),
-              child: Text(
-                  widget.documentSnapshot.data['time'] != null
-                      ? timeago
-                          .format(widget.documentSnapshot.data['time'].toDate())
-                      : '',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textbody2(context),
-                      color: Colors.grey)),
             ),
+            // Padding(
+            //   padding:
+            //       EdgeInsets.symmetric(horizontal: screenSize.width * 0.02),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Row(
+            //         children: [
+            //           GestureDetector(
+            //               child: _isLiked
+            //                   ? Container(
+            //                       decoration: ShapeDecoration(
+            //                         shape: RoundedRectangleBorder(
+            //                             borderRadius:
+            //                                 BorderRadius.circular(60.0),
+            //                             side: BorderSide(
+            //                                 width: 0.1, color: Colors.black54)),
+            //                         //color: Theme.of(context).accentColor,
+            //                       ),
+            //                       child: Padding(
+            //                           padding: const EdgeInsets.only(
+            //                             left: 8.0,
+            //                             right: 8.0,
+            //                             top: 6.0,
+            //                             bottom: 6.0,
+            //                           ),
+            //                           child: Icon(Icons.thumb_up_alt)))
+            //                   : Container(
+            //                       decoration: ShapeDecoration(
+            //                         shape: RoundedRectangleBorder(
+            //                             borderRadius:
+            //                                 BorderRadius.circular(60.0),
+            //                             side: BorderSide(
+            //                                 width: 0.1, color: Colors.black54)),
+            //                         //color: Theme.of(context).accentColor,
+            //                       ),
+            //                       child: Padding(
+            //                           padding: const EdgeInsets.only(
+            //                             left: 8.0,
+            //                             right: 8.0,
+            //                             top: 6.0,
+            //                             bottom: 6.0,
+            //                           ),
+            //                           child:
+            //                               Icon(Icons.thumb_up_alt_outlined))),
+            //               onTap: () {
+            //                 if (!_isLiked) {
+            //                   setState(() {
+            //                     _isLiked = true;
+            //                   });
+
+            //                   postLike(widget.documentSnapshot.reference);
+            //                   addLikeToActivityFeed(
+            //                       widget.documentSnapshot, widget.currentuser);
+            //                 } else {
+            //                   setState(() {
+            //                     _isLiked = false;
+            //                   });
+
+            //                   postUnlike(widget.documentSnapshot.reference);
+            //                   removeLikeFromActivityFeed(
+            //                       widget.documentSnapshot, widget.currentuser);
+            //                 }
+            //               }),
+            //           FutureBuilder(
+            //             future: _repository
+            //                 .fetchPostLikes(widget.documentSnapshot.reference),
+            //             builder: ((context,
+            //                 AsyncSnapshot<List<DocumentSnapshot>>
+            //                     likesSnapshot) {
+            //               if (likesSnapshot.hasData) {
+            //                 return GestureDetector(
+            //                   onTap: () {
+            //                     Navigator.push(
+            //                         context,
+            //                         MaterialPageRoute(
+            //                             builder: ((context) => LikesScreen(
+            //                                   user: widget.currentuser,
+            //                                   documentReference: widget
+            //                                       .documentSnapshot.reference,
+            //                                 ))));
+            //                   },
+            //                   child: Container(
+            //                     child: Padding(
+            //                       padding: EdgeInsets.all(8.0),
+            //                       child: likesSnapshot.data.length > 0
+            //                           ? SizedBox(
+            //                               height: screenSize.height * 0.06,
+            //                               width: screenSize.width * 0.2,
+            //                               child: Stack(
+            //                                 children: [
+            //                                   CircleAvatar(
+            //                                     radius: 15.0,
+            //                                     backgroundColor: Colors.black,
+            //                                     backgroundImage:
+            //                                         CachedNetworkImageProvider(
+            //                                             likesSnapshot
+            //                                                     .data[0].data[
+            //                                                 'ownerPhotoUrl']),
+            //                                   ),
+            //                                   likesSnapshot.data.length > 1
+            //                                       ? Positioned(
+            //                                           left: 15.0,
+            //                                           child: CircleAvatar(
+            //                                             radius: 15.0,
+            //                                             backgroundImage:
+            //                                                 CachedNetworkImageProvider(
+            //                                                     likesSnapshot
+            //                                                             .data[1]
+            //                                                             .data[
+            //                                                         'ownerPhotoUrl']),
+            //                                           ),
+            //                                         )
+            //                                       : Container(),
+            //                                   likesSnapshot.data.length > 2
+            //                                       ? Positioned(
+            //                                           left: 30.0,
+            //                                           child: CircleAvatar(
+            //                                             radius: 15.0,
+            //                                             backgroundColor:
+            //                                                 Colors.grey,
+            //                                             backgroundImage:
+            //                                                 CachedNetworkImageProvider(
+            //                                                     likesSnapshot
+            //                                                             .data[2]
+            //                                                             .data[
+            //                                                         'ownerPhotoUrl']),
+            //                                           ),
+            //                                         )
+            //                                       : Container(),
+            //                                   likesSnapshot.data.length > 3
+            //                                       ? Positioned(
+            //                                           left: 30.0,
+            //                                           child: CircleAvatar(
+            //                                             radius: 15.0,
+            //                                             backgroundColor:
+            //                                                 Colors.grey,
+            //                                             backgroundImage:
+            //                                                 CachedNetworkImageProvider(
+            //                                                     likesSnapshot
+            //                                                             .data[3]
+            //                                                             .data[
+            //                                                         'ownerPhotoUrl']),
+            //                                           ),
+            //                                         )
+            //                                       : Container(),
+            //                                   likesSnapshot.data.length > 4
+            //                                       ? Positioned(
+            //                                           left: 30.0,
+            //                                           child: CircleAvatar(
+            //                                             radius: 15.0,
+            //                                             backgroundColor:
+            //                                                 Colors.grey,
+            //                                             child: Text(
+            //                                                 '${likesSnapshot.data.length}'),
+            //                                           ),
+            //                                         )
+            //                                       : Container(),
+            //                                 ],
+            //                               ),
+            //                             )
+
+            //                           //  Text(
+            //                           //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+            //                           //     style: TextStyle(
+            //                           //         fontFamily: FontNameDefault,
+            //                           //         fontSize: textBody1(context),
+            //                           //         fontWeight: FontWeight.bold),
+            //                           //   )
+            //                           : Text(
+            //                               "0 ",
+            //                               style: TextStyle(
+            //                                   fontFamily: FontNameDefault,
+            //                                   fontSize: textBody1(context)),
+            //                             ),
+            //                     ),
+            //                   ),
+            //                 );
+            //               } else {
+            //                 return Center(child: Container());
+            //               }
+            //             }),
+            //           ),
+            //         ],
+            //       ),
+            //       GestureDetector(
+            //         onTap: () {
+            //           Navigator.push(
+            //               context,
+            //               MaterialPageRoute(
+            //                   builder: ((context) => CommentsScreen(
+            //                         group: widget.group,
+            //                         isGroupFeed: true,
+            //                         snapshot: widget.documentSnapshot,
+            //                         followingUser: widget.currentuser,
+            //                         documentReference:
+            //                             widget.documentSnapshot.reference,
+            //                         user: widget.currentuser,
+            //                       ))));
+            //         },
+            //         child: Container(
+            //             decoration: ShapeDecoration(
+            //               shape: RoundedRectangleBorder(
+            //                   borderRadius: BorderRadius.circular(60.0),
+            //                   side: BorderSide(
+            //                       width: 0.1, color: Colors.black54)),
+            //               //color: Theme.of(context).accentColor,
+            //             ),
+            //             child: Padding(
+            //                 padding: const EdgeInsets.only(
+            //                   left: 8.0,
+            //                   right: 8.0,
+            //                   top: 6.0,
+            //                   bottom: 6.0,
+            //                 ),
+            //                 child: Row(
+            //                   children: [
+            //                     commentWidget(
+            //                         widget.documentSnapshot.reference),
+            //                     SizedBox(
+            //                       width: 4.0,
+            //                     ),
+            //                     Icon(Icons.messenger_outline_sharp),
+            //                   ],
+            //                 ))),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            SizedBox(
+              height: screenSize.height * 0.005,
+            ),
+            // Padding(
+            //     padding: EdgeInsets.symmetric(
+            //       horizontal: screenSize.width / 30,
+            //       vertical: screenSize.height * 0.005,
+            //     ),
+            //     child: commentWidget(widget.documentSnapshot.reference)),
           ],
         ),
       ),
@@ -1670,171 +1594,112 @@ class _ListPostForumState extends State<ListPostForum> {
         });
   }
 
-  showCategory(DocumentSnapshot snapshot, BuildContext context) {
+  deleteDialog(DocumentSnapshot snapshot) {
     var screenSize = MediaQuery.of(context).size;
-    if (snapshot.data['category'] == 'Entertainment') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            Icons.tv,
-            color: Colors.green,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.green),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Social') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            Icons.group,
-            color: Colors.blue,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.blue),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Science') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            MdiIcons.spaceStation,
-            color: Colors.orange,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.orange),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Politics') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            MdiIcons.pollBox,
-            color: Colors.brown,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.brown),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Technology') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            MdiIcons.robot,
-            color: Colors.pink,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.pink),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Other') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            Icons.more,
-            color: Colors.grey,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.grey),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Environment') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            MdiIcons.tree,
-            color: Colors.greenAccent,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.greenAccent),
-          ),
-        ),
-      );
-    } else if (snapshot.data['category'] == 'Sports') {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            MdiIcons.tennisBall,
-            color: Colors.purple,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            widget.documentSnapshot.data['category'],
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.purple),
-          ),
-        ),
-      );
-    } else {
-      return Padding(
-        padding: EdgeInsets.only(left: 8.0),
-        child: Chip(
-          avatar: Icon(
-            Icons.more,
-            color: Colors.grey,
-          ),
-          backgroundColor: Colors.white,
-          label: Text(
-            'Other',
-            style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-                color: Colors.grey),
-          ),
-        ),
-      );
-    }
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   showReport(DocumentSnapshot snapshot) {

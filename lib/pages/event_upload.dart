@@ -280,54 +280,54 @@ class _EventUploadState extends State<EventUpload> {
     super.dispose();
   }
 
-  submit() {
-    if (eventTitleController.text.isNotEmpty &&
-        hostNameController.text.isNotEmpty &&
-        aboutController.text.isNotEmpty &&
-        startDateController.text.isNotEmpty &&
-        endDateController.text.isNotEmpty) {
-      //To show CircularProgressIndicator
-      _changeVisibility(false);
-      _repository.getCurrentUser().then((currentUser) {
-        if (currentUser != null) {
-          compressImage();
-          _repository.retreiveUserDetails(currentUser).then((user) {
-            _repository.uploadImageToStorage(widget.imageFile).then((url) {
-              _repository
-                  .addEventToDb(
-                user,
-                url,
-                eventTitleController.text,
-                locationController.text,
-                hostNameController.text,
-                websiteController.text,
-                aboutController.text,
-                agendaController.text,
-                _selectedCategory.name,
-                _selectedEventType.name,
-                venueController.text,
-                startDateController.text,
-                endDateController.text,
-                ticketWebsiteController.text,
-              )
-                  .then((value) {
-                print('Event added to db');
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Home()));
-              }).catchError(
-                      (e) => print('Error adding current event to db : $e'));
-            }).catchError((e) {
-              print('Error uploading image to storage : $e');
-            });
-          });
-        } else {
-          print('Current User is null');
-        }
-      });
-    } else {
-      return;
-    }
-  }
+  // submit() {
+  //   if (eventTitleController.text.isNotEmpty &&
+  //       hostNameController.text.isNotEmpty &&
+  //       aboutController.text.isNotEmpty &&
+  //       startDateController.text.isNotEmpty &&
+  //       endDateController.text.isNotEmpty) {
+  //     //To show CircularProgressIndicator
+  //     _changeVisibility(false);
+  //     _repository.getCurrentUser().then((currentUser) {
+  //       if (currentUser != null) {
+  //         compressImage();
+  //         _repository.retreiveUserDetails(currentUser).then((user) {
+  //           _repository.uploadImageToStorage(widget.imageFile).then((url) {
+  //             _repository
+  //                 .addEventToDb(
+  //               user,
+  //               url,
+  //               eventTitleController.text,
+  //               locationController.text,
+  //               hostNameController.text,
+  //               websiteController.text,
+  //               aboutController.text,
+  //               agendaController.text,
+  //               _selectedCategory.name,
+  //               _selectedEventType.name,
+  //               venueController.text,
+  //               startDateController.text,
+  //               endDateController.text,
+  //               ticketWebsiteController.text,
+  //             )
+  //                 .then((value) {
+  //               print('Event added to db');
+  //               Navigator.pushReplacement(
+  //                   context, MaterialPageRoute(builder: (context) => Home()));
+  //             }).catchError(
+  //                     (e) => print('Error adding current event to db : $e'));
+  //           }).catchError((e) {
+  //             print('Error uploading image to storage : $e');
+  //           });
+  //         });
+  //       } else {
+  //         print('Current User is null');
+  //       }
+  //     });
+  //   } else {
+  //     return;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +367,7 @@ class _EventUploadState extends State<EventUpload> {
                       child: Icon(MdiIcons.send,
                           size: screenSize.height * 0.04,
                           color: Theme.of(context).accentColor),
-                      onTap: submit,
+                      //    onTap: submit,
                     ),
                   )
                 : Padding(

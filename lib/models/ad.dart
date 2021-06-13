@@ -6,6 +6,7 @@ class Ad {
   String imgUrl;
   String caption;
   String location;
+  String city;
   String condition;
   String description;
   String price;
@@ -13,6 +14,9 @@ class Ad {
   String postOwnerName;
   String postOwnerPhotoUrl;
   String postType;
+  String category;
+  List<String> imgUrls;
+  GeoPoint geopoint;
 
   Ad({
     this.postId,
@@ -23,10 +27,14 @@ class Ad {
     this.price,
     this.imgUrl,
     this.location,
+    this.city,
     this.time,
     this.postOwnerName,
     this.postOwnerPhotoUrl,
     this.postType,
+    this.category,
+    this.imgUrls,
+    this.geopoint,
   });
 
   Map toMap(Ad post) {
@@ -39,10 +47,14 @@ class Ad {
     data['price'] = post.price;
     data['condition'] = post.condition;
     data['location'] = post.location;
+    data['city'] = post.city;
     data['time'] = post.time;
     data['postType'] = post.postType;
+    data['category'] = post.category;
+    data['imgUrls'] = post.imgUrls;
     data['postOwnerName'] = post.postOwnerName;
     data['postOwnerPhotoUrl'] = post.postOwnerPhotoUrl;
+    data['geopoint'] = post.geopoint;
     return data;
   }
 
@@ -52,12 +64,16 @@ class Ad {
     this.imgUrl = mapData['imgUrl'];
     this.caption = mapData['caption'];
     this.location = mapData['location'];
+    this.city = mapData['city'];
     this.condition = mapData['condition'];
     this.description = mapData['description'];
     this.price = mapData['price'];
     this.time = mapData['time'];
     this.postType = mapData['postType'];
+    this.category = mapData['category'];
+    this.imgUrls = mapData['imgUrls'];
     this.postOwnerName = mapData['postOwnerName'];
     this.postOwnerPhotoUrl = mapData['postOwnerPhotoUrl'];
+    this.geopoint = mapData['geopoint'];
   }
 }

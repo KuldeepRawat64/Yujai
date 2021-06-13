@@ -1,4 +1,6 @@
-
+import 'package:Yujai/models/education.dart';
+import 'package:Yujai/models/experience.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   String uid;
@@ -15,16 +17,10 @@ class User {
   String posts;
   String gender;
   String status;
+  GeoPoint geoPoint;
   String accountType;
-  String school;
-  String startSchool;
-  String endSchool;
-  String college;
-  String startCollege;
-  String endCollege;
-  String university;
-  String startUniversity;
-  String endUniversity;
+  List<dynamic> education;
+  List<dynamic> experience;
   String website;
   String designation;
   List<dynamic> skills;
@@ -42,18 +38,7 @@ class User {
   String products;
   String establishYear;
   String industry;
-  String certification1;
-  String certification2;
-  String certification3;
-  String company1;
-  String startCompany1;
-  String endCompany1;
-  String company2;
-  String startCompany2;
-  String endCompany2;
-  String company3;
-  String startCompany3;
-  String endCompany3;
+  List<dynamic> certifications;
   String employees;
   String medal;
   bool isVerified;
@@ -76,16 +61,10 @@ class User {
     this.bio,
     this.gender,
     this.status,
+    this.geoPoint,
     this.accountType,
-    this.school,
-    this.startSchool,
-    this.endSchool,
-    this.college,
-    this.startCollege,
-    this.endCollege,
-    this.university,
-    this.startUniversity,
-    this.endUniversity,
+    this.education,
+    this.experience,
     this.website,
     this.designation,
     this.skills,
@@ -103,19 +82,8 @@ class User {
     this.products,
     this.establishYear,
     this.industry,
-    this.certification1,
-    this.certification2,
-    this.certification3,
+    this.certifications,
     this.employees,
-    this.company1,
-    this.startCompany1,
-    this.endCompany1,
-    this.company2,
-    this.startCompany2,
-    this.endCompany2,
-    this.company3,
-    this.startCompany3,
-    this.endCompany3,
     this.medal,
     this.isVerified,
     this.isPrivate,
@@ -135,20 +103,12 @@ class User {
     data['dateOfBirth'] = user.dateOfBirth;
     data['location'] = user.location;
     data['photoUrl'] = user.photoUrl;
+    data['geoPoint'] = user.geoPoint;
     data['displayName'] = user.displayName;
     data['bio'] = user.bio;
     data['gender'] = user.gender;
     data['status'] = user.status;
     data['accountType'] = user.accountType;
-    data['school'] = user.school;
-    data['startSchool'] = user.startSchool;
-    data['endSchool'] = user.endSchool;
-    data['college'] = user.college;
-    data['startCollege'] = user.startCollege;
-    data['endCollege'] = user.endCollege;
-    data['university'] = user.university;
-    data['startUniversity'] = user.startUniversity;
-    data['endUniversity'] = user.endUniversity;
     data['website'] = user.website;
     data['designation'] = user.designation;
     data['skills'] = user.skills;
@@ -166,19 +126,11 @@ class User {
     data['products'] = user.products;
     data['establishYear'] = user.establishYear;
     data['industry'] = user.industry;
-    data['certification1'] = user.certification1;
-    data['certification2'] = user.certification2;
-    data['certification3'] = user.certification3;
+    data['education'] = user.education;
+    data['experience'] = user.experience;
+    data['industry'] = user.industry;
     data['employees'] = user.employees;
-    data['company1'] = user.company1;
-    data['company2'] = user.company2;
-    data['company3'] = user.company3;
-    data['startCompany1'] = user.startCompany1;
-    data['startCompany2'] = user.startCompany2;
-    data['startCompany3'] = user.startCompany3;
-    data['endCompany1'] = user.endCompany1;
-    data['endCompany2'] = user.endCompany2;
-    data['endCompany3'] = user.endCompany3;
+    data['certifications'] = user.certifications;
     data['medal'] = user.medal;
     data['isVerified'] = user.isVerified;
     data['isPrivate'] = user.isPrivate;
@@ -199,19 +151,14 @@ class User {
     this.location = mapData['location'];
     this.photoUrl = mapData['photoUrl'];
     this.displayName = mapData['displayName'];
+    this.geoPoint = mapData['geoPoint'];
     this.bio = mapData['bio'];
     this.gender = mapData['gender'];
     this.status = mapData['status'];
     this.accountType = mapData['accountType'];
-    this.school = mapData['school'];
-    this.startSchool = mapData['startSchool'];
-    this.endSchool = mapData['endSchool'];
-    this.college = mapData['college'];
-    this.startCollege = mapData['startCollege'];
-    this.endCollege = mapData['endCollege'];
-    this.university = mapData['university'];
-    this.startUniversity = mapData['startUniversity'];
-    this.endUniversity = mapData['endUniversity'];
+    this.education = mapData['education'];
+    this.experience = mapData['experience'];
+    this.certifications = mapData['certifications'];
     this.website = mapData['website'];
     this.designation = mapData['designation'];
     this.skills = mapData['skills'];
@@ -229,19 +176,9 @@ class User {
     this.products = mapData['products'];
     this.establishYear = mapData['establishYear'];
     this.industry = mapData['industry'];
-    this.certification1 = mapData['certification1'];
-    this.certification2 = mapData['certification2'];
-    this.certification3 = mapData['certification3'];
+
     this.employees = mapData['employees'];
-    this.company1 = mapData['company1'];
-    this.company2 = mapData['company2'];
-    this.company3 = mapData['company3'];
-    this.startCompany1 = mapData['startCompany1'];
-    this.startCompany2 = mapData['startCompany2'];
-    this.startCompany3 = mapData['startCompany3'];
-    this.endCompany1 = mapData['endCompany1'];
-    this.endCompany2 = mapData['endCompany2'];
-    this.endCompany3 = mapData['endCompany3'];
+
     this.medal = mapData['medal'];
     this.isVerified = mapData['isVerified'];
     this.isPrivate = mapData['isPrivate'];

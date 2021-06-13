@@ -2,6 +2,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_post.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +52,12 @@ class _PostScreenState extends State<PostScreen> {
     return FutureBuilder(
       future: _future,
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.connectionState == ConnectionState.done) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (snapshot.data.length > 0) {
             return SizedBox(
                 height: screenSize.height,
                 child: ListView.builder(
@@ -67,16 +72,11 @@ class _PostScreenState extends State<PostScreen> {
                                 currentuser: _user,
                               )
                             : Container())));
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
           }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
         }
+        return Center(
+          child: Text('Post not available'),
+        );
       }),
     );
   }

@@ -11,9 +11,12 @@ import 'package:Yujai/pages/group_upload_discussion.dart';
 import 'package:Yujai/pages/group_upload_forum.dart';
 import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
+import 'package:Yujai/pages/new_poll_form.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_group_home.dart';
+import 'package:Yujai/widgets/new_ad_screen.dart';
+import 'package:Yujai/widgets/new_poll_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +26,9 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'dart:async';
 import 'package:Yujai/pages/group_upload_event.dart';
 import 'package:Yujai/widgets/new_post_screen.dart';
+import 'package:flutter_fab_dialer/flutter_fab_dialer.dart';
+import 'package:flutter_boom_menu/flutter_boom_menu.dart';
+import 'package:Yujai/widgets/new_event_screen.dart';
 
 class GroupPage extends StatefulWidget {
   final String gid;
@@ -65,6 +71,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
   bool isRequested;
   bool followButtonClicked = false;
   String selectedSubject;
+  bool scrollVisible = true;
 
   Future<void> send() async {
     final Email email = Email(
@@ -173,6 +180,108 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  BoomMenu buildBoomMenu() {
+    return BoomMenu(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: IconThemeData(size: 22.0),
+        //child: Icon(Icons.add),
+        onOpen: () => print('OPENING DIAL'),
+        onClose: () => print('DIAL CLOSED'),
+        scrollVisible: scrollVisible,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.8,
+        children: [
+          MenuItem(
+//          child: Icon(Icons.accessibility, color: Colors.black, size: 40,),
+            child: Image.asset('assets/images/picture.png',
+                color: Colors.grey[850]),
+            title: "Discussion",
+            titleColor: Colors.grey[850],
+            subtitle: "Upload post or start a discussion ",
+            subTitleColor: Colors.grey[850],
+            backgroundColor: Colors.grey[100],
+            onTap: () {
+              //  Navigator.pop(context);
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20.0))),
+                  backgroundColor: Colors.white,
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      child: NewPostScreen(
+                          group: _group, currentUser: currentuser)));
+            },
+          ),
+          MenuItem(
+            child: Image.asset('assets/images/calendar.png',
+                color: Colors.grey[850]),
+            title: "Event",
+            titleColor: Colors.grey[850],
+            subtitle: "Start an offline or online event",
+            subTitleColor: Colors.grey[850],
+            backgroundColor: Colors.grey[300],
+            onTap: () {
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20.0))),
+                  backgroundColor: Colors.white,
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: NewEventScreen(
+                          group: _group, currentUser: currentuser)));
+            },
+          ),
+          MenuItem(
+              child: Image.asset('assets/images/poll.png', color: Colors.white),
+              title: "Poll",
+              titleColor: Colors.white,
+              subtitle: "Create a group poll or ask a question",
+              subTitleColor: Colors.white,
+              backgroundColor: Colors.grey[600],
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20.0))),
+                    backgroundColor: Colors.white,
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: NewPollScreen(
+                            group: _group, currentUser: currentuser)));
+              }),
+          MenuItem(
+            child: Image.asset('assets/images/marketplace.png',
+                color: Colors.white70),
+            title: "Ad",
+            titleColor: Colors.white70,
+            subtitle: "Create an ad for selling product",
+            subTitleColor: Colors.white70,
+            backgroundColor: Colors.grey[800],
+            onTap: () {
+              showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20.0))),
+                  backgroundColor: Colors.white,
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: NewAdScreen(
+                          group: _group, currentUser: currentuser)));
+            },
+          )
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -206,7 +315,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                           child: Text(
                             _group.groupName,
                             style: TextStyle(
-                                fontSize: screenSize.height * 0.018,
+                                fontSize: textHeader(context),
                                 color: Colors.black54,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -221,6 +330,23 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                     Navigator.pop(context);
                   }),
               actions: [
+                widget.currentUser.uid != null && _group != null && isMember
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: screenSize.height * 0.023,
+                          child: InkWell(
+                            onTap:
+                                widget.currentUser.uid == _group.currentUserUid
+                                    ? _onButtonPressedAdmin
+                                    : _onButtonPressedUser,
+                            child: Icon(
+                              Icons.add,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
                 isMember
                     ? InkWell(
                         onTap: () => _scaffoldKey.currentState.openEndDrawer(),
@@ -384,15 +510,16 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                     [_group != null ? buildButtonBar() : Container()]))
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          heroTag: null,
-          child: Icon(
-            Icons.add,
-            size: screenSize.height * 0.05,
-          ),
-          onPressed:
-              widget.currentUser != null && _group != null ? checkUser : null,
-        ),
+        //   floatingActionButton: buildBoomMenu(),
+        //  FloatingActionButton(
+        //   heroTag: null,
+        //   child: Icon(
+        //     Icons.add,
+        //     size: screenSize.height * 0.05,
+        //   ),
+        //   onPressed:
+        //       widget.currentUser != null && _group != null ? checkUser : null,
+        // ),
         endDrawer: widget.currentUser.uid != null &&
                 _group != null &&
                 widget.currentUser.uid == _group.currentUserUid
@@ -959,97 +1086,125 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.42,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.add_a_photo,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Upload Post',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialog,
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.shopping,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Post an Ad',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogAd,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.text_fields,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Start Discussion',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadDiscussion(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                )));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.poll,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Create Poll',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadPoll(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                )));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
                   onTap: () {
                     Navigator.pop(context);
                   },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: screenSize.height * 0.28,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.chat_bubble_outline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Discussion',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewPostScreen(
+                                    group: _group, currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        MdiIcons.shoppingOutline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Ad',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: NewAdScreen(
+                                    group: _group, currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.poll_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Poll',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: NewPollScreen(
+                                    group: _group, currentUser: currentuser)));
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => GroupUploadPoll(
+                        //               group: _group,
+                        //               gid: widget.gid,
+                        //               name: widget.name,
+                        //             )));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         });
   }
@@ -1331,121 +1486,153 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.5,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.add_a_photo,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Upload Post',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialog,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.event,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Upload Event',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogEvent,
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.shopping,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Post an Ad',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogAd,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.text_fields,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Start Discussion',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadDiscussion(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                )));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.poll,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Create Poll',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20.0))),
-                        backgroundColor: Colors.white,
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 18),
-                            child: NewPostScreen()));
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => GroupUploadPoll(
-                    //               group: _group,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //             )));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
                   onTap: () {
                     Navigator.pop(context);
                   },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: screenSize.height * 0.36,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.chat_bubble_outline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Discussion',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewPostScreen(
+                                    group: _group, currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.event_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Event',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: NewEventScreen(
+                                    group: _group, currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        MdiIcons.shoppingOutline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Ad',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: NewAdScreen(
+                                    group: _group, currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.poll_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Poll',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: NewPollScreen(
+                                    group: _group, currentUser: currentuser)));
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => GroupUploadPoll(
+                        //               group: _group,
+                        //               gid: widget.gid,
+                        //               name: widget.name,
+                        //             )));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         });
   }
@@ -1456,17 +1643,13 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
       child: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          Container(
-              //  height: MediaQuery.of(context).size.height * 0.75,
-              child: widget.currentUser != null
-                  ? NestedTabBarGroupHome(
-                      group: _group,
-                      currentUser: widget.currentUser,
-                      isMember: isMember,
-                      gid: _group.uid,
-                      name: _group.groupName,
-                    )
-                  : Container()),
+          NestedTabBarGroupHome(
+            group: _group,
+            currentUser: widget.currentUser,
+            isMember: isMember,
+            gid: _group.uid,
+            name: _group.groupName,
+          ),
         ],
         controller: _tabController,
       ),
@@ -1550,15 +1733,15 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                     setState(() {
                       imageFile = selectedImage;
                     });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => GroupUploadEvent(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                  imageFile: imageFile,
-                                ))));
+                    // Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: ((context) => GroupUploadEvent(
+                    //               group: _group,
+                    //               gid: widget.gid,
+                    //               name: widget.name,
+                    //               imageFile: imageFile,
+                    //             ))));
                   });
                 },
               ),
@@ -1598,15 +1781,15 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                     setState(() {
                       imageFile = selectedImage;
                     });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadAd(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                  imageFile: imageFile,
-                                )));
+                    // Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => GroupUploadAd(
+                    //               group: _group,
+                    //               gid: widget.gid,
+                    //               name: widget.name,
+                    //               imageFile: imageFile,
+                    //             )));
                   });
                 },
               ),

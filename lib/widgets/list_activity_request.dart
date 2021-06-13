@@ -205,7 +205,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => InstaFriendProfileScreen(
+        builder: (context) => FriendProfileScreen(
               name: widget.documentSnapshot.data['ownerName'],
               uid: widget.documentSnapshot.data['ownerUid'],
             )));

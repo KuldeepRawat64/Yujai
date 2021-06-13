@@ -1,6 +1,7 @@
 import 'package:Yujai/models/event.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
+import 'package:Yujai/pages/group_page.dart';
 import 'package:Yujai/pages/search_data.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_event.dart';
@@ -10,6 +11,9 @@ import 'package:Yujai/widgets/list_post.dart';
 import 'package:Yujai/widgets/list_promotion.dart';
 import 'package:Yujai/widgets/nested_tab_bar.dart';
 import 'package:Yujai/widgets/no_content.dart';
+import 'package:Yujai/widgets/no_event.dart';
+import 'package:Yujai/widgets/no_news.dart';
+import 'package:Yujai/widgets/no_post.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +24,9 @@ import 'package:shimmer/shimmer.dart';
 import '../style.dart';
 
 class SearchTabs extends StatefulWidget {
+  final int index;
+
+  const SearchTabs({Key key, this.index}) : super(key: key);
   @override
   _SearchTabsState createState() => _SearchTabsState();
 }
@@ -78,7 +85,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
       //   });
       // });
     });
-    _tabController = new TabController(length: 7, vsync: this);
+    _tabController = new TabController(
+        initialIndex: widget.index ?? 0, length: 8, vsync: this);
     _tabController.addListener(() {
       if (_filter.text.isEmpty) {
         setState(() {
@@ -173,6 +181,11 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                   'Users',
                 ),
               ),
+              Tab(
+                child: Text(
+                  'Groups',
+                ),
+              ),
             ],
           ),
           leading: IconButton(
@@ -193,7 +206,9 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenSize.width / 11),
-              child: TextField(
+              child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
+                autofocus: true,
                 controller: _filter,
                 style: TextStyle(
                     fontFamily: FontNameDefault, fontSize: textBody1(context)),
@@ -207,7 +222,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     _searchTerm = _filter.text;
                   });
                 },
-                onSubmitted: (val) {
+                onFieldSubmitted: (val) {
                   setState(() {
                     _searchTerm = val;
                   });
@@ -231,7 +246,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -240,7 +255,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -249,7 +264,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -258,7 +273,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -267,7 +282,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -276,7 +291,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
                     ),
                   ),
             _searchTerm.isNotEmpty
@@ -285,7 +300,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                     child: Icon(
                       Icons.search,
                       size: screenSize.height * 0.15,
-                      color: Colors.black54,
+                      color: Colors.black26,
+                    ),
+                  ),
+            _searchTerm.isNotEmpty
+                ? groupsSearch()
+                : Center(
+                    child: Icon(
+                      Icons.search,
+                      size: screenSize.height * 0.15,
+                      color: Colors.black26,
                     ),
                   )
           ],
@@ -351,7 +375,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
         stream: Firestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return NoEvent();
           } else {
             return ListView.builder(
               itemCount: snapshot.data.documents.length,
@@ -362,7 +386,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       .snapshots(),
                   builder: ((context, snapshotEvents) {
                     if (snapshot.data != null && !snapshotEvents.hasData) {
-                      return Container();
+                      return NoEvent();
                     } else {
                       if (_searchTerm.isNotEmpty) {
                         List<DocumentSnapshot> tempList =
@@ -399,11 +423,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   Widget promoSearch() {
+    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
               itemCount: snapshot.data.documents.length,
@@ -430,16 +455,20 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         }
                         resultList = tempList;
                       }
+
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: resultList.length,
-                        itemBuilder: ((context, index) => resultList.length > 0
-                            ? ListItemPromotion(
-                                documentSnapshot: resultList[index],
-                                index: index,
-                                currentuser: _user,
-                              )
-                            : Container()),
+                        itemBuilder: ((context, index) =>
+                                // resultList.length > 0
+                                //     ?
+                                ListItemPromotion(
+                                  documentSnapshot: resultList[index],
+                                  index: index,
+                                  currentuser: _user,
+                                )
+                            // : Container()
+                            ),
                       );
                     }
                   }),
@@ -546,11 +575,10 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: ((context) =>
-                                        InstaFriendProfileScreen(
-                                            uid: resultList[index].data['uid'],
-                                            name: resultList[index]
-                                                .data['displayName']))));
+                                    builder: ((context) => FriendProfileScreen(
+                                        uid: resultList[index].data['uid'],
+                                        name: resultList[index]
+                                            .data['displayName']))));
                           },
                           leading: Container(
                             decoration: ShapeDecoration(
@@ -592,6 +620,94 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
+                    )
+                  : Container()),
+            );
+          }
+        }));
+  }
+
+  Widget groupsSearch() {
+    var screenSize = MediaQuery.of(context).size;
+    return StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance
+            .collection('groups')
+            //   .where('isHidden', isEqualTo: 'false')
+            .snapshots(),
+        builder: ((context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          } else {
+            if (_searchTerm.isNotEmpty) {
+              List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
+              for (int i = 0; i < snapshot.data.documents.length; i++) {
+                if (snapshot.data.documents[i].data['groupName']
+                        .toString()
+                        .startsWith(_searchTerm) &&
+                    snapshot.data.documents[i].data['isHidden'] == false) {
+                  tempList.add(snapshot.data.documents[i]);
+                }
+              }
+              resultList = tempList;
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: resultList.length,
+              itemBuilder: ((context, index) => resultList.length > 0
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GroupPage(
+                                          currentUser: _user,
+                                          isMember: false,
+                                          gid: resultList[index].data['uid'],
+                                          name: resultList[index]
+                                              .data['groupName'],
+                                        )));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 8.0,
+                              right: 8.0,
+                              top: 8.0,
+                            ),
+                            child: Container(
+                              decoration: ShapeDecoration(
+                                color: const Color(0xffffffff),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  //  side: BorderSide(color: Colors.grey[300]),
+                                ),
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: NetworkImage(
+                                      resultList[index]
+                                          .data['groupProfilePhoto']),
+                                ),
+                                title: Text(
+                                  // userList[index].toString(),
+                                  resultList[index].data['groupName'],
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                  ),
+                                ),
+                                trailing:
+                                    resultList[index].data['isPrivate'] == true
+                                        ? Icon(Icons.lock_outline)
+                                        : Icon(Icons.public),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : Container()),
             );
@@ -753,7 +869,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => InstaFriendProfileScreen(
+                                builder: (context) => FriendProfileScreen(
                                     uid: resultList[index].data['uid'],
                                     name: resultList[index]
                                         .data['displayName'])));
@@ -952,7 +1068,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           name: suggestionsList[index].displayName))));
             },
             leading: CircleAvatar(
@@ -977,7 +1093,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           name: suggestionsList[index].displayName))));
             },
             leading: CircleAvatar(

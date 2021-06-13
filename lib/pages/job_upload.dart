@@ -621,8 +621,6 @@ class _JobPostState extends State<JobPost> {
                     jobTitleController.text,
                     _locationController.text,
                     _industryController.text,
-                    salaryController.text + ' ' + _selectedSalary.name,
-                    _selectedTiming.name,
                     aboutController.text,
                     websiteController.text)
                 .then((value) {

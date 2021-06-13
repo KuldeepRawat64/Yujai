@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/image_detail.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'friend_profile.dart';
 
@@ -20,10 +26,17 @@ class AdDetailScreen extends StatefulWidget {
 
 class _AdDetailScreenState extends State<AdDetailScreen> {
   String selectedSubject;
+  final List<String> images = [];
+
   @override
   void initState() {
     super.initState();
     selectedSubject = 'Spam';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.documentSnapshot.data['imgUrls'].forEach((urls) {
+        precacheImage(NetworkImage(urls), context);
+      });
+    });
   }
 
   Future<void> send() async {
@@ -285,41 +298,41 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
         backgroundColor: const Color(0xffffffff),
         body: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              leading: IconButton(
-                  icon: Icon(Icons.keyboard_arrow_left,
-                      color: Colors.white, size: screenSize.height * 0.045),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              actions: [
-                IconButton(
-                    icon: Icon(Icons.more_horiz, color: Colors.white),
-                    onPressed: () {
-                      widget.currentuser.uid ==
-                              widget.documentSnapshot.data['ownerUid']
-                          ? showDelete(widget.documentSnapshot)
-                          : showReport(widget.documentSnapshot);
-                    })
-              ],
-              backgroundColor: Color(0xFFEDF2F8),
-              expandedHeight: screenSize.height * 0.4,
-              flexibleSpace: FlexibleSpaceBar(
-                background: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ImageDetail(
-                                  image: widget.documentSnapshot.data['imgUrl'],
-                                )));
-                  },
-                  child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: widget.documentSnapshot.data['imgUrl']),
-                ),
-              ),
-            ),
+            // SliverAppBar(
+            //   leading: IconButton(
+            //       icon: Icon(Icons.keyboard_arrow_left,
+            //           color: Colors.white, size: screenSize.height * 0.045),
+            //       onPressed: () {
+            //         Navigator.pop(context);
+            //       }),
+            //   actions: [
+            //     IconButton(
+            //         icon: Icon(Icons.more_horiz, color: Colors.white),
+            //         onPressed: () {
+            //           widget.currentuser.uid ==
+            //                   widget.documentSnapshot.data['ownerUid']
+            //               ? showDelete(widget.documentSnapshot)
+            //               : showReport(widget.documentSnapshot);
+            //         })
+            //   ],
+            //   backgroundColor: Color(0xFFEDF2F8),
+            //   expandedHeight: screenSize.height * 0.4,
+            //   flexibleSpace: FlexibleSpaceBar(
+            //     background: InkWell(
+            //       onTap: () {
+            //         Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //                 builder: (context) => ImageDetail(
+            //                       image: widget.documentSnapshot.data['imgUrl'],
+            //                     )));
+            //       },
+            //       child: CachedNetworkImage(
+            //           fit: BoxFit.cover,
+            //           imageUrl: widget.documentSnapshot.data['imgUrl']),
+            //     ),
+            //   ),
+            // ),
             SliverList(
                 delegate: SliverChildListDelegate(
                     [AdStack(documentSnapshot: widget.documentSnapshot)]))
@@ -330,7 +343,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
   }
 }
 
-class AdStack extends StatelessWidget {
+class AdStack extends StatefulWidget {
   const AdStack({
     Key key,
     @required this.documentSnapshot,
@@ -339,293 +352,412 @@ class AdStack extends StatelessWidget {
   final DocumentSnapshot documentSnapshot;
 
   @override
+  _AdStackState createState() => _AdStackState();
+}
+
+class _AdStackState extends State<AdStack> {
+  final CarouselController _controller = CarouselController();
+  String reason = '';
+  int _current = 0;
+  Completer<GoogleMapController> _gpsController = Completer();
+  // inititalize _center
+  Position _center;
+  final Set<Marker> _markers = {};
+  GeoPoint geopint;
+
+  @override
+  void initState() {
+    super.initState();
+    // Then define _center in initstate
+  }
+
+  // CameraPosition _currentPosition = CameraPosition(
+  //   target: LatLng(13.0827, 80.2707),
+  //   zoom: 12,
+  // );
+
+  void onPageChange(int index, CarouselPageChangedReason changeReason) {
+    setState(() {
+      reason = changeReason.toString();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return Stack(
+        fit: StackFit.loose,
+        alignment: Alignment.topCenter,
+        children: [
+          Positioned(child: adHeader(context)),
+          Positioned(
+            child: adBody(context),
+          )
+        ]);
+  }
+
+  Widget adHeader(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    return Wrap(
-      children: [
-        Wrap(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                right: screenSize.width / 30,
-                top: screenSize.height * 0.012,
+    return Container(
+      height: screenSize.height * 0.35,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                child: CarouselSlider.builder(
+                    carouselController: _controller,
+                    itemCount: widget.documentSnapshot.data['imgUrls'].length,
+                    itemBuilder: (context, index, realIdx) {
+                      return Container(
+                        child: Center(
+                          child: Image.network(
+                            widget.documentSnapshot.data['imgUrls'][index],
+                            height: screenSize.height * 0.34,
+                            width: screenSize.width,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                    options: CarouselOptions(
+                        enableInfiniteScroll: false,
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                        viewportFraction: 1,
+                        onPageChanged: (index, reason) {
+                          if (widget.documentSnapshot.data['imgUrls'].length >
+                              1) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }
+                        })),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                    widget.documentSnapshot.data['imgUrls'].map<Widget>((url) {
+                  int index =
+                      widget.documentSnapshot.data['imgUrls'].indexOf(url);
+                  return Container(
+                    width: 26.0,
+                    height: 4.0,
+                    margin:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      color: _current == index
+                          ? Color.fromRGBO(0, 0, 0, 0.9)
+                          : Color.fromRGBO(0, 0, 0, 0.4),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          // CachedNetworkImage(
+          //   imageUrl: documentSnapshot.data['imgUrls'][0],
+          //   fit: BoxFit.cover,
+          //   height: screenSize.height * 0.4,
+          //   width: screenSize.width,
+          // ),
+          Positioned(
+            top: 20,
+            left: 20,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.keyboard_arrow_left_outlined)),
+            ),
+          ),
+          Positioned(
+            top: 20.0,
+            right: 20.0,
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.more_vert_outlined),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget adBody(BuildContext context) {
+    geopint = widget.documentSnapshot.data['geopoint'];
+    _markers.add(
+      Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId(_center.toString()),
+        position: LatLng(geopint.latitude, geopint.longitude),
+
+        icon: BitmapDescriptor.defaultMarker,
+      ),
+    );
+    var screenSize = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.only(
+        top: screenSize.height * 0.35,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+      decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+                blurRadius: 12.0,
+                spreadRadius: 4.0,
+                color: Colors.grey[100],
+                offset: Offset(10, -10))
+          ],
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+              contentPadding: EdgeInsets.zero,
+              trailing: Icon(Icons.person_outline),
+              subtitle: Text(
+                  widget.documentSnapshot.data['time'] != null
+                      ? timeago
+                          .format(widget.documentSnapshot.data['time'].toDate())
+                      : '',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textbody2(context),
+                      color: Colors.grey)),
+              title: Text(widget.documentSnapshot.data['postOwnerName'],
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    //  color: Theme.of(context).primaryColor,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold,
+                  )),
+              leading: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      widget.documentSnapshot.data['postOwnerPhotoUrl']))),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                      documentSnapshot.data['time'] != null
-                          ? timeago
-                              .format(documentSnapshot.data['time'].toDate())
-                          : '',
-                      style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textbody2(context),
-                          color: Colors.grey)),
-                  Text(documentSnapshot.data['price'],
+                  Text('\u{20B9}',
                       style: TextStyle(
                         fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
+                        color: Theme.of(context).primaryColor,
+                        fontSize: textHeader(context),
+                        fontWeight: FontWeight.bold,
+                      )),
+                  Text(widget.documentSnapshot.data['price'],
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        // color: Theme.of(context).primaryColor,
+                        fontSize: textHeader(context),
                         fontWeight: FontWeight.bold,
                       )),
                 ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(screenSize.height * 0.012),
-              child: Divider(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: screenSize.width / 30),
-              child: Text(
-                documentSnapshot.data['caption'],
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                  fontWeight: FontWeight.bold,
-                ),
+              SizedBox(
+                height: 10.0,
               ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: screenSize.height * 0.01,
-          ),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-          child: Container(
-            width: screenSize.width,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                top: screenSize.height * 0.012,
-              ),
-              child: Text(
-                'Description',
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                  color: Colors.black45,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          width: screenSize.width,
-          padding: EdgeInsets.only(
-            // top: screenSize.height * 0.012,
-            bottom: screenSize.height * 0.012,
-            left: screenSize.width / 30,
-          ),
-          child: Wrap(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
               Text(
-                documentSnapshot.data['description'],
+                widget.documentSnapshot.data['caption'],
+                style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontSize: textHeader(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                widget.documentSnapshot.data['description'],
                 style: TextStyle(
                     fontFamily: FontNameDefault,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
+                    color: Colors.black54,
                     fontSize: textBody1(context)),
               ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: screenSize.height * 0.01,
-          ),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-          child: Container(
-            width: screenSize.width,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                top: screenSize.height * 0.012,
-              ),
-              child: Text(
-                'Details',
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                  color: Colors.black45,
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenSize.width * 0.2,
+                  vertical: screenSize.height * 0.005,
+                ),
+                child: Text(
+                  widget.documentSnapshot.data['location'],
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    color: Colors.black54,
+                    fontStyle: FontStyle.italic,
+                    //  fontSize: textBody1(context),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          width: screenSize.width,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: screenSize.width / 30),
-                    child: Text(
-                      'Product Condition',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context)),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                    ),
-                    child: Chip(
-                      backgroundColor: Colors.grey[100],
-                      label: Text(documentSnapshot.data['condition']),
-                      labelStyle: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context)),
-                    ),
-                  ),
-                ],
+              Container(
+                height: screenSize.height * 0.13,
+                width: screenSize.width,
+                margin:
+                    EdgeInsets.symmetric(vertical: screenSize.height * 0.02),
+                child: GoogleMap(
+                  markers: _markers,
+                  zoomControlsEnabled: false,
+                  initialCameraPosition: CameraPosition(
+                      target: LatLng(geopint.latitude, geopint.longitude),
+                      zoom: 12),
+                  onMapCreated: (GoogleMapController controller) {
+                    _gpsController.complete();
+                  },
+                ),
               ),
               Row(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: screenSize.width / 30),
-                    child: Text(
-                      'Location',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context)),
-                    ),
-                  ),
-                  Wrap(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: screenSize.width / 30,
-                          bottom: screenSize.height * 0.012,
+                  Container(
+                    width: screenSize.width * 0.45,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.production_quantity_limits,
+                          color: Theme.of(context).accentColor,
                         ),
-                        child: Chip(
-                          backgroundColor: Colors.grey[100],
-                          label: Text(
-                            documentSnapshot.data['location'],
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context)),
-                          ),
-                        ),
+                        onPressed: null,
                       ),
-                    ],
+                      title: Text(
+                        'Condition',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                      ),
+                      subtitle: Text(
+                        widget.documentSnapshot.data['condition'] != ''
+                            ? widget.documentSnapshot.data['condition']
+                            : 'Used',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: screenSize.width * 0.45,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.category_outlined,
+                          color: Theme.of(context).accentColor,
+                        ),
+                        onPressed: null,
+                      ),
+                      title: Text(
+                        'Category',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                      ),
+                      subtitle: Text(
+                        widget.documentSnapshot.data['category'] != ''
+                            ? widget.documentSnapshot.data['category']
+                            : 'Other',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: screenSize.height * 0.01,
-          ),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-          child: Container(
-            width: screenSize.width,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                top: screenSize.height * 0.012,
-              ),
-              child: Text(
-                'Uploader',
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                  color: Colors.black45,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+          // Padding(
+          //   padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
+          //   child: Container(
+          //     width: screenSize.width,
+          //     child: Padding(
+          //       padding: EdgeInsets.only(
+          //         left: screenSize.width / 30,
+          //         top: screenSize.height * 0.012,
+          //       ),
+          //       child: Text(
+          //         'Uploader',
+          //         style: TextStyle(
+          //           fontFamily: FontNameDefault,
+          //           fontSize: textSubTitle(context),
+          //           color: Colors.black45,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // InkWell(
+          //     onTap: () {
+          //       Navigator.of(context).push(MaterialPageRoute(
+          //           builder: (context) => InstaFriendProfileScreen(
+          //               uid: widget.documentSnapshot.data['ownerUid'],
+          //               name: widget.documentSnapshot.data['postOwnerName'])));
+          //     },
+          //     child: Padding(
+          //       padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+          //       child: Container(
+          //         decoration: BoxDecoration(
+          //             color: Colors.white,
+          //             borderRadius: BorderRadius.circular(12.0),
+          //             boxShadow: [
+          //               BoxShadow(
+          //                 color: Colors.grey[300],
+          //                 offset: const Offset(1.0, 1.0),
+          //                 blurRadius: 1.0,
+          //                 spreadRadius: 1.0,
+          //               ),
+          //             ]),
+          //         child: ListTile(
+          //           subtitle: Text(''),
+          //           leading: CircleAvatar(
+          //             backgroundImage: CachedNetworkImageProvider(
+          //                 widget.documentSnapshot.data['postOwnerPhotoUrl']),
+          //           ),
+          //           title: Text(
+          //             widget.documentSnapshot.data['postOwnerName'],
+          //             style: TextStyle(
+          //               fontFamily: FontNameDefault,
+          //               color: Colors.black,
+          //               fontSize: textSubTitle(context),
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     )),
+          Padding(
+            padding: EdgeInsets.only(top: screenSize.height * 0.012),
+            child: Container(
+              height: screenSize.height * 0.04,
+              width: screenSize.width,
             ),
           ),
-        ),
-        InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => InstaFriendProfileScreen(
-                      uid: documentSnapshot.data['ownerUid'],
-                      name: documentSnapshot.data['postOwnerName'])));
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[300],
-                    offset: const Offset(1.0, 1.0),
-                    blurRadius: 5.0,
-                    spreadRadius: 2.0,
-                  ),
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: const Offset(0.0, 0.0),
-                    blurRadius: 0.0,
-                    spreadRadius: 0.0,
-                  ),
-                ]),
-                child: ListTile(
-                  trailing: IconButton(
-                    icon: Icon(Icons.account_box_outlined),
-                    onPressed: null,
-                  ),
-                  subtitle: Text(''),
-                  leading: CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(
-                        documentSnapshot.data['postOwnerPhotoUrl']),
-                  ),
-                  title: Text(
-                    documentSnapshot.data['postOwnerName'],
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-              ),
-            )),
-        Padding(
-          padding: EdgeInsets.only(top: screenSize.height * 0.012),
-          child: Container(
-            height: screenSize.height * 0.04,
-            width: screenSize.width,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

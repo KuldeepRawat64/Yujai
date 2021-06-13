@@ -428,7 +428,7 @@ class JobDetail extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => InstaFriendProfileScreen(
+                            builder: (context) => FriendProfileScreen(
                                   uid: documentSnapshot.data['ownerUid'],
                                   name: documentSnapshot.data['jobOwnerName'],
                                 )));
@@ -450,8 +450,7 @@ class JobDetail extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      InstaFriendProfileScreen(
+                                  builder: (context) => FriendProfileScreen(
                                         uid: documentSnapshot.data['ownerUid'],
                                         name: documentSnapshot
                                             .data['jobOwnerName'],

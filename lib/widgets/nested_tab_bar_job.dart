@@ -1,6 +1,7 @@
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/resources/repository.dart';
+import 'package:Yujai/widgets/no_job.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -149,8 +150,8 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
             controller: _nestedTabController,
             children: <Widget>[
               jobImagesWidget(),
-          //    jobSearch(),
-          //    companiesList(),
+              //    jobSearch(),
+              //    companiesList(),
             ],
           ),
         )
@@ -181,7 +182,7 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => InstaFriendProfileScreen(
+                          builder: ((context) => FriendProfileScreen(
                               uid: companyList[index].uid,
                               name: companyList[index].displayName))));
                 },
@@ -266,7 +267,7 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
 
   Widget shimmerJobs() {
     return Container(
-      color: const Color(0xffffffff),
+        color: const Color(0xffffffff),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(mainAxisSize: MainAxisSize.max, children: [
@@ -337,23 +338,30 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
   }
 
   Widget jobImagesWidget() {
+    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
         future: _listFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: shimmerJobs());
           } else {
-            return SizedBox(
-                height: MediaQuery.of(context).size.height * 0.9,
-                child: ListView.builder(
-                    controller: _scrollController3,
-                    //shrinkWrap: true,
-                    itemCount: listJob.length,
-                    itemBuilder: ((context, index) => ListItemJob(
-                        documentSnapshot: listJob[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  child: ListView.builder(
+                      controller: _scrollController3,
+                      //shrinkWrap: true,
+                      itemCount: listJob.length,
+                      itemBuilder: ((context, index) => ListItemJob(
+                          documentSnapshot: listJob[index],
+                          index: index,
+                          user: _user,
+                          currentuser: _user))));
+            }
+            return Container(
+                width: screenSize.width,
+                height: screenSize.height * 0.3,
+                child: NoJob());
           }
         });
   }

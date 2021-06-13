@@ -35,8 +35,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Yujai/widgets/list_event_forum.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:Yujai/widgets/subscriber_chart.dart';
-import 'package:charts_flutter/flutter.dart' as chart;
-import 'package:fl_chart/fl_chart.dart';
+// import 'package:charts_flutter/flutter.dart' as chart;
+// import 'package:fl_chart/fl_chart.dart';
 //import 'package:Yujai/pages/group_requests.dart';
 
 class NestedTabBarProject extends StatefulWidget {
@@ -106,68 +106,68 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   String newTaskId = Uuid().v4();
   String newListId = Uuid().v4();
   bool _isEditingDesc = false;
-  final List<SubscriberSeries> data = [
-    SubscriberSeries(
-      year: "2011",
-      subscribers: 10000000,
-      barColor: chart.ColorUtil.fromDartColor(Colors.blue),
-    ),
-    SubscriberSeries(
-      year: "2012",
-      subscribers: 8500000,
-      barColor: chart.ColorUtil.fromDartColor(Colors.blue),
-    ),
-    SubscriberSeries(
-      year: "2013",
-      subscribers: 7700000,
-      barColor: chart.ColorUtil.fromDartColor(Colors.blue),
-    ),
-    SubscriberSeries(
-      year: "2014",
-      subscribers: 7600000,
-      barColor: chart.ColorUtil.fromDartColor(Colors.blue),
-    ),
-    SubscriberSeries(
-      year: "2015",
-      subscribers: 5500000,
-      barColor: chart.ColorUtil.fromDartColor(Colors.red),
-    ),
-  ];
+  // final List<SubscriberSeries> data = [
+  //   SubscriberSeries(
+  //     year: "2011",
+  //     subscribers: 10000000,
+  //     barColor: chart.ColorUtil.fromDartColor(Colors.blue),
+  //   ),
+  //   SubscriberSeries(
+  //     year: "2012",
+  //     subscribers: 8500000,
+  //     barColor: chart.ColorUtil.fromDartColor(Colors.blue),
+  //   ),
+  //   SubscriberSeries(
+  //     year: "2013",
+  //     subscribers: 7700000,
+  //     barColor: chart.ColorUtil.fromDartColor(Colors.blue),
+  //   ),
+  //   SubscriberSeries(
+  //     year: "2014",
+  //     subscribers: 7600000,
+  //     barColor: chart.ColorUtil.fromDartColor(Colors.blue),
+  //   ),
+  //   SubscriberSeries(
+  //     year: "2015",
+  //     subscribers: 5500000,
+  //     barColor: chart.ColorUtil.fromDartColor(Colors.red),
+  //   ),
+  // ];
 
-  static final List<String> chartDropdownItems = [
-    'Last 7 days',
-    'Last month',
-    'Last year'
-  ];
-  String actualDropdown = chartDropdownItems[0];
-  int actualChart = 0;
-  List<chart.Series<TaskList, String>> _seriesPieData;
-  List<TaskList> myPieData;
-  _generatePieData(myPieData) {
-    _seriesPieData = List<chart.Series<TaskList, String>>();
-    _seriesPieData.add(chart.Series(
-        labelAccessorFn: (TaskList row, _) => "${row.totalTasks}",
-        id: 'tasklist',
-        data: myPieData,
-        colorFn: (TaskList tasklist, _) =>
-            chart.ColorUtil.fromDartColor(Colors.grey),
-        domainFn: (TaskList tasklist, _) => tasklist.listName,
-        measureFn: (TaskList tasklist, _) => tasklist.totalTasks));
-  }
+  // static final List<String> chartDropdownItems = [
+  //   'Last 7 days',
+  //   'Last month',
+  //   'Last year'
+  // ];
+  // String actualDropdown = chartDropdownItems[0];
+  // int actualChart = 0;
+  // List<chart.Series<TaskList, String>> _seriesPieData;
+  // List<TaskList> myPieData;
+  // _generatePieData(myPieData) {
+  //   _seriesPieData = List<chart.Series<TaskList, String>>();
+  //   _seriesPieData.add(chart.Series(
+  //       labelAccessorFn: (TaskList row, _) => "${row.totalTasks}",
+  //       id: 'tasklist',
+  //       data: myPieData,
+  //       colorFn: (TaskList tasklist, _) =>
+  //           chart.ColorUtil.fromDartColor(Colors.grey),
+  //       domainFn: (TaskList tasklist, _) => tasklist.listName,
+  //       measureFn: (TaskList tasklist, _) => tasklist.totalTasks));
+  // }
 
-  List<chart.Series<TaskList, String>> _seriesData;
-  List<TaskList> myData;
-  _generateData(myData) {
-    _seriesData = List<chart.Series<TaskList, String>>();
-    _seriesData.add(chart.Series(
-        labelAccessorFn: (TaskList row, _) => "${row.totalTasks}",
-        id: 'tasklist',
-        data: myData,
-        colorFn: (TaskList tasklist, _) =>
-            chart.ColorUtil.fromDartColor(Colors.grey),
-        domainFn: (TaskList tasklist, _) => tasklist.listName,
-        measureFn: (TaskList tasklist, _) => tasklist.totalTasks));
-  }
+  // List<chart.Series<TaskList, String>> _seriesData;
+  // List<TaskList> myData;
+  // _generateData(myData) {
+  //   _seriesData = List<chart.Series<TaskList, String>>();
+  //   _seriesData.add(chart.Series(
+  //       labelAccessorFn: (TaskList row, _) => "${row.totalTasks}",
+  //       id: 'tasklist',
+  //       data: myData,
+  //       colorFn: (TaskList tasklist, _) =>
+  //           chart.ColorUtil.fromDartColor(Colors.grey),
+  //       domainFn: (TaskList tasklist, _) => tasklist.listName,
+  //       measureFn: (TaskList tasklist, _) => tasklist.totalTasks));
+  // }
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -724,7 +724,7 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
               'Members',
               style: TextStyle(
                   fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
+                  fontSize: textHeader(context),
                   fontWeight: FontWeight.bold),
             ),
             Divider(),
@@ -735,7 +735,7 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
             Text('Description',
                 style: TextStyle(
                     fontFamily: FontNameDefault,
-                    fontSize: textSubTitle(context),
+                    fontSize: textHeader(context),
                     fontWeight: FontWeight.bold)),
             Divider(),
             StreamBuilder<DocumentSnapshot>(

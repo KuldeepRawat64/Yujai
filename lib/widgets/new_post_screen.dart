@@ -1,48 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/new_post_form.dart';
+import '../style.dart';
+import 'package:Yujai/models/user.dart';
+import 'package:Yujai/models/group.dart';
 
 class NewPostScreen extends StatelessWidget {
+  final Group group;
+  final User currentUser;
+
+  const NewPostScreen({Key key, this.group, this.currentUser})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.95,
-        child: Column(
-          //shrinkWrap: true,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 8.0, top: 12, left: 12, right: 12),
-                  child: Text(
-                    'New Post',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 8.0, top: 12, left: 12, right: 12),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: CircleAvatar(
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.grey,
-                      ),
-                      backgroundColor: Colors.white,
+    var screenSize = MediaQuery.of(context).size;
+    return SafeArea(
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: screenSize.height * 0.95,
+          child: Column(
+            //shrinkWrap: true,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: screenSize.height * 0.01,
+                        top: screenSize.height * 0.02,
+                        left: screenSize.width * 0.05,
+                        right: screenSize.width * 0.05),
+                    child: Text(
+                      'New Post',
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textAppTitle(context),
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                )
-              ],
-            ),
-            NewTaskForm()
-          ],
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: screenSize.height * 0.01,
+                        top: screenSize.height * 0.02,
+                        left: screenSize.width * 0.05,
+                        right: screenSize.width * 0.05),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Container(
+                child: NewPostForm(
+                  group: group,
+                  currentUser: currentUser,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -19,6 +19,15 @@ import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_event.dart';
 import 'package:Yujai/pages/image_detail.dart';
 import 'package:Yujai/widgets/list_event_home.dart';
+import 'package:Yujai/widgets/list_job.dart';
+import 'package:Yujai/widgets/new_article_screen.dart';
+import 'package:Yujai/widgets/new_event_screen_main.dart';
+import 'package:Yujai/widgets/new_job_screen.dart';
+import 'package:Yujai/widgets/new_post_main.dart';
+import 'package:Yujai/widgets/new_work_screen.dart';
+import 'package:Yujai/widgets/no_job.dart';
+import 'package:Yujai/widgets/no_news.dart';
+import 'package:Yujai/widgets/no_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,12 +40,12 @@ import '../widgets/list_news.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/pages/search_data.dart';
 
-class InstaFeedScreen extends StatefulWidget {
+class FeedScreen extends StatefulWidget {
   @override
-  _InstaFeedScreenState createState() => _InstaFeedScreenState();
+  _FeedScreenState createState() => _FeedScreenState();
 }
 
-class _InstaFeedScreenState extends State<InstaFeedScreen> {
+class _FeedScreenState extends State<FeedScreen> {
   var _repository = Repository();
   User currentuser, user, followingUser;
   IconData icon;
@@ -57,11 +66,12 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
   ScrollController _scrollController;
   ScrollController _scrollController1;
   ScrollController _scrollController2;
-  ScrollController _scrollController3 = ScrollController();
+  ScrollController _scrollController3;
   ScrollController _scrollController4 = ScrollController();
   ScrollController _scrollController5 = ScrollController();
   Future<List<DocumentSnapshot>> _eventFuture;
   Future<List<DocumentSnapshot>> _newsFuture;
+  Future<List<DocumentSnapshot>> _jobFuture;
   //Offset state <-------------------------------------
   double offset = 0.0;
   @override
@@ -98,6 +108,12 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
           listNews = updatedList;
         });
       });
+      _repository.retrieveJobs(user).then((updatedList) {
+        if (!mounted) return;
+        setState(() {
+          listJob = updatedList;
+        });
+      });
     });
     _scrollController = ScrollController()
       ..addListener(() {
@@ -120,6 +136,14 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
         setState(() {
           //<----------------
           offset = _scrollController2.offset;
+          //force arefresh so the app bar can be updated
+        });
+      });
+    _scrollController3 = ScrollController()
+      ..addListener(() {
+        setState(() {
+          //<----------------
+          offset = _scrollController3.offset;
           //force arefresh so the app bar can be updated
         });
       });
@@ -165,6 +189,7 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
     _future = _repository.fetchFeed(currentUser);
     _eventFuture = _repository.retrieveEvents(currentUser);
     _newsFuture = _repository.retrieveNews(currentUser);
+    _jobFuture = _repository.retrieveJobs(currentUser);
   }
 
   @override
@@ -178,25 +203,63 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
           automaticallyImplyLeading: false,
           backgroundColor: new Color(0xffffffff),
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.message_outlined,
-              size: screenSize.height * 0.035,
-              color: Colors.black54,
-            ),
-            onPressed: () {
+          leading: InkWell(
+            onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: ((context) => ChatScreen())));
             },
-          ),
-          title: Text(
-            'Yujai',
-            style: TextStyle(
-              fontFamily: 'Signatra',
-              color: Colors.black54,
-              fontSize: screenSize.height * 0.05,
+            child: Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Icon(
+                Icons.message_outlined,
+                size: screenSize.height * 0.035,
+                color: Colors.black54,
+              ),
             ),
           ),
+          title: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => SearchTabs(
+                        index: 6,
+                      )));
+            },
+            child: Container(
+              height: screenSize.height * 0.07,
+              decoration: ShapeDecoration(
+                  color: Colors.grey[100],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(60.0))),
+              child: TextFormField(
+                enabled: false,
+                style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontSize: textSubTitle(context),
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  labelText: "Enter a name",
+                  labelStyle: TextStyle(
+                    fontFamily: FontNameDefault,
+                    color: Colors.grey,
+                    fontSize: textSubTitle(context),
+                    //fontWeight: FontWeight.bold,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+              ),
+            ),
+          ),
+          //  Text(
+          //   'Yujai',
+          //   style: TextStyle(
+          //     fontFamily: 'Signatra',
+          //     color: Colors.black54,
+          //     fontSize: screenSize.height * 0.05,
+          //   ),
+          // ),
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.notifications_outlined,
@@ -205,17 +268,22 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ActivityFeed()));
                 }),
-            IconButton(
-              icon: Icon(
-                Icons.search_outlined,
-                size: screenSize.height * 0.04,
-                color: Colors.black54,
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SearchTabs()));
-              },
-            )
+            currentuser != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      radius: screenSize.height * 0.023,
+                      child: InkWell(
+                        onTap: currentuser.accountType == 'Company'
+                            ? _onButtonPressedCompany
+                            : _onButtonPressedUser,
+                        child: Icon(
+                          Icons.add,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
           ],
         ),
         body: currentuser != null
@@ -223,18 +291,18 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
             : Center(
                 child: shimmer(),
               ),
-        floatingActionButton: currentuser != null
-            ? FloatingActionButton(
-                heroTag: null,
-                child: Icon(
-                  Icons.add,
-                  size: MediaQuery.of(context).size.height * 0.04,
-                ),
-                onPressed: currentuser.accountType == 'Company'
-                    ? _onButtonPressedCompany
-                    : _onButtonPressedUser,
-              )
-            : Text(''),
+        // floatingActionButton: currentuser != null
+        //     ? FloatingActionButton(
+        //         heroTag: null,
+        //         child: Icon(
+        //           Icons.add,
+        //           size: MediaQuery.of(context).size.height * 0.04,
+        //         ),
+        //         onPressed: currentuser.accountType == 'Company'
+        //             ? _onButtonPressedCompany
+        //             : _onButtonPressedUser,
+        //       )
+        //     : Text(''),
       ),
     );
   }
@@ -244,51 +312,93 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.26,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.add_a_photo_outlined,
-                    size: screenSize.height * 0.04,
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
                   ),
-                  title: Text(
-                    'Post',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialog,
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.work_outline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Work application',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showDialogPromotion,
+              ),
+              Container(
+                height: screenSize.height * 0.22,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewPostMain(currentUser: currentuser)));
+                      },
+                      leading: Icon(
+                        Icons.add_a_photo_outlined,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Post a photo',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.work_outline,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Upload work application',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child:
+                                    NewWorkScreen(currentUser: currentuser)));
+                      },
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
+              ),
+            ],
           );
         });
   }
@@ -298,77 +408,150 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.43,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.add_a_photo_outlined,
-                    size: screenSize.height * 0.04,
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
                   ),
-                  title: Text(
-                    'Post',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialog,
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.work_outline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Job',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showDialogJob,
+              ),
+              Container(
+                height: screenSize.height * 0.36,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewPostMain(currentUser: currentuser)));
+                      },
+                      leading: Icon(
+                        Icons.add_a_photo_outlined,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Photo',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.work_outline,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Job',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewJobScreen(currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.article_outlined,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Article',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewArticleScreen(
+                                    currentUser: currentuser)));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.event_outlined,
+                        color: Colors.black54,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Event',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20.0))),
+                            backgroundColor: Colors.white,
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                child: NewEventScreenMain(
+                                    currentUser: currentuser)));
+                      },
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.event_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Event',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogEvent,
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.newspaperVariantOutline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Article',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogArticle,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
+              ),
+            ],
           );
         });
   }
@@ -434,8 +617,8 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                       fontSize: textSubTitle(context)),
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => Promotion())));
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: ((context) => Promotion())));
                 },
               ),
               SimpleDialogOption(
@@ -474,12 +657,12 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                     setState(() {
                       imageFile = selectedImage;
                     });
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => EventUpload(
-                                  imageFile: imageFile,
-                                ))));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: ((context) => EventUpload(
+                    //               imageFile: imageFile,
+                    //             ))));
                   });
                 },
               ),
@@ -845,7 +1028,7 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                           //       user: followingUser,
                           //       currentUser: currentuser,
                         )))
-                : Wrap(
+                : ListView(
                     //  mainAxisSize: MainAxisSize.min,
                     // mainAxisAlignment: MainAxisAlignment.start,
                     //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -855,12 +1038,25 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                           vertical: screenSize.height * 0.01,
                           horizontal: screenSize.width / 30,
                         ),
-                        child: Text(
-                          'Articles',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textHeader(context),
-                              fontWeight: FontWeight.bold),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Articles',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textHeader(context),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            // Text(
+                            //   'More',
+                            //   style: TextStyle(
+                            //       color: Theme.of(context).accentColor,
+                            //       fontFamily: FontNameDefault,
+                            //       fontSize: textSubTitle(context),
+                            //       fontWeight: FontWeight.bold),
+                            // ),
+                          ],
                         ),
                       ),
                       newsImageWidget(),
@@ -869,15 +1065,56 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                           vertical: screenSize.height * 0.005,
                           horizontal: screenSize.width / 30,
                         ),
-                        child: Text(
-                          'Events',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textHeader(context),
-                              fontWeight: FontWeight.bold),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Events',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textHeader(context),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            // Text(
+                            //   'More',
+                            //   style: TextStyle(
+                            //       color: Theme.of(context).accentColor,
+                            //       fontFamily: FontNameDefault,
+                            //       fontSize: textSubTitle(context),
+                            //       fontWeight: FontWeight.bold),
+                            // ),
+                          ],
                         ),
                       ),
                       eventImagesWidget(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: screenSize.height * 0.005,
+                          horizontal: screenSize.width / 30,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Jobs',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textHeader(context),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            // Text(
+                            //   'More',
+                            //   style: TextStyle(
+                            //       color: Theme.of(context).accentColor,
+                            //       fontFamily: FontNameDefault,
+                            //       fontSize: textSubTitle(context),
+                            //       fontWeight: FontWeight.bold),
+                            // ),
+                          ],
+                        ),
+                      ),
+                      jobImagesWidget(),
+                      SizedBox(height: screenSize.height * 0.1)
                     ],
                   );
           } else {
@@ -902,19 +1139,35 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
           if (!snapshot.hasData) {
             return Center(child: shimmerNews());
           } else {
-            return SizedBox(
-                height: screenSize.height * 0.45,
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  height: screenSize.height * 0.5,
+                  width: screenSize.width,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: screenSize.width * 0.05,
+                      ),
+                      Flexible(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollController1,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: listNews.length,
+                            itemBuilder: ((context, index) => ListItemNews(
+                                documentSnapshot: listNews[index],
+                                index: index,
+                                user: _user,
+                                currentuser: _user))),
+                      ),
+                    ],
+                  ));
+            }
+            return Container(
                 width: screenSize.width,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    controller: _scrollController1,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemCount: listNews.length,
-                    itemBuilder: ((context, index) => ListItemNews(
-                        documentSnapshot: listNews[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+                height: screenSize.height * 0.3,
+                child: NoNews());
           }
         });
   }
@@ -927,19 +1180,76 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
           if (!snapshot.hasData) {
             return Center(child: shimmerEvent());
           } else {
-            return SizedBox(
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  width: screenSize.width,
+                  height: screenSize.height * 0.3,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: screenSize.width * 0.05,
+                      ),
+                      Flexible(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollController2,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: listEvent.length,
+                            itemBuilder: ((context, index) => ListItemEvent(
+                                documentSnapshot: listEvent[index],
+                                index: index,
+                                user: _user,
+                                currentuser: _user))),
+                      ),
+                    ],
+                  ));
+            }
+            return Container(
                 width: screenSize.width,
-                height: screenSize.height * 0.25,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    controller: _scrollController2,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemCount: listEvent.length,
-                    itemBuilder: ((context, index) => ListItemEvent(
-                        documentSnapshot: listEvent[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+                height: screenSize.height * 0.3,
+                child: NoEvent());
+          }
+        });
+  }
+
+  Widget jobImagesWidget() {
+    var screenSize = MediaQuery.of(context).size;
+    return FutureBuilder(
+        future: _jobFuture,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: shimmerEvent());
+          } else {
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  width: screenSize.width,
+                  height: screenSize.height * 0.26,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: screenSize.width * 0.05,
+                      ),
+                      Flexible(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollController3,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: listJob.length,
+                            itemBuilder: ((context, index) => ListItemJob(
+                                documentSnapshot: listJob[index],
+                                index: index,
+                                user: _user,
+                                currentuser: _user))),
+                      ),
+                    ],
+                  ));
+            }
+            return Container(
+                width: screenSize.width,
+                height: screenSize.height * 0.3,
+                child: NoJob());
           }
         });
   }
@@ -967,8 +1277,7 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) =>
-                                      InstaFriendProfileScreen(
+                                  builder: ((context) => FriendProfileScreen(
                                         uid: list[index].data['ownerUid'],
                                         name: list[index].data['postOwnerName'],
                                       )))).then((value) {
@@ -997,7 +1306,7 @@ class _InstaFeedScreenState extends State<InstaFeedScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: ((context) =>
-                                          InstaFriendProfileScreen(
+                                          FriendProfileScreen(
                                             uid: list[index].data['ownerUid'],
                                             name: list[index]
                                                 .data['postOwnerName'],

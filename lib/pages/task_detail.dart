@@ -302,7 +302,6 @@ class _TaskDetailState extends State<TaskDetail> {
           height: screenSize.height * 0.13,
           child: DateRangeField(
             dateFormat: DateFormat.MMMd(),
-            context: context,
             decoration: InputDecoration(
               filled: true,
               fillColor: const Color(0xffffffff),

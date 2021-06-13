@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/pages/ad_detail_page.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -134,6 +135,13 @@ class _ListAdState extends State<ListAd> {
         },
         child: Container(
           decoration: ShapeDecoration(
+            shadows: [
+              BoxShadow(
+                  offset: Offset(1, 1),
+                  color: Colors.grey[200],
+                  blurRadius: 2.0,
+                  spreadRadius: 2.0),
+            ],
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
@@ -153,52 +161,76 @@ class _ListAdState extends State<ListAd> {
                                 documentSnapshot: widget.documentSnapshot,
                               )));
                 },
-                child: FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: widget.documentSnapshot.data['imgUrl'],
-                  height: screenSize.height * 0.4,
-                  width: screenSize.width,
-                  fit: BoxFit.cover,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: screenSize.height * 0.015,
+                      left: screenSize.height * 0.015,
+                      right: screenSize.height * 0.015),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: screenSize.height * 0.2,
+                        width: screenSize.width,
+                        decoration: ShapeDecoration(
+                            image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                    widget.documentSnapshot.data['imgUrls'][0]),
+                                fit: BoxFit.cover),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    screenSize.height * 0.005))),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: screenSize.width * 0.03,
+                            top: screenSize.height * 0.16),
+                        child: CircleAvatar(
+                          radius: screenSize.height * 0.035,
+                          backgroundColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: CircleAvatar(
+                              radius: screenSize.height * 0.035,
+                              backgroundImage: CachedNetworkImageProvider(
+                                widget
+                                    .documentSnapshot.data['postOwnerPhotoUrl'],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          right: 10,
+                          bottom: 25,
+                          child: Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: ShapeDecoration(
+                                gradient: LinearGradient(
+                                    colors: [Colors.deepPurple, Colors.purple]),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0))),
+                            child: Text(
+                              '\u{20B9}' +
+                                  widget.documentSnapshot.data['price'],
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                fontFamily: FontNameDefault,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )),
+                    ],
+                  ),
                 ),
               ),
               Wrap(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(
-                        top: screenSize.height * 0.01,
-                        left: screenSize.width * 0.012),
+                    padding: EdgeInsets.only(left: screenSize.width * 0.025),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: screenSize.width * 0.01,
-                                bottom: screenSize.height * 0.01,
-                              ),
-                              child: Text(
-                                  widget.documentSnapshot.data['time'] != null
-                                      ? timeago.format(widget
-                                          .documentSnapshot.data['time']
-                                          .toDate())
-                                      : '',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textbody2(context),
-                                      color: Colors.grey)),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          widget.documentSnapshot.data['price'],
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textSubTitle(context),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                         SizedBox(
                           height: 4.0,
                         ),
@@ -207,7 +239,7 @@ class _ListAdState extends State<ListAd> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.black,
+                              color: Colors.black,
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context)),
                         ),
@@ -215,7 +247,12 @@ class _ListAdState extends State<ListAd> {
                           height: 4.0,
                         ),
                         Text(
-                          widget.documentSnapshot.data['location'],
+                          widget.documentSnapshot.data['city'] != null &&
+                                  widget.documentSnapshot.data['city'] != ''
+                              ? widget.documentSnapshot.data['city']
+                              : widget.documentSnapshot.data['location'],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textBody1(context),

@@ -96,7 +96,7 @@ class _LikesScreenState extends State<LikesScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: ((context) =>
-                                            InstaFriendProfileScreen(
+                                            FriendProfileScreen(
                                               uid: snapshot
                                                   .data[index].data['ownerUid'],
                                               name: snapshot.data[index]
@@ -120,12 +120,12 @@ class _LikesScreenState extends State<LikesScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: ((context) =>
-                                            InstaProfileScreen())))
+                                            ProfileScreen())))
                                 : Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: ((context) =>
-                                            InstaFriendProfileScreen(
+                                            FriendProfileScreen(
                                               name: snapshot.data[index]
                                                   .data['ownerName'],
                                             ))));

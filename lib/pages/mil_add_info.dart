@@ -29,7 +29,7 @@ class _MilAddInfoState extends State<MilAddInfo> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
+        //  resizeToAvoidBottomPadding: false,
         body: SingleChildScrollView(
           child: Container(
             child: Column(

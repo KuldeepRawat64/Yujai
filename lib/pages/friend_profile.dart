@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_activity_events.dart';
@@ -7,6 +9,10 @@ import 'package:Yujai/pages/send_mail.dart';
 import 'package:Yujai/pages/webview.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/flow_widget.dart';
+import 'package:Yujai/widgets/nested_tab_bar_profile.dart';
+import 'package:Yujai/widgets/skill_widgets.dart';
+import 'package:Yujai/widgets/sliver_persistent_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,21 +22,24 @@ import 'package:Yujai/pages/friend_info.dart';
 import 'package:Yujai/pages/friend_activity_applications.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class InstaFriendProfileScreen extends StatefulWidget {
+class FriendProfileScreen extends StatefulWidget {
   final String name;
   final String uid;
-  InstaFriendProfileScreen({this.name, this.uid});
+  FriendProfileScreen({this.name, this.uid});
 
   @override
-  _InstaFriendProfileScreenState createState() =>
-      _InstaFriendProfileScreenState();
+  _FriendProfileScreenState createState() => _FriendProfileScreenState();
 }
 
-class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
+class _FriendProfileScreenState extends State<FriendProfileScreen>
+    with TickerProviderStateMixin {
   String currentUserId, followingUserId;
   var _repository = Repository();
+  TabController _tabController;
   static User _user, currentuser;
   IconData icon;
   Color color;
@@ -44,6 +53,15 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
   String selectedSubject;
   final _bodyController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  ScrollController _scrollController;
+  //Offset state <-------------------------------------
+  double offset = 0.0;
+  var _tabs = ["Overview", "Skills", "Experience"];
+  Completer<GoogleMapController> _gpsController = Completer();
+  // inititalize _center
+  Position _center;
+  final Set<Marker> _markers = {};
+  //GeoPoint geopint;
 
   Future<void> send() async {
     final Email email = Email(
@@ -76,8 +94,8 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
     return Wrap(
       children: strings
           .map((items) => Padding(
-                padding: EdgeInsets.all(screenSize.height * 0.01),
-                child: chip(items, Colors.deepPurple[100]),
+                padding: EdgeInsets.all(screenSize.height * 0.005),
+                child: chip(items, Colors.deepPurple[50]),
               ))
           .toList(),
     );
@@ -92,14 +110,14 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
         style: TextStyle(
           fontFamily: FontNameDefault,
           // fontWeight: FontWeight.bold,
-          color: Colors.black,
-          fontSize: textbody2(context),
+          color: Colors.deepPurple[400],
+          fontSize: 14,
         ),
       ),
       backgroundColor: color,
       elevation: 0.0,
       shadowColor: Colors.grey[60],
-      padding: EdgeInsets.all(screenSize.height * 0.01),
+      padding: EdgeInsets.all(screenSize.height * 0.005),
     );
   }
 
@@ -161,6 +179,15 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
     });
     fetchUidBySearchedName(widget.uid);
     selectedSubject = 'Spam';
+    _tabController = TabController(length: 1, vsync: this);
+    _scrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          //<----------------
+          offset = _scrollController.offset;
+          //force arefresh so the app bar can be updated
+        });
+      });
   }
 
   setSelectedSubject(String val) {
@@ -440,7 +467,7 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
     return GestureDetector(
       onTap: function,
       child: Container(
-        width: screenSize.width / 2,
+        width: screenSize.width * 0.25,
         height: screenSize.height * 0.05,
         decoration: BoxDecoration(
             color: backgroundcolor,
@@ -453,7 +480,7 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               fontWeight: FontWeight.bold,
               fontFamily: FontNameDefault,
               color: textColor,
-              fontSize: textSubTitle(context),
+              //     fontSize: textSubTitle(context),
             ),
           ),
         ),
@@ -559,16 +586,16 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             SizedBox(
               width: screenSize.width / 30,
             ),
-            IconButton(
-              icon: Icon(
-                Icons.more_horiz_outlined,
-                size: screenSize.height * 0.035,
-                color: Colors.black54,
-              ),
-              onPressed: () {
-                showReport();
-              },
-            ),
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.more_horiz_outlined,
+            //     size: screenSize.height * 0.035,
+            //     color: Colors.black54,
+            //   ),
+            //   onPressed: () {
+            //     showReport();
+            //   },
+            // ),
           ],
         ),
       );
@@ -659,182 +686,47 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: new Color(0xffffffff),
-        appBar: AppBar(
-          elevation: 0.5,
-          actions: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: screenSize.height * 0.02,
-                horizontal: screenSize.width / 50,
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) => Home()));
-                },
-                child: Container(
-                  height: screenSize.height * 0.055,
-                  width: screenSize.width * 0.15,
-                  child: Center(
-                      child: Text(
-                    'Home',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: FontNameDefault,
-                      color: Colors.white,
-                      fontSize: textButton(context),
+      child: Material(
+        child: _user == null
+            ? Container()
+            : _user.accountType == 'Company'
+                ? Scaffold(
+                    appBar: AppBar(
+                      elevation: 0.5,
+                      actions: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.more_horiz_outlined,
+                            size: screenSize.height * 0.035,
+                            color: Colors.black54,
+                          ),
+                          onPressed: () {
+                            showReport();
+                          },
+                        ),
+                      ],
+                      title: Text(
+                        'Profile',
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                          fontSize: textHeader(context),
+                        ),
+                      ),
+                      backgroundColor: Color(0xffffffff),
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.keyboard_arrow_left,
+                          color: Colors.black54,
+                          size: 30,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
-                  )),
-                  decoration: ShapeDecoration(
-                    color: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(60.0),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-          leading: IconButton(
-              icon: Icon(
-                Icons.keyboard_arrow_left,
-                color: Colors.black54,
-                size: screenSize.height * 0.045,
-              ),
-              onPressed: () => Navigator.pop(context)),
-          //  centerTitle: true,
-          backgroundColor: Colors.white,
-          title: Text(
-            'Profile',
-            style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontSize: textAppTitle(context),
-              color: Colors.black54,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        body: _user != null
-            ? ListView(
-                children: <Widget>[
-                  _user.accountType != 'Company'
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            _user.accountType == 'Military'
-                                ? Stack(
-                                    fit: StackFit.loose,
-                                    alignment: Alignment.topLeft,
-                                    children: [
-                                      checkMilitaryType(),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: screenSize.width / 30,
-                                          top: screenSize.height * 0.155,
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: screenSize.height * 0.07,
-                                          backgroundColor: Colors.grey,
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                                  _user.photoUrl),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Stack(
-                                    fit: StackFit.loose,
-                                    alignment: Alignment.topLeft,
-                                    children: [
-                                      Container(
-                                        height: screenSize.height * 0.17,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        color: Colors.white,
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            color: Color(0xff251F34),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          left: screenSize.width / 30,
-                                          top: screenSize.height * 0.09,
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: screenSize.height * 0.07,
-                                          backgroundColor: Colors.grey,
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                            _user.photoUrl,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: screenSize.width / 30,
-                                top: screenSize.height * 0.01,
-                              ),
-                              child: Text(_user.displayName,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  )),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: screenSize.width / 30,
-                                top: screenSize.height * 0.01,
-                              ),
-                              child: _user.accountType == 'Military'
-                                  ? Text(
-                                      _user.military,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
-                                      ),
-                                    )
-                                  : _user.accountType.isNotEmpty
-                                      ? Text(
-                                          _user.accountType,
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                            color: Colors.grey,
-                                          ),
-                                        )
-                                      : Container(),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: screenSize.width / 30,
-                                top: screenSize.height * 0.01,
-                              ),
-                              child: _user.location.isNotEmpty
-                                  ? Text(
-                                      _user.location,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                            buildButtonRow(),
-                          ],
-                        )
-                      : Column(
+                    body: ListView(
+                      children: <Widget>[
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Stack(
@@ -884,23 +776,563 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
                             buildButtonRow(),
                           ],
                         ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenSize.height * 0.012),
-                    child: Container(
-                      height: screenSize.height * 0.01,
-                      color: Colors.grey[200],
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //       vertical: screenSize.height * 0.012),
+                        //   child: Container(
+                        //     height: screenSize.height * 0.01,
+                        //     color: Colors.grey[200],
+                        //   ),
+                        // ),
+                        SizedBox(
+                          height: screenSize.height * 0.02,
+                        ),
+                        companyBody(),
+                      ],
+                    ))
+                : DefaultTabController(
+                    length: _tabs.length,
+                    child: NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return <Widget>[
+                          SliverOverlapAbsorber(
+                            handle:
+                                NestedScrollView.sliverOverlapAbsorberHandleFor(
+                                    context),
+                            sliver: SliverAppBar(
+                              actions: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0),
+                                  child: buildProfileButton(),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.more_horiz,
+                                    color: Colors.black54,
+                                  ),
+                                  onPressed: showReport,
+                                )
+                              ],
+                              leading: IconButton(
+                                icon: Icon(
+                                  Icons.keyboard_arrow_left,
+                                  color: Colors.black54,
+                                  size: 30,
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              backgroundColor: Color(0xffffffff),
+                              title: const Text(
+                                'Profile',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              //   pinned: true,
+                              flexibleSpace: FlexibleSpaceBar(
+                                title: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: ListTile(
+                                    minVerticalPadding: 2,
+                                    contentPadding: EdgeInsets.zero,
+                                    trailing: IconButton(
+                                      icon: Icon(
+                                        Icons.message_outlined,
+                                        size: 16,
+                                      ),
+                                      onPressed: null,
+                                    ),
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: 15,
+                                      backgroundImage:
+                                          NetworkImage(_user.photoUrl),
+                                    ),
+                                    title: Text(
+                                      _user.displayName,
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      _user.designation,
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: 10,
+                                        //   fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              elevation: 0,
+                              floating: true,
+                              snap: true,
+                              expandedHeight: screenSize.height * 0.22,
+                              collapsedHeight: screenSize.height * 0.1,
+                              forceElevated: innerBoxIsScrolled,
+                              bottom: TabBar(
+                                unselectedLabelStyle: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                labelPadding:
+                                    const EdgeInsets.symmetric(horizontal: 28),
+                                //controller: _nestedTabController,
+                                indicatorColor: Colors.purpleAccent,
+                                labelColor: Theme.of(context).primaryColor,
+                                unselectedLabelColor: Colors.black54,
+                                labelStyle: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                isScrollable: true,
+                                tabs: _tabs
+                                    .map((String name) => Tab(
+                                          text: name,
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ),
+                          // SliverAppBar(
+                          //   actions: [
+                          //     IconButton(
+                          //         onPressed: null,
+                          //         icon: Icon(
+                          //           Icons.more_horiz,
+                          //           color: Colors.black,
+                          //         ))
+                          //   ],
+                          //   floating: true,
+                          //   //      pinned: true,
+                          //   elevation: 0.5,
+                          //   leading: IconButton(
+                          //       icon: Icon(Icons.keyboard_arrow_left,
+                          //           color: Colors.black54, size: screenSize.height * 0.045),
+                          //       onPressed: () {
+                          //         Navigator.pop(context);
+                          //       }),
+                          //   backgroundColor: Color(0xFFffffff),
+                          //   expandedHeight: screenSize.height * 0.2,
+                          //   collapsedHeight: kToolbarHeight,
+                          //   flexibleSpace: FlexibleSpaceBar(
+                          //     stretchModes: [
+                          //       StretchMode.zoomBackground,
+                          //       StretchMode.fadeTitle,
+                          //       StretchMode.blurBackground
+                          //     ],
+                          //     title: ListTile(
+                          //       leading: CircleAvatar(
+                          //         backgroundColor: Colors.white,
+                          //         radius: screenSize.height * 0.03,
+                          //         backgroundImage: NetworkImage(_user.photoUrl),
+                          //       ),
+                          //       title: Padding(
+                          //         padding: EdgeInsets.only(left: screenSize.width / 30),
+                          //         child: Text(
+                          //           _user.displayName,
+                          //           style: TextStyle(
+                          //               fontSize: screenSize.height * 0.018,
+                          //               color: Colors.black54,
+                          //               fontWeight: FontWeight.bold),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     background: DecoratedBox(
+                          //       position: DecorationPosition.foreground,
+                          //       decoration: BoxDecoration(
+                          //         gradient: LinearGradient(
+                          //           begin: Alignment.bottomCenter,
+                          //           end: Alignment.center,
+                          //           colors: <Color>[
+                          //             Colors.deepPurple[300],
+                          //             Colors.transparent,
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ];
+                      },
+                      // backgroundColor: new Color(0xffffffff),
+                      // appBar: AppBar(
+                      //   elevation: 0.5,
+                      //   actions: [
+                      //     Padding(
+                      //       padding: EdgeInsets.symmetric(
+                      //         vertical: screenSize.height * 0.02,
+                      //         horizontal: screenSize.width / 50,
+                      //       ),
+                      //       child: GestureDetector(
+                      //         onTap: () {
+                      //           Navigator.of(context)
+                      //               .push(MaterialPageRoute(builder: (context) => Home()));
+                      //         },
+                      //         child: Container(
+                      //           height: screenSize.height * 0.055,
+                      //           width: screenSize.width * 0.15,
+                      //           child: Center(child: Icon(Icons.home_outlined)),
+                      //           decoration: ShapeDecoration(
+                      //             color: Theme.of(context).primaryColor,
+                      //             shape: RoundedRectangleBorder(
+                      //               borderRadius: BorderRadius.circular(60.0),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      //   leading: IconButton(
+                      //       icon: Icon(
+                      //         Icons.keyboard_arrow_left,
+                      //         color: Colors.black54,
+                      //         size: screenSize.height * 0.045,
+                      //       ),
+                      //       onPressed: () => Navigator.pop(context)),
+                      //   //  centerTitle: true,
+                      //   backgroundColor: Colors.white,
+                      //   title: Text(
+                      //     'Profile',
+                      //     style: TextStyle(
+                      //       fontFamily: FontNameDefault,
+                      //       fontSize: textAppTitle(context),
+                      //       color: Colors.black54,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
+                      body: _user != null
+                          ? TabBarView(children: [
+                              overviewProfile(),
+                              skillProfile(),
+                              expProfile()
+                            ])
+                          //CustomScrollView(
+                          //   physics: NeverScrollableScrollPhysics(),
+                          //    controller: _scrollController,
+                          //   slivers: [
+                          // SliverAppBar(
+                          //   actions: [
+                          //     IconButton(
+                          //         onPressed: null,
+                          //         icon: Icon(
+                          //           Icons.more_horiz,
+                          //           color: Colors.black,
+                          //         ))
+                          //   ],
+                          //   floating: true,
+                          //   //      pinned: true,
+                          //   elevation: 0.5,
+                          //   leading: IconButton(
+                          //       icon: Icon(Icons.keyboard_arrow_left,
+                          //           color: Colors.black54,
+                          //           size: screenSize.height * 0.045),
+                          //       onPressed: () {
+                          //         Navigator.pop(context);
+                          //       }),
+                          //   backgroundColor: Color(0xFFffffff),
+                          //   expandedHeight: screenSize.height * 0.2,
+                          //   collapsedHeight: kToolbarHeight,
+                          //   flexibleSpace: FlexibleSpaceBar(
+                          //     stretchModes: [
+                          //       StretchMode.zoomBackground,
+                          //       StretchMode.fadeTitle,
+                          //       StretchMode.blurBackground
+                          //     ],
+                          //     title: ListTile(
+                          //       leading: CircleAvatar(
+                          //         backgroundColor: Colors.white,
+                          //         radius: screenSize.height * 0.03,
+                          //         backgroundImage: NetworkImage(_user.photoUrl),
+                          //       ),
+                          //       title: Padding(
+                          //         padding: EdgeInsets.only(left: screenSize.width / 30),
+                          //         child: Text(
+                          //           _user.displayName,
+                          //           style: TextStyle(
+                          //               fontSize: screenSize.height * 0.018,
+                          //               color: Colors.black54,
+                          //               fontWeight: FontWeight.bold),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     background: DecoratedBox(
+                          //       position: DecorationPosition.foreground,
+                          //       decoration: BoxDecoration(
+                          //         gradient: LinearGradient(
+                          //           begin: Alignment.bottomCenter,
+                          //           end: Alignment.center,
+                          //           colors: <Color>[
+                          //             Colors.deepPurple[300],
+                          //             Colors.transparent,
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // SliverPersistentHeader(
+                          //   pinned: true,
+                          //   floating: true,
+                          //   delegate: ProfileHeader(
+                          //       minExtent: 110,
+                          //       maxExtent: 110,
+                          //       name: _user.displayName,
+                          //       photo: _user.photoUrl,
+                          //       designation: _user.designation,
+                          //       location: _user.location),
+                          // ),
+                          // SliverList(
+                          //     delegate: SliverChildListDelegate(
+                          //         [_user != null ? buildButtonBar() : Container()]))
+
+                          : Center(child: CircularProgressIndicator()),
                     ),
                   ),
-                  _user.accountType != 'Company' ? userBody() : companyBody(),
-                ],
-              )
-            : Center(child: CircularProgressIndicator()),
       ),
     );
   }
 
+  Widget overviewProfile() {
+    return ListView(
+      //   controller: _scrollController1,
+      //  physics: NeverScrollableScrollPhysics(),
+      //crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+          padding: EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: Color(0xffffffff),
+          ),
+          child: Column(
+            //    shrinkWrap: true,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Bio',
+                style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textHeader(context),
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 12.0,
+              ),
+              Text(_user.bio,
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    //        fontSize: textHeader(context),
+                    //      fontWeight: FontWeight.bold),
+                  ))
+            ],
+          ),
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+            padding: EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              color: Color(0xffffffff),
+            ),
+            child: userBody()),
+      ],
+    );
+  }
+
+  buildButtonBar() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.9,
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          NestedTabBarProfile(
+            currentUser: currentuser,
+            profileUser: _user,
+          ),
+        ],
+        controller: _tabController,
+      ),
+    );
+  }
+
+  Widget skillProfile() {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+          padding: EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: Color(0xffffffff),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Skills',
+                style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textHeader(context),
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 12.0,
+              ),
+              _user.skills == []
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width * 0.25,
+                          vertical: screenSize.height * 0.01),
+                      child: Text(
+                        'Nothing to see here',
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textBody1(context),
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (BuildContext context, int index) {
+                        return SkillEventRow(SkillEvent(
+                            skill: _user.skills[index]['skill'],
+                            level: _user.skills[index]['level'].toDouble()));
+                      },
+                      // separatorBuilder:
+                      //     (BuildContext context, int index) {
+                      //   return SizedBox(
+                      //     height: 2,
+                      //   );
+                      // },
+                      itemCount: _user.skills.length),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget expProfile() {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+          padding: EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: Color(0xffffffff),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Experience',
+                style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textHeader(context),
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 12.0,
+              ),
+              _user.experience != []
+                  ? Card(
+                      elevation: 0,
+                      // margin: EdgeInsets.symmetric(
+                      //     horizontal: screenSize.width * 0.2,
+                      //     vertical: screenSize.height * 0.02
+                      //     ),
+                      child: Stack(
+                        fit: StackFit.loose,
+                        children: [
+                          Positioned(
+                              left: 21,
+                              top: 15,
+                              bottom: 15,
+                              child: VerticalDivider(
+                                width: 1,
+                                color: Colors.black54,
+                              )),
+                          ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemBuilder: (BuildContext context, int index) {
+                                return FlowEventRow(FlowEvent(
+                                    employmentType: _user.experience[index]
+                                        ['employmentType'],
+                                    isPresent: _user.experience[index]
+                                        ['isPresent'],
+                                    industry: _user.experience[index]
+                                        ['industry'],
+                                    company: _user.experience[index]['company'],
+                                    designation: _user.experience[index]
+                                        ['designation'],
+                                    startDate: _user.experience[index]
+                                        ['startCompany'],
+                                    endDate: _user.experience[index]
+                                        ['endCompany']));
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return SizedBox(
+                                  height: 2,
+                                );
+                              },
+                              itemCount: _user.experience.length)
+                        ],
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width * 0.25,
+                          vertical: screenSize.height * 0.01),
+                      child: Text(
+                        'Nothing to see',
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textBody1(context),
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget companyBody() {
+    _markers.add(
+      Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId(_center.toString()),
+        position: LatLng(_user.geoPoint.latitude, _user.geoPoint.longitude),
+
+        icon: BitmapDescriptor.defaultMarker,
+      ),
+    );
     var screenSize = MediaQuery.of(context).size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -910,13 +1342,9 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontFamily: FontNameDefault,
-            fontSize: textSubTitle(context),
+            fontSize: textHeader(context),
           ),
         ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-        child: Divider(),
       ),
       Padding(
         padding: EdgeInsets.only(
@@ -926,7 +1354,7 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             Text(
               _user.bio,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: FontNameDefault,
                   fontSize: textBody1(context),
                   color: Colors.black54),
@@ -934,12 +1362,8 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           ],
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.01,
-          color: Colors.grey[200],
-        ),
+      SizedBox(
+        height: screenSize.height * 0.02,
       ),
       Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -948,66 +1372,66 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontFamily: FontNameDefault,
-            fontSize: textSubTitle(context),
+            fontSize: textHeader(context),
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-        child: Divider(),
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-          left: screenSize.width / 30,
-          top: screenSize.height * 0.012,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Employees',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontWeight: FontWeight.bold,
-                fontSize: textSubTitle(context),
+      _user.employees != ''
+          ? Padding(
+              padding: EdgeInsets.only(
+                left: screenSize.width / 30,
+                top: screenSize.height * 0.012,
               ),
-            ),
-            Text(
-              _user.companySize + ' employees',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
-              ),
-            )
-          ],
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-          left: screenSize.width / 30,
-          top: screenSize.height * 0.012,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Year of establishment',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontWeight: FontWeight.bold,
-                fontSize: textSubTitle(context),
-              ),
-            ),
-            Text(
-              _user.establishYear,
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textBody1(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Employees',
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontWeight: FontWeight.bold,
+                      fontSize: textSubTitle(context),
+                    ),
+                  ),
+                  Text(
+                    _user.employees + ' employees',
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                    ),
+                  )
+                ],
               ),
             )
-          ],
-        ),
-      ),
+          : Container(),
+      _user.establishYear != ''
+          ? Padding(
+              padding: EdgeInsets.only(
+                left: screenSize.width / 30,
+                top: screenSize.height * 0.012,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Year of establishment',
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontWeight: FontWeight.bold,
+                      fontSize: textSubTitle(context),
+                    ),
+                  ),
+                  Text(
+                    _user.establishYear,
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                    ),
+                  )
+                ],
+              ),
+            )
+          : Container(),
       Padding(
         padding: EdgeInsets.only(
           left: screenSize.width / 30,
@@ -1064,60 +1488,79 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           ],
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.01,
-          color: Colors.grey[200],
-        ),
+      SizedBox(
+        height: screenSize.height * 0.02,
       ),
-      Padding(
-        padding: EdgeInsets.only(left: screenSize.width / 30),
-        child: Text(
-          'Location',
-          style: TextStyle(
-            fontFamily: FontNameDefault,
-            fontWeight: FontWeight.bold,
-            fontSize: textSubTitle(context),
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-        child: Divider(),
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-            left: screenSize.width / 30, top: screenSize.height * 0.012),
-        child: Text(
-          _user.location,
-          style: TextStyle(
-            fontFamily: FontNameDefault,
-            fontSize: textBody1(context),
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.01,
-          color: Colors.grey[200],
-        ),
+      _user.geoPoint != null
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: screenSize.width / 30),
+                  child: Text(
+                    'Location',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenSize.width * 0.2,
+                    vertical: screenSize.height * 0.005,
+                  ),
+                  child: Text(
+                    _user.location,
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black54,
+                      fontStyle: FontStyle.italic,
+                      //  fontSize: textBody1(context),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    right: screenSize.width / 30,
+                    left: screenSize.width / 30,
+                    //top: screenSize.height * 0.012
+                  ),
+                  child: Container(
+                    height: screenSize.height * 0.13,
+                    width: screenSize.width,
+                    margin: EdgeInsets.symmetric(
+                        vertical: screenSize.height * 0.02),
+                    child: GoogleMap(
+                      markers: _markers,
+                      zoomControlsEnabled: false,
+                      initialCameraPosition: CameraPosition(
+                          target: LatLng(_user.geoPoint.latitude,
+                              _user.geoPoint.longitude),
+                          zoom: 12),
+                      onMapCreated: (GoogleMapController controller) {
+                        _gpsController.complete();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : Container(),
+      SizedBox(
+        height: screenSize.height * 0.02,
       ),
       Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
         child: Text(
           'Contact',
           style: TextStyle(
-            fontFamily: FontNameDefault,
             fontWeight: FontWeight.bold,
-            fontSize: textSubTitle(context),
+            fontFamily: FontNameDefault,
+            fontSize: textHeader(context),
           ),
         ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-        child: Divider(),
       ),
       Padding(
         padding: EdgeInsets.only(
@@ -1217,13 +1660,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           ],
         ),
       ),
-      Padding(
-        padding: EdgeInsets.only(top: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.01,
-          color: Colors.grey[200],
-        ),
-      ),
       InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
@@ -1243,9 +1679,9 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Posts',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -1255,11 +1691,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             ],
           ),
         ),
-      ),
-      Divider(
-        thickness: 0.4,
-        height: 0,
-        color: Colors.grey[500],
       ),
       InkWell(
         onTap: () {
@@ -1280,9 +1711,9 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Articles',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -1292,11 +1723,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             ],
           ),
         ),
-      ),
-      Divider(
-        thickness: 0.4,
-        height: 0,
-        color: Colors.grey[500],
       ),
       InkWell(
         onTap: () {
@@ -1317,8 +1743,8 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Events',
                 style: TextStyle(
-                  fontSize: textSubTitle(context),
-                ),
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -1328,11 +1754,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             ],
           ),
         ),
-      ),
-      Divider(
-        thickness: 0.4,
-        height: 0,
-        color: Colors.grey[500],
       ),
       InkWell(
         onTap: () {
@@ -1353,9 +1774,9 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Jobs',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -1365,11 +1786,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             ],
           ),
         ),
-      ),
-      Divider(
-        thickness: 0.4,
-        height: 0,
-        color: Colors.grey[500],
       ),
       InkWell(
         onTap: () {
@@ -1389,9 +1805,9 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Information',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -1400,13 +1816,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               )
             ],
           ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.01,
-          color: Colors.grey[200],
         ),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -1420,549 +1829,146 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
   Widget userBody() {
     var screenSize = MediaQuery.of(context).size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _user.bio.isNotEmpty
+      _user.accountType == 'Military'
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Basic Info',
-                        style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: textSubTitle(context),
-                        ),
-                      ),
-                      Divider(),
-                      _user.rank.isNotEmpty && _user.rank != 'Select a Rank'
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  'Rank  :  ',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                Text(
-                                  _user.rank,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.medal != null &&
-                              _user.medal.isNotEmpty &&
-                              _user.medal != 'Select a Medal'
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  'Medal  :  ',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                Text(
-                                  _user.medal,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.regiment.isNotEmpty &&
-                              _user.regiment != 'Select a Regiment'
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  'Regiment  :  ',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                Text(
-                                  _user.regiment,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.command.isNotEmpty &&
-                              _user.command != 'Select a Command'
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  'Command  :  ',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                Text(
-                                  _user.command,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.department.isNotEmpty &&
-                              _user.department != 'Select a Department'
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  'Department  :  ',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                Text(
-                                  _user.department,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      SizedBox(
-                        height: screenSize.height * 0.01,
-                      ),
-                      //  Divider(),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'About',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                      right: screenSize.width / 30,
-                      top: screenSize.height * 0.005),
-                  child: Text(
-                    _user.bio,
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                        color: Colors.black54),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
-              ],
-            )
-          : Container(),
-      _user.university.isNotEmpty ||
-              _user.college.isNotEmpty ||
-              _user.school.isNotEmpty
-          // ||
-          // _user.certification1.isNotEmpty
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Education & Qualification',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _user.university == ''
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: screenSize.height * 0.012),
-                                  child: Text(
-                                    'University',
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _user.university,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    Text(
-                                      ', ' + _user.endUniversity,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Text(
-                                  _user.stream,
-                                  style: TextStyle(
-                                    fontSize: screenSize.height * 0.018,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                      _user.college == ''
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: screenSize.height * 0.012),
-                                  child: Text(
-                                    'College',
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _user.college,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    Text(
-                                      ', ' + _user.endCollege,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                      _user.school == ''
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: screenSize.height * 0.012),
-                                  child: Text(
-                                    'School',
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _user.school,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                    Text(
-                                      ', ' + _user.endSchool,
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                      _user.certification1.isEmpty ||
-                              _user.certification2.isEmpty ||
-                              _user.certification3.isEmpty
-                          ? Container()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: screenSize.height * 0.012),
-                                  child: Text(
-                                    'Certifications',
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context),
-                                    ),
-                                  ),
-                                ),
-                                _user.certification1.isNotEmpty
-                                    ? Text(
-                                        _user.certification1,
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black54,
-                                        ),
-                                      )
-                                    : Container(),
-                                _user.certification2.isNotEmpty
-                                    ? Text(
-                                        _user.certification2,
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black54,
-                                        ),
-                                      )
-                                    : Container(),
-                                _user.certification3.isNotEmpty
-                                    ? Text(
-                                        _user.certification3,
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black54,
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
-              ],
-            )
-          : Container(),
-      _user.company1.isNotEmpty
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Experience',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
-                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenSize.width / 30,
-                        top: screenSize.height * 0.012,
-                      ),
-                      child: Text(
-                        _user.company1 +
-                            '   (' +
-                            _user.startCompany1 +
-                            ' ' +
-                            '- ' +
-                            _user.endCompany1 +
-                            ')   ',
-                        style: TextStyle(
+                    Text(
+                      'Basic Info',
+                      style: TextStyle(
                           fontFamily: FontNameDefault,
-                          fontSize: textBody1(context),
-                          color: Colors.black54,
-                        ),
-                      ),
+                          fontSize: textHeader(context),
+                          fontWeight: FontWeight.bold),
                     ),
-                    _user.company2.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              left: screenSize.width / 30,
-                              top: screenSize.height * 0.012,
-                            ),
-                            child: Text(
-                              _user.company2 +
-                                  '   (' +
-                                  _user.startCompany2 +
-                                  ' ' +
-                                  '- ' +
-                                  _user.endCompany2 +
-                                  ')   ',
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black54,
+
+                    _user.rank.isNotEmpty && _user.rank != 'Select a Rank'
+                        ? Wrap(
+                            children: [
+                              Text(
+                                'Rank  :  ',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: textSubTitle(context),
+                                ),
                               ),
-                            ),
+                              Text(
+                                _user.rank,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           )
                         : Container(),
-                    _user.company3.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              left: screenSize.width / 30,
-                              top: screenSize.height * 0.012,
-                            ),
-                            child: Text(
-                              _user.company3 +
-                                  '   (' +
-                                  _user.startCompany3 +
-                                  ' ' +
-                                  '- ' +
-                                  _user.endCompany3 +
-                                  ')   ',
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black54,
+                    _user.medal != null &&
+                            _user.medal.isNotEmpty &&
+                            _user.medal != 'Select a Medal'
+                        ? Wrap(
+                            children: [
+                              Text(
+                                'Medal  :  ',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: textSubTitle(context),
+                                ),
                               ),
-                            ),
+                              Text(
+                                _user.medal,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           )
                         : Container(),
+                    _user.regiment.isNotEmpty &&
+                            _user.regiment != 'Select a Regiment'
+                        ? Wrap(
+                            children: [
+                              Text(
+                                'Regiment  :  ',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                              Text(
+                                _user.regiment,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    _user.command.isNotEmpty &&
+                            _user.command != 'Select a Command'
+                        ? Wrap(
+                            children: [
+                              Text(
+                                'Command  :  ',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                              Text(
+                                _user.command,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    _user.department.isNotEmpty &&
+                            _user.department != 'Select a Department'
+                        ? Wrap(
+                            children: [
+                              Text(
+                                'Department  :  ',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                              Text(
+                                _user.department,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    SizedBox(
+                      height: screenSize.height * 0.01,
+                    ),
+                    //  Divider(),
                   ],
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
-              ],
-            )
-          : Container(),
-      _user.skills.isNotEmpty
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Skills',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Wrap(
-                    children: [
-                      _user != null
-                          ? getTextWidgets(_user.skills)
-                          : Text(
-                              '',
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black54,
-                              ),
-                            ),
-                    ],
-                  ),
                 ),
                 Padding(
                   padding:
@@ -1979,22 +1985,12 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Interest',
-                    style: TextStyle(
+                Text(
+                  'Interest',
+                  style: TextStyle(
                       fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -2013,37 +2009,22 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
               ],
             )
           : Container(),
+      SizedBox(
+        height: screenSize.height * 0.02,
+      ),
       _user.purpose.isNotEmpty
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Purpose',
-                    style: TextStyle(
+                Text(
+                  'Purpose',
+                  style: TextStyle(
                       fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -2055,39 +2036,24 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
               ],
             )
           : Container(),
+      SizedBox(
+        height: screenSize.height * 0.02,
+      ),
       _user.phone.isNotEmpty ||
               _user.website.isNotEmpty ||
               _user.email.isNotEmpty
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    'Contact Details',
-                    style: TextStyle(
+                Text(
+                  'Contact Details',
+                  style: TextStyle(
                       fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width / 30),
-                  child: Divider(),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 _user.phone.isNotEmpty
                     ? Column(
@@ -2199,17 +2165,12 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
                         ],
                       )
                     : Container(),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
-                ),
               ],
             )
           : Container(),
+      SizedBox(
+        height: screenSize.height * 0.02,
+      ),
       InkWell(
         onTap: () {
           if (isPrivate && !isFollowing) {
@@ -2233,10 +2194,10 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Activity',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  color: Colors.black,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    color: Colors.black,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -2256,9 +2217,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
             ],
           ),
         ),
-      ),
-      Divider(
-        height: 0,
       ),
       InkWell(
         onTap: () {
@@ -2282,10 +2240,10 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Information',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  color: Colors.black,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    color: Colors.black,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -2306,9 +2264,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
           ),
         ),
       ),
-      Divider(
-        height: 0,
-      ),
       InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
@@ -2328,10 +2283,10 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               Text(
                 'Work Applications',
                 style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  color: Colors.black,
-                  fontSize: textSubTitle(context),
-                ),
+                    fontFamily: FontNameDefault,
+                    color: Colors.black,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
@@ -2340,13 +2295,6 @@ class _InstaFriendProfileScreenState extends State<InstaFriendProfileScreen> {
               )
             ],
           ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-        child: Container(
-          height: screenSize.height * 0.02,
-          color: Colors.grey[200],
         ),
       ),
       Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

@@ -139,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               color: const Color(0xFFffffff),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.0),
-                              //  side: BorderSide(color: Colors.grey[300]),
+                                //  side: BorderSide(color: Colors.grey[300]),
                               ),
                             ),
                             child: Padding(
@@ -311,8 +311,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                         style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
-                                                          fontSize: textbody2(
-                                                              context),
+                                                          // fontSize: textbody2(
+                                                          //     context),
                                                           color: Colors.black54,
                                                         ),
                                                       )

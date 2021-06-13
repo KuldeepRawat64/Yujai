@@ -13,15 +13,18 @@ class _ChooseAccountState extends State<ChooseAccount> {
   String accountType = '';
   bool isLoading = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isSelected = false;
+  bool isSelected2 = false;
+  bool isSelected3 = false;
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return WillPopScope(
-      onWillPop: ()  async => false,
+      onWillPop: () async => false,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: const Color(0xfff6f6f6),
+          backgroundColor: const Color(0xffffffff),
           body: Container(
             padding: EdgeInsets.fromLTRB(
               screenSize.width / 11,
@@ -36,21 +39,24 @@ class _ChooseAccountState extends State<ChooseAccount> {
                 children: <Widget>[
                   Center(
                     child: Text(
-                      'Define your Account',
+                      'Define your account',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontFamily: FontNameDefault,
-                        fontSize: textAppTitle(context),
+                        fontSize: textHeader(context),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: screenSize.height * 0.05),
+                    padding: EdgeInsets.symmetric(
+                        vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
                         FirebaseUser currentUser = await _auth.currentUser();
                         setState(() {
+                          isSelected = true;
+                          isSelected2 = false;
+                          isSelected3 = false;
                           accountType = "Professional";
                         });
                         usersRef.document(currentUser.uid).updateData({
@@ -67,16 +73,20 @@ class _ChooseAccountState extends State<ChooseAccount> {
                           // border: new Border.all(
                           //   width: 0.15,
                           // ),
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(60.0),
+
+                          color: isSelected
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Center(
                           child: Text(
                             "Professional / Freelancer",
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              color: Colors.white,
-                             fontSize: textSubTitle(context),
+                              color: isSelected ? Colors.white : Colors.black54,
+                              fontWeight: FontWeight.bold,
+                              fontSize: textSubTitle(context),
                             ),
                           ),
                         ),
@@ -87,6 +97,9 @@ class _ChooseAccountState extends State<ChooseAccount> {
                     onTap: () async {
                       FirebaseUser currentUser = await _auth.currentUser();
                       setState(() {
+                        isSelected2 = true;
+                        isSelected = false;
+                        isSelected3 = false;
                         accountType = "Student";
                       });
                       usersRef.document(currentUser.uid).updateData({
@@ -103,28 +116,34 @@ class _ChooseAccountState extends State<ChooseAccount> {
                         // border: new Border.all(
                         //   width: 0.15,
                         // ),
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(60.0),
+                        color: isSelected2
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: Center(
                         child: Text(
                           "Student",
-                         style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.white,
-                             fontSize: textSubTitle(context),
-                            ),
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: isSelected2 ? Colors.white : Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context),
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: screenSize.height * 0.05),
+                    padding: EdgeInsets.symmetric(
+                        vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
                         FirebaseUser currentUser = await _auth.currentUser();
                         setState(() {
+                          isSelected3 = true;
+                          isSelected = false;
+                          isSelected2 = false;
                           accountType = "Military";
                         });
                         usersRef.document(currentUser.uid).updateData({
@@ -141,16 +160,20 @@ class _ChooseAccountState extends State<ChooseAccount> {
                           // border: new Border.all(
                           //   width: 0.15,
                           // ),
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(60.0),
+                          color: isSelected3
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Center(
                           child: Text(
                             "Military",
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              color: Colors.white,
-                             fontSize: textSubTitle(context),
+                              color:
+                                  isSelected3 ? Colors.white : Colors.black54,
+                              fontWeight: FontWeight.bold,
+                              fontSize: textSubTitle(context),
                             ),
                           ),
                         ),
@@ -163,6 +186,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
           ),
           bottomSheet: Container(
             height: screenSize.height * 0.09,
+            color: Color(0xffffffff),
             alignment: Alignment.center,
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(16.0),
@@ -170,7 +194,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
               'Select one of the above',
               style: TextStyle(
                 fontFamily: FontNameDefault,
-             fontSize: textBody1(context),
+                fontSize: textBody1(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
               ),

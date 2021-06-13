@@ -173,7 +173,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                     child: chip(items, Colors.white),
                   ))
               .toList()
-          : Container(),
+          : null,
     );
   }
 
@@ -450,7 +450,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
             height: screenSize.height * 0.9,
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  childAspectRatio: screenSize.height * 0.00075,
+                  childAspectRatio: screenSize.height * 0.0012,
                   maxCrossAxisExtent: 300,
                   mainAxisSpacing: 5.0,
                   crossAxisSpacing: 5.0),
@@ -653,12 +653,11 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      InstaFriendProfileScreen(
-                                          uid: snapshot.data.documents[index]
-                                              .data['ownerUid'],
-                                          name: snapshot.data.documents[index]
-                                              .data['ownerName'])));
+                                  builder: (context) => FriendProfileScreen(
+                                      uid: snapshot.data.documents[index]
+                                          .data['ownerUid'],
+                                      name: snapshot.data.documents[index]
+                                          .data['ownerName'])));
                         }
                       },
                       child: Padding(
@@ -791,20 +790,15 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                                 height: screenSize.height * 0.045,
                                 width: screenSize.width / 6,
                                 child: Center(
-                                    child: Text(
-                                  'Edit',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontSize: textButton(context),
-                                  ),
+                                    child: Icon(
+                                  Icons.edit_outlined,
+                                  color: Colors.black54,
                                 )),
                                 decoration: ShapeDecoration(
                                   color: Colors.white,
                                   shape: RoundedRectangleBorder(
                                     side: BorderSide(
-                                        width: 1.5, color: Colors.black54),
+                                        width: 0.1, color: Colors.black54),
                                     borderRadius: BorderRadius.circular(60.0),
                                   ),
                                 ),
@@ -936,7 +930,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => InstaFriendProfileScreen(
+                          builder: (context) => FriendProfileScreen(
                               uid: _group.currentUserUid,
                               name: _group.groupOwnerName)));
                 }

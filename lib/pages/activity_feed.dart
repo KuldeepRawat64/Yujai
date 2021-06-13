@@ -11,12 +11,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class InstaActivityScreen extends StatefulWidget {
+class ActivityScreen extends StatefulWidget {
   @override
-  _InstaActivityScreenState createState() => _InstaActivityScreenState();
+  _ActivityScreenState createState() => _ActivityScreenState();
 }
 
-class _InstaActivityScreenState extends State<InstaActivityScreen>
+class _ActivityScreenState extends State<ActivityScreen>
     with TickerProviderStateMixin {
   var _repository = Repository();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
@@ -81,6 +81,14 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
     super.dispose();
   }
 
+  int checkUserType() {
+    if (currentUser.accountType == 'Company') {
+      return 3;
+    } else {
+      return 5;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //  currentUser != null ? checkForCompanyAccount(currentUser) : null;
@@ -100,8 +108,10 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                 backgroundColor: Colors.white,
                 title: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SearchTabs()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SearchTabs(
+                              index: checkUserType() ?? 0,
+                            )));
                   },
                   child: Container(
                     decoration: ShapeDecoration(
@@ -117,7 +127,9 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SearchTabs()));
+                                  builder: (context) => SearchTabs(
+                                        index: checkUserType() ?? 0,
+                                      )));
                             },
                             child: Icon(
                               Icons.search,
@@ -132,13 +144,17 @@ class _InstaActivityScreenState extends State<InstaActivityScreen>
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => SearchTabs()));
+                                    builder: (context) => SearchTabs(
+                                          index: checkUserType() ?? 0,
+                                        )));
                               },
                               child: TextField(
                                 readOnly: true,
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SearchTabs()));
+                                      builder: (context) => SearchTabs(
+                                            index: checkUserType() ?? 0,
+                                          )));
                                 },
                                 // onChanged: (val) {
                                 //   setState(() {
@@ -268,7 +284,7 @@ class DataSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           uid: suggestionsList[index].uid,
                           name: suggestionsList[index].displayName))));
             },
@@ -294,7 +310,7 @@ class DataSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           uid: suggestionsList[index].uid,
                           name: suggestionsList[index].displayName))));
             },

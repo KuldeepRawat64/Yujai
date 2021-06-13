@@ -3,6 +3,7 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_field/date_field.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class CreateAccountProfile extends StatefulWidget {
 class _CreateAccountProfileState extends State<CreateAccountProfile> {
   AutoCompleteTextField locationTextField;
   GlobalKey<AutoCompleteTextFieldState<Location>> lkey = new GlobalKey();
+  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime date;
   TextEditingController phoneController = new TextEditingController();
@@ -46,6 +48,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
   User _user = User();
   var _repository = Repository();
   User currentuser, user, followingUser;
+  int startDate = 0;
 
   @override
   void initState() {
@@ -134,7 +137,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
               displayNameController.text.isEmpty
           ? _displayNameValid = false
           : _displayNameValid = true;
-      dateController.text.isEmpty ? _dateValid = false : _dateValid = true;
+
       // locationController.text.isEmpty
       //     ? _locationValid = false
       //     : _locationValid = true;
@@ -143,7 +146,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
     _firestore.collection('users').document(currentUser.uid).updateData({
       "displayName": displayNameController.text,
       "phone": phoneController.text,
-      "dateOfBirth": dateController.text,
+      "dateOfBirth": startDate.toString(),
       "location": locationController.text,
       "gender": selectedGender,
       "status": selectedStatus,
@@ -166,403 +169,400 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
       onWillPop: () async => false,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: const Color(0xfff6f6f6),
+          backgroundColor: const Color(0xffffffff),
           key: _scaffoldKey,
           body: ListView(
             children: [
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   screenSize.width / 11,
-                  screenSize.height * 0.01,
+                  screenSize.height * 0.02,
                   screenSize.width / 11,
                   screenSize.height * 0.025,
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Create a Profile',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: FontNameDefault,
-                        fontSize: textAppTitle(context),
-                      ),
-                    ),
-                    Text(
-                      'Fill the details below to continue',
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                        //color:Colors.grey,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: screenSize.height * 0.010),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
                         children: [
-                          Text(
-                            'Display name',
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 30.0),
+                            child: InkWell(
+                                onTap: () => Navigator.pop(context),
+                                child: Icon(Icons.keyboard_arrow_left,
+                                    size: screenSize.height * 0.04,
+                                    color: Colors.black54)),
                           ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              autocorrect: true,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                              ),
-                              controller: displayNameController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: const Color(0xffffffff),
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12.0)),
-                                  hintText: 'Your full name',
-                                  errorText: _displayNameValid
-                                      ? null
-                                      : 'Name too short'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: screenSize.height * 0.010),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Phone',
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                              ),
-                              keyboardType: TextInputType.phone,
-                              controller: phoneController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Create a Profile',
+                                  style: TextStyle(
+                                    //   color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textHeader(context),
+                                  ),
                                 ),
-                                hintText: 'Your contact number',
-                                errorText: _phoneValid
-                                    ? null
-                                    : 'Provide valid phone number',
-                              ),
+                                Text(
+                                  'Fill the details below to continue',
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    // fontSize: textBody1(context),
+                                    //color:Colors.grey,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: screenSize.height * 0.010),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Date of Birth',
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                        child: TextFormField(
+                          autocorrect: true,
+                          textCapitalization: TextCapitalization.words,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context),
+                            //   fontWeight: FontWeight.bold,
+                          ),
+                          controller: displayNameController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            hintText: 'Name',
+                            labelText: 'Name',
+                            hintStyle: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textAppTitle(context),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty) return "Please enter a name";
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                        child: TextFormField(
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          controller: phoneController,
+                          decoration: InputDecoration(
+                            icon: Icon(
+                              Icons.phone_outlined,
+                              color: Colors.black54,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            //   hintText: '00000 00000',
+                            labelText: 'Phone Number',
+                            labelStyle: TextStyle(
+                              fontFamily: FontNameDefault,
+                              color: Colors.grey,
+                              fontSize: textSubTitle(context),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                        child: DateTimeFormField(
+                          dateTextStyle: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context),
+                            //    fontWeight: FontWeight.bold,
+                          ),
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              isDense: true,
+                              icon: Icon(
+                                Icons.calendar_today,
                                 color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: DateTimeField(
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
                               ),
-                              onChanged: (val) {
-                                setState(() {
-                                  if (_dateValid == true) {
-                                    _dateValid = true;
-                                  } else {
-                                    _dateValid = false;
-                                  }
-                                });
-                              },
-                              controller: dateController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.0)),
-                                hintText: 'Enter date of birth',
-                              ),
-                              format: format,
-                              onShowPicker: (context, currentValue) {
-                                return showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(1900),
-                                    initialDate: currentValue ?? DateTime.now(),
-                                    lastDate: DateTime(2100));
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: screenSize.height * 0.010),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Location',
-                            style: TextStyle(
+                              labelText: 'Date of birth',
+                              hintStyle: TextStyle(
                                 fontFamily: FontNameDefault,
+                                color: Colors.grey,
                                 fontSize: textSubTitle(context),
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              autocorrect: true,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
+                                fontWeight: FontWeight.bold,
                               ),
-                              controller: locationController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.0)),
-                                hintText: 'e.g. Mumbai',
-                              ),
-                            ),
-                          ),
-                        ],
+                              border: InputBorder.none),
+                          mode: DateTimeFieldPickerMode.date,
+                          autovalidateMode: AutovalidateMode.always,
+                          onDateSelected: (DateTime value) {
+                            setState(() {
+                              startDate = value.millisecondsSinceEpoch;
+                            });
+                            print(value);
+                          },
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: screenSize.height * 0.010),
-                      child: Row(
+                      Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                        child: TextFormField(
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context),
+                            //   fontWeight: FontWeight.bold,
+                          ),
+                          controller: locationController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            icon: Icon(
+                              Icons.location_on_outlined,
+                              color: Colors.black54,
+                            ),
+                            labelText: "Location / City",
+                            labelStyle: TextStyle(
+                              fontFamily: FontNameDefault,
+                              color: Colors.grey,
+                              fontSize: textSubTitle(context),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty)
+                              return "Please enter a text for your post";
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.03,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Gender',
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textSubTitle(context),
+                                    ),
+                                  ),
+                                  ButtonBar(
+                                    alignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Radio(
+                                            value: 'Male',
+                                            groupValue: selectedGender,
+                                            activeColor:
+                                                Colors.deepPurpleAccent,
+                                            onChanged: (val) {
+                                              // print("Gender $val");
+                                              setSelectedGender(val);
+                                            },
+                                          ),
+                                          Text(
+                                            'Male',
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textBody1(context),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Radio(
+                                            value: 'Female',
+                                            groupValue: selectedGender,
+                                            activeColor:
+                                                Colors.deepPurpleAccent,
+                                            onChanged: (val) {
+                                              //print("Gender $val");
+                                              setSelectedGender(val);
+                                            },
+                                          ),
+                                          Text(
+                                            'Female',
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textBody1(context),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Status',
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textSubTitle(context),
+                                    ),
+                                  ),
+                                  ButtonBar(
+                                    alignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Radio(
+                                            value: 'Single',
+                                            groupValue: selectedStatus,
+                                            activeColor:
+                                                Colors.deepPurpleAccent,
+                                            onChanged: (val) {
+                                              //print("Status $val");
+                                              setSelectedStatus(val);
+                                            },
+                                          ),
+                                          Text('Single',
+                                              style: TextStyle(
+                                                fontFamily: FontNameDefault,
+                                                fontSize: textBody1(context),
+                                              )),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Radio(
+                                            value: 'Married',
+                                            groupValue: selectedStatus,
+                                            activeColor:
+                                                Colors.deepPurpleAccent,
+                                            onChanged: (val) {
+                                              //print("Status $val");
+                                              setSelectedStatus(val);
+                                            },
+                                          ),
+                                          Text('Married',
+                                              style: TextStyle(
+                                                fontFamily: FontNameDefault,
+                                                fontSize: textBody1(context),
+                                              )),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ]),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.01),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  'Gender',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.bold,
+                            Checkbox(
+                              checkColor: Colors.white,
+                              activeColor: Colors.deepPurpleAccent,
+                              value: this.valueFirst,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  _openAgreeDialog(context);
+                                  this.valueFirst = value;
+                                });
+                              },
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                //_openAgreeDialog(context);
+                              },
+                              child: Text(
+                                'Accept Terms & Conditions',
+                                style: TextStyle(
                                     fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                ButtonBar(
-                                  alignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Radio(
-                                          value: 'Male',
-                                          groupValue: selectedGender,
-                                          activeColor: Colors.deepPurpleAccent,
-                                          onChanged: (val) {
-                                            // print("Gender $val");
-                                            setSelectedGender(val);
-                                          },
-                                        ),
-                                        Text(
-                                          'Male',
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: <Widget>[
-                                        Radio(
-                                          value: 'Female',
-                                          groupValue: selectedGender,
-                                          activeColor: Colors.deepPurpleAccent,
-                                          onChanged: (val) {
-                                            //print("Gender $val");
-                                            setSelectedGender(val);
-                                          },
-                                        ),
-                                        Text(
-                                          'Female',
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    fontSize: textBody1(context)),
+                              ),
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  'Status',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                ButtonBar(
-                                  alignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Radio(
-                                          value: 'Single',
-                                          groupValue: selectedStatus,
-                                          activeColor: Colors.deepPurpleAccent,
-                                          onChanged: (val) {
-                                            //print("Status $val");
-                                            setSelectedStatus(val);
-                                          },
-                                        ),
-                                        Text('Single',
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textBody1(context),
-                                            )),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: <Widget>[
-                                        Radio(
-                                          value: 'Married',
-                                          groupValue: selectedStatus,
-                                          activeColor: Colors.deepPurpleAccent,
-                                          onChanged: (val) {
-                                            //print("Status $val");
-                                            setSelectedStatus(val);
-                                          },
-                                        ),
-                                        Text('Married',
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textBody1(context),
-                                            )),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ]),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.001),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            checkColor: Colors.white,
-                            activeColor: Colors.deepPurpleAccent,
-                            value: this.valueFirst,
-                            onChanged: (bool value) {
-                              setState(() {
-                                _openAgreeDialog(context);
-                                this.valueFirst = value;
-                              });
-                            },
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              //_openAgreeDialog(context);
-                            },
-                            child: Text(
-                              'Accept Terms & Conditions',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    valueFirst &&
-                            (displayNameController.text.isNotEmpty &&
-                                    phoneController.text.isNotEmpty &&
-                                    phoneController.text.length < 11 &&
-                                    phoneController.text.length > 9 &&
-                                    dateController.text.isNotEmpty ||
-                                locationController.text.isNotEmpty)
-                        ? GestureDetector(
-                            onTap: submit,
-                            child: Container(
-                              height: screenSize.height * 0.09,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(60.0),
+                      SizedBox(
+                        height: screenSize.height * 0.03,
+                      ),
+                      valueFirst &&
+                              (displayNameController.text.isNotEmpty &&
+                                      phoneController.text.isNotEmpty &&
+                                      phoneController.text.length < 11 &&
+                                      phoneController.text.length > 9 &&
+                                      dateController.text.isNotEmpty ||
+                                  locationController.text.isNotEmpty)
+                          ? GestureDetector(
+                              onTap: submit,
+                              child: Container(
+                                height: screenSize.height * 0.09,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Submit",
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        color: Colors.white,
+                                        fontSize: textSubTitle(context),
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ),
                               ),
-                              child: Center(
-                                child: Text(
-                                  "Submit",
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.white,
-                                      fontSize: textSubTitle(context),
-                                      fontWeight: FontWeight.normal),
+                            )
+                          : GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                height: screenSize.height * 0.09,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Submit",
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        color: Colors.grey,
+                                        fontSize: textAppTitle(context),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ),
                             ),
-                          )
-                        : GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              height: screenSize.height * 0.09,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(60.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Submit",
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.white,
-                                      fontSize: textSubTitle(context),
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                            ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'package:Yujai/style.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
@@ -78,7 +79,7 @@ class _SearchInterestsState extends State<SearchInterests>
   submit() async {
     FirebaseUser currentUser = await _auth.currentUser();
     usersRef.document(currentUser.uid).updateData({
-      "interests": _filters,
+      "interests": FieldValue.arrayUnion(_filters),
     });
     Navigator.pop(context);
   }

@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/image_detail.dart';
+import 'package:intl/intl.dart';
 
 import '../style.dart';
 
@@ -22,6 +23,18 @@ class EventDetailScreen extends StatefulWidget {
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
   var _repository = Repository();
+  bool seeMore = false;
+  convertDate(int timeinMilis) {
+    var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
+    var formattedDate = DateFormat.yMMMd().format(date);
+    return formattedDate;
+  }
+
+  convertTime(int timeinMilis) {
+    var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
+    var formattedDate = DateFormat.jm().format(date);
+    return formattedDate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,224 +42,225 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: new Color(0xffffffff),
-        appBar: AppBar(
-          elevation: 0.5,
-          //   centerTitle: true,
-          leading: IconButton(
-              icon: Icon(
-                Icons.keyboard_arrow_left,
-                color: Colors.black54,
-                size: screenSize.height * 0.045,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          backgroundColor: const Color(0xffffffff),
-          title: Text(
-            'Details',
-            style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-                fontSize: textAppTitle(context),
-                fontFamily: FontNameDefault),
-          ),
+        body: CustomScrollView(
+          slivers: [
+            // SliverAppBar(
+            //   leading: IconButton(
+            //       icon: Icon(Icons.keyboard_arrow_left,
+            //           color: Colors.white, size: screenSize.height * 0.045),
+            //       onPressed: () {
+            //         Navigator.pop(context);
+            //       }),
+            //   actions: [
+            //     IconButton(
+            //         icon: Icon(Icons.more_horiz, color: Colors.white),
+            //         onPressed: null)
+            //   ],
+            //   floating: true,
+            //   backgroundColor: Color(0xFFEDF2F8),
+            //   expandedHeight: screenSize.height * 0.2,
+            //   flexibleSpace: FlexibleSpaceBar(
+            //     background: CachedNetworkImage(
+            //         fit: BoxFit.cover,
+            //         imageUrl: widget.documentSnapshot.data['imgUrl']),
+            //   ),
+            // ),
+            SliverList(delegate: SliverChildListDelegate([eventStack()]))
+          ],
         ),
-        body: eventStack(),
       ),
     );
   }
 
-  Widget eventStack() {
+  Widget eventBody() {
     var screenSize = MediaQuery.of(context).size;
-    String toLaunch = widget.documentSnapshot.data['ticketWebsite'];
-    return ListView(
-      children: [
-        Column(
+    return Padding(
+      padding: EdgeInsets.only(top: screenSize.height * 0.25),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0))),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-                bottom: 8.0,
-              ),
-              child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey[200],
-                    offset: Offset(2.0, 2.0),
-                    blurRadius: 2.0,
-                    spreadRadius: 2.0,
-                  ),
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: Offset.zero,
-                    blurRadius: 0.0,
-                    spreadRadius: 0.0,
-                  )
-                ], borderRadius: BorderRadius.circular(12.0)),
+            Container(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: screenSize.height * 0.025,
+                    left: screenSize.height * 0.05,
+                    right: screenSize.height * 0.05,
+                    bottom: screenSize.height * 0.01),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Stack(
-                      fit: StackFit.loose,
-                      alignment: Alignment.bottomLeft,
-                      children: [
-                        widget.documentSnapshot.data['imgUrl'] != ''
-                            ? InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ImageDetail(
-                                            image: widget.documentSnapshot
-                                                .data['imgUrl'],
-                                          )));
-                                },
-                                child: Container(
-                                  height: screenSize.height * 0.17,
-                                  width: MediaQuery.of(context).size.width,
-                                  color: Colors.grey,
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                          widget
-                                              .documentSnapshot.data['imgUrl'],
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(
-                                height: screenSize.height * 0.17,
-                                width: MediaQuery.of(context).size.width,
-                                color: Colors.white,
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Colors.deepPurple,
-                                        Colors.black54,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: screenSize.width / 30,
-                            bottom: screenSize.height * 0.012,
-                          ),
-                          child: CircleAvatar(
-                            radius: screenSize.height * 0.05,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: CachedNetworkImageProvider(widget
-                                .documentSnapshot.data['eventOwnerPhotoUrl']),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenSize.width / 30,
-                        top: screenSize.height * 0.012,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => InstaFriendProfileScreen(
-                                  uid: widget.documentSnapshot.data['ownerUid'],
-                                  name: widget.documentSnapshot
-                                      .data['evenOwnerName'])));
-                        },
-                        child: Text(
-                          widget.documentSnapshot.data['eventOwnerName'],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: FontNameDefault,
-                            color: Colors.black,
-                            fontSize: textSubTitle(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: screenSize.width / 30,
-                        top: screenSize.height * 0.012,
-                      ),
-                      child: widget.documentSnapshot.data['location'] != '' &&
-                              widget.documentSnapshot.data['venue'] != ''
-                          ? Text(
-                              widget.documentSnapshot.data['location'],
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                fontStyle: FontStyle.normal,
-                                color: Colors.grey,
-                              ),
-                            )
-                          : Text(
-                              'Online',
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                fontStyle: FontStyle.normal,
-                                color: Colors.grey,
-                              ),
-                            ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(screenSize.height * 0.012),
-                      child: Divider(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: screenSize.width / 30),
-                      child: Text(
-                        widget.documentSnapshot.data['caption'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textSubTitle(context),
-                        ),
-                      ),
-                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: RaisedButton(
-                            splashColor: Colors.yellow,
-                            shape: StadiumBorder(),
-                            color: Colors.deepPurple,
-                            child: Text(
-                              'Register',
-                              style: TextStyle(
+                        CircleAvatar(
+                          backgroundImage: CachedNetworkImageProvider(widget
+                              .documentSnapshot.data['eventOwnerPhotoUrl']),
+                        ),
+                        SizedBox(
+                          width: screenSize.width * 0.05,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: screenSize.width * 0.3,
+                              child: Text(
+                                widget.documentSnapshot.data['caption'],
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.white),
+                                  color: Colors.black,
+                                  fontSize: textH1(context),
+                                ),
+                              ),
                             ),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MyWebView(
-                                        title: 'Register for Event',
-                                        selectedUrl: toLaunch,
-                                      )));
-                            },
-                          ),
+                            SizedBox(
+                              height: screenSize.height * 0.01,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MyWebView(
+                                        title: 'Event',
+                                        selectedUrl: widget.documentSnapshot
+                                            .data['website'])));
+                              },
+                              child: Container(
+                                width: screenSize.width * 0.6,
+                                child: Text(
+                                  widget.documentSnapshot.data['website'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    color: Theme.of(context).accentColor,
+                                    fontSize: textSubTitle(context),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.today_outlined,
+                            color: Colors.black87,
+                            size: screenSize.height * 0.04,
+                          ),
+                          onPressed: null,
+                        ),
+                        SizedBox(
+                          width: screenSize.height * 0.02,
+                        ),
+                        Container(
+                          width: screenSize.width * 0.5,
+                          child: Text(
+                            '${convertDate(widget.documentSnapshot.data['startDate'])}, ${convertTime(widget.documentSnapshot.data['startTime'])} - ${convertDate(widget.documentSnapshot.data['endDate'])}, ${convertTime(widget.documentSnapshot.data['endTime'])}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.location_on_outlined,
+                            color: Colors.black87,
+                            size: screenSize.height * 0.04,
+                          ),
+                          onPressed: null,
+                        ),
+                        SizedBox(
+                          width: screenSize.height * 0.02,
+                        ),
+                        Container(
+                          width: screenSize.width * 0.5,
+                          child: Text(
+                            widget.documentSnapshot.data['location'] == ''
+                                ? 'Online'
+                                : widget.documentSnapshot.data['location'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              //    fontWeight: FontWeight.bold,
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: screenSize.height * 0.01,
+                          left: screenSize.width * 0.01,
+                          right: screenSize.width * 0.01),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyWebView(
+                                        title: ' Registration',
+                                        selectedUrl: widget.documentSnapshot
+                                            .data['ticketWebsite'],
+                                      )));
+                        },
+                        child: Container(
+                            height: screenSize.height * 0.07,
+                            width: screenSize.width * 0.8,
+                            decoration: ShapeDecoration(
+                                color: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(60.0))),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(screenSize.height * 0.015),
+                              child: Center(
+                                child: Text(
+                                  'Register',
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textAppTitle(context),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            )),
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     top: screenSize.height * 0.01,
+            //   ),
+            //   child: Container(
+            //     height: screenSize.height * 0.005,
+            //     color: Colors.grey[200],
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
               child: Container(
@@ -261,236 +275,102 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     'Description',
                     style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.black45,
+                      fontSize: textHeader(context),
+                      //  color: Colors.black45,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.012,
-                bottom: screenSize.height * 0.012,
-                left: screenSize.width / 30,
-              ),
-              child: Wrap(
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.documentSnapshot.data['description'],
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: textBody1(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
-            ),
-            widget.documentSnapshot.data['agenda'] != ''
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(
-                          left: screenSize.width / 30,
-                          bottom: screenSize.height * 0.012,
-                        ),
-                        width: screenSize.width,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            //   left: screenSize.width / 30,
-                            top: screenSize.height * 0.012,
-                          ),
-                          child: Text(
-                            'Agenda',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black45,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: screenSize.height * 0.012,
-                          bottom: screenSize.height * 0.012,
-                          left: screenSize.width / 30,
-                        ),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.documentSnapshot.data['agenda'],
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                color: Colors.black,
-                                fontSize: textBody1(context),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
-            ),
             Container(
               color: Colors.white,
               width: screenSize.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                      top: screenSize.height * 0.012,
-                      bottom: screenSize.height * 0.012,
-                    ),
-                    child: Text(
-                      'Event Type',
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                      top: screenSize.height * 0.012,
-                      bottom: screenSize.height * 0.012,
-                    ),
-                    child: Text(
-                      widget.documentSnapshot.data['type'],
-                      style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context),
-                          color: Colors.black87),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: screenSize.height * 0.01,
-                    ),
-                    child: Container(
-                      height: screenSize.height * 0.01,
-                      color: Colors.grey[200],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                      top: screenSize.height * 0.012,
-                      bottom: screenSize.height * 0.012,
-                    ),
-                    child: Text(
-                      'Event Category',
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: screenSize.height * 0.012,
-                      bottom: screenSize.height * 0.012,
-                      left: screenSize.width / 30,
-                    ),
-                    child: Text(
-                      widget.documentSnapshot.data['category'],
-                      style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context),
-                          color: Colors.black87),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: screenSize.height * 0.01,
-                    ),
-                    child: Container(
-                      height: screenSize.height * 0.01,
-                      color: Colors.grey[200],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width / 30,
-                      top: screenSize.height * 0.012,
-                      bottom: screenSize.height * 0.012,
-                    ),
-                    child: Text(
-                      'Venue',
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Wrap(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: screenSize.height * 0.012,
-                          left: screenSize.width / 30,
-                          bottom: screenSize.height * 0.012,
-                        ),
-                        child: Text(
-                          widget.documentSnapshot.data['venue'] != ''
-                              ? widget.documentSnapshot.data['venue']
-                              : 'Online',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                              color: Colors.black87),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
               padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
+                // top: screenSize.height * 0.012,
+                bottom: screenSize.height * 0.012,
+                left: screenSize.width / 30,
               ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
+              child: widget.documentSnapshot.data['description']
+                          .toString()
+                          .length <
+                      350
+                  ? Text(
+                      widget.documentSnapshot.data['description'],
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontSize: textSubTitle(context)),
+                    )
+                  : seeMore
+                      ? Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot.data['description'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: textSubTitle(context)),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  seeMore = false;
+                                });
+                              },
+                              child: Text(
+                                'See less',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            )
+                          ],
+                        )
+                      : Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot.data['description']
+                                  .toString()
+                                  .substring(350),
+                              //  maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textBody1(context),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  seeMore = true;
+                                });
+                              },
+                              child: Text(
+                                'See more',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            )
+                          ],
+                        ),
             ),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     top: screenSize.height * 0.01,
+            //   ),
+            //   child: Container(
+            //     height: screenSize.height * 0.005,
+            //     color: Colors.grey[200],
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
               child: Container(
@@ -501,11 +381,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     top: screenSize.height * 0.012,
                   ),
                   child: Text(
-                    'Organiser',
+                    'Speakers',
                     style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.black45,
+                      fontSize: textHeader(context),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -514,27 +393,94 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                top: screenSize.height * 0.012,
+                //    left: screenSize.width / 30,
                 bottom: screenSize.height * 0.012,
               ),
-              child: Text(
-                widget.documentSnapshot.data['organiser'],
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  child: Icon(
+                    Icons.person_outline,
+                    color: Colors.black,
+                  ),
+                ),
+                title: Text(
+                  widget.documentSnapshot.data['host'],
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textBody1(context),
+                  ),
                 ),
               ),
             ),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     top: screenSize.height * 0.01,
+            //   ),
+            //   child: Container(
+            //     height: screenSize.height * 0.005,
+            //     color: Colors.grey[200],
+            //   ),
+            // ),
             Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
+              padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
               child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
+                width: screenSize.width,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: screenSize.width / 30,
+                    top: screenSize.height * 0.012,
+                  ),
+                  child: Text(
+                    'Uploader',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                    ),
+                  ),
+                ),
               ),
             ),
+            InkWell(
+              onTap: () {
+                if (widget.documentSnapshot.data['ownerUid'] !=
+                    widget.currentuser.uid) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FriendProfileScreen(
+                          uid: widget.documentSnapshot.data['ownerUid'],
+                          name:
+                              widget.documentSnapshot.data['eventOwnerName'])));
+                }
+              },
+              child: Container(
+                child: ListTile(
+                  //  subtitle: Text(''),
+                  leading: CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(
+                        widget.documentSnapshot.data['eventOwnerPhotoUrl']),
+                  ),
+                  title: Text(
+                    widget.documentSnapshot.data['eventOwnerName'],
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: textSubTitle(context),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Padding(
+            //   padding: EdgeInsets.only(
+            //     top: screenSize.height * 0.01,
+            //   ),
+            //   child: Container(
+            //     height: screenSize.height * 0.005,
+            //     color: Colors.grey[200],
+            //   ),
+            // ),
             Padding(
               padding: EdgeInsets.only(
                 left: screenSize.width / 30,
@@ -552,7 +498,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: FontNameDefault,
-                          fontSize: textSubTitle(context),
+                          fontSize: textHeader(context),
                         ),
                       ),
                       RaisedButton(
@@ -562,9 +508,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         child: Text(
                           'Discuss',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
                               fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
+                              fontSize: textButton(context),
                               color: Colors.white),
                         ),
                         onPressed: () {
@@ -572,11 +517,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => CommentsScreen(
-                                        commentType: 'commentEvent',
-                                        snapshot: widget.documentSnapshot,
+                                        isGroupFeed: true,
                                         documentReference:
                                             widget.documentSnapshot.reference,
                                         user: widget.currentuser,
+                                        snapshot: widget.documentSnapshot,
                                       ))));
                         },
                       ),
@@ -595,7 +540,53 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget eventStack() {
+    String toLaunch = widget.documentSnapshot.data['website'];
+    return Stack(
+      fit: StackFit.loose,
+      alignment: Alignment.topCenter,
+      children: [
+        Positioned(child: eventHeader()),
+        Positioned(child: eventBody()),
       ],
+    );
+  }
+
+  Widget eventHeader() {
+    return Container(
+      color: Colors.grey,
+      child: Stack(
+        overflow: Overflow.visible,
+        children: [
+          CachedNetworkImage(
+            imageUrl: widget.documentSnapshot.data['imgUrl'],
+          ),
+          Positioned(
+            top: 20,
+            left: 20,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.keyboard_arrow_left_outlined)),
+            ),
+          ),
+          Positioned(
+            top: 20.0,
+            right: 20.0,
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.more_vert_outlined),
+            ),
+          )
+        ],
+      ),
     );
   }
 

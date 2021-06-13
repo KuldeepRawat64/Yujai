@@ -88,6 +88,22 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                 widget.currentUser != null &&
                         _team != null &&
                         widget.currentUser.uid == _team.currentUserUid
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          radius: screenSize.height * 0.023,
+                          child: InkWell(
+                            onTap: _onButtonPressedAdmin,
+                            child: Icon(
+                              Icons.add,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
+                widget.currentUser != null &&
+                        _team != null &&
+                        widget.currentUser.uid == _team.currentUserUid
                     ? InkWell(
                         onTap: () => _scaffoldKey.currentState.openEndDrawer(),
                         child: Padding(
@@ -171,18 +187,6 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                     [_team != null ? buildButtonBar() : Container()]))
           ],
         ),
-        floatingActionButton: widget.currentUser != null &&
-                _team != null &&
-                widget.currentUser.uid == _team.currentUserUid
-            ? FloatingActionButton(
-                heroTag: null,
-                child: Icon(
-                  Icons.add,
-                  size: screenSize.height * 0.05,
-                ),
-                onPressed: _onButtonPressedAdmin,
-              )
-            : Text(''),
         endDrawer: widget.currentUser != null &&
                 _team != null &&
                 widget.currentUser.uid == _team.currentUserUid
@@ -440,7 +444,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                   'Cancel',
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
-                                      color: Colors.grey[600],
+                                      color: Colors.black,
                                       fontSize: textSubTitle(context)),
                                 ),
                               ),

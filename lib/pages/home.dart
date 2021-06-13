@@ -10,6 +10,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cupertino_tabbar/cupertino_tabbar.dart' as CupertinoTabBar;
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
+import 'package:new_version/new_version.dart';
 
 final usersRef = Firestore.instance.collection('users');
 final groupsRef = Firestore.instance.collection('groups');
@@ -47,6 +49,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    final newVersion = NewVersion(
+      context: context,
+      androidId: "com.animusit.yujai",
+    );
+    newVersion.showAlertIfNecessary();
     _pageController = PageController(initialPage: cupertinoTabBarIIIValue);
     final fbm = FirebaseMessaging();
     fbm.requestNotificationPermissions();
@@ -69,6 +76,17 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  void _checkVersion() async {
+    final newVersion = NewVersion(
+      context: context,
+      androidId: "com.animusit.yujai",
+    );
+    newVersion.showAlertIfNecessary();
+
+    // print("DEVICE : " + status.localVersion);
+    // print("STORE : " + status.storeVersion);
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -77,11 +95,11 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           body: new PageView(
             children: [
-              InstaFeedScreen(),
-              InstaSearchScreen(),
+              FeedScreen(),
+              SearchScreen(),
               NewsPage(),
-              InstaActivityScreen(),
-              InstaProfileScreen(),
+              ActivityScreen(),
+              ProfileScreen(),
             ],
             controller: _pageController,
             physics: new NeverScrollableScrollPhysics(),

@@ -653,14 +653,27 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
           children: [
             Text(
               'Members',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                //    color: Colors.black54,
+                fontWeight: FontWeight.bold,
+                fontSize: textHeader(context),
+              ),
             ),
             Divider(),
             Container(
               height: screenSize.height * 0.3,
               child: deptMembersWidget(),
             ),
-            Text('Description', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Description',
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                //  color: Colors.black54,
+                fontWeight: FontWeight.bold,
+                fontSize: textHeader(context),
+              ),
+            ),
             Divider(),
             StreamBuilder<DocumentSnapshot>(
               stream: Firestore.instance
@@ -676,7 +689,10 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                         ? snapshot.data['description']
                         : '',
                     style: TextStyle(
-                      fontSize: screenSize.height * 0.018,
+                      fontFamily: FontNameDefault,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                      fontSize: textAppTitle(context),
                     ),
                   );
                 } else {

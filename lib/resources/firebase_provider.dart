@@ -6,6 +6,7 @@ import 'package:Yujai/models/chatroom.dart';
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/discussion.dart';
+import 'package:Yujai/models/education.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/invite.dart';
 import 'package:Yujai/models/like.dart';
@@ -94,15 +95,9 @@ class FirebaseProvider {
       gender: '',
       status: '',
       accountType: 'Professional',
-      school: '',
-      startSchool: '',
-      endSchool: '',
-      college: '',
-      startCollege: '',
-      endCollege: '',
-      university: '',
-      startUniversity: '',
-      endUniversity: '',
+      education: [],
+      experience: [],
+      certifications: [],
       website: '',
       designation: '',
       skills: [],
@@ -120,20 +115,9 @@ class FirebaseProvider {
       purpose: [],
       industry: '',
       establishYear: '',
-      certification1: '',
-      certification2: '',
-      certification3: '',
-      company1: '',
-      company2: '',
-      company3: '',
-      startCompany1: '',
-      startCompany2: '',
-      startCompany3: '',
-      endCompany1: '',
-      endCompany2: '',
-      endCompany3: '',
       employees: '',
       medal: '',
+      //   geoPoint: GeoPoint(0,0)
     );
 
     //make new user their own follower to show their posts on their timeline
@@ -593,14 +577,10 @@ class FirebaseProvider {
     String currentPostId,
     String ownerUid,
     String caption,
-    String category,
     String option1,
     String option2,
     String option3,
     String option4,
-    String option5,
-    String option6,
-    String pollType,
     String postType,
     String ownerName,
     String ownerPhotoUrl,
@@ -615,15 +595,11 @@ class FirebaseProvider {
       currentUserUid: ownerUid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
-      category: category,
-      pollType: pollType,
       postType: postType,
       option1: option1,
       option2: option2,
       option3: option3,
       option4: option4,
-      option5: option5,
-      option6: option6,
       postOwnerName: ownerName,
       postOwnerPhotoUrl: ownerPhotoUrl,
     );
@@ -659,12 +635,15 @@ class FirebaseProvider {
   Future<void> addAdToForum(
     String currentGroupId,
     User currentUser,
-    String imgUrl,
+    List<String> imgUrls,
     String caption,
     String description,
     String price,
     String condition,
+    String city,
     String location,
+    String category,
+    GeoPoint geoPoint,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('groups')
@@ -674,14 +653,17 @@ class FirebaseProvider {
     ad = Ad(
       postId: postId,
       currentUserUid: currentUser.uid,
-      imgUrl: imgUrl,
+      imgUrls: imgUrls,
       caption: caption,
       description: description,
       price: price,
       condition: condition,
+      city: city,
       location: location,
+      category: category,
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
+      geopoint: geoPoint,
       time: FieldValue.serverTimestamp(),
     );
     return _collectionRef.document(postId).setData(ad.toMap(ad));
@@ -697,6 +679,7 @@ class FirebaseProvider {
     String condition,
     String location,
     String postType,
+    String category,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('groups')
@@ -712,6 +695,7 @@ class FirebaseProvider {
       price: price,
       condition: condition,
       location: location,
+      category: category,
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
       postType: postType,
@@ -864,8 +848,7 @@ class FirebaseProvider {
     String currentDeptId,
     User currentUser,
     String caption,
-    String category,
-    String pollType,
+    int pollLength,
     String postType,
     String option1,
     String option2,
@@ -884,15 +867,12 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
-      category: category,
-      pollType: pollType,
       postType: postType,
+      pollLength: pollLength,
       option1: option1,
       option2: option2,
       option3: option3,
       option4: option4,
-      option5: '',
-      option6: '',
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
     );
@@ -905,8 +885,7 @@ class FirebaseProvider {
     String currentProjectId,
     User currentUser,
     String caption,
-    String category,
-    String pollType,
+    int pollLength,
     String postType,
     String option1,
     String option2,
@@ -927,15 +906,12 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
-      category: category,
-      pollType: pollType,
       postType: postType,
+      pollLength: pollLength,
       option1: option1,
       option2: option2,
       option3: option3,
       option4: option4,
-      option5: '',
-      option6: '',
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
     );
@@ -946,15 +922,12 @@ class FirebaseProvider {
     String currentGroupId,
     User currentUser,
     String caption,
-    String category,
-    String pollType,
+    int pollLength,
     String postType,
     String option1,
     String option2,
     String option3,
     String option4,
-    String option5,
-    String option6,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('groups')
@@ -966,15 +939,12 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
-      category: category,
-      pollType: pollType,
       postType: postType,
+      pollLength: pollLength,
       option1: option1,
       option2: option2,
       option3: option3,
       option4: option4,
-      option5: option5,
-      option6: option6,
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
     );
@@ -985,15 +955,12 @@ class FirebaseProvider {
     String currentGroupId,
     User currentUser,
     String caption,
-    String category,
-    String pollType,
     String postType,
+    int pollLength,
     String option1,
     String option2,
     String option3,
     String option4,
-    String option5,
-    String option6,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('groups')
@@ -1005,15 +972,12 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
-      category: category,
-      pollType: pollType,
       postType: postType,
+      pollLength: pollLength,
       option1: option1,
       option2: option2,
       option3: option3,
       option4: option4,
-      option5: option5,
-      option6: option6,
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
     );
@@ -1024,17 +988,18 @@ class FirebaseProvider {
     User currentUser,
     String imgUrl,
     String caption,
-    String location,
-    String organiser,
+    String city,
+    String venue,
+    String host,
     String website,
     String description,
-    String agenda,
     String category,
-    String type,
-    String venue,
-    String startEvent,
-    String endEvent,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
     String ticketWebsite,
+    GeoPoint geoPoint,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('users')
@@ -1046,19 +1011,20 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       imgUrl: imgUrl,
       caption: caption,
-      location: location,
+      city: city,
+      venue: venue,
       eventOwnerName: currentUser.displayName,
       eventOwnerPhotoUrl: currentUser.photoUrl,
-      organiser: organiser,
       website: website,
       description: description,
-      agenda: agenda,
       category: category,
-      type: type,
-      venue: venue,
-      startEvent: startEvent,
-      endEvent: endEvent,
+      startDate: startDate,
+      endDate: endDate,
+      startTime: startTime,
+      endTime: endTime,
+      host: host,
       ticketWebsite: ticketWebsite,
+      geopoint: geoPoint,
       time: FieldValue.serverTimestamp(),
     );
     return _collectionRef.document(postId).setData(event.toMap(event));
@@ -1069,17 +1035,18 @@ class FirebaseProvider {
     User currentUser,
     String imgUrl,
     String caption,
-    String location,
-    String organiser,
+    String city,
+    String venue,
+    String host,
     String website,
     String description,
-    String agenda,
     String category,
-    String type,
-    String venue,
-    String startEvent,
-    String endEvent,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
     String ticketWebsite,
+    GeoPoint geoPoint,
   ) {
     CollectionReference _collectionRef = _firestore
         .collection('groups')
@@ -1091,19 +1058,20 @@ class FirebaseProvider {
       currentUserUid: currentUser.uid,
       imgUrl: imgUrl,
       caption: caption,
-      location: location,
+      city: city,
+      venue: venue,
       eventOwnerName: currentUser.displayName,
       eventOwnerPhotoUrl: currentUser.photoUrl,
-      organiser: organiser,
       website: website,
       description: description,
-      agenda: agenda,
       category: category,
-      type: type,
-      venue: venue,
-      startEvent: startEvent,
-      endEvent: endEvent,
+      startDate: startDate,
+      endDate: endDate,
+      startTime: startTime,
+      endTime: endTime,
+      host: host,
       ticketWebsite: ticketWebsite,
+      geopoint: geoPoint,
       time: FieldValue.serverTimestamp(),
     );
     return _collectionRef.document(postId).setData(event.toMap(event));
@@ -1133,9 +1101,7 @@ class FirebaseProvider {
     User currentUser,
     String caption,
     String location,
-    String category,
-    String salary,
-    String timing,
+    String industry,
     String description,
     String website,
   ) {
@@ -1151,9 +1117,7 @@ class FirebaseProvider {
       location: location,
       jobOwnerName: currentUser.displayName,
       jobOwnerPhotoUrl: currentUser.photoUrl,
-      category: category,
-      salary: salary,
-      timing: timing,
+      industry: industry,
       description: description,
       website: website,
       time: FieldValue.serverTimestamp(),
@@ -1162,16 +1126,17 @@ class FirebaseProvider {
   }
 
   Future<void> addPromotionToDb(
-    User currentUser,
-    String caption,
-    String location,
-    String portfolio,
-    String timing,
-    String category,
-    String description,
-    String locations,
-    String skills,
-  ) {
+      User currentUser,
+      String caption,
+      String location,
+      String portfolio,
+//String timing,
+      // String category,
+      String description,
+      // String locations,
+      List<dynamic> skills,
+      List<dynamic> experience,
+      List<dynamic> education) {
     CollectionReference _collectionRef = _firestore
         .collection('users')
         .document(currentUser.uid)
@@ -1185,11 +1150,13 @@ class FirebaseProvider {
       promotionOwnerName: currentUser.displayName,
       promotionOwnerPhotoUrl: currentUser.photoUrl,
       portfolio: portfolio,
-      timing: timing,
-      category: category,
+      //   timing: timing,
+      //   category: category,
       description: description,
-      locations: locations,
+      //   locations: locations,
       skills: skills,
+      experience: experience,
+      education: education,
       time: FieldValue.serverTimestamp(),
     );
     return _collectionRef.document(postId).setData(promotion.toMap(promotion));
@@ -2285,6 +2252,60 @@ class FirebaseProvider {
     return _firestore.collection('users').document(uid).updateData(map);
   }
 
+  Future<void> updateEducationDetails(
+      String uid,
+      String university,
+      String stream,
+      int startDate,
+      int endDate,
+      String cert1,
+      String cert2,
+      String cert3) async {
+    Map<String, dynamic> map = Map();
+    map['university'] = university;
+    map['stream'] = stream;
+    map['startUniversity'] = startDate;
+    map['endUniversity'] = endDate;
+    map['cet1'] = cert1;
+    map['cet2'] = cert2;
+    map['cet3'] = cert3;
+    return _firestore.collection('users').document(uid).updateData(map);
+  }
+
+  Future<void> updateExperienceDetails(
+    String uid,
+    String company1,
+    String designationCompany1,
+    int startDateCompany1,
+    int endDateCompany1,
+    String company2,
+    String designationCompany2,
+    int startDateCompany2,
+    int endDateCompany2,
+    String company3,
+    String designationCompany3,
+    int startDateCompany3,
+    int endDateCompany3,
+  ) async {
+    Map<String, dynamic> map = Map();
+    map['experience']['id'] = 0;
+    map['experience']['company'] = company1;
+    map['experience']['designation'] = designationCompany1;
+    map['experience']['startCompany'] = startDateCompany1;
+    map['experience']['endCompany'] = endDateCompany1;
+    map['experience']['id'] = 1;
+    map['experience']['company'] = company1;
+    map['experience']['designation'] = designationCompany1;
+    map['experience']['startCompany'] = startDateCompany1;
+    map['experience']['endCompany'] = endDateCompany1;
+    map['experience']['id'] = 2;
+    map['experience']['company'] = company1;
+    map['experience']['designation'] = designationCompany1;
+    map['experience']['startCompany'] = startDateCompany1;
+    map['experience']['endCompany'] = endDateCompany1;
+    return _firestore.collection('users').document(uid).updateData(map);
+  }
+
   Future<void> updateSchool(String uid, String school) async {
     Map<String, dynamic> map = Map();
     map['school'] = school;
@@ -2356,6 +2377,31 @@ class FirebaseProvider {
     }
     print('USERSLIST : ${userList.length}');
     return userList;
+  }
+
+  static Future<QuerySnapshot> getUsers(
+    int limit, {
+    DocumentSnapshot startAfter,
+  }) async {
+    final refUsers = Firestore.instance
+        .collection('users')
+        .where(
+          'accountType',
+          whereIn: [
+            'Professional',
+            'Military',
+            'Student',
+            '',
+          ],
+        )
+        .where('isHidden', isEqualTo: false)
+        .orderBy('displayName')
+        .limit(limit);
+    if (startAfter == null) {
+      return refUsers.getDocuments();
+    } else {
+      return refUsers.startAfterDocument(startAfter).getDocuments();
+    }
   }
 
   Future<List<Member>> fetchAllProjectMembers(

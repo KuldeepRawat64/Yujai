@@ -10,6 +10,8 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_group.dart';
 import 'package:Yujai/widgets/nested_tab_bar_team.dart';
+import 'package:Yujai/widgets/new_group_screen.dart';
+import 'package:Yujai/widgets/new_team_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -97,6 +99,18 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
               appBar: currentUser != null &&
                       currentUser.accountType != 'Company'
                   ? AppBar(
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: screenSize.height * 0.023,
+                            child: InkWell(
+                              onTap: _onButtonPressed,
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        ),
+                      ],
                       elevation: 0.5,
                       automaticallyImplyLeading: false,
                       centerTitle: true,
@@ -104,7 +118,9 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       title: GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SearchTabs()));
+                              builder: (context) => SearchTabs(
+                                    index: 7,
+                                  )));
                         },
                         child: Container(
                           decoration: ShapeDecoration(
@@ -119,10 +135,11 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchTabs()));
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => SearchTabs(
+                                                  index: 7,
+                                                )));
                                   },
                                   child: Icon(
                                     Icons.search,
@@ -136,10 +153,11 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SearchTabs()));
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => SearchTabs(
+                                                    index: 7,
+                                                  )));
                                     },
                                     child: TextField(
                                       readOnly: true,
@@ -147,7 +165,9 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    SearchTabs()));
+                                                    SearchTabs(
+                                                      index: 7,
+                                                    )));
                                       },
                                       // onChanged: (val) {
                                       //   setState(() {
@@ -171,6 +191,18 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       ),
                     )
                   : AppBar(
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: screenSize.height * 0.023,
+                            child: InkWell(
+                              onTap: _onButtonPressedCompany,
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        ),
+                      ],
                       elevation: 0.5,
                       backgroundColor: Color(0xffffffff),
                       automaticallyImplyLeading: false,
@@ -187,22 +219,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
               body: currentUser != null && currentUser.accountType != 'Company'
                   ? ButtonBar(context: context, tabController: _tabController)
                   : myTeamsList(),
-              floatingActionButton:
-                  currentUser != null && currentUser.accountType != 'Company'
-                      ? FloatingActionButton(
-                          child: Icon(
-                            Icons.group_add,
-                            size: MediaQuery.of(context).size.height * 0.04,
-                          ),
-                          onPressed: _onButtonPressed,
-                        )
-                      : FloatingActionButton(
-                          child: Icon(
-                            Icons.group_add,
-                            size: MediaQuery.of(context).size.height * 0.04,
-                          ),
-                          onPressed: _onButtonPressedCompany,
-                        ),
+//floatingActionButton:
             )
           : Center(
               child: CircularProgressIndicator(),
@@ -239,8 +256,17 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CreateGroup()));
+                    Navigator.pop(context);
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20.0))),
+                        backgroundColor: Colors.white,
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: NewGroupScreen(currentUser: currentUser)));
                   },
                 ),
                 ListTile(
@@ -292,8 +318,17 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CreateTeam()));
+                    Navigator.pop(context);
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20.0))),
+                        backgroundColor: Colors.white,
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: NewTeamScreen(currentUser: currentUser)));
                   },
                 ),
                 ListTile(
@@ -449,7 +484,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           uid: suggestionsList[index].uid,
                           name: suggestionsList[index].displayName))));
             },
@@ -475,7 +510,7 @@ class UserSearch extends SearchDelegate<String> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => InstaFriendProfileScreen(
+                      builder: ((context) => FriendProfileScreen(
                           uid: suggestionsList[index].uid,
                           name: suggestionsList[index].displayName))));
             },

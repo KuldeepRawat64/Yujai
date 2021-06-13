@@ -8,7 +8,7 @@ class Job {
   FieldValue time;
   String jobOwnerName;
   String jobOwnerPhotoUrl;
-  String category;
+  String industry;
   String salary;
   String timing;
   String description;
@@ -22,7 +22,7 @@ class Job {
     this.time,
     this.jobOwnerName,
     this.jobOwnerPhotoUrl,
-    this.category,
+    this.industry,
     this.salary,
     this.timing,
     this.description,
@@ -38,7 +38,7 @@ class Job {
     data['time'] = job.time;
     data['jobOwnerName'] = job.jobOwnerName;
     data['jobOwnerPhotoUrl'] = job.jobOwnerPhotoUrl;
-    data['category'] = job.category;
+    data['industry'] = job.industry;
     data['salary'] = job.salary;
     data['timing'] = job.timing;
     data['description'] = job.description;
@@ -54,7 +54,7 @@ class Job {
     this.time = mapData['time'];
     this.jobOwnerName = mapData['jobOwnerName'];
     this.jobOwnerPhotoUrl = mapData['jobOwnerPhotoUrl'];
-    this.category = mapData['category'];
+    this.industry = mapData['industry'];
     this.salary = mapData['salary'];
     this.timing = mapData['timing'];
     this.description = mapData['description'];

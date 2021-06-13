@@ -77,7 +77,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
-             // side: BorderSide(color: Colors.grey[300]),
+              // side: BorderSide(color: Colors.grey[300]),
             ),
           ),
           child: Column(
@@ -87,19 +87,23 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(
-                  left: screenSize.width * 0.2,
+                  //     left: screenSize.width * 0.2,
                   top: screenSize.height * 0.01,
                   right: screenSize.width * 0.02,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.documentSnapshot.data['timing'],
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                        color: Colors.black54,
+                    Padding(
+                      padding: EdgeInsets.only(left: 12),
+                      child: Text(
+                        timeago.format(
+                            widget.documentSnapshot.data['time'].toDate()),
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textbody2(context),
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                     widget.currentuser.uid ==
@@ -110,29 +114,18 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                             },
                             child: Container(
                                 decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
+                                  shape: CircleBorder(
+                                      //          borderRadius: BorderRadius.circular(12.0),
                                       side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
+                                          width: 0.1, color: Colors.black54)),
                                   //color: Theme.of(context).accentColor,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: screenSize.height * 0.005,
+                                      horizontal: screenSize.width * 0.02,
+                                    ),
+                                    child: Icon(Icons.more_horiz_outlined))),
                           )
                         : InkWell(
                             onTap: () {
@@ -140,29 +133,18 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                             },
                             child: Container(
                                 decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
+                                  shape: CircleBorder(
+                                      //          borderRadius: BorderRadius.circular(12.0),
                                       side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
+                                          width: 0.1, color: Colors.black54)),
                                   //color: Theme.of(context).accentColor,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: screenSize.height * 0.005,
+                                      horizontal: screenSize.width * 0.02,
+                                    ),
+                                    child: Icon(Icons.more_horiz_outlined))),
                           )
                   ],
                 ),
@@ -181,23 +163,14 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Container(
-                          decoration: ShapeDecoration(
-                            color: Colors.grey[100],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  screenSize.height * 0.01),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(screenSize.height * 0.02),
-                            child: CircleAvatar(
-                              radius: screenSize.height * 0.03,
-                              backgroundColor: Colors.grey,
-                              backgroundImage: CachedNetworkImageProvider(widget
-                                  .documentSnapshot
-                                  .data['promotionOwnerPhotoUrl']),
-                            ),
+                        Padding(
+                          padding: EdgeInsets.all(screenSize.height * 0.02),
+                          child: CircleAvatar(
+                            radius: screenSize.height * 0.03,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: CachedNetworkImageProvider(widget
+                                .documentSnapshot
+                                .data['promotionOwnerPhotoUrl']),
                           ),
                         ),
                         new SizedBox(
@@ -280,18 +253,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(screenSize.height * 0.01),
-                child: Text(
-                  timeago.format(widget.documentSnapshot.data['time'].toDate()),
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textbody2(context),
-                    color: Colors.black54,
-                  ),
-                ),
-              ),
-              //   SizedBox(height: screenSize.height * 0.02)
+              SizedBox(height: screenSize.height * 0.02)
             ],
           ),
         ),

@@ -2,6 +2,9 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/webview.dart';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/education_widget.dart';
+import 'package:Yujai/widgets/flow_widget.dart';
+import 'package:Yujai/widgets/skill_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +40,12 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
               onPressed: () {
                 Navigator.pop(context);
               }),
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.more_vert),
+          //     onPressed: null,
+          //   )
+          // ],
           backgroundColor: const Color(0xffffffff),
           title: Text(
             'Details',
@@ -66,207 +75,121 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey[200],
-                          offset: Offset(1.0, 1.0),
-                          spreadRadius: 1.0,
-                          blurRadius: 1.0),
-                      BoxShadow(
-                          color: Colors.white,
-                          offset: Offset.zero,
-                          spreadRadius: 0,
-                          blurRadius: 0)
-                    ]),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: screenSize.width / 30,
-                            vertical: screenSize.height * 0.012,
-                          ),
-                          child: CircleAvatar(
-                            radius: screenSize.height * 0.045,
-                            backgroundColor: Colors.grey,
-                            backgroundImage: CachedNetworkImageProvider(
-                              widget.documentSnapshot
-                                  .data['promotionOwnerPhotoUrl'],
-                            ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width / 30,
+                          vertical: screenSize.height * 0.012,
+                        ),
+                        child: CircleAvatar(
+                          radius: screenSize.height * 0.045,
+                          backgroundColor: Colors.grey,
+                          backgroundImage: CachedNetworkImageProvider(
+                            widget.documentSnapshot
+                                .data['promotionOwnerPhotoUrl'],
                           ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.01),
-                              child: Text(
-                                DateFormat.yMMMd().add_jm().format(myDateTime),
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black54,
-                                    fontSize: textbody2(context)),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.005),
-                              child: Text(
-                                widget.documentSnapshot.data['caption'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.005),
-                              child: Text(
-                                widget.documentSnapshot
-                                    .data['promotionOwnerName'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    widget.documentSnapshot.data['portfolio'] != ''
-                        ? Padding(
-                            padding: EdgeInsets.all(screenSize.height * 0.012),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RaisedButton(
-                                  splashColor: Colors.yellow,
-                                  shape: StadiumBorder(),
-                                  color: Colors.deepPurple,
-                                  child: Text(
-                                    'Portfolio',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.white),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => MyWebView(
-                                                  title: 'Portfolio',
-                                                  selectedUrl: widget
-                                                      .documentSnapshot
-                                                      .data['portfolio'],
-                                                )));
-                                  },
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                    Padding(
-                      padding: EdgeInsets.only(left: screenSize.width / 30),
-                      child: Row(
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.location_on,
-                            size: screenSize.height * 0.04,
-                            color: Colors.black54,
-                          ),
                           Padding(
                             padding:
-                                EdgeInsets.only(left: screenSize.width / 30),
+                                EdgeInsets.only(top: screenSize.height * 0.01),
                             child: Text(
-                              widget.documentSnapshot.data['location'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: screenSize.height * 0.005,
-                        left: screenSize.width / 30,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.timer,
-                            size: screenSize.height * 0.04,
-                            color: Colors.black54,
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsets.only(left: screenSize.width / 30),
-                            child: Text(
-                              widget.documentSnapshot.data['timing'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: screenSize.height * 0.005,
-                        left: screenSize.width / 30,
-                        bottom: screenSize.height * 0.012,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.business,
-                            size: screenSize.height * 0.04,
-                            color: Colors.black54,
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsets.only(left: screenSize.width / 30),
-                            child: Text(
-                              widget.documentSnapshot.data['category'],
+                              DateFormat.yMMMd().add_jm().format(myDateTime),
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
+                                color: Colors.black54,
+                                // fontSize: textbody2(context)
                               ),
                             ),
-                          )
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: screenSize.height * 0.005),
+                            child: Text(
+                              widget.documentSnapshot.data['caption'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontSize: textHeader(context)),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: screenSize.height * 0.005),
+                            child: Text(
+                              widget
+                                  .documentSnapshot.data['promotionOwnerName'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: FontNameDefault,
+                                //fontSize: textSubTitle(context)
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(
+                                width: 6.0,
+                              ),
+                              Text(
+                                widget.documentSnapshot.data['location'],
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: FontNameDefault,
+                                  //fontSize: textBody1(context)
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: screenSize.width / 30,
-                    top: screenSize.height * 0.012,
+                    ],
                   ),
-                  child: Text(
-                    'Description',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                ),
+                  widget.documentSnapshot.data['portfolio'] != ''
+                      ? Padding(
+                          padding: EdgeInsets.all(screenSize.height * 0.012),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RaisedButton(
+                                splashColor: Colors.yellow,
+                                shape: StadiumBorder(),
+                                color: Colors.deepPurple,
+                                child: Text(
+                                  'Portfolio',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context),
+                                      color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => MyWebView(
+                                            title: 'Portfolio',
+                                            selectedUrl: widget.documentSnapshot
+                                                .data['portfolio'],
+                                          )));
+                                },
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
+                ],
               ),
             ),
             Container(
@@ -291,113 +214,179 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              width: screenSize.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: screenSize.height * 0.01,
-                        left: screenSize.width / 30,
-                        bottom: screenSize.height * 0.01),
-                    child: Text(
-                      'Preffered locations',
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black45,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Wrap(
+            widget.documentSnapshot.data['skills'] != null ||
+                    widget.documentSnapshot.data['skills'] != []
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: screenSize.width / 30,
-                          bottom: screenSize.height * 0.012,
-                        ),
-                        child: Text(
-                          widget.documentSnapshot.data['locations'],
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
+                      Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: screenSize.width / 30,
+                            top: screenSize.height * 0.012,
+                          ),
+                          child: Text(
+                            'Skills',
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textHeader(context),
+                              //    color: Colors.black45,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
+                      ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (BuildContext context, int index) {
+                            return SkillEventRow(SkillEvent(
+                                skill: widget.documentSnapshot.data['skills']
+                                    [index]['skill'],
+                                level: widget.documentSnapshot.data['skills']
+                                    [index]['level']));
+                          },
+                          itemCount:
+                              widget.documentSnapshot.data['skills'].length),
                     ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: screenSize.width / 30,
-                    top: screenSize.height * 0.012,
-                  ),
-                  child: Text(
-                    'Skills',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.black45,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              width: screenSize.width,
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                //  top: screenSize.height * 0.012,
-                bottom: screenSize.height * 0.012,
-              ),
-              child: Wrap(
-                children: [
-                  Text(
-                    widget.documentSnapshot.data['skills'],
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context)),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
-              ),
-              child: Container(
-                height: screenSize.height * 0.01,
-                color: Colors.grey[200],
-              ),
-            ),
+                  )
+                : Container(),
+            widget.documentSnapshot.data['experience'] != [] ||
+                    widget.documentSnapshot.data['experience'] != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: screenSize.width / 30,
+                            top: screenSize.height * 0.012,
+                          ),
+                          child: Text(
+                            'Experience',
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textHeader(context),
+                              //    color: Colors.black45,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        // margin: EdgeInsets.symmetric(
+                        //     horizontal: screenSize.width * 0.2,
+                        //     vertical: screenSize.height * 0.02
+                        //     ),
+                        child: Stack(
+                          fit: StackFit.loose,
+                          children: [
+                            Positioned(
+                                left: 21,
+                                top: 15,
+                                bottom: 15,
+                                child: VerticalDivider(
+                                  width: 1,
+                                  color: Colors.black54,
+                                )),
+                            ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return FlowEventRow(FlowEvent(
+                                      employmentType:
+                                          widget.documentSnapshot.data['experience']
+                                              [index]['employmentType'],
+                                      isPresent: widget.documentSnapshot.data['experience']
+                                          [index]['isPresent'],
+                                      industry: widget.documentSnapshot.data['experience']
+                                          [index]['industry'],
+                                      company: widget.documentSnapshot.data['experience']
+                                          [index]['company'],
+                                      designation: widget.documentSnapshot.data['experience']
+                                          [index]['designation'],
+                                      startDate: widget.documentSnapshot.data['experience']
+                                          [index]['startCompany'],
+                                      endDate: widget.documentSnapshot.data['experience'][index]['endCompany']));
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    height: 2,
+                                  );
+                                },
+                                itemCount: widget
+                                    .documentSnapshot.data['experience'].length)
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
+            widget.documentSnapshot.data['education'] != [] ||
+                    widget.documentSnapshot.data['education'] != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: screenSize.width / 30,
+                            top: screenSize.height * 0.012,
+                          ),
+                          child: Text(
+                            'Education',
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textHeader(context),
+                              //    color: Colors.black45,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: screenSize.width / 30),
+                        child: Card(
+                          elevation: 0,
+                          // margin: EdgeInsets.symmetric(
+                          //     horizontal: screenSize.width * 0.035,
+                          //     vertical: screenSize.height * 0.02),
+                          child: ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemBuilder: (BuildContext context, int index) {
+                                return FlowEducationRow(FlowEducation(
+                                    isPresent: widget.documentSnapshot
+                                        .data['education'][index]['isPresent'],
+                                    university: widget.documentSnapshot
+                                        .data['education'][index]['university'],
+                                    degree: widget.documentSnapshot.data['education']
+                                        [index]['degree'],
+                                    field: widget.documentSnapshot.data['education']
+                                        [index]['field'],
+                                    startDate: widget.documentSnapshot.data['education']
+                                        [index]['startUniversity'],
+                                    endDate: widget.documentSnapshot.data['education']
+                                        [index]['endUniversity']));
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return SizedBox(
+                                  height: 2,
+                                );
+                              },
+                              itemCount: widget
+                                  .documentSnapshot.data['education'].length),
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
             Padding(
               padding: EdgeInsets.only(bottom: screenSize.height * 0.012),
               child: Container(
@@ -410,8 +399,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                     'Contact',
                     style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.black45,
+                      fontSize: textHeader(context),
+                      //    color: Colors.black45,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -465,14 +454,15 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                     color: Colors.white),
                               ),
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        InstaFriendProfileScreen(
-                                          uid: widget.documentSnapshot
-                                              .data['ownerUid'],
-                                          name: widget.documentSnapshot
-                                              .data['promotionOwnerName'],
-                                        )));
+                                if (widget.documentSnapshot.data['ownerUid'] !=
+                                    widget.currentuser.uid)
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => FriendProfileScreen(
+                                            uid: widget.documentSnapshot
+                                                .data['ownerUid'],
+                                            name: widget.documentSnapshot
+                                                .data['promotionOwnerName'],
+                                          )));
                               },
                             ),
                             Icon(

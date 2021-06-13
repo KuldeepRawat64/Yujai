@@ -86,7 +86,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         body: ListView(
             padding: EdgeInsets.fromLTRB(
               screenSize.width / 11,
@@ -98,211 +98,193 @@ class _CompanyInfoState extends State<CompanyInfo> {
               Form(
                 key: _gstKey,
                 child: Container(
-                  child: Column(children: [
-                    Text(
-                      'Company Info',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: FontNameDefault,
-                        fontSize: textAppTitle(context),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(bottom: screenSize.height * 0.012),
-                      child: Text(
-                        'Fill the details below to continue',
-                        style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context),
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Company Info',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textHeader(context),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Image.asset(
-                        'assets/office-building.png',
-                        height: screenSize.height * 0.12,
-                        width: screenSize.width / 2.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.012),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Company Name',
+                        SizedBox(
+                          height: screenSize.height * 0.05,
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.only(bottom: screenSize.height * 0.02),
+                          child: TextFormField(
+                            autocorrect: true,
+                            textCapitalization: TextCapitalization.sentences,
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              color: Colors.black54,
-                              fontSize: textSubTitle(context),
-                              fontWeight: FontWeight.bold,
+                              fontSize: textBody1(context),
                             ),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              autocorrect: true,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(
+                            controller: companyNameController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              // suffix: Row(
+
+                              labelText: 'Company name',
+                              hintStyle: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
+                                fontSize: textAppTitle(context),
+                                fontWeight: FontWeight.bold,
                               ),
-                              controller: companyNameController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                hintText: "Name of your company",
-                              ),
+                              // border: OutlineInputBorder(
+                              //   borderRadius: new BorderRadius.circular(10),
+                              // ),
+                              border: InputBorder.none,
+                              isDense: true,
                             ),
+                            validator: (value) {
+                              if (value.isEmpty)
+                                return "Please enter your company name";
+                              return null;
+                            },
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.012),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Contact',
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.only(bottom: screenSize.height * 0.02),
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
+                              fontSize: textBody1(context),
                             ),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              style: TextStyle(
+                            controller: phoneController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              // suffix: Row(
+
+                              labelText: 'Company phone',
+                              hintStyle: TextStyle(
                                 fontFamily: FontNameDefault,
+                                fontSize: textAppTitle(context),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              // border: OutlineInputBorder(
+                              //   borderRadius: new BorderRadius.circular(10),
+                              // ),
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty)
+                                return "Please enter your company phone";
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.only(bottom: screenSize.height * 0.02),
+                          child: TextFormField(
+                            style: TextStyle(
                                 fontSize: textBody1(context),
-                              ),
-                              controller: phoneController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                hintText: "Company contact",
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.012),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Establishment Year',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              style: TextStyle(
-                                  fontSize: textBody1(context),
-                                  fontFamily: FontNameDefault),
-                              keyboardType: TextInputType.number,
-                              controller: establishYearController,
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: const Color(0xffffffff),
-                                  hintText: 'eg. 1967'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenSize.height * 0.012),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Gst Number',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            height: screenSize.height * 0.09,
-                            child: TextFormField(
-                              onFieldSubmitted: (value) {},
-                              validator: (value) {
-                                if (value.isEmpty ||
-                                    !RegExp(r"^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$")
-                                        .hasMatch(value)) {
-                                  return 'Enter a valid gst';
-                                }
-                                return null;
-                              },
-                              style: TextStyle(
+                                fontFamily: FontNameDefault),
+                            keyboardType: TextInputType.number,
+                            controller: establishYearController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              // suffix: Row(
+
+                              labelText: 'Establsihed year',
+                              hintStyle: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
+                                fontSize: textAppTitle(context),
+                                fontWeight: FontWeight.bold,
                               ),
-                              controller: gstController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                hintText: "Your gst no",
-                                labelText: 'Gst',
+                              // border: OutlineInputBorder(
+                              //   borderRadius: new BorderRadius.circular(10),
+                              // ),
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                            validator: (value) {
+                              if (value.isEmpty)
+                                return "Please enter established year of your company";
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              EdgeInsets.only(bottom: screenSize.height * 0.02),
+                          child: TextFormField(
+                            onFieldSubmitted: (value) {},
+                            validator: (value) {
+                              if (value.isEmpty ||
+                                  !RegExp(r"^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$")
+                                      .hasMatch(value)) {
+                                return 'Enter a valid gst';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textBody1(context),
+                            ),
+                            controller: gstController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              // suffix: Row(
+
+                              labelText: 'Company gst',
+                              hintStyle: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textAppTitle(context),
+                                fontWeight: FontWeight.bold,
                               ),
+                              // border: OutlineInputBorder(
+                              //   borderRadius: new BorderRadius.circular(10),
+                              // ),
+                              border: InputBorder.none,
+                              isDense: true,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    companyNameController.text.isNotEmpty &&
-                            phoneController.text.isNotEmpty &&
-                            establishYearController.text.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: screenSize.height * 0.015),
-                            child: GestureDetector(
-                              onTap: submit,
-                              child: Container(
-                                alignment: Alignment.bottomCenter,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: screenSize.height * 0.02,
+                            //left: screenSize.width * 0.01,
+                            //right: screenSize.width * 0.01
+                          ),
+                          child: InkWell(
+                            onTap: submit,
+                            child: Container(
                                 height: screenSize.height * 0.07,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  borderRadius: BorderRadius.circular(60.0),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Next",
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.white,
-                                      fontSize: textSubTitle(context),
+                                //    width: screenSize.width * 0.8,
+                                decoration: ShapeDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0))),
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.all(screenSize.height * 0.015),
+                                  child: Center(
+                                    child: Text(
+                                      'Create',
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textAppTitle(context),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Text(''),
-                  ]),
+                                )),
+                          ),
+                        )
+                      ]),
                 ),
               ),
             ]),

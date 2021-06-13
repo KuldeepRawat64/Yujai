@@ -1,13 +1,15 @@
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/friend_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/pages/event_detail_group.dart';
-
+import 'package:intl/intl.dart';
 import '../style.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEventForum extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
@@ -33,6 +35,18 @@ class ListItemEventForum extends StatefulWidget {
 
 class _ListItemEventForumState extends State<ListItemEventForum> {
   String selectedSubject;
+
+  convertDate(int timeinMilis) {
+    var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
+    var formattedDate = DateFormat.yMMMd().format(date);
+    return formattedDate;
+  }
+
+  convertTime(int timeinMilis) {
+    var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
+    var formattedDate = DateFormat.jm().format(date);
+    return formattedDate;
+  }
 
   Future<void> send() async {
     final Email email = Email(
@@ -87,13 +101,161 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            //    mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              ListTile(
+                leading: CircleAvatar(
+                    radius: screenSize.height * 0.03,
+                    backgroundImage: CachedNetworkImageProvider(
+                        widget.documentSnapshot.data['eventOwnerPhotoUrl'])),
+                title: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FriendProfileScreen(
+                                uid: widget.documentSnapshot.data['ownerUid'],
+                                name: widget
+                                    .documentSnapshot.data['eventOwnerName'])));
+                  },
+                  child: new Text(
+                    widget.documentSnapshot.data['eventOwnerName'],
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                subtitle: widget.documentSnapshot.data['city'] != '' &&
+                        widget.documentSnapshot.data['city'] != null
+                    ? Row(
+                        children: [
+                          new Text(
+                            widget.documentSnapshot.data['city'],
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //    fontSize: textBody1(context),
+                                color: Colors.grey),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Icon(
+                            Icons.circle,
+                            size: 6.0,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              //   left: screenSize.width / 30,
+                              top: screenSize.height * 0.002,
+                            ),
+                            child: Text(
+                                widget.documentSnapshot.data['time'] != null
+                                    ? timeago.format(widget
+                                        .documentSnapshot.data['time']
+                                        .toDate())
+                                    : '',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    //   fontSize: textbody2(context),
+                                    color: Colors.grey)),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          new Text(
+                            'Online',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //    fontSize: textBody1(context),
+                                color: Colors.grey),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Icon(
+                            Icons.circle,
+                            size: 6.0,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              //   left: screenSize.width / 30,
+                              top: screenSize.height * 0.002,
+                            ),
+                            child: Text(
+                                widget.documentSnapshot.data['time'] != null
+                                    ? timeago.format(widget
+                                        .documentSnapshot.data['time']
+                                        .toDate())
+                                    : '',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    //   fontSize: textbody2(context),
+                                    color: Colors.grey)),
+                          ),
+                        ],
+                      ),
+                trailing: widget.currentuser.uid ==
+                            widget.documentSnapshot.data['ownerUid'] ||
+                        widget.group != null &&
+                            widget.group.currentUserUid ==
+                                widget.currentuser.uid
+                    ? InkWell(
+                        onTap: () {
+                          //    showDelete(widget.documentSnapshot);
+                          //      deleteDialog(widget.documentSnapshot);
+                        },
+                        child: Container(
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60.0),
+                                  side: BorderSide(
+                                      width: 0.1, color: Colors.black54)),
+                              //color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.005,
+                                  horizontal: screenSize.width * 0.02,
+                                ),
+                                child: Icon(Icons.more_horiz_outlined))),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          //   showReport(widget.documentSnapshot);
+                        },
+                        child: Container(
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                      width: 0.1, color: Colors.black54)),
+                              //color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 8.0,
+                                  right: 8.0,
+                                  top: 6.0,
+                                  bottom: 6.0,
+                                ),
+                                child: Icon(Icons.more_horiz_outlined))),
+                      ),
+              ),
               Padding(
                 padding: EdgeInsets.only(
                     right: screenSize.width / 50,
-                    top: screenSize.height * 0.012,
+                    //  top: screenSize.height * 0.012,
                     left: screenSize.width / 30),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,20 +265,18 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          height: screenSize.height * 0.18,
+                          width: screenSize.width * 0.55,
                           decoration: ShapeDecoration(
+                              image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    widget.documentSnapshot.data['imgUrl'],
+                                  ),
+                                  fit: BoxFit.cover),
                               color: Colors.grey[100],
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       screenSize.height * 0.012))),
-                          child: Padding(
-                            padding: EdgeInsets.all(screenSize.height * 0.025),
-                            child: CircleAvatar(
-                              radius: screenSize.height * 0.04,
-                              backgroundColor: Colors.grey,
-                              backgroundImage: CachedNetworkImageProvider(widget
-                                  .documentSnapshot.data['eventOwnerPhotoUrl']),
-                            ),
-                          ),
                         ),
                         new SizedBox(
                           width: screenSize.width * 0.03,
@@ -140,162 +300,145 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                                             )));
                               },
                               child: Container(
-                                width: screenSize.width * 0.5,
+                                width: screenSize.width * 0.3,
+                                // height: screenSize.height * 0.045,
                                 child: Text(
                                   widget.documentSnapshot.data['caption'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
-                                      fontSize: textSubTitle(context),
+                                      fontSize: textH1(context),
                                       fontWeight: FontWeight.bold,
                                       color: Theme.of(context).primaryColor),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                  maxLines: 2,
                                 ),
                               ),
                             ),
                             SizedBox(
-                              height: screenSize.height * 0.01,
+                              height: screenSize.height * 0.005,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget
-                                          .documentSnapshot.data['startEvent'],
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: textBody1(context),
-                                      ),
-                                    ),
-                                    Text(
-                                      'To',
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      ),
-                                    ),
-                                    Text(
-                                      widget.documentSnapshot.data['endEvent'],
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: textBody1(context),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: screenSize.height * 0.01,
-                                    ),
-                                    widget.documentSnapshot.data['location'] !=
-                                                null &&
-                                            widget.documentSnapshot
-                                                .data['location'].isNotEmpty
-                                        ? new Text(
-                                            widget.documentSnapshot
-                                                .data['location'],
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              color: Colors.grey,
-                                              fontSize: textBody1(context),
-                                            ),
-                                          )
-                                        : Text(
-                                            'Online',
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              color: Colors.grey,
-                                              fontSize: textBody1(context),
-                                            ),
+                            Container(
+                              width: screenSize.width * 0.3,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${convertDate(widget.documentSnapshot.data['startDate'])}',
+                                                style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      textSubTitle(context),
+                                                ),
+                                              ),
+
+                                              Text(
+                                                'To \n${convertDate(widget.documentSnapshot.data['endDate'])}',
+                                                style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      textSubTitle(context),
+                                                ),
+                                              ),
+                                              // Text(
+                                              //   convertTime(widget
+                                              //       .documentSnapshot
+                                              //       .data['startTime']),
+                                              //   style: TextStyle(
+                                              //     fontFamily: FontNameDefault,
+                                              //     color: Colors.black87,
+                                              //     fontWeight: FontWeight.bold,
+                                              //     fontSize: textBody1(context),
+                                              //   ),
+                                              // ),
+                                            ],
                                           ),
-                                  ],
-                                ),
-                                // SizedBox(
-                                //   width: screenSize.width * 0.15,
-                                // ),
-                              ],
+                                        ],
+                                      ),
+                                      // SizedBox(
+                                      //   height: 5.0,
+                                      // ),
+                                      // Text(
+                                      //   'To',
+                                      //   style: TextStyle(
+                                      //     fontFamily: FontNameDefault,
+                                      //     color: Colors.black87,
+                                      //     fontWeight: FontWeight.bold,
+                                      //     fontSize: textBody1(context),
+                                      //   ),
+                                      // ),
+                                      // SizedBox(
+                                      //   height: 5.0,
+                                      // ),
+                                      // Row(
+                                      //   children: [
+                                      //     Column(
+                                      //       crossAxisAlignment:
+                                      //           CrossAxisAlignment.start,
+                                      //       children: [
+                                      //         Text(
+                                      //           '${convertDate(widget.documentSnapshot.data['endDate'])},',
+                                      //           style: TextStyle(
+                                      //             fontFamily: FontNameDefault,
+                                      //             color: Colors.black87,
+                                      //             fontWeight: FontWeight.bold,
+                                      //             fontSize: textBody1(context),
+                                      //           ),
+                                      //         ),
+                                      //         Text(
+                                      //           convertTime(widget
+                                      //               .documentSnapshot
+                                      //               .data['endTime']),
+                                      //           style: TextStyle(
+                                      //             fontFamily: FontNameDefault,
+                                      //             color: Colors.black87,
+                                      //             fontWeight: FontWeight.bold,
+                                      //             fontSize: textBody1(context),
+                                      //           ),
+                                      //         ),
+                                      //       ],
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                    ],
+                                  ),
+                                  // SizedBox(
+                                  //   width: screenSize.width * 0.15,
+                                  // ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    widget.user != null &&
-                            widget.user.uid ==
-                                widget.documentSnapshot.data['ownerUid']
-                        ? InkWell(
-                            onTap: () {
-                              showDelete(widget.documentSnapshot);
-                            },
-                            child: Container(
-                                decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              showReport(widget.documentSnapshot, context);
-                            },
-                            child: Container(
-                                decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 1.5,
-                                          color: Colors.deepPurple)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                    top: 6.0,
-                                    bottom: 6.0,
-                                  ),
-                                  child: Text(
-                                    'More',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textButton(context),
-                                        color: Colors.deepPurple,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )),
-                          ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(
+                    top: screenSize.height * 0.01,
+                    left: screenSize.width * 0.03),
                 child: Container(
-                  height: screenSize.height * 0.055,
+                  //   height: screenSize.height * 0.055,
                   child: Text(
                     widget.documentSnapshot.data['description'],
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    maxLines: 3,
                     style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textBody1(context),
@@ -303,19 +446,24 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, top: 2.0),
-                child: Text(
-                  timeago.format(widget.documentSnapshot.data['time'].toDate()),
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textbody2(context),
-                    color: Colors.black54,
-                  ),
-                ),
-              ),
+              // widget.documentSnapshot.data['time'] == null
+              //     ? Container()
+              //     : Padding(
+              //         padding: EdgeInsets.only(
+              //             left: screenSize.width * 0.03,
+              //             top: screenSize.height * 0.005),
+              //         child: Text(
+              //           timeago.format(
+              //               widget.documentSnapshot.data['time'].toDate()),
+              //           style: TextStyle(
+              //             fontFamily: FontNameDefault,
+              //             fontSize: textbody2(context),
+              //             color: Colors.black54,
+              //           ),
+              //         ),
+              //       ),
               SizedBox(
-                height: screenSize.height * 0.03,
+                height: screenSize.height * 0.02,
               ),
             ],
           ),

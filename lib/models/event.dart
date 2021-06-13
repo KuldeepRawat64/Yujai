@@ -7,18 +7,20 @@ class Event {
   String imgUrl;
   String caption;
   String location;
+  String venue;
+  String city;
   FieldValue time;
   String eventOwnerName;
   String eventOwnerPhotoUrl;
-  String organiser;
+  String host;
   String website;
   String description;
-  String agenda;
   String category;
-  String type;
-  String venue;
-  String startEvent;
-  String endEvent;
+  GeoPoint geopoint;
+  int startDate;
+  int endDate;
+  int startTime;
+  int endTime;
   String ticketWebsite;
 
   Event({
@@ -27,18 +29,20 @@ class Event {
     this.caption,
     this.imgUrl,
     this.location,
+    this.city,
+    this.venue,
     this.time,
     this.eventOwnerName,
     this.eventOwnerPhotoUrl,
-    this.organiser,
     this.website,
     this.description,
-    this.agenda,
+    this.host,
     this.category,
-    this.type,
-    this.venue,
-    this.startEvent,
-    this.endEvent,
+    this.geopoint,
+    this.startDate,
+    this.endDate,
+    this.startTime,
+    this.endTime,
     this.ticketWebsite,
   });
 
@@ -49,18 +53,20 @@ class Event {
     data['imgUrl'] = event.imgUrl;
     data['caption'] = event.caption;
     data['location'] = event.location;
+    data['venue'] = event.venue;
     data['time'] = event.time;
+    data['city'] = event.city;
     data['eventOwnerName'] = event.eventOwnerName;
     data['eventOwnerPhotoUrl'] = event.eventOwnerPhotoUrl;
-    data['organiser'] = event.organiser;
+    data['host'] = event.host;
     data['website'] = event.website;
     data['description'] = event.description;
-    data['agenda'] = event.agenda;
+    data['geopoint'] = event.geopoint;
     data['category'] = event.category;
-    data['type'] = event.type;
-    data['venue'] = event.venue;
-    data['startEvent'] = event.startEvent;
-    data['endEvent'] = event.endEvent;
+    data['startDate'] = event.startDate;
+    data['endDate'] = event.endDate;
+    data['startTime'] = event.startTime;
+    data['endTime'] = event.endTime;
     data['ticketWebsite'] = event.ticketWebsite;
     return data;
   }
@@ -71,18 +77,20 @@ class Event {
     this.imgUrl = mapData['imgUrl'];
     this.caption = mapData['caption'];
     this.location = mapData['location'];
+    this.venue = mapData['venue'];
     this.time = mapData['time'];
+    this.city = mapData['city'];
     this.eventOwnerName = mapData['eventOwnerName'];
     this.eventOwnerPhotoUrl = mapData['eventOwnerPhotoUrl'];
-    this.organiser = mapData['organiser'];
+    this.geopoint = mapData['geopoint'];
     this.website = mapData['website'];
     this.description = mapData['description'];
-    this.agenda = mapData['agenda'];
+    this.host = mapData['host'];
     this.category = mapData['category'];
-    this.type = mapData['type'];
-    this.venue = mapData['venue'];
-    this.startEvent = mapData['startEvent'];
-    this.endEvent = mapData['endEvent'];
+    this.startDate = mapData['startDate'];
+    this.endDate = mapData['endDate'];
+    this.startTime = mapData['startTime'];
+    this.endTime = mapData['endTime'];
     this.ticketWebsite = mapData['ticketWebsite'];
   }
 }

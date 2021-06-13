@@ -106,14 +106,10 @@ class _ListPostReviewState extends State<ListPostReview> {
         widget.documentSnapshot.data['postId'],
         widget.documentSnapshot.data['ownerUid'],
         widget.documentSnapshot.data['caption'],
-        widget.documentSnapshot.data['category'],
         widget.documentSnapshot.data['option1'],
         widget.documentSnapshot.data['option2'],
         widget.documentSnapshot.data['option3'],
         widget.documentSnapshot.data['option4'],
-        widget.documentSnapshot.data['option5'],
-        widget.documentSnapshot.data['option6'],
-        widget.documentSnapshot.data['pollType'],
         widget.documentSnapshot.data['postType'],
         widget.documentSnapshot.data['postOwnerName'],
         widget.documentSnapshot.data['postOwnerPhotoUrl'],
@@ -182,9 +178,9 @@ class _ListPostReviewState extends State<ListPostReview> {
             decoration: ShapeDecoration(
               color: const Color(0xffffffff),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                 // side: BorderSide(color: Colors.grey[300]),
-                  ),
+                borderRadius: BorderRadius.circular(12.0),
+                // side: BorderSide(color: Colors.grey[300]),
+              ),
             ),
             child: Wrap(
               children: <Widget>[
@@ -350,9 +346,10 @@ class _ListPostReviewState extends State<ListPostReview> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              InstaFriendProfileScreen(
-                                                  uid: widget.documentSnapshot
-                                                      .data['ownerUid'],
+                                              FriendProfileScreen(
+                                                  uid:
+                                                      widget.documentSnapshot
+                                                          .data['ownerUid'],
                                                   name: widget.documentSnapshot
                                                       .data['postOwnerName'])));
                                 },

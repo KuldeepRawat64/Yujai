@@ -102,14 +102,27 @@ class Repository {
   Future<void> addAdToForum(
           String currentGroupId,
           User currentUser,
-          String imgUrl,
+          List<String> imgUrl,
           String caption,
           String description,
           String price,
           String condition,
-          String location) =>
-      _firebaseProvider.addAdToForum(currentGroupId, currentUser, imgUrl,
-          caption, description, price, condition, location);
+          String city,
+          String location,
+          String category,
+          GeoPoint geoPoint) =>
+      _firebaseProvider.addAdToForum(
+          currentGroupId,
+          currentUser,
+          imgUrl,
+          caption,
+          description,
+          price,
+          condition,
+          city,
+          location,
+          category,
+          geoPoint);
 
   Future<void> addAdToReview(
           String currentGroupId,
@@ -120,9 +133,10 @@ class Repository {
           String price,
           String condition,
           String location,
-          String postType) =>
+          String postType,
+          String category) =>
       _firebaseProvider.addAdToReview(currentGroupId, currentUser, imgUrl,
-          caption, description, price, condition, location, postType);
+          caption, description, price, condition, location, postType, category);
 
   Future<void> addApprovedAdToForum(
           String currentGroupId,
@@ -176,31 +190,27 @@ class Repository {
           currentGroupId, currentUser, caption, postType);
 
   Future<void> addPollToForum(
-          String currentGroupId,
-          User currentUser,
-          String caption,
-          String category,
-          String pollType,
-          String postType,
-          String option1,
-          String option2,
-          String option3,
-          String option4,
-          String option5,
-          String option6) =>
+    String currentGroupId,
+    User currentUser,
+    String caption,
+    String postType,
+    int pollLength,
+    String option1,
+    String option2,
+    String option3,
+    String option4,
+  ) =>
       _firebaseProvider.addPollToForum(
-          currentGroupId,
-          currentUser,
-          caption,
-          category,
-          pollType,
-          postType,
-          option1,
-          option2,
-          option3,
-          option4,
-          option5,
-          option6);
+        currentGroupId,
+        currentUser,
+        caption,
+        pollLength,
+        postType,
+        option1,
+        option2,
+        option3,
+        option4,
+      );
 
   Future<void> addPollToProject(
           String currentTeamId,
@@ -208,8 +218,7 @@ class Repository {
           String currentProjectId,
           User currentUser,
           String caption,
-          String category,
-          String pollType,
+          int pollLength,
           String postType,
           String option1,
           String option2,
@@ -221,8 +230,7 @@ class Repository {
           currentProjectId,
           currentUser,
           caption,
-          category,
-          pollType,
+          pollLength,
           postType,
           option1,
           option2,
@@ -234,66 +242,47 @@ class Repository {
           String currentDeptId,
           User currentUser,
           String caption,
-          String category,
-          String pollType,
+          int pollLength,
           String postType,
           String option1,
           String option2,
           String option3,
           String option4) =>
-      _firebaseProvider.addPollToDept(
-          currentTeamId,
-          currentDeptId,
-          currentUser,
-          caption,
-          category,
-          pollType,
-          postType,
-          option1,
-          option2,
-          option3,
-          option4);
+      _firebaseProvider.addPollToDept(currentTeamId, currentDeptId, currentUser,
+          caption, pollLength, postType, option1, option2, option3, option4);
 
   Future<void> addPollToReview(
-          String currentGroupId,
-          User currentUser,
-          String caption,
-          String category,
-          String pollType,
-          String postType,
-          String option1,
-          String option2,
-          String option3,
-          String option4,
-          String option5,
-          String option6) =>
+    String currentGroupId,
+    User currentUser,
+    String caption,
+    String postType,
+    int pollLength,
+    String option1,
+    String option2,
+    String option3,
+    String option4,
+  ) =>
       _firebaseProvider.addPollToReview(
-          currentGroupId,
-          currentUser,
-          caption,
-          category,
-          pollType,
-          postType,
-          option1,
-          option2,
-          option3,
-          option4,
-          option5,
-          option6);
+        currentGroupId,
+        currentUser,
+        caption,
+        postType,
+        pollLength,
+        option1,
+        option2,
+        option3,
+        option4,
+      );
 
   Future<void> addApprovedPollToForum(
           String currentGroupId,
           String currentPostId,
           String ownerUid,
           String caption,
-          String category,
           String option1,
           String option2,
           String option3,
           String option4,
-          String option5,
-          String option6,
-          String pollType,
           String postType,
           String ownerName,
           String ownerPhotoUrl) =>
@@ -302,14 +291,10 @@ class Repository {
           currentPostId,
           ownerUid,
           caption,
-          category,
           option1,
           option2,
           option3,
           option4,
-          option5,
-          option6,
-          pollType,
           postType,
           ownerName,
           ownerPhotoUrl);
@@ -356,96 +341,96 @@ class Repository {
     User currentUser,
     String imgUrl,
     String caption,
-    String location,
-    String organiser,
+    String city,
+    String venue,
+    String host,
     String website,
     String description,
-    String agenda,
     String category,
-    String type,
-    String venue,
-    String startEvent,
-    String endEvent,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
     String ticketWebsite,
+    GeoPoint geoPoint,
   ) =>
       _firebaseProvider.addEventToDb(
           currentUser,
           imgUrl,
           caption,
-          location,
-          organiser,
+          city,
+          venue,
+          host,
           website,
           description,
-          agenda,
           category,
-          type,
-          venue,
-          startEvent,
-          endEvent,
-          ticketWebsite);
+          startDate,
+          endDate,
+          startTime,
+          endTime,
+          ticketWebsite,
+          geoPoint);
 
   Future<void> addEventToForum(
     String currentGroupId,
     User currentUser,
     String imgUrl,
     String caption,
-    String location,
-    String organiser,
+    String city,
+    String venue,
+    String host,
     String website,
     String description,
-    String agenda,
     String category,
-    String type,
-    String venue,
-    String startEvent,
-    String endEvent,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
     String ticketWebsite,
+    GeoPoint geoPoint,
   ) =>
       _firebaseProvider.addEventToForum(
           currentGroupId,
           currentUser,
           imgUrl,
           caption,
-          location,
-          organiser,
+          city,
+          venue,
+          host,
           website,
           description,
-          agenda,
           category,
-          type,
-          venue,
-          startEvent,
-          endEvent,
-          ticketWebsite);
+          startDate,
+          endDate,
+          startTime,
+          endTime,
+          ticketWebsite,
+          geoPoint);
 
   Future<void> addNewsToDb(
           User currentUser, String imgUrl, String caption, String source) =>
       _firebaseProvider.addNewsToDb(currentUser, imgUrl, caption, source);
 
-  Future<void> addJobToDb(
-          User currentUser,
-          String caption,
-          String location,
-          String category,
-          String salary,
-          String timing,
-          String description,
-          String website) =>
-      _firebaseProvider.addJobPostToDb(currentUser, caption, location, category,
-          salary, timing, description, website);
+  Future<void> addJobToDb(User currentUser, String caption, String location,
+          String industry, String description, String website) =>
+      _firebaseProvider.addJobPostToDb(
+          currentUser, caption, location, industry, description, website);
 
   Future<void> addPromotionToDb(
-          User currentUser,
-          String caption,
-          String location,
-          String portfolio,
-          String timing,
-          String category,
-          String description,
-          String locations,
-          String skills) =>
+    User currentUser,
+    String caption,
+    String location,
+    String portfolio,
+    //  String timing,
+    //    String category,
+    String description,
+    //    String locations,
+    List<dynamic> skills,
+    List<dynamic> experience,
+    List<dynamic> education,
+  ) =>
       _firebaseProvider.addPromotionToDb(currentUser, caption, location,
-          portfolio, timing, category, description, locations, skills);
+          portfolio, description, skills, experience, education);
 
   Future<User> retreiveUserDetails(FirebaseUser user) =>
       _firebaseProvider.retrieveUserDetails(user);
@@ -729,6 +714,49 @@ class Repository {
   Future<void> updateDetails(String uid, String name, String bio, String email,
           String phone, String website) =>
       _firebaseProvider.updateDetails(uid, name, bio, email, phone, website);
+
+  Future<void> updateEducationDetails(
+          String uid,
+          String university,
+          String stream,
+          int startDate,
+          int endDate,
+          String cert1,
+          String cert2,
+          String cert3) =>
+      _firebaseProvider.updateEducationDetails(
+          uid, university, stream, startDate, endDate, cert1, cert2, cert3);
+
+  Future<void> updateExperienceDetails(
+    String uid,
+    String company1,
+    String designationCompany1,
+    int startDateCompany1,
+    int endDateCompany1,
+    String company2,
+    String designationCompany2,
+    int startDateCompany2,
+    int endDateCompany2,
+    String company3,
+    String designationCompany3,
+    int startDateCompany3,
+    int endDateCompany3,
+  ) =>
+      _firebaseProvider.updateExperienceDetails(
+        uid,
+        company1,
+        designationCompany1,
+        startDateCompany1,
+        endDateCompany1,
+        company2,
+        designationCompany2,
+        startDateCompany2,
+        endDateCompany2,
+        company3,
+        designationCompany3,
+        startDateCompany3,
+        endDateCompany3,
+      );
 
   Future<void> updateSchool(String uid, String school) =>
       _firebaseProvider.updateSchool(uid, school);

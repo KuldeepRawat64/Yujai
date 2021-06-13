@@ -1,9 +1,13 @@
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
+import 'package:Yujai/widgets/no_event.dart';
+import 'package:Yujai/widgets/no_news.dart';
+import 'package:Yujai/widgets/no_post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import '../style.dart';
 import 'list_post.dart';
@@ -438,46 +442,80 @@ class _NestedTabBarState extends State<NestedTabBar>
   }
 
   Widget postImagesWidgetFuture() {
+    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
         future: _listFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: shimmer());
           } else {
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      Flexible(
+                        child: ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            controller: _scrollController,
+                            //shrinkWrap: true,
+                            itemCount: list.length,
+                            itemBuilder: ((context, index) => ListItemPost(
+                                documentSnapshot: list[index],
+                                index: index,
+                                user: _user,
+                                currentuser: _user))),
+                      ),
+                    ],
+                  ));
+            }
             return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    controller: _scrollController,
-                    //shrinkWrap: true,
-                    itemCount: list.length,
-                    itemBuilder: ((context, index) => ListItemPost(
-                        documentSnapshot: list[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+                width: screenSize.width,
+                height: screenSize.height * 0.3,
+                child: NoPost());
           }
         });
   }
 
   Widget eventImagesWidget() {
+    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
         future: _eventFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: shimmerEvent());
           } else {
-            return SizedBox(
+            if (snapshot.data.length > 0) {
+              return SizedBox(
                 height: MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    controller: _scrollController1,
-                    itemCount: listEvent.length,
-                    itemBuilder: ((context, index) => ListItemEvent(
-                        documentSnapshot: listEvent[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.025,
+                    ),
+                    Flexible(
+                      child: ListView.builder(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          controller: _scrollController1,
+                          itemCount: listEvent.length,
+                          itemBuilder: ((context, index) => ListItemEvent(
+                              documentSnapshot: listEvent[index],
+                              index: index,
+                              user: _user,
+                              currentuser: _user))),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return SizedBox(
+                  width: screenSize.width,
+                  height: screenSize.height * 0.3,
+                  child: NoEvent());
+            }
           }
         });
   }
@@ -505,23 +543,39 @@ class _NestedTabBarState extends State<NestedTabBar>
   // }
 
   Widget newsImageWidget() {
+    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
         future: _newsFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: shimmerNews());
           } else {
+            if (snapshot.data.length > 0) {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                      ),
+                      Flexible(
+                        child: ListView.builder(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            controller: _scrollController3,
+                            itemCount: listNews.length,
+                            itemBuilder: ((context, index) => ListItemNews(
+                                documentSnapshot: listNews[index],
+                                index: index,
+                                user: _user,
+                                currentuser: _user))),
+                      ),
+                    ],
+                  ));
+            }
             return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    controller: _scrollController3,
-                    itemCount: listNews.length,
-                    itemBuilder: ((context, index) => ListItemNews(
-                        documentSnapshot: listNews[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user))));
+                width: screenSize.width,
+                height: screenSize.height * 0.3,
+                child: NoNews());
           }
         });
   }

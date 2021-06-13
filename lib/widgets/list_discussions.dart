@@ -495,12 +495,11 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          InstaFriendProfileScreen(
-                                              uid: widget.documentSnapshot
-                                                  .data['ownerUid'],
-                                              name: widget.documentSnapshot
-                                                  .data['postOwnerName'])));
+                                      builder: (context) => FriendProfileScreen(
+                                          uid: widget.documentSnapshot
+                                              .data['ownerUid'],
+                                          name: widget.documentSnapshot
+                                              .data['postOwnerName'])));
                             },
                             child: new Text(
                               widget.documentSnapshot.data['postOwnerName'],
@@ -2063,7 +2062,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           .document(snapshot.data['postId'])
           .setData(_feed.toMap(_feed))
           .then((value) {
-       // actId = Uuid().v4();
+        // actId = Uuid().v4();
         print('Feed added');
       });
     }

@@ -26,7 +26,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:expandable_text/expandable_text.dart';
+// import 'package:expandable_text/expandable_text.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final String photoUrl;
@@ -454,16 +454,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            ExpandableText(
-                              snapshot['message'],
-                              maxLines: 6,
-                              expandText: 'Read more',
-                              collapseText: 'Less',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.white),
-                            ),
+                            Text(snapshot['message'])
+                            // ExpandableText(
+                            //   snapshot['message'],
+                            //   maxLines: 6,
+                            //   expandText: 'Read more',
+                            //   collapseText: 'Less',
+                            //   style: TextStyle(
+                            //       fontFamily: FontNameDefault,
+                            //       fontSize: textBody1(context),
+                            //       color: Colors.white),
+                            // ),
                           ],
                         ),
                       )),
@@ -562,16 +563,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            ExpandableText(
-                              snapshot['message'],
-                              maxLines: 6,
-                              expandText: 'Read more',
-                              collapseText: 'Less',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.black),
-                            ),
+                            Text(snapshot['message'])
+                            // ExpandableText(
+                            //   snapshot['message'],
+                            //   maxLines: 6,
+                            //   expandText: 'Read more',
+                            //   collapseText: 'Less',
+                            //   style: TextStyle(
+                            //       fontFamily: FontNameDefault,
+                            //       fontSize: textBody1(context),
+                            //       color: Colors.black),
+                            // ),
                           ],
                         ),
                       ),
