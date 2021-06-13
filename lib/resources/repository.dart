@@ -401,7 +401,7 @@ class Repository {
         ticketWebsite,
       );
 
-  Future<void> addEventToForum(
+  Future<void> addOfflineEventToForum(
     String currentGroupId,
     User currentUser,
     String imgUrl,
@@ -409,7 +409,6 @@ class Repository {
     String city,
     String venue,
     String host,
-    String website,
     String description,
     String category,
     int startDate,
@@ -419,7 +418,7 @@ class Repository {
     String ticketWebsite,
     GeoPoint geoPoint,
   ) =>
-      _firebaseProvider.addEventToForum(
+      _firebaseProvider.addOfflineEventToForum(
           currentGroupId,
           currentUser,
           imgUrl,
@@ -427,7 +426,6 @@ class Repository {
           city,
           venue,
           host,
-          website,
           description,
           category,
           startDate,
@@ -436,6 +434,37 @@ class Repository {
           endTime,
           ticketWebsite,
           geoPoint);
+
+  Future<void> addOnlineEventToForum(
+    String currentGroupId,
+    User currentUser,
+    String imgUrl,
+    String caption,
+    String host,
+    String website,
+    String description,
+    String category,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
+    String ticketWebsite,
+  ) =>
+      _firebaseProvider.addOnlineEventToForum(
+        currentGroupId,
+        currentUser,
+        imgUrl,
+        caption,
+        host,
+        website,
+        description,
+        category,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        ticketWebsite,
+      );
 
   Future<void> addNewsToDb(
           User currentUser, String imgUrl, String caption, String source) =>

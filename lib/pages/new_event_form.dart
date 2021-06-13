@@ -910,14 +910,33 @@ class _NewEventFormState extends State<NewEventForm> {
           compressImage();
           _repository.retreiveUserDetails(currentUser).then((user) {
             _repository.uploadImageToStorage(imageFile).then((url) {
-              _repository
-                  .addEventToForum(
+              if (!widget.isOnline) {
+                _repository
+                    .addOfflineEventToForum(
+                        widget.group.uid,
+                        user,
+                        url,
+                        _captionController.text,
+                        location,
+                        _locationController.text,
+                        _hostController.text,
+                        _descriptionController.text,
+                        selectedEventList,
+                        startDate,
+                        endDate,
+                        startTime,
+                        endTime,
+                        _ticketWebsiteController.text,
+                        GeoPoint(lat, lng))
+                    .catchError((e) =>
+                        print('Error adding offline event to group : $e'));
+              } else {
+                _repository
+                    .addOnlineEventToForum(
                       widget.group.uid,
                       user,
                       url,
                       _captionController.text,
-                      location,
-                      _locationController.text,
                       _hostController.text,
                       _eventWebsiteController.text,
                       _descriptionController.text,
@@ -927,9 +946,10 @@ class _NewEventFormState extends State<NewEventForm> {
                       startTime,
                       endTime,
                       _ticketWebsiteController.text,
-                      GeoPoint(lat, lng))
-                  .catchError(
-                      (e) => print('Error adding current event to db : $e'));
+                    )
+                    .catchError((e) =>
+                        print('Error adding online event to group : $e'));
+              }
             }).catchError((e) {
               print('Error uploading image to storage : $e');
             });

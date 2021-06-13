@@ -1090,7 +1090,7 @@ class FirebaseProvider {
     return _collectionRef.document(postId).setData(event.toMap(event));
   }
 
-  Future<void> addEventToForum(
+  Future<void> addOfflineEventToForum(
     String currentGroupId,
     User currentUser,
     String imgUrl,
@@ -1098,7 +1098,6 @@ class FirebaseProvider {
     String city,
     String venue,
     String host,
-    String website,
     String description,
     String category,
     int startDate,
@@ -1122,7 +1121,6 @@ class FirebaseProvider {
       venue: venue,
       eventOwnerName: currentUser.displayName,
       eventOwnerPhotoUrl: currentUser.photoUrl,
-      website: website,
       description: description,
       category: category,
       startDate: startDate,
@@ -1132,6 +1130,47 @@ class FirebaseProvider {
       host: host,
       ticketWebsite: ticketWebsite,
       geopoint: geoPoint,
+      time: FieldValue.serverTimestamp(),
+    );
+    return _collectionRef.document(postId).setData(event.toMap(event));
+  }
+
+  Future<void> addOnlineEventToForum(
+    String currentGroupId,
+    User currentUser,
+    String imgUrl,
+    String caption,
+    String host,
+    String website,
+    String description,
+    String category,
+    int startDate,
+    int endDate,
+    int startTime,
+    int endTime,
+    String ticketWebsite,
+  ) {
+    CollectionReference _collectionRef = _firestore
+        .collection('groups')
+        .document(currentGroupId)
+        .collection('events');
+
+    event = Event(
+      postId: postId,
+      currentUserUid: currentUser.uid,
+      imgUrl: imgUrl,
+      caption: caption,
+      eventOwnerName: currentUser.displayName,
+      eventOwnerPhotoUrl: currentUser.photoUrl,
+      website: website,
+      description: description,
+      category: category,
+      startDate: startDate,
+      endDate: endDate,
+      startTime: startTime,
+      endTime: endTime,
+      host: host,
+      ticketWebsite: ticketWebsite,
       time: FieldValue.serverTimestamp(),
     );
     return _collectionRef.document(postId).setData(event.toMap(event));
