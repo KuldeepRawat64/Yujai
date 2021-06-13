@@ -43,13 +43,11 @@ class _NewJobFormState extends State<NewJobForm> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
-  var _locationController;
-  var _captionController;
   TextEditingController jobTitleController = TextEditingController();
   TextEditingController designationController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
   TextEditingController websiteController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
   final _repository = Repository();
   String location = '';
   final format = DateFormat('yyyy-MM-dd');
@@ -332,7 +330,7 @@ class _NewJobFormState extends State<NewJobForm> {
                 border: InputBorder.none,
                 isDense: true,
               ),
-              controller: locationController,
+              controller: _locationController,
               validator: (value) {
                 if (value.isEmpty) return "Please enter a city for this job";
                 return null;
@@ -506,8 +504,8 @@ class _NewJobFormState extends State<NewJobForm> {
                     valueIndustry,
                     aboutController.text,
                     websiteController.text)
-                .catchError((e) =>
-                    print('Error adding current application to db : $e'));
+                .catchError(
+                    (e) => print('Error adding current job to db : $e'));
             //    }).catchError((e) {
             //        print('Error uploading image to storage : $e');
             //       });

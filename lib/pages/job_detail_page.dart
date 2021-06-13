@@ -66,204 +66,122 @@ class JobDetail extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey[200],
-                      offset: Offset(1.0, 1.0),
-                      spreadRadius: 1.0,
-                      blurRadius: 1.0),
-                  BoxShadow(
-                    color: Colors.white,
-                    offset: Offset.zero,
-                    spreadRadius: 0.0,
-                    blurRadius: 0.0,
-                  )
-                ]),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        screenSize.width / 30,
-                        screenSize.height * 0.012,
-                        screenSize.width / 30,
-                        0,
-                      ),
-                      child: CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          backgroundImage: CachedNetworkImageProvider(
-                              documentSnapshot.data['jobOwnerPhotoUrl']),
-                          radius: screenSize.height * 0.04),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      screenSize.width / 30,
+                      screenSize.height * 0.012,
+                      screenSize.width / 30,
+                      0,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.only(top: screenSize.height * 0.012),
-                          child: Text(
-                            DateFormat.yMMMd().add_jm().format(myDateTime),
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                color: Colors.black54,
-                                fontSize: textbody2(context)),
+                    child: CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        backgroundImage: CachedNetworkImageProvider(
+                            documentSnapshot.data['jobOwnerPhotoUrl']),
+                        radius: screenSize.height * 0.04),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: screenSize.height * 0.012),
+                        child: Text(
+                          DateFormat.yMMMd().add_jm().format(myDateTime),
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            // fontSize: textbody2(context)
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 0, top: screenSize.height * 0.01),
-                          child: Text(
-                            documentSnapshot.data['caption'],
-                            style: TextStyle(
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 0, top: screenSize.height * 0.01),
+                        child: Text(
+                          documentSnapshot.data['caption'],
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black,
+                            fontSize: textSubTitle(context),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 0.0, top: screenSize.height * 0.012),
+                        child: Text(
+                          documentSnapshot.data['jobOwnerName'],
+                          style: TextStyle(
                               fontFamily: FontNameDefault,
                               color: Colors.black,
-                              fontSize: textSubTitle(context),
+                              fontWeight: FontWeight.normal,
+                              fontSize: textSubTitle(context)),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 16,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 6.0,
+                          ),
+                          Text(
+                            documentSnapshot.data['location'],
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontFamily: FontNameDefault,
+                              //fontSize: textBody1(context)
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 0.0, top: screenSize.height * 0.012),
-                          child: Text(
-                            documentSnapshot.data['jobOwnerName'],
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal,
-                                fontSize: textSubTitle(context)),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.all(screenSize.height * 0.012),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      RaisedButton(
-                        splashColor: Colors.yellow,
-                        shape: StadiumBorder(),
-                        color: Colors.deepPurple,
-                        child: Text(
-                          'Apply',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                              color: Colors.white),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyWebView(
-                                        title: 'Apply for work',
-                                        selectedUrl:
-                                            documentSnapshot.data['website'],
-                                      )));
-                        },
+                        ],
                       ),
                     ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: screenSize.height * 0.035,
-                        color: Colors.black54,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: screenSize.width / 30),
-                        child: Text(
-                          documentSnapshot.data['location'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: screenSize.height * 0.01,
-                      left: screenSize.width / 30),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.timer,
-                        size: screenSize.height * 0.035,
-                        color: Colors.black54,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: screenSize.width / 30),
-                        child: Text(
-                          documentSnapshot.data['timing'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: screenSize.height * 0.01,
-                    left: screenSize.width / 30,
-                    bottom: screenSize.height * 0.01,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.business,
-                        size: screenSize.height * 0.035,
-                        color: Colors.black54,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: screenSize.width / 30),
-                        child: Text(
-                          documentSnapshot.data['category'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context)),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-              left: screenSize.width / 30,
-              top: screenSize.height * 0.012,
-              bottom: screenSize.height * 0.012),
-          child: Container(
-            //  height: screenSize.height * 0.06,
-            width: MediaQuery.of(context).size.width,
-            child: Text(
-              'Description',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textSubTitle(context),
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
+                  )
+                ],
               ),
-            ),
+              documentSnapshot.data['website'] != ''
+                  ? Padding(
+                      padding: EdgeInsets.all(screenSize.height * 0.012),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          RaisedButton(
+                            splashColor: Colors.yellow,
+                            shape: StadiumBorder(),
+                            color: Colors.deepPurple,
+                            child: Text(
+                              'Apply',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.white),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyWebView(
+                                            title: 'Apply for work',
+                                            selectedUrl: documentSnapshot
+                                                .data['website'],
+                                          )));
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         ),
         Container(
@@ -287,106 +205,8 @@ class JobDetail extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-              left: screenSize.width / 30,
-              top: screenSize.height * 0.012,
-              bottom: screenSize.height * 0.012),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Text(
-              'Salary',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textSubTitle(context),
-                color: Colors.black45,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          width: screenSize.width,
-          padding: EdgeInsets.only(
-            top: screenSize.height * 0.012,
-            left: screenSize.width / 30,
-            bottom: screenSize.height * 0.012,
-          ),
-          child: Text(
-            documentSnapshot.data['salary'],
-            style: TextStyle(
-              fontFamily: FontNameDefault,
-              color: Colors.black,
-              fontSize: textBody1(context),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-              left: screenSize.width / 30,
-              top: screenSize.height * 0.012,
-              bottom: screenSize.height * 0.012),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Text(
-              'Location',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textSubTitle(context),
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          width: screenSize.width,
-          padding: EdgeInsets.only(
-            left: screenSize.width / 30,
-            bottom: screenSize.height * 0.01,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                documentSnapshot.data['location'],
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
-                ),
-              ),
-              // IconButton(
-              //   icon: Icon(
-              //     Icons.keyboard_arrow_right,
-              //     color: Colors.black54,
-              //   ),
-              //   onPressed: () {},
-              // )
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
-          ),
+        SizedBox(
+          height: screenSize.height * 0.02,
         ),
         Container(
           width: screenSize.width,
@@ -398,8 +218,7 @@ class JobDetail extends StatelessWidget {
             'Employer',
             style: TextStyle(
               fontFamily: FontNameDefault,
-              fontSize: textSubTitle(context),
-              color: Colors.black54,
+              fontSize: textHeader(context),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -415,7 +234,7 @@ class JobDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                radius: screenSize.height * 0.045,
+                radius: screenSize.height * 0.03,
                 backgroundImage: CachedNetworkImageProvider(
                     documentSnapshot.data['jobOwnerPhotoUrl']),
                 backgroundColor: Colors.grey,
@@ -491,13 +310,6 @@ class JobDetail extends StatelessWidget {
                 ),
               )
             ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-          child: Container(
-            height: screenSize.height * 0.01,
-            color: Colors.grey[200],
           ),
         ),
         SizedBox(

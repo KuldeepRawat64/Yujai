@@ -72,7 +72,7 @@ class _ListItemJobState extends State<ListItemJob> {
       child: Padding(
         padding: EdgeInsets.only(
           top: screenSize.height * 0.01,
-          // left: screenSize.width * 0.05,
+          left: screenSize.width * 0.05,
           right: screenSize.width * 0.05,
         ),
         child: Container(
@@ -92,24 +92,13 @@ class _ListItemJobState extends State<ListItemJob> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ListTile(
-                  leading: CircleAvatar(
-                    radius: screenSize.height * 0.03,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(
-                        widget.documentSnapshot.data['jobOwnerPhotoUrl']),
-                  ),
-                  trailing: Chip(
-                    backgroundColor: Colors.grey[200],
-                    label: Text(
-                      widget.documentSnapshot.data['timing'],
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        // fontSize: textBody1(context),
-                        color: Theme.of(context).accentColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )),
+                leading: CircleAvatar(
+                  radius: screenSize.height * 0.03,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: CachedNetworkImageProvider(
+                      widget.documentSnapshot.data['jobOwnerPhotoUrl']),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.only(left: screenSize.width * 0.04),
                 child: Column(
