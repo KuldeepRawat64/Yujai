@@ -466,7 +466,7 @@ class _ListItemEventState extends State<ListItemEvent> {
               //         ),
               //       ),
               SizedBox(
-                height: screenSize.height * 0.02,
+                height: screenSize.height * 0.04,
               ),
             ],
           ),

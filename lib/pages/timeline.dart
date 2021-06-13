@@ -1192,7 +1192,7 @@ class _FeedScreenState extends State<FeedScreen> {
             if (snapshot.data.length > 0) {
               return SizedBox(
                   width: screenSize.width,
-                  height: screenSize.height * 0.38,
+                  height: screenSize.height * 0.39,
                   child: Row(
                     children: [
                       SizedBox(
