@@ -123,29 +123,35 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             SizedBox(
                               height: screenSize.height * 0.01,
                             ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyWebView(
-                                        title: 'Event',
-                                        selectedUrl: widget.documentSnapshot
-                                            .data['website'])));
-                              },
-                              child: Container(
-                                width: screenSize.width * 0.6,
-                                child: Text(
-                                  widget.documentSnapshot.data['website'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    color: Theme.of(context).accentColor,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            )
+                            widget.documentSnapshot.data['website'] != '' &&
+                                    widget.documentSnapshot.data['website'] !=
+                                        null
+                                ? InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => MyWebView(
+                                                  title: 'Event',
+                                                  selectedUrl: widget
+                                                      .documentSnapshot
+                                                      .data['website'])));
+                                    },
+                                    child: Container(
+                                      width: screenSize.width * 0.6,
+                                      child: Text(
+                                        widget.documentSnapshot.data['website'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: FontNameDefault,
+                                          color: Theme.of(context).accentColor,
+                                          fontSize: textSubTitle(context),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ),
                       ],
@@ -195,11 +201,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         Container(
                           width: screenSize.width * 0.5,
                           child: Text(
-                            widget.documentSnapshot.data['location'] == '' ||
-                                    widget.documentSnapshot.data['location'] ==
-                                        null
+                            widget.documentSnapshot.data['city'] == '' ||
+                                    widget.documentSnapshot.data['city'] == null
                                 ? 'Online'
-                                : widget.documentSnapshot.data['location'],
+                                : widget.documentSnapshot.data['city'],
                             style: TextStyle(
                               color: Colors.black,
                               //    fontWeight: FontWeight.bold,
