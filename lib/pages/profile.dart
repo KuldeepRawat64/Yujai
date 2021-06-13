@@ -916,34 +916,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // ),
       Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
-        child: _user.employees.isNotEmpty
+        child: _user.employees.isNotEmpty ||
+                _user.industry.isNotEmpty ||
+                _user.products.isNotEmpty
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: screenSize.height * 0.01,
-                        bottom: screenSize.height * 0.005),
-                    child: Text(
-                      'Employess',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textSubTitle(context)),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        // left: screenSize.width / 30,
-                        bottom: screenSize.height * 0.01),
-                    child: Text(
-                      _user.employees + ' employees',
-                      style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          color: Colors.black54,
-                          fontSize: textBody1(context)),
-                    ),
-                  ),
+                  _user.employees.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: screenSize.height * 0.01,
+                                  bottom: screenSize.height * 0.005),
+                              child: Text(
+                                'Employess',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context)),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  // left: screenSize.width / 30,
+                                  bottom: screenSize.height * 0.01),
+                              child: Text(
+                                _user.employees + ' employees',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    color: Colors.black54,
+                                    fontSize: textBody1(context)),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
                   _user.establishYear != null && _user.establishYear.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
