@@ -93,6 +93,8 @@ class _ListItemEventState extends State<ListItemEvent> {
           top: 8.0,
         ),
         child: Container(
+//width: screenSize.width * 0.8,
+          height: screenSize.height * 0.35,
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
@@ -105,151 +107,153 @@ class _ListItemEventState extends State<ListItemEvent> {
             //    mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              ListTile(
-                leading: CircleAvatar(
-                    radius: screenSize.height * 0.03,
-                    backgroundImage: CachedNetworkImageProvider(
-                        widget.documentSnapshot.data['eventOwnerPhotoUrl'])),
-                title: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FriendProfileScreen(
-                                uid: widget.documentSnapshot.data['ownerUid'],
-                                name: widget
-                                    .documentSnapshot.data['eventOwnerName'])));
-                  },
-                  child: new Text(
-                    widget.documentSnapshot.data['eventOwnerName'],
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        fontWeight: FontWeight.bold),
+              Expanded(
+                child: ListTile(
+                  leading: CircleAvatar(
+                      radius: screenSize.height * 0.03,
+                      backgroundImage: CachedNetworkImageProvider(
+                          widget.documentSnapshot.data['eventOwnerPhotoUrl'])),
+                  title: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FriendProfileScreen(
+                                  uid: widget.documentSnapshot.data['ownerUid'],
+                                  name: widget.documentSnapshot
+                                      .data['eventOwnerName'])));
+                    },
+                    child: new Text(
+                      widget.documentSnapshot.data['eventOwnerName'],
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
+                  subtitle: widget.documentSnapshot.data['city'] != '' &&
+                          widget.documentSnapshot.data['city'] != null
+                      ? Row(
+                          children: [
+                            new Text(
+                              widget.documentSnapshot.data['city'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  //    fontSize: textBody1(context),
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Icon(
+                              Icons.circle,
+                              size: 6.0,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                //   left: screenSize.width / 30,
+                                top: screenSize.height * 0.002,
+                              ),
+                              child: Text(
+                                  widget.documentSnapshot.data['time'] != null
+                                      ? timeago.format(widget
+                                          .documentSnapshot.data['time']
+                                          .toDate())
+                                      : '',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      //   fontSize: textbody2(context),
+                                      color: Colors.grey)),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            new Text(
+                              'Online',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  //    fontSize: textBody1(context),
+                                  color: Colors.grey),
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Icon(
+                              Icons.circle,
+                              size: 6.0,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                //   left: screenSize.width / 30,
+                                top: screenSize.height * 0.002,
+                              ),
+                              child: Text(
+                                  widget.documentSnapshot.data['time'] != null
+                                      ? timeago.format(widget
+                                          .documentSnapshot.data['time']
+                                          .toDate())
+                                      : '',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      //   fontSize: textbody2(context),
+                                      color: Colors.grey)),
+                            ),
+                          ],
+                        ),
+                  trailing: widget.currentuser.uid ==
+                              widget.documentSnapshot.data['ownerUid'] ||
+                          widget.group != null &&
+                              widget.group.currentUserUid ==
+                                  widget.currentuser.uid
+                      ? InkWell(
+                          onTap: () {
+                            //    showDelete(widget.documentSnapshot);
+                            //      deleteDialog(widget.documentSnapshot);
+                          },
+                          child: Container(
+                              decoration: ShapeDecoration(
+                                shape: CircleBorder(
+                                    //          borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide(
+                                        width: 0.1, color: Colors.black54)),
+                                //color: Theme.of(context).accentColor,
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenSize.height * 0.005,
+                                    horizontal: screenSize.width * 0.02,
+                                  ),
+                                  child: Icon(Icons.more_horiz_outlined))),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            //   showReport(widget.documentSnapshot);
+                          },
+                          child: Container(
+                              decoration: ShapeDecoration(
+                                shape: CircleBorder(
+                                    //          borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide(
+                                        width: 0.1, color: Colors.black54)),
+                                //color: Theme.of(context).accentColor,
+                              ),
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenSize.height * 0.005,
+                                    horizontal: screenSize.width * 0.02,
+                                  ),
+                                  child: Icon(Icons.more_horiz_outlined))),
+                        ),
                 ),
-                subtitle: widget.documentSnapshot.data['city'] != '' &&
-                        widget.documentSnapshot.data['city'] != null
-                    ? Row(
-                        children: [
-                          new Text(
-                            widget.documentSnapshot.data['city'],
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                //    fontSize: textBody1(context),
-                                color: Colors.grey),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Icon(
-                            Icons.circle,
-                            size: 6.0,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              //   left: screenSize.width / 30,
-                              top: screenSize.height * 0.002,
-                            ),
-                            child: Text(
-                                widget.documentSnapshot.data['time'] != null
-                                    ? timeago.format(widget
-                                        .documentSnapshot.data['time']
-                                        .toDate())
-                                    : '',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    //   fontSize: textbody2(context),
-                                    color: Colors.grey)),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          new Text(
-                            'Online',
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                //    fontSize: textBody1(context),
-                                color: Colors.grey),
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Icon(
-                            Icons.circle,
-                            size: 6.0,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              //   left: screenSize.width / 30,
-                              top: screenSize.height * 0.002,
-                            ),
-                            child: Text(
-                                widget.documentSnapshot.data['time'] != null
-                                    ? timeago.format(widget
-                                        .documentSnapshot.data['time']
-                                        .toDate())
-                                    : '',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    //   fontSize: textbody2(context),
-                                    color: Colors.grey)),
-                          ),
-                        ],
-                      ),
-                trailing: widget.currentuser.uid ==
-                            widget.documentSnapshot.data['ownerUid'] ||
-                        widget.group != null &&
-                            widget.group.currentUserUid ==
-                                widget.currentuser.uid
-                    ? InkWell(
-                        onTap: () {
-                          //    showDelete(widget.documentSnapshot);
-                          //      deleteDialog(widget.documentSnapshot);
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: CircleBorder(
-                                  //          borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(
-                                      width: 0.1, color: Colors.black54)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenSize.height * 0.005,
-                                  horizontal: screenSize.width * 0.02,
-                                ),
-                                child: Icon(Icons.more_horiz_outlined))),
-                      )
-                    : InkWell(
-                        onTap: () {
-                          //   showReport(widget.documentSnapshot);
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: CircleBorder(
-                                  //          borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(
-                                      width: 0.1, color: Colors.black54)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenSize.height * 0.005,
-                                  horizontal: screenSize.width * 0.02,
-                                ),
-                                child: Icon(Icons.more_horiz_outlined))),
-                      ),
               ),
               Padding(
                 padding: EdgeInsets.only(
@@ -265,7 +269,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                       children: <Widget>[
                         Container(
                           height: screenSize.height * 0.18,
-                          width: screenSize.width * 0.55,
+                          width: screenSize.width * 0.5,
                           decoration: ShapeDecoration(
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
@@ -278,7 +282,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                                       screenSize.height * 0.012))),
                         ),
                         new SizedBox(
-                          width: screenSize.width * 0.03,
+                          width: screenSize.width * 0.02,
                         ),
                         Column(
                           mainAxisSize: MainAxisSize.min,
@@ -299,7 +303,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                                             )));
                               },
                               child: Container(
-                                width: screenSize.width * 0.3,
+                                width: screenSize.width * 0.25,
                                 // height: screenSize.height * 0.045,
                                 child: Text(
                                   widget.documentSnapshot.data['caption'],
@@ -317,7 +321,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                               height: screenSize.height * 0.005,
                             ),
                             Container(
-                              width: screenSize.width * 0.3,
+                              width: screenSize.width * 0.25,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

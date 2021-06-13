@@ -1029,6 +1029,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           //       currentUser: currentuser,
                         )))
                 : ListView(
+                    shrinkWrap: true,
                     //  mainAxisSize: MainAxisSize.min,
                     // mainAxisAlignment: MainAxisAlignment.start,
                     //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1060,6 +1061,9 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       ),
                       newsImageWidget(),
+                      SizedBox(
+                        height: screenSize.height * 0.005,
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: screenSize.height * 0.005,
@@ -1087,6 +1091,9 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       ),
                       eventImagesWidget(),
+                      SizedBox(
+                        height: screenSize.height * 0.005,
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: screenSize.height * 0.005,
@@ -1150,11 +1157,13 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       Flexible(
                         child: ListView.builder(
+                            itemExtent: screenSize.width * 0.9,
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             controller: _scrollController1,
                             physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: listNews.length,
+                            itemCount:
+                                listNews.length > 4 ? 4 : listNews.length,
                             itemBuilder: ((context, index) => ListItemNews(
                                 documentSnapshot: listNews[index],
                                 index: index,
@@ -1183,7 +1192,7 @@ class _FeedScreenState extends State<FeedScreen> {
             if (snapshot.data.length > 0) {
               return SizedBox(
                   width: screenSize.width,
-                  height: screenSize.height * 0.3,
+                  height: screenSize.height * 0.38,
                   child: Row(
                     children: [
                       SizedBox(
@@ -1191,11 +1200,13 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       Flexible(
                         child: ListView.builder(
+                            itemExtent: screenSize.width * 0.9,
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             controller: _scrollController2,
                             physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: listEvent.length,
+                            itemCount:
+                                listEvent.length > 4 ? 4 : listEvent.length,
                             itemBuilder: ((context, index) => ListItemEvent(
                                 documentSnapshot: listEvent[index],
                                 index: index,
@@ -1232,11 +1243,12 @@ class _FeedScreenState extends State<FeedScreen> {
                       ),
                       Flexible(
                         child: ListView.builder(
+                            itemExtent: screenSize.width * 0.9,
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
                             controller: _scrollController3,
                             physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: listJob.length,
+                            itemCount: listJob.length > 4 ? 4 : listJob.length,
                             itemBuilder: ((context, index) => ListItemJob(
                                 documentSnapshot: listJob[index],
                                 index: index,

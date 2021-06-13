@@ -76,7 +76,7 @@ class _ListItemJobState extends State<ListItemJob> {
           right: screenSize.width * 0.05,
         ),
         child: Container(
-          width: screenSize.width * 0.8,
+          //  width: screenSize.width * 0.8,
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
