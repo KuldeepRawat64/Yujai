@@ -218,8 +218,8 @@ class _ListItemEventState extends State<ListItemEvent> {
                         },
                         child: Container(
                             decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
+                              shape: CircleBorder(
+                                  //          borderRadius: BorderRadius.circular(12.0),
                                   side: BorderSide(
                                       width: 0.1, color: Colors.black54)),
                               //color: Theme.of(context).accentColor,
@@ -237,18 +237,16 @@ class _ListItemEventState extends State<ListItemEvent> {
                         },
                         child: Container(
                             decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                              shape: CircleBorder(
+                                  //          borderRadius: BorderRadius.circular(12.0),
                                   side: BorderSide(
                                       width: 0.1, color: Colors.black54)),
                               //color: Theme.of(context).accentColor,
                             ),
                             child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.005,
+                                  horizontal: screenSize.width * 0.02,
                                 ),
                                 child: Icon(Icons.more_horiz_outlined))),
                       ),
