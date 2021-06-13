@@ -300,7 +300,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                   _group != null
                       ? CircleAvatar(
                           backgroundColor: Colors.white,
-                          radius: screenSize.height * 0.03,
+                          radius: screenSize.height * 0.025,
                           backgroundImage: NetworkImage(_group
                                           .groupProfilePhoto !=
                                       null &&
@@ -310,12 +310,14 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         )
                       : Container(),
                   _group != null
-                      ? Padding(
+                      ? Container(
+                          width: screenSize.width * 0.4,
                           padding: EdgeInsets.only(left: screenSize.width / 30),
                           child: Text(
                             _group.groupName,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: textHeader(context),
+                                fontSize: textAppTitle(context),
                                 color: Colors.black54,
                                 fontWeight: FontWeight.bold),
                           ),
