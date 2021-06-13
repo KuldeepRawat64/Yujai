@@ -53,7 +53,7 @@ class _EditProfileScreenState extends State<EditProfileCompanyAboutForm> {
     if (_formKey.currentState.validate()) {
       FirebaseUser currentUser = await _auth.currentUser();
       _firestore.collection('users').document(currentUser.uid).updateData({
-        "bio": _controller.text,
+        "bio": _bioController.text,
       });
       _formKey.currentState.save();
       Navigator.pop(context);
