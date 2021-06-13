@@ -29,16 +29,8 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
   FirebaseUser currentUser;
-  final _nameController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _websiteController = TextEditingController();
-
-  final _controller = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _employeeController = TextEditingController();
   final _gstController = TextEditingController();
   final _companyNameController = TextEditingController();

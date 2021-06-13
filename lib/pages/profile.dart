@@ -916,7 +916,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // ),
       Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
-        child: _user.companySize.isNotEmpty
+        child: _user.employees.isNotEmpty
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -937,7 +937,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // left: screenSize.width / 30,
                         bottom: screenSize.height * 0.01),
                     child: Text(
-                      _user.companySize + ' employees',
+                      _user.employees + ' employees',
                       style: TextStyle(
                           fontFamily: FontNameDefault,
                           color: Colors.black54,
