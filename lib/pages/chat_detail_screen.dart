@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/models/message.dart';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/image_detail.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
@@ -106,7 +107,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       Timer(
           Duration(milliseconds: 300),
           () => _scrollController
-              .jumpTo(_scrollController.position.maxScrollExtent));
+              .jumpTo(_scrollController.position.minScrollExtent));
       //  _scrollController.animateTo(_scrollController.position.maxScrollExtent,
       //    duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
     }
@@ -147,13 +148,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: screenSize.width / 30),
-                  child: Text(
-                    widget.name,
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FriendProfileScreen(
+                                    uid: widget.receiverUid,
+                                    name: widget.name,
+                                  )));
+                    },
+                    child: Text(
+                      widget.name,
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
@@ -165,14 +177,23 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ? Container(
                     child: CircularProgressIndicator(),
                   )
-                : Column(
-                    children: <Widget>[
-                      chatMessagesListWidget(),
-                      chatInputWidget(),
-                      SizedBox(
-                        height: 5.0,
-                      )
-                    ],
+                : Container(
+                    child: Column(
+                      //       mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Flexible(child: chatMessagesListWidget()),
+                        // SizedBox(
+                        //   height: 5.0,
+                        // ),
+                        Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor),
+                            child: chatInputWidget()),
+                        // SizedBox(
+                        //   height: 5.0,
+                        // )
+                      ],
+                    ),
                   ),
           )),
     );
@@ -181,12 +202,26 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Widget chatInputWidget() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      color: Colors.transparent,
-      child: Wrap(
+      // color: Color(0xffffffff),
+      //height: screenSize.height * 0.1,
+      //color: Colors.transparent,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
         children: [
           Container(
-            color: const Color(0xffffffff),
-            width: screenSize.width,
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.attachment_rounded,
+                color: Colors.black54,
+              ),
+              onPressed: () {
+                _onButtonPressedUser();
+              },
+              color: Colors.black,
+            ),
+          ),
+          Flexible(
             child: TextFormField(
               textCapitalization: TextCapitalization.sentences,
               minLines: 1,
@@ -200,41 +235,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 contentPadding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
                 hintText: "Enter message...",
                 labelText: "Message",
-                icon: IconButton(
-                  icon: Icon(
-                    Icons.attachment_rounded,
-                    color: Colors.black54,
-                  ),
-                  onPressed: () {
-                    _onButtonPressedUser();
-                  },
-                  color: Colors.black,
-                ),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: InkWell(
-                    child: Icon(
-                      MdiIcons.send,
-                      size: screenSize.height * 0.035,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onTap: () {
-                      if (_messageController.text != '') {
-                        sendMessage();
-                        _scrollController.animateTo(
-                            _scrollController.position.maxScrollExtent,
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.fastOutSlowIn);
-                      }
-                    },
-                  ),
-                ),
               ),
               onFieldSubmitted: (value) {
                 _messageController.text = value;
               },
             ),
           ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: InkWell(
+              child: Icon(
+                MdiIcons.send,
+                size: screenSize.height * 0.035,
+                color: Theme.of(context).primaryColor,
+              ),
+              onTap: () {
+                if (_messageController.text != '') {
+                  sendMessage();
+                  _scrollController.animateTo(
+                      _scrollController.position.minScrollExtent,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.fastOutSlowIn);
+                }
+              },
+            ),
+          )
         ],
       ),
     );
@@ -376,38 +401,37 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
-    return Flexible(
-      flex: 1,
-      // fit: FlexFit.tight,
-      child: StreamBuilder(
-        stream: Firestore.instance
-            .collection('messages')
-            .document(_senderuid)
-            .collection('chatRoom')
-            .document(widget.receiverUid)
-            .collection('messages')
-            .orderBy('timestamp', descending: false)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            //listItem = snapshot.data.documents;
-            return ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) =>
-                  //   ListItemChat(
-                  //   documentSnapshot: snapshot.data.documents[index],
-                  //  ),
-                  chatMessageItem(snapshot.data.documents[index]),
-              itemCount: snapshot.data.documents.length,
-            );
-          }
-        },
-      ),
+    return StreamBuilder(
+      stream: Firestore.instance
+          .collection('messages')
+          .document(_senderuid)
+          .collection('chatRoom')
+          .document(widget.receiverUid)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          //listItem = snapshot.data.documents;
+          return ListView.builder(
+            reverse: true,
+            // itemExtent: 100,
+            //   shrinkWrap: true,
+            controller: _scrollController,
+            padding: EdgeInsets.all(8.0),
+            itemBuilder: (context, index) =>
+                //   ListItemChat(
+                //   documentSnapshot: snapshot.data.documents[index],
+                //  ),
+                chatMessageItem(snapshot.data.documents[index]),
+            itemCount: snapshot.data.documents.length,
+          );
+        }
+      },
     );
   }
 
@@ -454,17 +478,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            Text(snapshot['message'])
+                            Text(
+                              snapshot['message'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.white),
+                            )
                             // ExpandableText(
                             //   snapshot['message'],
                             //   maxLines: 6,
                             //   expandText: 'Read more',
                             //   collapseText: 'Less',
-                            //   style: TextStyle(
-                            //       fontFamily: FontNameDefault,
-                            //       fontSize: textBody1(context),
-                            //       color: Colors.white),
-                            // ),
                           ],
                         ),
                       )),
@@ -476,7 +501,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           timeago.format(snapshot['timestamp'].toDate()),
                           style: TextStyle(
                             fontFamily: FontNameDefault,
-                            fontSize: textbody2(context),
+                            //      fontSize: textbody2(context),
                             color: Colors.grey,
                           ),
                         )
@@ -529,7 +554,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           timeago.format(snapshot['timestamp'].toDate()),
                           style: TextStyle(
                             fontFamily: FontNameDefault,
-                            fontSize: textbody2(context),
+                            //   fontSize: textbody2(context),
                             color: Colors.grey,
                           ),
                         )
@@ -563,7 +588,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            Text(snapshot['message'])
+                            Text(
+                              snapshot['message'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black),
+                            )
                             // ExpandableText(
                             //   snapshot['message'],
                             //   maxLines: 6,
@@ -586,7 +617,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             timeago.format(snapshot['timestamp'].toDate()),
                             style: TextStyle(
                               fontFamily: FontNameDefault,
-                              fontSize: textbody2(context),
+                              // fontSize: textbody2(context),
                               color: Colors.grey,
                             ),
                           )
@@ -638,7 +669,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                               timeago.format(snapshot['timestamp'].toDate()),
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textbody2(context),
+                                //     fontSize: textbody2(context),
                                 color: Colors.grey,
                               ),
                             )
