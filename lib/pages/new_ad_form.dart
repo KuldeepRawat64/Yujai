@@ -75,27 +75,14 @@ class _NewAdFormState extends State<NewAdForm> {
   String selectedConditionList;
 
   List<String> categoryList = [
-    'Conference',
-    'Seminar',
-    'Covention',
-    'Festival',
-    'Fair',
-    'Concert',
-    'Performance',
-    'Screening',
-    'Dinner',
-    'Gala',
-    'Class',
-    'Training',
-    'Workshop',
-    'Party',
-    'Social Gathering',
-    'Rally',
-    'Tournament',
-    'Game',
-    'Endurance',
-    'Tour',
-    'Other',
+    'Smartphone',
+    'Real estate',
+    'Computers',
+    'Households',
+    'Charity',
+    'Automobiles',
+    'Spare parts',
+    'Books & Stationary'
   ];
 
   List<File> selectedFiles = [];
