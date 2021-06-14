@@ -130,7 +130,9 @@ class _ListItemUserState extends State<ListItemUser> {
                   onPressed: () {
                     setState(() {
                       _isInvited = true;
-                      addMember(widget.documentSnapshot);
+                      widget.team != null
+                          ? addMember(widget.documentSnapshot)
+                          : inviteUser();
                     });
                   }),
         ),
@@ -161,7 +163,7 @@ class _ListItemUserState extends State<ListItemUser> {
       var _feed = Feed(
         ownerName: widget.currentuser.displayName,
         ownerUid: widget.currentuser.uid,
-        type: 'team invite',
+        type: 'group invite',
         ownerPhotoUrl: widget.currentuser.photoUrl,
         gid: widget.group.uid,
         gname: widget.group.groupName,
@@ -177,7 +179,7 @@ class _ListItemUserState extends State<ListItemUser> {
           .document(widget.currentuser.uid)
           .setData(_feed.toMap(_feed))
           .then((value) {
-        print('Team Invite sent');
+        print('Group Invite sent');
       });
     } else {
       var _feed = Feed(

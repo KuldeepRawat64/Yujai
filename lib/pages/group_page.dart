@@ -1414,19 +1414,12 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
           .document(currentuser.uid)
           .setData(_member.toMap(_member));
 
-      var group = Group(
-        uid: _group.uid,
-        groupName: _group.groupName,
-        groupProfilePhoto: _group.groupProfilePhoto,
-        isPrivate: isPrivate,
-      );
-      return Firestore.instance
-          .collection('users')
-          .document(currentuser.uid)
+      await Firestore.instance
           .collection('groups')
           .document(_group.uid)
-          .setData(group.toMap(group))
-          .then((value) => Navigator.pushReplacement(
+          .updateData({
+        'members': FieldValue.arrayUnion([currentuser.uid])
+      }).then((value) => Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => GroupPage(

@@ -343,21 +343,13 @@ class _GroupRequestState extends State<GroupRequest> {
         .collection('members')
         .document(snapshot['ownerUid'])
         .setData(_member.toMap(_member));
-    var group = Group(
-      uid: widget.gid,
-      groupName: widget.name,
-      groupProfilePhoto: widget.group.groupProfilePhoto,
-      isPrivate: widget.group.isPrivate,
-    );
-    return Firestore.instance
-        .collection('users')
-        .document(snapshot['ownerUid'])
+
+    await Firestore.instance
         .collection('groups')
         .document(widget.gid)
-        .setData(group.toMap(group))
-        .then((value) {
-      removeInviteToActivityFeed(snapshot);
-    });
+        .updateData({
+      'members': FieldValue.arrayUnion([snapshot['ownerUid']])
+    }).then((value) => removeInviteToActivityFeed(snapshot));
   }
 
   removeInviteToActivityFeed(DocumentSnapshot snapshot) {

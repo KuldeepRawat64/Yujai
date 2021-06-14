@@ -128,8 +128,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
         children: [
           FlatButton(
             onPressed: () {
-              showGroup(context);
-              removeRequestFromActivityFeed();
+              joinGroup();
             },
             child: Text(
               'Join',
@@ -270,6 +269,42 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
     showTeam(context);
   }
 
+  joinGroup() async {
+    var _member = Member(
+      ownerName: currentuser.displayName,
+      ownerUid: currentuser.uid,
+      ownerPhotoUrl: currentuser.photoUrl,
+      accountType: '',
+      timestamp: FieldValue.serverTimestamp(),
+    );
+
+    Firestore.instance
+        .collection('groups')
+        .document(widget.documentSnapshot.data['gid'])
+        .collection('members')
+        .document(currentuser.uid)
+        .setData(_member.toMap(_member));
+
+    await Firestore.instance
+        .collection('groups')
+        .document(widget.documentSnapshot.data['gid'])
+        .updateData({
+      'members': FieldValue.arrayUnion([currentuser.uid])
+    });
+    // var _team = Team(
+    //   uid: widget.documentSnapshot.data['gid'],
+    //   teamName: widget.documentSnapshot.data['gname'],
+    // );
+    // Firestore.instance
+    //     .collection('users')
+    //     .document(currentuser.uid)
+    //     .collection('groups')
+    //     .document(widget.documentSnapshot.data['gid'])
+    //     .setData(_team.toMap(_team));
+    removeRequestFromActivityFeed();
+    showGroup(context);
+  }
+
   void addFollowToActivityFeed() {
     var _feed = Feed(
       ownerName: _user.displayName,
@@ -371,8 +406,8 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                             avatar: CircleAvatar(
                               radius: screenSize.height * 0.02,
                               backgroundColor: Colors.white,
-                              backgroundImage:
-                                  AssetImage('assets/images/team_no-image.png'),
+                              backgroundImage: CachedNetworkImageProvider(widget
+                                  .documentSnapshot.data['groupProfilePhoto']),
                             ),
                             label: Text(widget.documentSnapshot.data['gname'],
                                 style: TextStyle(
