@@ -845,7 +845,16 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                                         Icons.message_outlined,
                                         size: 16,
                                       ),
-                                      onPressed: null,
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChatDetailScreen(
+                                                      photoUrl: _user.photoUrl,
+                                                      name: _user.displayName,
+                                                      receiverUid: _user.uid,
+                                                    )));
+                                      },
                                     ),
                                     leading: CircleAvatar(
                                       backgroundColor: Colors.white,

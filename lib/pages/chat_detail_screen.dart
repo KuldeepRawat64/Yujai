@@ -104,10 +104,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   _scrollToEnd() async {
     if (_needsScroll) {
       _needsScroll = false;
-      Timer(
-          Duration(milliseconds: 300),
-          () => _scrollController
-              .jumpTo(_scrollController.position.minScrollExtent));
+      Timer(Duration(milliseconds: 300), () {
+        if (_scrollController.hasClients)
+          _scrollController.jumpTo(_scrollController.position.minScrollExtent);
+      });
       //  _scrollController.animateTo(_scrollController.position.maxScrollExtent,
       //    duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
     }
