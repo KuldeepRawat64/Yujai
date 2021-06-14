@@ -1324,15 +1324,18 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   }
 
   Widget companyBody() {
-    _markers.add(
-      Marker(
-        // This marker id can be anything that uniquely identifies each marker.
-        markerId: MarkerId(_center.toString()),
-        position: LatLng(_user.geoPoint.latitude, _user.geoPoint.longitude),
+    _user.geoPoint != null
+        ? _markers.add(
+            Marker(
+              // This marker id can be anything that uniquely identifies each marker.
+              markerId: MarkerId(_center.toString()),
+              position:
+                  LatLng(_user.geoPoint.latitude, _user.geoPoint.longitude),
 
-        icon: BitmapDescriptor.defaultMarker,
-      ),
-    );
+              icon: BitmapDescriptor.defaultMarker,
+            ),
+          )
+        : _markers.clear();
     var screenSize = MediaQuery.of(context).size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -1743,6 +1746,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
               Text(
                 'Events',
                 style: TextStyle(
+                    fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
                     fontWeight: FontWeight.bold),
               ),

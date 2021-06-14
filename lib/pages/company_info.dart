@@ -1,3 +1,4 @@
+import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ class _CompanyInfoState extends State<CompanyInfo> {
   TextEditingController gstController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final format = DateFormat('yyyy');
+  User _user;
+  final _repository = Repository();
 
   @override
   void initState() {
@@ -36,6 +39,15 @@ class _CompanyInfoState extends State<CompanyInfo> {
 
   getUser() async {
     currentUser = await _auth.currentUser();
+  }
+
+  retrieveUserDetails() async {
+    FirebaseUser currentUser = await _repository.getCurrentUser();
+    User user = await _repository.retreiveUserDetails(currentUser);
+    if (!mounted) return;
+    setState(() {
+      _user = user;
+    });
   }
 
   List<DropdownMenuItem<CompanySize>> buildDropDownMenuCompanySize(
@@ -195,7 +207,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
                               fillColor: Colors.grey[100],
                               // suffix: Row(
 
-                              labelText: 'Establsihed year',
+                              labelText: 'Established year',
                               hintStyle: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textAppTitle(context),
@@ -218,12 +230,17 @@ class _CompanyInfoState extends State<CompanyInfo> {
                           padding:
                               EdgeInsets.only(bottom: screenSize.height * 0.02),
                           child: TextFormField(
-                            onFieldSubmitted: (value) {},
+                            //   onFieldSubmitted: (value) {},
+                            textCapitalization: TextCapitalization.words,
                             validator: (value) {
                               if (value.isEmpty ||
                                   !RegExp(r"^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$")
                                       .hasMatch(value)) {
                                 return 'Enter a valid gst';
+                              } else {
+                                if (_user.gst == value) {
+                                  return 'Gst already exist';
+                                }
                               }
                               return null;
                             },

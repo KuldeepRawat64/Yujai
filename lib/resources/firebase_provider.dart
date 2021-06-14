@@ -117,7 +117,6 @@ class FirebaseProvider {
       establishYear: '',
       employees: '',
       medal: '',
-      //   geoPoint: GeoPoint(0,0)
     );
 
     //make new user their own follower to show their posts on their timeline

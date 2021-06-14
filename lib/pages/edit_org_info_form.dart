@@ -42,9 +42,13 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
   AutoCompleteTextField industryTextField;
   GlobalKey<AutoCompleteTextFieldState<Industry>> industrykey = new GlobalKey();
   static List<Industry> industries = new List<Industry>();
-  final format = DateFormat.y();
+  DateFormat format = DateFormat.y();
   bool isSelected = false;
   var _gstKey = GlobalKey<FormState>();
+  String valueEmployee;
+  String formattedString = 'yyyy';
+  DateTime estYear;
+  List employees = ['1-9', '10-49', '50-99', '100-999', '1000+'];
 
   @override
   void initState() {
@@ -117,7 +121,7 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
       _firestore.collection('users').document(currentUser.uid).updateData({
         "displayName": _companyNameController.text,
         "gst": _gstController.text,
-        "employees": _employeeController.text,
+        "employees": valueEmployee,
         "establishedYear": _establishmentController.text,
         "industry": _industryController.text,
         "products": _productController.text,
@@ -180,36 +184,82 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
                     isDense: true,
                   ),
                 ),
+                // SizedBox(
+                //   height: screenSize.height * 0.02,
+                // ),
+                // TextFormField(
+                //   style: TextStyle(
+                //     fontFamily: FontNameDefault,
+                //     fontSize: textSubTitle(context),
+                //     // fontWeight: FontWeight.bold,
+                //   ),
+                //   controller: _employeeController,
+                //   decoration: InputDecoration(
+                //     filled: true,
+                //     fillColor: Colors.grey[100],
+                //     //   hintText: 'Bio',
+                //     labelText: 'Employees',
+                //     labelStyle: TextStyle(
+                //       fontWeight: FontWeight.normal,
+                //       fontFamily: FontNameDefault,
+                //       color: Colors.grey[500],
+                //       fontSize: textSubTitle(context),
+                //       //fontWeight: FontWeight.bold,
+                //     ),
+                //     border: InputBorder.none,
+                //     isDense: true,
+                //   ),
+                // ),
                 SizedBox(
                   height: screenSize.height * 0.02,
                 ),
-                TextFormField(
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textSubTitle(context),
-                    // fontWeight: FontWeight.bold,
-                  ),
-                  controller: _employeeController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    //   hintText: 'Bio',
-                    labelText: 'Employees',
-                    labelStyle: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontFamily: FontNameDefault,
-                      color: Colors.grey[500],
-                      fontSize: textSubTitle(context),
-                      //fontWeight: FontWeight.bold,
+                DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                        fillColor: Colors.grey[100],
+                        filled: true,
+                        border: InputBorder.none),
+                    hint: Text(
+                      'Employees',
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.normal,
+                        fontSize: textSubTitle(context),
+                        //fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    border: InputBorder.none,
-                    isDense: true,
+                    //  underline: Container(),
+                    icon: Icon(Icons.keyboard_arrow_down_outlined),
+                    iconSize: 30,
+                    isExpanded: true,
+                    value: valueEmployee,
+                    items: employees.map((valueItem) {
+                      return DropdownMenuItem(
+                          value: valueItem,
+                          child: Text(valueItem,
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontWeight: FontWeight.bold,
+                                fontSize: textSubTitle(context),
+                              )));
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        valueEmployee = newValue;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) return 'Please select an industry';
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(
                   height: screenSize.height * 0.02,
                 ),
                 DateTimeField(
+                  initialValue: DateTime.parse("2012-02-27"),
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textBody1(context),
@@ -328,6 +378,7 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
                   height: screenSize.height * 0.02,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.words,
                   onFieldSubmitted: (value) {},
                   validator: (value) {
                     if (value.isEmpty ||
