@@ -232,7 +232,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context),
-                            //   fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                           controller: displayNameController,
                           decoration: InputDecoration(
@@ -243,7 +243,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                             hintStyle: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textAppTitle(context),
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                             border: InputBorder.none,
                             isDense: true,
@@ -260,6 +260,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textBody1(context),
+                            fontWeight: FontWeight.bold,
                           ),
                           keyboardType: TextInputType.phone,
                           controller: phoneController,
@@ -276,7 +277,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                               fontFamily: FontNameDefault,
                               color: Colors.grey,
                               fontSize: textSubTitle(context),
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                             border: InputBorder.none,
                             isDense: true,
@@ -289,7 +290,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                           dateTextStyle: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context),
-                            //    fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                           decoration: InputDecoration(
                               filled: true,
@@ -304,7 +305,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                                 fontFamily: FontNameDefault,
                                 color: Colors.grey,
                                 fontSize: textSubTitle(context),
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.normal,
                               ),
                               border: InputBorder.none),
                           mode: DateTimeFieldPickerMode.date,
@@ -323,7 +324,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context),
-                            //   fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                           controller: locationController,
                           decoration: InputDecoration(
@@ -338,7 +339,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                               fontFamily: FontNameDefault,
                               color: Colors.grey,
                               fontSize: textSubTitle(context),
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                             ),
                             border: InputBorder.none,
                             isDense: true,
@@ -490,7 +491,9 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                               value: this.valueFirst,
                               onChanged: (bool value) {
                                 setState(() {
-                                  _openAgreeDialog(context);
+                                  if (value) {
+                                    _openAgreeDialog(context);
+                                  }
                                   this.valueFirst = value;
                                 });
                               },
