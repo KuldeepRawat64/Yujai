@@ -221,7 +221,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                     ),
                   ),
                   FadeInImage.assetNetwork(
-                    height: screenSize.height * 0.18,
+                    height: screenSize.height * 0.22,
                     width: screenSize.width,
                     fadeInDuration: const Duration(milliseconds: 300),
                     placeholder: 'assets/images/placeholder.png',
@@ -248,8 +248,8 @@ class _ListItemNewsState extends State<ListItemNews> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(
-                            top: screenSize.height * 0.01,
-                            bottom: screenSize.height * 0.005,
+                            top: screenSize.height * 0.005,
+                            //  bottom: screenSize.height * 0.005,
                           ),
                           child: Text(
                             'Read more...',
