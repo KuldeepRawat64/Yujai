@@ -516,8 +516,8 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
                         height: screenSize.height * 0.03,
                       ),
                       valueFirst &&
-                              (displayNameController.text.isNotEmpty &&
-                                      phoneController.text.isNotEmpty &&
+                              (displayNameController.text.isNotEmpty ||
+                                  phoneController.text.isNotEmpty &&
                                       phoneController.text.length < 11 &&
                                       phoneController.text.length > 9 &&
                                       dateController.text.isNotEmpty ||
