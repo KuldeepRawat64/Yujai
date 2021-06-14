@@ -1857,7 +1857,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //         _user.college.isEmpty &&
                 //         _user.school.isEmpty
                 //     ?
-                _user.education != []
+                _user.education.isNotEmpty
                     ? Card(
                         elevation: 0,
                         // margin: EdgeInsets.symmetric(
@@ -1988,7 +1988,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-                  _user.experience != []
+                  _user.experience.isNotEmpty
                       ? Card(
                           elevation: 0,
                           // margin: EdgeInsets.symmetric(
@@ -2225,7 +2225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //     height: 0.0,
                   //   ),
                   // ),
-                  _user.skills == []
+                  _user.skills.isEmpty
                       ? Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: screenSize.width * 0.25,
