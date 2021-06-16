@@ -13,7 +13,7 @@ import '../style.dart';
 
 class EventDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
 
   EventDetailScreen({this.documentSnapshot, this.user, this.currentuser});
 
@@ -99,8 +99,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(widget
-                              .documentSnapshot.data['eventOwnerPhotoUrl']),
+                          backgroundImage: CachedNetworkImageProvider(
+                              widget.documentSnapshot['eventOwnerPhotoUrl']),
                         ),
                         SizedBox(
                           width: screenSize.width * 0.05,
@@ -111,7 +111,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             Container(
                               width: screenSize.width * 0.3,
                               child: Text(
-                                widget.documentSnapshot.data['caption'],
+                                widget.documentSnapshot['caption'],
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: FontNameDefault,
@@ -123,23 +123,22 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             SizedBox(
                               height: screenSize.height * 0.01,
                             ),
-                            widget.documentSnapshot.data['website'] != '' &&
-                                    widget.documentSnapshot.data['website'] !=
-                                        null
+                            widget.documentSnapshot['website'] != '' &&
+                                    widget.documentSnapshot['website'] != null
                                 ? InkWell(
                                     onTap: () {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) => MyWebView(
                                                   title: 'Event',
-                                                  selectedUrl: widget
-                                                      .documentSnapshot
-                                                      .data['website'])));
+                                                  selectedUrl:
+                                                      widget.documentSnapshot[
+                                                          'website'])));
                                     },
                                     child: Container(
                                       width: screenSize.width * 0.6,
                                       child: Text(
-                                        widget.documentSnapshot.data['website'],
+                                        widget.documentSnapshot['website'],
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontFamily: FontNameDefault,
@@ -175,7 +174,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         Container(
                           width: screenSize.width * 0.5,
                           child: Text(
-                            '${convertDate(widget.documentSnapshot.data['startDate'])}, ${convertTime(widget.documentSnapshot.data['startTime'])} - ${convertDate(widget.documentSnapshot.data['endDate'])}, ${convertTime(widget.documentSnapshot.data['endTime'])}',
+                            '${convertDate(widget.documentSnapshot['startDate'])}, ${convertTime(widget.documentSnapshot['startTime'])} - ${convertDate(widget.documentSnapshot['endDate'])}, ${convertTime(widget.documentSnapshot['endTime'])}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontFamily: FontNameDefault,
@@ -201,10 +200,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         Container(
                           width: screenSize.width * 0.5,
                           child: Text(
-                            widget.documentSnapshot.data['city'] == '' ||
-                                    widget.documentSnapshot.data['city'] == null
+                            widget.documentSnapshot['city'] == '' ||
+                                    widget.documentSnapshot['city'] == null
                                 ? 'Online'
-                                : widget.documentSnapshot.data['city'],
+                                : widget.documentSnapshot['city'],
                             style: TextStyle(
                               color: Colors.black,
                               //    fontWeight: FontWeight.bold,
@@ -227,8 +226,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               MaterialPageRoute(
                                   builder: (context) => MyWebView(
                                         title: ' Registration',
-                                        selectedUrl: widget.documentSnapshot
-                                            .data['ticketWebsite'],
+                                        selectedUrl: widget
+                                            .documentSnapshot['ticketWebsite'],
                                       )));
                         },
                         child: Container(
@@ -298,76 +297,74 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 bottom: screenSize.height * 0.012,
                 left: screenSize.width / 30,
               ),
-              child: widget.documentSnapshot.data['description']
-                          .toString()
-                          .length <
-                      350
-                  ? Text(
-                      widget.documentSnapshot.data['description'],
-                      style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontSize: textSubTitle(context)),
-                    )
-                  : seeMore
-                      ? Wrap(
-                          children: [
-                            Text(
-                              widget.documentSnapshot.data['description'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: textSubTitle(context)),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  seeMore = false;
-                                });
-                              },
-                              child: Text(
-                                'See less',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                    color: Theme.of(context).accentColor),
-                              ),
-                            )
-                          ],
+              child:
+                  widget.documentSnapshot['description'].toString().length < 350
+                      ? Text(
+                          widget.documentSnapshot['description'],
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: textSubTitle(context)),
                         )
-                      : Wrap(
-                          children: [
-                            Text(
-                              widget.documentSnapshot.data['description']
-                                  .toString()
-                                  .substring(350),
-                              //  maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  seeMore = true;
-                                });
-                              },
-                              child: Text(
-                                'See more',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                    color: Theme.of(context).accentColor),
-                              ),
+                      : seeMore
+                          ? Wrap(
+                              children: [
+                                Text(
+                                  widget.documentSnapshot['description'],
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      seeMore = false;
+                                    });
+                                  },
+                                  child: Text(
+                                    'See less',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textSubTitle(context),
+                                        color: Theme.of(context).accentColor),
+                                  ),
+                                )
+                              ],
                             )
-                          ],
-                        ),
+                          : Wrap(
+                              children: [
+                                Text(
+                                  widget.documentSnapshot['description']
+                                      .toString()
+                                      .substring(350),
+                                  //  maxLines: 5,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textBody1(context),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      seeMore = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    'See more',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textSubTitle(context),
+                                        color: Theme.of(context).accentColor),
+                                  ),
+                                )
+                              ],
+                            ),
             ),
             // Padding(
             //   padding: EdgeInsets.only(
@@ -412,7 +409,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   ),
                 ),
                 title: Text(
-                  widget.documentSnapshot.data['host'],
+                  widget.documentSnapshot['host'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textBody1(context),
@@ -451,13 +448,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             ),
             InkWell(
               onTap: () {
-                if (widget.documentSnapshot.data['ownerUid'] !=
+                if (widget.documentSnapshot['ownerUid'] !=
                     widget.currentuser.uid) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => FriendProfileScreen(
-                          uid: widget.documentSnapshot.data['ownerUid'],
-                          name:
-                              widget.documentSnapshot.data['eventOwnerName'])));
+                          uid: widget.documentSnapshot['ownerUid'],
+                          name: widget.documentSnapshot['eventOwnerName'])));
                 }
               },
               child: Container(
@@ -465,10 +461,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   //  subtitle: Text(''),
                   leading: CircleAvatar(
                     backgroundImage: CachedNetworkImageProvider(
-                        widget.documentSnapshot.data['eventOwnerPhotoUrl']),
+                        widget.documentSnapshot['eventOwnerPhotoUrl']),
                   ),
                   title: Text(
-                    widget.documentSnapshot.data['eventOwnerName'],
+                    widget.documentSnapshot['eventOwnerName'],
                     style: TextStyle(
                       fontFamily: FontNameDefault,
                       color: Colors.black,
@@ -552,7 +548,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   Widget eventStack() {
-    String toLaunch = widget.documentSnapshot.data['website'];
+    String toLaunch = widget.documentSnapshot['website'];
     return Stack(
       fit: StackFit.loose,
       alignment: Alignment.topCenter,
@@ -570,7 +566,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         overflow: Overflow.visible,
         children: [
           CachedNetworkImage(
-            imageUrl: widget.documentSnapshot.data['imgUrl'],
+            imageUrl: widget.documentSnapshot['imgUrl'],
           ),
           Positioned(
             top: 20,

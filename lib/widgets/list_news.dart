@@ -18,7 +18,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class ListItemNews extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemNews({
@@ -46,8 +46,8 @@ class _ListItemNewsState extends State<ListItemNews> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -123,8 +123,8 @@ class _ListItemNewsState extends State<ListItemNews> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => MyWebView(
-                    title: widget.documentSnapshot.data['caption'],
-                    selectedUrl: widget.documentSnapshot.data['source'],
+                    title: widget.documentSnapshot['caption'],
+                    selectedUrl: widget.documentSnapshot['source'],
                   )));
         },
         child: Padding(
@@ -151,35 +151,35 @@ class _ListItemNewsState extends State<ListItemNews> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => FriendProfileScreen(
-                                  uid: widget.documentSnapshot.data['ownerUid'],
-                                  name: widget.documentSnapshot
-                                      .data['newsOwnerName'])));
+                                  uid: widget.documentSnapshot['ownerUid'],
+                                  name: widget
+                                      .documentSnapshot['newsOwnerName'])));
                     },
                     child: ListTile(
                       leading: CircleAvatar(
                         radius: screenSize.height * 0.025,
                         backgroundColor: Colors.grey,
                         backgroundImage: CachedNetworkImageProvider(
-                            widget.documentSnapshot.data['newsOwnerPhotoUrl']),
+                            widget.documentSnapshot['newsOwnerPhotoUrl']),
                       ),
                       title: new Text(
-                        widget.documentSnapshot.data['newsOwnerName'],
+                        widget.documentSnapshot['newsOwnerName'],
                         style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context),
                             fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                          widget.documentSnapshot.data['time'] != null
+                          widget.documentSnapshot['time'] != null
                               ? timeago.format(
-                                  widget.documentSnapshot.data['time'].toDate())
+                                  widget.documentSnapshot['time'].toDate())
                               : '',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //   fontSize: textbody2(context),
                               color: Colors.grey)),
                       trailing: widget.currentuser.uid ==
-                              widget.documentSnapshot.data['ownerUid']
+                              widget.documentSnapshot['ownerUid']
                           ? InkWell(
                               onTap: () {
                                 showDelete(widget.documentSnapshot);
@@ -225,7 +225,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                     width: screenSize.width,
                     fadeInDuration: const Duration(milliseconds: 300),
                     placeholder: 'assets/images/placeholder.png',
-                    image: widget.documentSnapshot.data['imgUrl'],
+                    image: widget.documentSnapshot['imgUrl'],
                     fit: BoxFit.cover,
                   ),
                   Padding(
@@ -238,7 +238,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.documentSnapshot.data['caption'],
+                          widget.documentSnapshot['caption'],
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: TextStyle(
@@ -348,9 +348,8 @@ class _ListItemNewsState extends State<ListItemNews> {
                                               backgroundColor: Colors.black,
                                               backgroundImage:
                                                   CachedNetworkImageProvider(
-                                                      likesSnapshot
-                                                              .data[0].data[
-                                                          'ownerPhotoUrl']),
+                                                      likesSnapshot.data[0]
+                                                          ['ownerPhotoUrl']),
                                             ),
                                             likesSnapshot.data.length > 1
                                                 ? Positioned(
@@ -360,8 +359,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                                                       backgroundImage:
                                                           CachedNetworkImageProvider(
                                                               likesSnapshot
-                                                                      .data[1]
-                                                                      .data[
+                                                                      .data[1][
                                                                   'ownerPhotoUrl']),
                                                     ),
                                                   )
@@ -376,8 +374,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                                                       backgroundImage:
                                                           CachedNetworkImageProvider(
                                                               likesSnapshot
-                                                                      .data[2]
-                                                                      .data[
+                                                                      .data[2][
                                                                   'ownerPhotoUrl']),
                                                     ),
                                                   )
@@ -392,8 +389,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                                                       backgroundImage:
                                                           CachedNetworkImageProvider(
                                                               likesSnapshot
-                                                                      .data[3]
-                                                                      .data[
+                                                                      .data[3][
                                                                   'ownerPhotoUrl']),
                                                     ),
                                                   )
@@ -484,16 +480,16 @@ class _ListItemNewsState extends State<ListItemNews> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentuser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid != snapshot.data['ownerUid']) {
+    if (widget.currentuser.uid != snapshot['ownerUid']) {
       var _feed = Feed(
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
@@ -504,14 +500,14 @@ class _ListItemNewsState extends State<ListItemNews> {
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(snapshot.data['ownerUid'])
+          .doc(snapshot['ownerUid'])
           .collection('items')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
-          .setData(_feed.toMap(_feed))
+          .doc(snapshot['postId'])
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Feed added');
       });
@@ -523,24 +519,25 @@ class _ListItemNewsState extends State<ListItemNews> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");
     });
   }
 
-  void removeLikeFromActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void removeLikeFromActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid != snapshot.data['ownerUid']) {
-      Firestore.instance
+    if (widget.currentuser.uid != snapshot['ownerUid']) {
+      FirebaseFirestore.instance
           .collection('users')
-          .document(snapshot.data['ownerUid'])
+          .doc(snapshot['ownerUid'])
           .collection('items')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
+          .doc(snapshot['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {
@@ -723,13 +720,13 @@ class _ListItemNewsState extends State<ListItemNews> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.user.uid)
+        .doc(widget.user.uid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

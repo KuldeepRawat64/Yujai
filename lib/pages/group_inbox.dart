@@ -18,7 +18,7 @@ class GroupInbox extends StatefulWidget {
   final String gid;
   final String name;
   final Group group;
-  final User currentuser;
+  final UserModel currentuser;
   const GroupInbox({this.gid, this.name, this.group, this.currentuser});
 
   @override
@@ -27,7 +27,7 @@ class GroupInbox extends StatefulWidget {
 
 class _GroupInboxState extends State<GroupInbox> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -54,8 +54,8 @@ class _GroupInboxState extends State<GroupInbox> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -176,9 +176,9 @@ class _GroupInboxState extends State<GroupInbox> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           .where('postOwnerUid', isEqualTo: widget.currentuser.uid)
           .orderBy('timestamp', descending: true)

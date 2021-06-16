@@ -18,7 +18,7 @@ class GroupSettings extends StatefulWidget {
   final bool isHidden;
   final Group group;
   final Team team;
-  final User currentuser;
+  final UserModel currentuser;
   const GroupSettings({
     this.gid,
     this.name,
@@ -38,7 +38,7 @@ class _GroupSettingsState extends State<GroupSettings> {
   Group _group;
   bool isPrivate = false;
   bool isHidden = false;
-  User _user;
+  UserModel _user;
   var _repository = Repository();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -141,7 +141,7 @@ class _GroupSettingsState extends State<GroupSettings> {
   }
 
   submit() {
-    groupsRef.document(_group.uid).updateData({
+    groupsRef.doc(_group.uid).update({
       "isPrivate": isPrivate,
       "isHidden": isHidden,
       "groupName": _nameController.text,
@@ -682,16 +682,16 @@ class _GroupSettingsState extends State<GroupSettings> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              Firestore.instance
+                              FirebaseFirestore.instance
                                   .collection('groups')
-                                  .document(widget.gid)
+                                  .doc(widget.gid)
                                   .delete()
                                   .then((value) {
-                                Firestore.instance
+                                FirebaseFirestore.instance
                                     .collection('users')
-                                    .document(widget.currentuser.uid)
+                                    .doc(widget.currentuser.uid)
                                     .collection('groups')
-                                    .document(widget.gid)
+                                    .doc(widget.gid)
                                     .delete();
                                 Navigator.push(
                                     context,

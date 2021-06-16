@@ -12,7 +12,7 @@ import '../style.dart';
 
 class ListItemUser extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
   final String gid;
   final String name;
@@ -71,7 +71,7 @@ class _ListItemUserState extends State<ListItemUser> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot.data['ownerUid'], widget.gid)
+        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -100,14 +100,14 @@ class _ListItemUserState extends State<ListItemUser> {
         ),
         child: ListTile(
           subtitle: Text(
-            widget.documentSnapshot.data['accountType'],
+            widget.documentSnapshot['accountType'],
             style: TextStyle(
               fontFamily: FontNameDefault,
               fontSize: textBody1(context),
             ),
           ),
           title: Text(
-            widget.documentSnapshot.data['ownerName'],
+            widget.documentSnapshot['ownerName'],
             style: TextStyle(
               fontFamily: FontNameDefault,
               fontSize: textSubTitle(context),
@@ -115,7 +115,7 @@ class _ListItemUserState extends State<ListItemUser> {
           ),
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(
-                widget.documentSnapshot.data['ownerPhotoUrl']),
+                widget.documentSnapshot['ownerPhotoUrl']),
           ),
           trailing: _isInvited
               ? IconButton(
@@ -143,10 +143,10 @@ class _ListItemUserState extends State<ListItemUser> {
   addMember(DocumentSnapshot snapshot) {
     _repository.addTeamMember(
         currentTeam: widget.team,
-        followerId: snapshot.data['ownerUid'],
-        followerName: snapshot.data['ownerName'],
+        followerId: snapshot['ownerUid'],
+        followerName: snapshot['ownerName'],
         followerAccountType: '${widget.team.teamName} Member',
-        followerPhotoUrl: snapshot.data['ownerPhotoUrl']);
+        followerPhotoUrl: snapshot['ownerPhotoUrl']);
     addInviteToActivityFeed();
   }
 
@@ -154,7 +154,7 @@ class _ListItemUserState extends State<ListItemUser> {
     print('User Invited');
     _repository.inviteUser(
         currentGroupId: widget.gid,
-        followingUserId: widget.documentSnapshot.data['ownerUid']);
+        followingUserId: widget.documentSnapshot['ownerUid']);
     addInviteToActivityFeed();
   }
 
@@ -170,14 +170,14 @@ class _ListItemUserState extends State<ListItemUser> {
         groupProfilePhoto: widget.group.groupProfilePhoto,
         timestamp: FieldValue.serverTimestamp(),
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(widget.documentSnapshot.data['ownerUid'])
+          .doc(widget.documentSnapshot['ownerUid'])
           .collection('requests')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(widget.currentuser.uid)
-          .setData(_feed.toMap(_feed))
+          .doc(widget.currentuser.uid)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Group Invite sent');
       });
@@ -192,14 +192,14 @@ class _ListItemUserState extends State<ListItemUser> {
         groupProfilePhoto: widget.team.teamProfilePhoto,
         timestamp: FieldValue.serverTimestamp(),
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(widget.documentSnapshot.data['ownerUid'])
+          .doc(widget.documentSnapshot['ownerUid'])
           .collection('requests')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(widget.currentuser.uid)
-          .setData(_feed.toMap(_feed))
+          .doc(widget.currentuser.uid)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Team Invite sent');
       });
@@ -210,18 +210,18 @@ class _ListItemUserState extends State<ListItemUser> {
     print('Invite deleted');
     _repository.deleteInvite(
         currentGroupId: widget.gid,
-        followingUserId: widget.documentSnapshot.data['ownerUid']);
+        followingUserId: widget.documentSnapshot['ownerUid']);
     removeInviteToActivityFeed();
   }
 
   void removeInviteToActivityFeed() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.documentSnapshot.data['ownerUid'])
+        .doc(widget.documentSnapshot['ownerUid'])
         .collection('requests')
         // .document(currentUser.uid)
         // .collection('likes')
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print('Group Invite sent');

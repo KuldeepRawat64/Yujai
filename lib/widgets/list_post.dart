@@ -18,7 +18,7 @@ import '../style.dart';
 
 class ListItemPost extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemPost({
@@ -77,8 +77,8 @@ class _ListItemPostState extends State<ListItemPost> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -152,31 +152,30 @@ class _ListItemPostState extends State<ListItemPost> {
               leading: CircleAvatar(
                   radius: screenSize.height * 0.03,
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot.data['postOwnerPhotoUrl'])),
+                      widget.documentSnapshot['postOwnerPhotoUrl'])),
               title: InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FriendProfileScreen(
-                              uid: widget.documentSnapshot.data['ownerUid'],
-                              name: widget
-                                  .documentSnapshot.data['postOwnerName'])));
+                              uid: widget.documentSnapshot['ownerUid'],
+                              name: widget.documentSnapshot['postOwnerName'])));
                 },
                 child: new Text(
-                  widget.documentSnapshot.data['postOwnerName'],
+                  widget.documentSnapshot['postOwnerName'],
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context),
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              subtitle: widget.documentSnapshot.data['location'] != '' &&
-                      widget.documentSnapshot.data['location'] != null
+              subtitle: widget.documentSnapshot['location'] != '' &&
+                      widget.documentSnapshot['location'] != null
                   ? Row(
                       children: [
                         new Text(
-                          widget.documentSnapshot.data['location'],
+                          widget.documentSnapshot['location'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //    fontSize: textBody1(context),
@@ -199,10 +198,9 @@ class _ListItemPostState extends State<ListItemPost> {
                             top: screenSize.height * 0.002,
                           ),
                           child: Text(
-                              widget.documentSnapshot.data['time'] != null
-                                  ? timeago.format(widget
-                                      .documentSnapshot.data['time']
-                                      .toDate())
+                              widget.documentSnapshot['time'] != null
+                                  ? timeago.format(
+                                      widget.documentSnapshot['time'].toDate())
                                   : '',
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
@@ -217,65 +215,65 @@ class _ListItemPostState extends State<ListItemPost> {
                         top: screenSize.height * 0.002,
                       ),
                       child: Text(
-                          widget.documentSnapshot.data['time'] != null
+                          widget.documentSnapshot['time'] != null
                               ? timeago.format(
-                                  widget.documentSnapshot.data['time'].toDate())
+                                  widget.documentSnapshot['time'].toDate())
                               : '',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //   fontSize: textbody2(context),
                               color: Colors.grey)),
                     ),
-              trailing: widget.currentuser.uid ==
-                      widget.documentSnapshot.data['ownerUid']
-                  ? InkWell(
-                      onTap: () {
-                        //    showDelete(widget.documentSnapshot);
-                        //    deleteDialog(widget.documentSnapshot);
-                      },
-                      child: Container(
-                          decoration: ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(60.0),
-                                side: BorderSide(
-                                    width: 0.1, color: Colors.black54)),
-                            //color: Theme.of(context).accentColor,
-                          ),
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: screenSize.height * 0.005,
-                                horizontal: screenSize.width * 0.02,
+              trailing:
+                  widget.currentuser.uid == widget.documentSnapshot['ownerUid']
+                      ? InkWell(
+                          onTap: () {
+                            //    showDelete(widget.documentSnapshot);
+                            //    deleteDialog(widget.documentSnapshot);
+                          },
+                          child: Container(
+                              decoration: ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(60.0),
+                                    side: BorderSide(
+                                        width: 0.1, color: Colors.black54)),
+                                //color: Theme.of(context).accentColor,
                               ),
-                              child: Icon(Icons.more_horiz_outlined))),
-                    )
-                  : InkWell(
-                      onTap: () {
-                        showReport(widget.documentSnapshot);
-                      },
-                      child: Container(
-                          decoration: ShapeDecoration(
-                            shape: CircleBorder(
-                                side: BorderSide(
-                                    width: 0.1, color: Colors.purple)),
-                            //  color: Theme.of(context).accentColor,
-                          ),
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: screenSize.height * 0.005,
-                                horizontal: screenSize.width * 0.02,
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenSize.height * 0.005,
+                                    horizontal: screenSize.width * 0.02,
+                                  ),
+                                  child: Icon(Icons.more_horiz_outlined))),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            showReport(widget.documentSnapshot);
+                          },
+                          child: Container(
+                              decoration: ShapeDecoration(
+                                shape: CircleBorder(
+                                    side: BorderSide(
+                                        width: 0.1, color: Colors.purple)),
+                                //  color: Theme.of(context).accentColor,
                               ),
-                              child: Icon(Icons.more_horiz_outlined))),
-                    ),
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenSize.height * 0.005,
+                                    horizontal: screenSize.width * 0.02,
+                                  ),
+                                  child: Icon(Icons.more_horiz_outlined))),
+                        ),
             ),
             Center(
               child: FadeInImage.assetNetwork(
                 fadeInDuration: const Duration(milliseconds: 300),
                 placeholder: 'assets/images/placeholder.png',
                 placeholderScale: 10,
-                image: widget.documentSnapshot.data['imgUrl'],
+                image: widget.documentSnapshot['imgUrl'],
               ),
             ),
-            widget.documentSnapshot.data['caption'] != ''
+            widget.documentSnapshot['caption'] != ''
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -285,7 +283,7 @@ class _ListItemPostState extends State<ListItemPost> {
                             top: screenSize.height * 0.01,
                             left: screenSize.width / 30),
                         child: Text(
-                          widget.documentSnapshot.data['caption'],
+                          widget.documentSnapshot['caption'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context),
@@ -380,7 +378,7 @@ class _ListItemPostState extends State<ListItemPost> {
                                         backgroundImage:
                                             CachedNetworkImageProvider(
                                                 likesSnapshot.data[0]
-                                                    .data['ownerPhotoUrl']),
+                                                    ['ownerPhotoUrl']),
                                       ),
                                       likesSnapshot.data.length > 1
                                           ? Positioned(
@@ -389,9 +387,8 @@ class _ListItemPostState extends State<ListItemPost> {
                                                 radius: 15.0,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[1].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[1]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -403,9 +400,8 @@ class _ListItemPostState extends State<ListItemPost> {
                                                 backgroundColor: Colors.grey,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[2].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[2]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -417,9 +413,8 @@ class _ListItemPostState extends State<ListItemPost> {
                                                 backgroundColor: Colors.grey,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[3].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[3]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -700,8 +695,8 @@ class _ListItemPostState extends State<ListItemPost> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentuser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
@@ -878,13 +873,13 @@ class _ListItemPostState extends State<ListItemPost> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.user.uid)
+        .doc(widget.user.uid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -898,9 +893,9 @@ class _ListItemPostState extends State<ListItemPost> {
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid == snapshot.data['ownerUid']) {
+    if (widget.currentuser.uid == snapshot['ownerUid']) {
       return print('Owner liked');
     } else {
       var _feed = Feed(
@@ -913,14 +908,14 @@ class _ListItemPostState extends State<ListItemPost> {
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(snapshot.data['ownerUid'])
+          .doc(snapshot['ownerUid'])
           .collection('items')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
-          .setData(_feed.toMap(_feed))
+          .doc(snapshot['postId'])
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Feed added');
       });
@@ -930,26 +925,27 @@ class _ListItemPostState extends State<ListItemPost> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");
     });
   }
 
-  void removeLikeFromActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void removeLikeFromActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     //  bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (currentUser.uid == snapshot.data['ownerUid']) {
+    if (currentUser.uid == snapshot['ownerUid']) {
       return print('Owner feed');
     } else {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(snapshot.data['ownerUid'])
+          .doc(snapshot['ownerUid'])
           .collection('items')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
+          .doc(snapshot['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {

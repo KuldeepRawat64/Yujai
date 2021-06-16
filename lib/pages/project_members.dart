@@ -22,7 +22,7 @@ class ProjectMembers extends StatefulWidget {
   final Team group;
   final Department dept;
   final Project project;
-  final User currentuser;
+  final UserModel currentuser;
   const ProjectMembers({
     this.gid,
     this.name,
@@ -38,7 +38,7 @@ class ProjectMembers extends StatefulWidget {
 
 class _ProjectMembersState extends State<ProjectMembers> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -65,8 +65,8 @@ class _ProjectMembersState extends State<ProjectMembers> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -187,13 +187,13 @@ class _ProjectMembersState extends State<ProjectMembers> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.dept.uid)
+          .doc(widget.dept.uid)
           .collection('projects')
-          .document(widget.project.uid)
+          .doc(widget.project.uid)
           .collection('members')
           .snapshots(),
       builder: ((context, snapshot) {

@@ -11,7 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditSkillForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditSkillForm({this.currentUser});
 
@@ -22,7 +22,7 @@ class EditSkillForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditSkillForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _skillController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
@@ -45,10 +45,10 @@ class _EditProfileScreenState extends State<EditSkillForm> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(currentUser.uid)
-          .updateData({
+          .doc(currentUser.uid)
+          .update({
         'skills': FieldValue.arrayUnion([
           {
             'skill': _skillController.text,

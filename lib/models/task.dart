@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Task {
+class TaskModel {
   String taskId;
   String taskName;
   String ownerName;
@@ -18,7 +18,7 @@ class Task {
   String description;
   int count;
 
-  Task(
+  TaskModel(
       {this.taskId,
       this.taskName,
       this.ownerName,
@@ -35,7 +35,7 @@ class Task {
       this.description,
       this.count});
 
-  Map toMap(Task task) {
+  Map toMap(TaskModel task) {
     var data = Map<String, dynamic>();
     data['taskId'] = task.taskId;
     data['taskName'] = task.taskName;
@@ -55,7 +55,7 @@ class Task {
     return data;
   }
 
-  Task.fromMap(Map<String, dynamic> mapData) {
+  TaskModel.fromMap(Map<String, dynamic> mapData) {
     this.taskId = mapData['taskId'];
     this.taskName = mapData['taskName'];
     this.ownerPhotoUrl = mapData['ownerPhotoUrl'];

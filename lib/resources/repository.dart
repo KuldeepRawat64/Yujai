@@ -19,33 +19,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Repository {
   final _firebaseProvider = FirebaseProvider();
 
-  Future<void> addDataToDb(FirebaseUser user) =>
-      _firebaseProvider.addDataToDb(user);
+  Future<void> addDataToDb(User user) => _firebaseProvider.addDataToDb(user);
 
-  Future<FirebaseUser> signIn() => _firebaseProvider.signIn();
+  Future<User> signIn() => _firebaseProvider.signIn();
 
-  Future<bool> authenticateUser(FirebaseUser user) =>
+  Future<bool> authenticateUser(User user) =>
       _firebaseProvider.authenticateUser(user);
 
-  Future<FirebaseUser> getCurrentUser() => _firebaseProvider.getCurrentUser();
+  Future<User> getCurrentUser() => _firebaseProvider.getCurrentUser();
 
   Future<void> signOut() => _firebaseProvider.signOut();
 
   Future<String> uploadImageToStorage(File imageFile) =>
       _firebaseProvider.uploadImageToStorage(imageFile);
 
-  Future<void> addPostToDb(
-          User currentUser, String imgUrl, String caption, String location) =>
+  Future<void> addPostToDb(UserModel currentUser, String imgUrl, String caption,
+          String location) =>
       _firebaseProvider.addPostToDb(currentUser, imgUrl, caption, location);
 
-  Future<void> addPostToForum(String currentGroupId, User currentUser,
+  Future<void> addPostToForum(String currentGroupId, UserModel currentUser,
           String imgUrl, String caption, String location) =>
       _firebaseProvider.addPostToForum(
           currentGroupId, currentUser, imgUrl, caption, location);
 
   Future<void> addListToProject(
           String currentListId,
-          User currentUser,
+          UserModel currentUser,
           String listName,
           String currentTeamId,
           String currentDeptId,
@@ -56,7 +55,7 @@ class Repository {
 
   Future<void> addTaskToList(
           String newTaskId,
-          User currentUser,
+          UserModel currentUser,
           String taskName,
           String description,
           String currentTeamId,
@@ -94,14 +93,14 @@ class Repository {
           ownerPhotoUrl,
           postType);
 
-  Future<void> addPostToReview(String currentGroupId, User currentUser,
+  Future<void> addPostToReview(String currentGroupId, UserModel currentUser,
           String imgUrl, String caption, String location, String postType) =>
       _firebaseProvider.addPostToReview(
           currentGroupId, currentUser, imgUrl, caption, location, postType);
 
   Future<void> addAdToForum(
           String currentGroupId,
-          User currentUser,
+          UserModel currentUser,
           List<String> imgUrl,
           String caption,
           String description,
@@ -126,7 +125,7 @@ class Repository {
 
   Future<void> addAdToReview(
           String currentGroupId,
-          User currentUser,
+          UserModel currentUser,
           String imgUrl,
           String caption,
           String description,
@@ -166,15 +165,15 @@ class Repository {
           postType);
 
   Future<void> addDiscussionToForum(
-          String currentGroupId, User currentUser, String caption) =>
+          String currentGroupId, UserModel currentUser, String caption) =>
       _firebaseProvider.addDiscussionToForum(
           currentGroupId, currentUser, caption);
 
-  Future<void> addDiscussionToDb(User currentUser, String caption) =>
+  Future<void> addDiscussionToDb(UserModel currentUser, String caption) =>
       _firebaseProvider.addDiscussionToDb(currentUser, caption);
 
   Future<void> addDiscussionToDept(String currentTeamId, String currentDeptId,
-          User currentUser, String caption, String discussId) =>
+          UserModel currentUser, String caption, String discussId) =>
       _firebaseProvider.addDiscussionToDept(
           currentTeamId, currentDeptId, currentUser, caption, discussId);
 
@@ -182,19 +181,19 @@ class Repository {
           String currentTeamId,
           String currentDeptId,
           String currentProjectId,
-          User currentUser,
+          UserModel currentUser,
           String caption) =>
       _firebaseProvider.addDiscussionToProject(
           currentTeamId, currentDeptId, currentProjectId, currentUser, caption);
 
-  Future<void> addDiscussionToReview(String currentGroupId, User currentUser,
-          String caption, String postType) =>
+  Future<void> addDiscussionToReview(String currentGroupId,
+          UserModel currentUser, String caption, String postType) =>
       _firebaseProvider.addDiscussionToReview(
           currentGroupId, currentUser, caption, postType);
 
   Future<void> addPollToForum(
     String currentGroupId,
-    User currentUser,
+    UserModel currentUser,
     String caption,
     String postType,
     int pollLength,
@@ -219,7 +218,7 @@ class Repository {
           String currentTeamId,
           String currentDeptId,
           String currentProjectId,
-          User currentUser,
+          UserModel currentUser,
           String caption,
           int pollLength,
           String postType,
@@ -243,7 +242,7 @@ class Repository {
   Future<void> addPollToDept(
           String currentTeamId,
           String currentDeptId,
-          User currentUser,
+          UserModel currentUser,
           String caption,
           int pollLength,
           String postType,
@@ -256,7 +255,7 @@ class Repository {
 
   Future<void> addPollToReview(
     String currentGroupId,
-    User currentUser,
+    UserModel currentUser,
     String caption,
     String postType,
     int pollLength,
@@ -303,7 +302,7 @@ class Repository {
           ownerPhotoUrl);
 
   Future<void> addGroupToDb(
-          User currentUser,
+          UserModel currentUser,
           String groupName,
           String description,
           String location,
@@ -315,7 +314,7 @@ class Repository {
           location, agenda, isPrivate, isHidden, rules);
 
   Future<void> addProjectToDept(
-          User currentUser,
+          UserModel currentUser,
           String teamUid,
           String departmentUid,
           String projectName,
@@ -326,7 +325,7 @@ class Repository {
           departmentUid, projectName, isPrivate, color, pId);
 
   Future<void> addDeptToteam(
-          User currentUser,
+          UserModel currentUser,
           String teamUid,
           String departmentUid,
           String departmentName,
@@ -336,12 +335,12 @@ class Repository {
       _firebaseProvider.addDepartmentToTeam(currentUser, teamUid, departmentUid,
           departmentName, isPrivate, img, color);
 
-  Future<void> addTeamToDb(User currentUser, String teamName,
+  Future<void> addTeamToDb(UserModel currentUser, String teamName,
           List<String> department, int color) =>
       _firebaseProvider.addTeamToDb(currentUser, teamName, department, color);
 
   Future<void> addOfflineEventToDb(
-    User currentUser,
+    UserModel currentUser,
     String imgUrl,
     String caption,
     String city,
@@ -373,7 +372,7 @@ class Repository {
           geoPoint);
 
   Future<void> addOnlineEventToDb(
-    User currentUser,
+    UserModel currentUser,
     String imgUrl,
     String caption,
     String host,
@@ -403,7 +402,7 @@ class Repository {
 
   Future<void> addOfflineEventToForum(
     String currentGroupId,
-    User currentUser,
+    UserModel currentUser,
     String imgUrl,
     String caption,
     String city,
@@ -437,7 +436,7 @@ class Repository {
 
   Future<void> addOnlineEventToForum(
     String currentGroupId,
-    User currentUser,
+    UserModel currentUser,
     String imgUrl,
     String caption,
     String host,
@@ -466,17 +465,22 @@ class Repository {
         ticketWebsite,
       );
 
-  Future<void> addNewsToDb(
-          User currentUser, String imgUrl, String caption, String source) =>
+  Future<void> addNewsToDb(UserModel currentUser, String imgUrl, String caption,
+          String source) =>
       _firebaseProvider.addNewsToDb(currentUser, imgUrl, caption, source);
 
-  Future<void> addJobToDb(User currentUser, String caption, String location,
-          String industry, String description, String website) =>
+  Future<void> addJobToDb(
+          UserModel currentUser,
+          String caption,
+          String location,
+          String industry,
+          String description,
+          String website) =>
       _firebaseProvider.addJobPostToDb(
           currentUser, caption, location, industry, description, website);
 
   Future<void> addPromotionToDb(
-    User currentUser,
+    UserModel currentUser,
     String caption,
     String location,
     String portfolio,
@@ -491,7 +495,7 @@ class Repository {
       _firebaseProvider.addPromotionToDb(currentUser, caption, location,
           portfolio, description, skills, experience, education);
 
-  Future<User> retreiveUserDetails(FirebaseUser user) =>
+  Future<UserModel> retreiveUserDetails(User user) =>
       _firebaseProvider.retrieveUserDetails(user);
 
   Future<Group> retreiveGroupDetails(String group) =>
@@ -561,37 +565,37 @@ class Repository {
           String userId, DocumentReference reference, String label) =>
       _firebaseProvider.checkIfUserVotedOrNot(userId, reference, label);
 
-  Future<List<DocumentSnapshot>> retrievePosts(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrievePosts(User user) =>
       _firebaseProvider.retrievePosts(user);
 
-  Future<List<DocumentSnapshot>> retrieveGroupPosts(FirebaseUser group) =>
+  Future<List<DocumentSnapshot>> retrieveGroupPosts(User group) =>
       _firebaseProvider.retrieveGroupPosts(group);
 
-  Future<List<DocumentSnapshot>> retrieveFeeds(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrieveFeeds(User user) =>
       _firebaseProvider.retrieveFeeds(user);
 
-  Future<List<DocumentSnapshot>> retrieveEvents(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrieveEvents(User user) =>
       _firebaseProvider.retrieveEvents(user);
 
-  Future<List<DocumentSnapshot>> retrieveNews(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrieveNews(User user) =>
       _firebaseProvider.retrieveNews(user);
 
-  Future<List<DocumentSnapshot>> retrieveJobs(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrieveJobs(User user) =>
       _firebaseProvider.retrieveJobs(user);
 
-  Future<List<DocumentSnapshot>> retrievePromotion(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrievePromotion(User user) =>
       _firebaseProvider.retrievePromotion(user);
 
-  Future<List<DocumentSnapshot>> retrieveFollowers(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrieveFollowers(User user) =>
       _firebaseProvider.retrieveFollowers(user);
 
-  Future<List<String>> fetchAllUserNames(FirebaseUser user) =>
+  Future<List<String>> fetchAllUserNames(User user) =>
       _firebaseProvider.fetchAllUserNames(user);
 
   Future<String> fetchUidBySearchedName(String name) =>
       _firebaseProvider.fetchUidBySearchedName(name);
 
-  Future<User> fetchUserDetailsById(String uid) =>
+  Future<UserModel> fetchUserDetailsById(String uid) =>
       _firebaseProvider.fetchUserDetailsById(uid);
 
   Future<Group> fetchGroupDetailsById(String uid) =>
@@ -613,14 +617,14 @@ class Repository {
       _firebaseProvider.fetchListDetailsById(
           uid, departmentUid, projectId, listUid);
 
-  Future<User> fetchPostDetailsById(String uid, String postId) =>
+  Future<UserModel> fetchPostDetailsById(String uid, String postId) =>
       _firebaseProvider.fetchPostDetailsById(uid, postId);
 
   Future<void> followUser(
           {String currentUserId,
           String followingUserId,
-          User followingUser,
-          User currentUser}) =>
+          UserModel followingUser,
+          UserModel currentUser}) =>
       _firebaseProvider.followUser(
           currentUserId: currentUserId,
           followingUserId: followingUserId,
@@ -727,8 +731,8 @@ class Repository {
   Future<void> unFollowUser(
           {String currentUserId,
           String followingUserId,
-          User followingUser,
-          User currentUser}) =>
+          UserModel followingUser,
+          UserModel currentUser}) =>
       _firebaseProvider.unFollowUser(
           currentUserId: currentUserId,
           followingUserId: followingUserId,
@@ -739,7 +743,7 @@ class Repository {
       _firebaseProvider.deleteInvite(
           currentGroupId: currentGroupId, followingUserId: followingUserId);
 
-  Future<void> addChatRoom({User followingUser, User currentUser}) =>
+  Future<void> addChatRoom({UserModel followingUser, UserModel currentUser}) =>
       _firebaseProvider.addChatRoom(
           followingUser: followingUser, currentUser: currentUser);
 
@@ -771,8 +775,9 @@ class Repository {
       _firebaseProvider.updatePhoto(photoUrl, uid);
 
   Future<void> updateDetails(String uid, String name, String bio, String email,
-          String phone, String website) =>
-      _firebaseProvider.updateDetails(uid, name, bio, email, phone, website);
+          String phone, String website, String location) =>
+      _firebaseProvider.updateDetails(
+          uid, name, bio, email, phone, website, location);
 
   Future<void> updateEducationDetails(
           String uid,
@@ -823,26 +828,26 @@ class Repository {
   Future<void> updatePrducts(String uid, List<String> products) =>
       _firebaseProvider.updateProducts(uid, products);
 
-  Future<List<String>> fetchUserNames(FirebaseUser user) =>
+  Future<List<String>> fetchUserNames(User user) =>
       _firebaseProvider.fetchUserNames(user);
 
-  Future<List<User>> fetchAllUsers(FirebaseUser user) =>
+  Future<List<UserModel>> fetchAllUsers(User user) =>
       _firebaseProvider.fetchAllUsers(user);
 
   Future<List<Member>> fetchAllProjectMembers(
           String teamUid, String deptUid, String projectUid) =>
       _firebaseProvider.fetchAllProjectMembers(teamUid, deptUid, projectUid);
 
-  Future<List<Group>> fetchAllGroups(FirebaseUser user) =>
+  Future<List<Group>> fetchAllGroups(User user) =>
       _firebaseProvider.fetchAllGroups(user);
 
-  Future<List<Group>> fetchMyGroups(FirebaseUser user) =>
+  Future<List<Group>> fetchMyGroups(User user) =>
       _firebaseProvider.fetchMyGroups(user);
 
-  Future<List<Team>> fetchMyTeams(FirebaseUser user) =>
+  Future<List<Team>> fetchMyTeams(User user) =>
       _firebaseProvider.fetchMyTeams(user);
 
-  Future<List<User>> fetchAllCompanies(FirebaseUser user) =>
+  Future<List<UserModel>> fetchAllCompanies(User user) =>
       _firebaseProvider.fetchAllCompanies(user);
 
   void uploadImageMsgToDb(String url, String receiverUid, String senderuid,
@@ -861,16 +866,16 @@ class Repository {
   Future<void> addMessageToGroup(Message message, Group receiverGroup) =>
       _firebaseProvider.addMessageToGroup(message, receiverGroup);
 
-  Future<List<DocumentSnapshot>> fetchFeed(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> fetchFeed(User user) =>
       _firebaseProvider.fetchFeed(user);
 
-  Future<List<String>> fetchFollowingUids(FirebaseUser user) =>
+  Future<List<String>> fetchFollowingUids(User user) =>
       _firebaseProvider.fetchFollowingUids(user);
 
-  Future<List<User>> fetchFollowingUsers(FirebaseUser user) =>
+  Future<List<UserModel>> fetchFollowingUsers(User user) =>
       _firebaseProvider.fetchFollowingUsers(user);
 
-  Future<List<User>> fetchFollowUsers(FirebaseUser user) =>
+  Future<List<UserModel>> fetchFollowUsers(User user) =>
       _firebaseProvider.fetchFollowUsers(user);
 
   //Future<List<DocumentSnapshot>> retrievePostByUID(String uid) => _firebaseProvider.retrievePostByUID(uid);

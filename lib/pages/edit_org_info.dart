@@ -35,7 +35,7 @@ class EditOrgInfo extends StatefulWidget {
 
 class _EditOrgInfoState extends State<EditOrgInfo> {
   var _repository = Repository();
-  FirebaseUser currentUser;
+  User currentUser;
   final _employeeController = TextEditingController();
   final _gstController = TextEditingController();
   final _companyNameController = TextEditingController();
@@ -50,7 +50,7 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
   final format = DateFormat.y();
   bool isSelected = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var _gstKey = GlobalKey<FormState>();
 
@@ -73,8 +73,8 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
 
   void getIndustry() async {
     try {
-      final response =
-          await http.get("https://kuldeeprawat64.github.io/data/industry.json");
+      final response = await http.get(
+          Uri.parse("https://kuldeeprawat64.github.io/data/industry.json"));
       if (response.statusCode == 200) {
         industries = loadIndustry(response.body);
         print('industry: ${industries.length}');
@@ -124,8 +124,8 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
         _industryController.text.isNotEmpty &&
         _productController.text.isNotEmpty &&
         _gstValid) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      _firestore.collection('users').document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      _firestore.collection('users').doc(currentUser.uid).update({
         "displayName": _companyNameController.text,
         "gst": _gstController.text,
         "employees": _employeeController.text,

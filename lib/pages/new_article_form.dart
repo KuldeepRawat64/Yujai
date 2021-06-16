@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,7 +28,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:date_field/date_field.dart';
 
 class NewArticleForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
 
@@ -64,10 +65,14 @@ class _NewJobFormState extends State<NewArticleForm> {
   bool skillFirst = false;
   bool skillSecond = false;
   bool skillThird = false;
-  User _user;
+  UserModel _user;
   List<dynamic> selectedSkills = [];
   String valueEmpType;
   String valueIndustry;
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
 
   List<String> categoryList = [
     'Conference',
@@ -133,8 +138,8 @@ class _NewJobFormState extends State<NewArticleForm> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -483,19 +488,37 @@ class _NewJobFormState extends State<NewArticleForm> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    setState(() {
-      _locationController.text = formattedAddress;
-    });
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    locationController.text = _currentAddress;
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 
   _submitForm(BuildContext context) {

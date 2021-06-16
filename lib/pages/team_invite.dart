@@ -15,7 +15,7 @@ class TeamInvite extends StatefulWidget {
   final String gid;
   final String name;
   final Team group;
-  final User currentuser;
+  final UserModel currentuser;
   const TeamInvite({this.gid, this.name, this.group, this.currentuser});
 
   @override
@@ -24,7 +24,7 @@ class TeamInvite extends StatefulWidget {
 
 class _TeamInviteState extends State<TeamInvite> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -51,8 +51,8 @@ class _TeamInviteState extends State<TeamInvite> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -64,7 +64,7 @@ class _TeamInviteState extends State<TeamInvite> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: new Color(0xfff6f6f6),
+        backgroundColor: new Color(0xfff6f6f6),
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
@@ -75,12 +75,12 @@ class _TeamInviteState extends State<TeamInvite> {
                 size: screenSize.height * 0.045,
               ),
               onPressed: () => Navigator.pop(context)),
-      //    centerTitle: true,
+          //    centerTitle: true,
           backgroundColor: const Color(0xffffffff),
           title: Text(
             'Team Invite',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -173,9 +173,9 @@ class _TeamInviteState extends State<TeamInvite> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('users')
-          .document(_user.uid)
+          .doc(_user.uid)
           .collection('followers')
           .where(
         'accountType',

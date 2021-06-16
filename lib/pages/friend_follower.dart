@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Yujai/widgets/list_Followers.dart';
 
 class FriendFollower extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
 
   const FriendFollower({Key key, this.user, this.followingUser})
       : super(key: key);
@@ -17,8 +17,8 @@ class FriendFollower extends StatefulWidget {
 
 class _FriendFollowerState extends State<FriendFollower> {
   var _repository = Repository();
-  User _user = User();
-  List<User> usersList = List<User>();
+  UserModel _user = UserModel();
+  List<UserModel> usersList = List<UserModel>();
   List<DocumentSnapshot> listFriendFollowers = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _future;
   ScrollController _scrollController = ScrollController();

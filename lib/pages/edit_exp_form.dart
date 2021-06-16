@@ -12,7 +12,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditExperienceForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
   final Map<String, dynamic> experience;
   EditExperienceForm({this.currentUser, this.experience});
 
@@ -23,7 +23,7 @@ class EditExperienceForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditExperienceForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _companyController = TextEditingController();
   final _designationController = TextEditingController();
   int startDate = 0;
@@ -95,10 +95,10 @@ class _EditProfileScreenState extends State<EditExperienceForm> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(currentUser.uid)
-          .updateData({
+          .doc(currentUser.uid)
+          .update({
         'experience': FieldValue.arrayUnion([
           {
             'company': _companyController.text,
@@ -216,10 +216,7 @@ class _EditProfileScreenState extends State<EditExperienceForm> {
   }
 
   deletePost() {
-    Firestore.instance
-        .collection('users')
-        .document(currentUser.uid)
-        .updateData({
+    FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
       'experience': FieldValue.arrayRemove([widget.experience])
     }).then((value) => Navigator.pop(context));
   }

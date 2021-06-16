@@ -27,7 +27,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:date_field/date_field.dart';
 
 class NewJobForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
 
@@ -62,7 +62,7 @@ class _NewJobFormState extends State<NewJobForm> {
   bool skillFirst = false;
   bool skillSecond = false;
   bool skillThird = false;
-  User _user;
+  UserModel _user;
   List<dynamic> selectedSkills = [];
   String valueEmpType;
   String valueIndustry;
@@ -131,8 +131,8 @@ class _NewJobFormState extends State<NewJobForm> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -474,20 +474,20 @@ class _NewJobFormState extends State<NewJobForm> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    setState(() {
-      _locationController.text = formattedAddress;
-    });
-  }
+  // getUserLocation() async {
+  //   Position position = await Geolocator()
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //   List<Placemark> placemarks = await Geolocator()
+  //       .placemarkFromCoordinates(position.latitude, position.longitude);
+  //   Placemark placemark = placemarks[0];
+  //   String completeAddress =
+  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+  //   print(completeAddress);
+  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
+  //   setState(() {
+  //     _locationController.text = formattedAddress;
+  //   });
+  // }
 
   _submitForm(BuildContext context) {
     if (_formKey.currentState.validate()) {

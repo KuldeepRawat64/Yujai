@@ -30,7 +30,7 @@ class TeamPage extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
 
   const TeamPage({
     this.gid,
@@ -43,7 +43,7 @@ class TeamPage extends StatefulWidget {
 }
 
 class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
-  static User currentuser;
+  static UserModel currentuser;
   TabController _tabController;
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
@@ -389,16 +389,16 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              Firestore.instance
+                              FirebaseFirestore.instance
                                   .collection('teams')
-                                  .document(widget.gid)
+                                  .doc(widget.gid)
                                   .delete()
                                   .then((value) {
-                                Firestore.instance
+                                FirebaseFirestore.instance
                                     .collection('users')
-                                    .document(widget.currentUser.uid)
+                                    .doc(widget.currentUser.uid)
                                     .collection('teams')
-                                    .document(widget.gid)
+                                    .doc(widget.gid)
                                     .delete();
                                 Navigator.push(
                                     context,
@@ -574,21 +574,21 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
   }
 
   leaveTeam() async {
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('teams')
-        .document(_team.uid)
+        .doc(_team.uid)
         .collection('members')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .delete()
         .then((value) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
     });
 
-    return Firestore.instance
+    return FirebaseFirestore.instance
         .collection('users')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .collection('teams')
-        .document(_team.uid)
+        .doc(_team.uid)
         .delete()
         .then((value) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));

@@ -34,7 +34,7 @@ class ProjectPage extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final String label;
   final String projectId;
   final String projectName;
@@ -122,7 +122,7 @@ class _ProjectPageState extends State<ProjectPage>
   String currentUserId, followingUserId;
   File imageFile;
   bool isCompany = false;
-  static User currentuser;
+  static UserModel currentuser;
   bool isMember;
   bool userAgreed = false;
   bool valueFirst = false;
@@ -1009,11 +1009,11 @@ class _ProjectPageState extends State<ProjectPage>
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(_department.uid)
+                                .doc(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -1028,12 +1028,12 @@ class _ProjectPageState extends State<ProjectPage>
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentProject,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return new DropdownMenuItem(
-                                        value: doc.data["uid"],
+                                        value: doc["uid"],
                                         child: Text(
-                                          doc.data["projectName"],
+                                          doc["projectName"],
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontFamily: FontNameDefault,
@@ -1430,11 +1430,11 @@ class _ProjectPageState extends State<ProjectPage>
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(_department.uid)
+                                .doc(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -1450,12 +1450,12 @@ class _ProjectPageState extends State<ProjectPage>
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentProject,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return new DropdownMenuItem(
-                                        value: doc.data["uid"],
+                                        value: doc["uid"],
                                         child: Text(
-                                          doc.data["projectName"],
+                                          doc["projectName"],
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textSubTitle(context),
@@ -1730,11 +1730,11 @@ class _ProjectPageState extends State<ProjectPage>
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(_department.uid)
+                                .doc(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -1749,12 +1749,12 @@ class _ProjectPageState extends State<ProjectPage>
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentProject,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return new DropdownMenuItem(
-                                        value: doc.data["uid"],
+                                        value: doc["uid"],
                                         child: Text(
-                                          doc.data["projectName"],
+                                          doc["projectName"],
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textSubTitle(context),
@@ -1986,11 +1986,11 @@ class _ProjectPageState extends State<ProjectPage>
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(_department.uid)
+                                .doc(_department.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -2005,12 +2005,12 @@ class _ProjectPageState extends State<ProjectPage>
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentProject,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return new DropdownMenuItem(
-                                        value: doc.data["uid"],
+                                        value: doc["uid"],
                                         child: Text(
-                                          doc.data["projectName"],
+                                          doc["projectName"],
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textSubTitle(context),
@@ -2035,13 +2035,13 @@ class _ProjectPageState extends State<ProjectPage>
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(_department.uid)
+                                .doc(_department.uid)
                                 .collection('projects')
-                                .document(widget.projectId)
+                                .doc(widget.projectId)
                                 .collection('list')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -2056,11 +2056,11 @@ class _ProjectPageState extends State<ProjectPage>
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentList,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return new DropdownMenuItem(
-                                        value: doc.data["listId"],
-                                        child: Text(doc.data["listName"],
+                                        value: doc["listId"],
+                                        child: Text(doc["listName"],
                                             style: TextStyle(
                                               fontFamily: FontNameDefault,
                                               fontSize: textSubTitle(context),
@@ -2193,22 +2193,22 @@ class _ProjectPageState extends State<ProjectPage>
 
   leaveGroup() async {
     if (isMember == true) {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('groups')
-          .document(_team.uid)
+          .doc(_team.uid)
           .collection('members')
-          .document(currentuser.uid)
+          .doc(currentuser.uid)
           .delete()
           .then((value) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Home()));
       });
 
-      return Firestore.instance
+      return FirebaseFirestore.instance
           .collection('users')
-          .document(currentuser.uid)
+          .doc(currentuser.uid)
           .collection('groups')
-          .document(_team.uid)
+          .doc(_team.uid)
           .delete()
           .then((value) {
         Navigator.pushReplacement(
@@ -2476,7 +2476,7 @@ class _ProjectPageState extends State<ProjectPage>
         }));
   }
 
-  void addInbox(String type, User currentUser) {
+  void addInbox(String type, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
     if (currentUser.uid == _team.currentUserUid) {
       return print('Owner liked');
@@ -2492,14 +2492,14 @@ class _ProjectPageState extends State<ProjectPage>
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(actId)
-          .setData(_feed.toMap(_feed))
+          .doc(actId)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Inbox added');
       });

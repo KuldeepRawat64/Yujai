@@ -23,7 +23,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 class ListPostForum extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User currentuser;
+  final UserModel currentuser;
   final int index;
   final String gid;
   final String name;
@@ -102,8 +102,8 @@ class _ListPostForumState extends State<ListPostForum> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -479,7 +479,7 @@ class _ListPostForumState extends State<ListPostForum> {
                   top: screenSize.height * 0.01,
                   left: screenSize.width / 30),
               child: Text(
-                widget.documentSnapshot.data['caption'],
+                widget.documentSnapshot['caption'],
                 style: TextStyle(
                     //   color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -497,7 +497,7 @@ class _ListPostForumState extends State<ListPostForum> {
             ),
             child: Column(
               children: [
-                widget.documentSnapshot.data['option1'] != ''
+                widget.documentSnapshot['option1'] != ''
                     ? Column(
                         children: [
                           //     SizedBox(height: screenSize.height * 0.01),
@@ -529,7 +529,7 @@ class _ListPostForumState extends State<ListPostForum> {
                                 child: !_isVoted
                                     ? Center(
                                         child: Text(
-                                        widget.documentSnapshot.data['option1'],
+                                        widget.documentSnapshot['option1'],
                                         style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textBody1(context),
@@ -552,8 +552,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                widget.documentSnapshot
-                                                    .data['option1'],
+                                                widget.documentSnapshot[
+                                                    'option1'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     color: Colors.black54,
@@ -575,7 +575,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot.data['option2'] != ''
+                widget.documentSnapshot['option2'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -607,7 +607,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot.data['option2'],
+                                      widget.documentSnapshot['option2'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           color: Theme.of(context).primaryColor,
@@ -628,8 +628,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget.documentSnapshot
-                                                  .data['option2'],
+                                              widget
+                                                  .documentSnapshot['option2'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -651,7 +651,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot.data['option3'] != ''
+                widget.documentSnapshot['option3'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -683,7 +683,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot.data['option3'],
+                                      widget.documentSnapshot['option3'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           color: Theme.of(context).primaryColor,
@@ -704,8 +704,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget.documentSnapshot
-                                                  .data['option3'],
+                                              widget
+                                                  .documentSnapshot['option3'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -727,7 +727,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot.data['option4'] != ''
+                widget.documentSnapshot['option4'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -759,7 +759,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot.data['option4'],
+                                      widget.documentSnapshot['option4'],
                                       style: TextStyle(
                                           color: Theme.of(context).primaryColor,
                                           fontWeight: FontWeight.bold,
@@ -780,8 +780,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget.documentSnapshot
-                                                  .data['option4'],
+                                              widget
+                                                  .documentSnapshot['option4'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -814,7 +814,7 @@ class _ListPostForumState extends State<ListPostForum> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       checkPollStatus(
-                        widget.documentSnapshot.data['pollLength'],
+                        widget.documentSnapshot['pollLength'],
                       ),
                       Text(
                         '${totalVotes.length} Total votes',
@@ -908,31 +908,30 @@ class _ListPostForumState extends State<ListPostForum> {
               leading: CircleAvatar(
                   radius: screenSize.height * 0.03,
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot.data['postOwnerPhotoUrl'])),
+                      widget.documentSnapshot['postOwnerPhotoUrl'])),
               title: InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FriendProfileScreen(
-                              uid: widget.documentSnapshot.data['ownerUid'],
-                              name: widget
-                                  .documentSnapshot.data['postOwnerName'])));
+                              uid: widget.documentSnapshot['ownerUid'],
+                              name: widget.documentSnapshot['postOwnerName'])));
                 },
                 child: new Text(
-                  widget.documentSnapshot.data['postOwnerName'],
+                  widget.documentSnapshot['postOwnerName'],
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context),
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              subtitle: widget.documentSnapshot.data['location'] != '' &&
-                      widget.documentSnapshot.data['location'] != null
+              subtitle: widget.documentSnapshot['location'] != '' &&
+                      widget.documentSnapshot['location'] != null
                   ? Row(
                       children: [
                         new Text(
-                          widget.documentSnapshot.data['location'],
+                          widget.documentSnapshot['location'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //    fontSize: textBody1(context),
@@ -955,10 +954,9 @@ class _ListPostForumState extends State<ListPostForum> {
                             top: screenSize.height * 0.002,
                           ),
                           child: Text(
-                              widget.documentSnapshot.data['time'] != null
-                                  ? timeago.format(widget
-                                      .documentSnapshot.data['time']
-                                      .toDate())
+                              widget.documentSnapshot['time'] != null
+                                  ? timeago.format(
+                                      widget.documentSnapshot['time'].toDate())
                                   : '',
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
@@ -973,9 +971,9 @@ class _ListPostForumState extends State<ListPostForum> {
                         top: screenSize.height * 0.002,
                       ),
                       child: Text(
-                          widget.documentSnapshot.data['time'] != null
+                          widget.documentSnapshot['time'] != null
                               ? timeago.format(
-                                  widget.documentSnapshot.data['time'].toDate())
+                                  widget.documentSnapshot['time'].toDate())
                               : '',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
@@ -983,7 +981,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               color: Colors.grey)),
                     ),
               trailing: widget.currentuser.uid ==
-                          widget.documentSnapshot.data['ownerUid'] ||
+                          widget.documentSnapshot['ownerUid'] ||
                       widget.group != null &&
                           widget.group.currentUserUid == widget.currentuser.uid
                   ? InkWell(
@@ -1026,22 +1024,22 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: Icon(Icons.more_horiz_outlined))),
                     ),
             ),
-            widget.documentSnapshot.data['postType'] == 'poll'
+            widget.documentSnapshot['postType'] == 'poll'
                 ? Container(
                     // constraints: BoxConstraints.tight(Size.square(screenSize.height)),
                     child: _buildFlipAnimation())
-                : widget.documentSnapshot.data['imgUrl'] == null ||
-                        widget.documentSnapshot.data['imgUrl'] == ''
+                : widget.documentSnapshot['imgUrl'] == null ||
+                        widget.documentSnapshot['imgUrl'] == ''
                     ? Container()
                     : Center(
                         child: FadeInImage.assetNetwork(
                           fadeInDuration: const Duration(milliseconds: 300),
                           placeholder: 'assets/images/placeholder.png',
                           placeholderScale: 10,
-                          image: widget.documentSnapshot.data['imgUrl'],
+                          image: widget.documentSnapshot['imgUrl'],
                         ),
                       ),
-            widget.documentSnapshot.data['postType'] == 'poll'
+            widget.documentSnapshot['postType'] == 'poll'
                 ? Container()
                 : Padding(
                     padding: EdgeInsets.only(
@@ -1057,7 +1055,7 @@ class _ListPostForumState extends State<ListPostForum> {
                           top: screenSize.height * 0.01,
                           left: screenSize.width * 0.05),
                       child: Text(
-                        widget.documentSnapshot.data['caption'],
+                        widget.documentSnapshot['caption'],
                         style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context)),
@@ -1150,7 +1148,7 @@ class _ListPostForumState extends State<ListPostForum> {
                                         backgroundImage:
                                             CachedNetworkImageProvider(
                                                 likesSnapshot.data[0]
-                                                    .data['ownerPhotoUrl']),
+                                                    ['ownerPhotoUrl']),
                                       ),
                                       likesSnapshot.data.length > 1
                                           ? Positioned(
@@ -1159,9 +1157,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                                 radius: 15.0,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[1].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[1]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -1173,9 +1170,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                                 backgroundColor: Colors.grey,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[2].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[2]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -1187,9 +1183,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                                 backgroundColor: Colors.grey,
                                                 backgroundImage:
                                                     CachedNetworkImageProvider(
-                                                        likesSnapshot
-                                                                .data[3].data[
-                                                            'ownerPhotoUrl']),
+                                                        likesSnapshot.data[3]
+                                                            ['ownerPhotoUrl']),
                                               ),
                                             )
                                           : Container(),
@@ -1519,8 +1514,8 @@ class _ListPostForumState extends State<ListPostForum> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentuser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
@@ -1534,15 +1529,15 @@ class _ListPostForumState extends State<ListPostForum> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('votes')
-        .document(widget.currentuser.uid)
-        .setData(_vote.toMap(_vote))
+        .doc(widget.currentuser.uid)
+        .set(_vote.toMap(_vote))
         .then((value) {
       print("Post Voted");
     });
   }
 
   void addVoteToSelectedOption(
-      DocumentReference reference, User currentUser, String option) {
+      DocumentReference reference, UserModel currentUser, String option) {
     var _vote = Vote(
         ownerName: widget.currentuser.displayName,
         ownerPhotoUrl: widget.currentuser.photoUrl,
@@ -1550,8 +1545,8 @@ class _ListPostForumState extends State<ListPostForum> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection(option)
-        .document(widget.currentuser.uid)
-        .setData(_vote.toMap(_vote))
+        .doc(widget.currentuser.uid)
+        .set(_vote.toMap(_vote))
         .then((value) {
       print("Option Voted");
     });
@@ -1889,13 +1884,13 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -1909,13 +1904,13 @@ class _ListPostForumState extends State<ListPostForum> {
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid == snapshot.data['ownerUid']) {
+    if (widget.currentuser.uid == snapshot['ownerUid']) {
       return print('Owner liked');
     } else {
       var _feed = Feed(
-        postOwnerUid: snapshot.data['ownerUid'],
+        postOwnerUid: snapshot['ownerUid'],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
         type: 'like',
@@ -1925,14 +1920,14 @@ class _ListPostForumState extends State<ListPostForum> {
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
-          .setData(_feed.toMap(_feed))
+          .doc(snapshot['postId'])
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Group Feed added');
       });
@@ -1942,26 +1937,27 @@ class _ListPostForumState extends State<ListPostForum> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");
     });
   }
 
-  void removeLikeFromActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void removeLikeFromActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     //  bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (currentUser.uid == snapshot.data['ownerUid']) {
+    if (currentUser.uid == snapshot['ownerUid']) {
       return print('Owner feed');
     } else {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
+          .doc(snapshot['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {

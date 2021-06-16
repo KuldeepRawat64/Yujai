@@ -59,7 +59,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isCompany = false;
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool isUser = false;
@@ -92,8 +92,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -2750,12 +2750,12 @@ class CompanyHeader extends StatelessWidget {
   const CompanyHeader({
     Key key,
     @required this.context,
-    @required User user,
+    @required UserModel user,
   })  : _user = user,
         super(key: key);
 
   final BuildContext context;
-  final User _user;
+  final UserModel _user;
 
   @override
   Widget build(BuildContext context) {
@@ -2842,12 +2842,12 @@ class UserHeader extends StatelessWidget {
   const UserHeader({
     Key key,
     @required this.context,
-    @required User user,
+    @required UserModel user,
   })  : _user = user,
         super(key: key);
 
   final BuildContext context;
-  final User _user;
+  final UserModel _user;
 
   @override
   Widget build(BuildContext context) {
@@ -2934,12 +2934,12 @@ class MilitaryBody extends StatelessWidget {
   const MilitaryBody({
     Key key,
     @required this.context,
-    @required User user,
+    @required UserModel user,
   })  : _user = user,
         super(key: key);
 
   final BuildContext context;
-  final User _user;
+  final UserModel _user;
 
   @override
   Widget build(BuildContext context) {
@@ -2962,16 +2962,16 @@ class MilitaryBody extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(
-                              bio: _user.bio,
-                              photoUrl: _user.photoUrl,
-                              name: _user.displayName,
-                              email: _user.email,
-                              phone: _user.phone,
-                            )));
+                // Navigator.push(
+                //     context,
+                // MaterialPageRoute(
+                //     builder: (context) => EditProfileScreen(
+                //           bio: _user.bio,
+                //           photoUrl: _user.photoUrl,
+                //           name: _user.displayName,
+                //           email: _user.email,
+                //           phone: _user.phone,
+                //         )));
               },
               child: Container(
                 height: screenSize.height * 0.055,
@@ -3199,14 +3199,14 @@ class MilitaryBody extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(
-                            bio: _user.bio,
-                            photoUrl: _user.photoUrl,
-                            name: _user.displayName,
-                            email: _user.email)));
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => EditProfileScreen(
+                //             bio: _user.bio,
+                //             photoUrl: _user.photoUrl,
+                //             name: _user.displayName,
+                //             email: _user.email)));
               },
               child: Container(
                 height: screenSize.height * 0.055,

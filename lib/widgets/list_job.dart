@@ -9,7 +9,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class ListItemJob extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemJob({this.user, this.index, this.currentuser, this.documentSnapshot});
@@ -23,8 +23,8 @@ class _ListItemJobState extends State<ListItemJob> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -96,7 +96,7 @@ class _ListItemJobState extends State<ListItemJob> {
                   radius: screenSize.height * 0.03,
                   backgroundColor: Colors.grey,
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot.data['jobOwnerPhotoUrl']),
+                      widget.documentSnapshot['jobOwnerPhotoUrl']),
                 ),
               ),
               Padding(
@@ -120,7 +120,7 @@ class _ListItemJobState extends State<ListItemJob> {
                         padding:
                             EdgeInsets.only(top: screenSize.height * 0.012),
                         child: new Text(
-                          widget.documentSnapshot.data['caption'],
+                          widget.documentSnapshot['caption'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontWeight: FontWeight.bold,
@@ -132,7 +132,7 @@ class _ListItemJobState extends State<ListItemJob> {
                     Padding(
                       padding: EdgeInsets.only(top: screenSize.height * 0.01),
                       child: new Text(
-                        widget.documentSnapshot.data['jobOwnerName'],
+                        widget.documentSnapshot['jobOwnerName'],
                         style: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
@@ -146,9 +146,9 @@ class _ListItemJobState extends State<ListItemJob> {
               ),
               ListTile(
                   leading: new Text(
-                    widget.documentSnapshot.data['location'] != null ||
-                            widget.documentSnapshot.data['location']
-                        ? widget.documentSnapshot.data['location']
+                    widget.documentSnapshot['location'] != null ||
+                            widget.documentSnapshot['location']
+                        ? widget.documentSnapshot['location']
                         : '',
                     style: TextStyle(
                       fontFamily: FontNameDefault,
@@ -156,10 +156,10 @@ class _ListItemJobState extends State<ListItemJob> {
                       //     fontSize: textBody1(context),
                     ),
                   ),
-                  trailing: widget.documentSnapshot.data['time'] != null
+                  trailing: widget.documentSnapshot['time'] != null
                       ? Text(
-                          timeago.format(
-                              widget.documentSnapshot.data['time'].toDate()),
+                          timeago
+                              .format(widget.documentSnapshot['time'].toDate()),
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             //   fontSize: textbody2(context),
@@ -399,13 +399,13 @@ class _ListItemJobState extends State<ListItemJob> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.user.uid)
+        .doc(widget.user.uid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

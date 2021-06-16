@@ -11,7 +11,7 @@ import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
 class EditProfilePurpose extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditProfilePurpose({Key key, this.currentUser}) : super(key: key);
 
@@ -25,7 +25,7 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
   int _widgetId = 1;
   // Map<String, dynamic> currentSkill;
   var _repository = Repository();
-  User _user;
+  UserModel _user;
 
   @override
   void initState() {
@@ -34,8 +34,8 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -54,10 +54,10 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
             children: [
               Chip(
                 onDeleted: () {
-                  Firestore.instance
+                  FirebaseFirestore.instance
                       .collection('users')
-                      .document(widget.currentUser.uid)
-                      .updateData({
+                      .doc(widget.currentUser.uid)
+                      .update({
                     'purpose': FieldValue.arrayRemove([purpose[index]])
                   }).then((value) {
                     retrieveUserDetails();

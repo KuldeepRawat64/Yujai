@@ -30,7 +30,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class TaskDetail extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final String teamId, deptId, projectId, listId;
   final Project project;
   final Department department;
@@ -94,9 +94,9 @@ class _TaskDetailState extends State<TaskDetail> {
         });
       });
     _taskNameController =
-        TextEditingController(text: widget.documentSnapshot.data['taskName']);
-    _taskDescriptionController = TextEditingController(
-        text: widget.documentSnapshot.data['taskDescription']);
+        TextEditingController(text: widget.documentSnapshot['taskName']);
+    _taskDescriptionController =
+        TextEditingController(text: widget.documentSnapshot['taskDescription']);
     _commentTextController = TextEditingController(text: '');
   }
 
@@ -123,13 +123,11 @@ class _TaskDetailState extends State<TaskDetail> {
               fontFamily: FontNameDefault, fontSize: textHeader(context)),
           onChanged: (newValue) {
             if (_taskNameController.text.isNotEmpty)
-              widget.documentSnapshot.reference
-                  .updateData({'taskName': newValue});
+              widget.documentSnapshot.reference.update({'taskName': newValue});
           },
           onSubmitted: (newValue) {
             if (_taskNameController.text.isNotEmpty)
-              widget.documentSnapshot.reference
-                  .updateData({'taskName': newValue});
+              widget.documentSnapshot.reference.update({'taskName': newValue});
             setState(() {
               _isEditingText = false;
             });
@@ -204,18 +202,18 @@ class _TaskDetailState extends State<TaskDetail> {
                   snapshot.data['assignedName'] != ''
                       ? InkWell(
                           onTap: () {
-                            Firestore.instance
+                            FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.teamId)
+                                .doc(widget.teamId)
                                 .collection('departments')
-                                .document(widget.department.uid)
+                                .doc(widget.department.uid)
                                 .collection('projects')
-                                .document(widget.project.uid)
+                                .doc(widget.project.uid)
                                 .collection('list')
-                                .document(widget.listId)
+                                .doc(widget.listId)
                                 .collection('tasks')
-                                .document(snapshot.data['taskId'])
-                                .updateData({
+                                .doc(snapshot.data['taskId'])
+                                .update({
                               'assigned': '',
                               'assignedName': '',
                               'assignedEmail': '',
@@ -252,12 +250,12 @@ class _TaskDetailState extends State<TaskDetail> {
           onChanged: (newValue) {
             if (_taskNameController.text.isNotEmpty)
               widget.documentSnapshot.reference
-                  .updateData({'taskDescription': newValue});
+                  .update({'taskDescription': newValue});
           },
           onSubmitted: (newValue) {
             if (_taskNameController.text.isNotEmpty)
               widget.documentSnapshot.reference
-                  .updateData({'taskDescription': newValue});
+                  .update({'taskDescription': newValue});
             setState(() {
               _isEditingDesc = false;
             });
@@ -328,7 +326,7 @@ class _TaskDetailState extends State<TaskDetail> {
               return null;
             },
             onSaved: (value) {
-              widget.documentSnapshot.reference.updateData({
+              widget.documentSnapshot.reference.update({
                 'dueDateRangeStart': DateFormat.MMMd().format(value.start),
                 'dueDateRangeEnd': DateFormat.MMMd().format(value.end)
                 //'${value.start.month.toString() } / ${ value.start.day.toString()} - ${value.end.month.toString() } / ${ value.end.day.toString()}'
@@ -346,8 +344,8 @@ class _TaskDetailState extends State<TaskDetail> {
           _isEditingDate = true;
         });
       },
-      child: widget.documentSnapshot.data['dueDateRangeStart'] != '' &&
-              widget.documentSnapshot.data['dueDateRangeStart'] != null
+      child: widget.documentSnapshot['dueDateRangeStart'] != '' &&
+              widget.documentSnapshot['dueDateRangeStart'] != null
           ? Row(
               children: [
                 SizedBox(
@@ -358,7 +356,7 @@ class _TaskDetailState extends State<TaskDetail> {
                   width: screenSize.width * 0.005,
                 ),
                 Text(
-                  '${widget.documentSnapshot.data['dueDateRangeStart']} - ${widget.documentSnapshot.data['dueDateRangeEnd']}',
+                  '${widget.documentSnapshot['dueDateRangeStart']} - ${widget.documentSnapshot['dueDateRangeEnd']}',
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     color: Colors.black,
@@ -527,13 +525,13 @@ class _TaskDetailState extends State<TaskDetail> {
                     ),
                     Expanded(
                       child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance
+                        stream: FirebaseFirestore.instance
                             .collection('teams')
-                            .document(widget.teamId)
+                            .doc(widget.teamId)
                             .collection('departments')
-                            .document(widget.department.uid)
+                            .doc(widget.department.uid)
                             .collection('projects')
-                            .document(widget.project.uid)
+                            .doc(widget.project.uid)
                             .collection('members')
                             .orderBy('timestamp', descending: false)
                             .snapshots(),
@@ -545,40 +543,32 @@ class _TaskDetailState extends State<TaskDetail> {
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   //   scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data.documents.length,
+                                  itemCount: snapshot.data.docs.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return InkWell(
                                       onTap: () {
-                                        Firestore.instance
+                                        FirebaseFirestore.instance
                                             .collection('teams')
-                                            .document(widget.teamId)
+                                            .doc(widget.teamId)
                                             .collection('departments')
-                                            .document(widget.department.uid)
+                                            .doc(widget.department.uid)
                                             .collection('projects')
-                                            .document(widget.project.uid)
+                                            .doc(widget.project.uid)
                                             .collection('list')
-                                            .document(widget.listId)
+                                            .doc(widget.listId)
                                             .collection('tasks')
-                                            .document(widget.documentSnapshot
-                                                .data['taskId'])
-                                            .updateData({
-                                          'assigned': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerUid'],
+                                            .doc(widget
+                                                .documentSnapshot['taskId'])
+                                            .update({
+                                          'assigned': snapshot.data.docs[index]
+                                              ['ownerUid'],
                                           'assignedName': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerName'],
+                                              .data.docs[index]['ownerName'],
                                           'assignedEmail': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerEmail'],
+                                              .data.docs[index]['ownerEmail'],
                                           'assignedPhoto': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerPhotoUrl']
+                                              .data.docs[index]['ownerPhotoUrl']
                                         }).then((value) {
                                           setState(() {
                                             _isAssigned = true;
@@ -590,36 +580,30 @@ class _TaskDetailState extends State<TaskDetail> {
                                       child: ListTile(
                                           leading: CircleAvatar(
                                             radius: screenSize.height * 0.02,
-                                            backgroundImage: snapshot
-                                                                .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'] !=
+                                            backgroundImage: snapshot.data
+                                                                .docs[index]
+                                                            ['ownerPhotoUrl'] !=
                                                         '' &&
-                                                    snapshot
-                                                                .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'] !=
+                                                    snapshot.data.docs[index]
+                                                            ['ownerPhotoUrl'] !=
                                                         null
-                                                ? NetworkImage(snapshot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['ownerPhotoUrl'])
+                                                ? NetworkImage(
+                                                    snapshot.data.docs[index]
+                                                        ['ownerPhotoUrl'])
                                                 : AssetImage(
                                                     'assets/images/no_image.png'),
                                           ),
                                           title: Text(
-                                            snapshot.data.documents[index]
-                                                .data['ownerName'],
+                                            snapshot.data.docs[index]
+                                                ['ownerName'],
                                             style: TextStyle(
                                                 fontFamily: FontNameDefault,
                                                 fontSize:
                                                     textSubTitle(context)),
                                           ),
                                           subtitle: Text(
-                                            snapshot.data.documents[index]
-                                                .data['ownerEmail'],
+                                            snapshot.data.docs[index]
+                                                ['ownerEmail'],
                                             style: TextStyle(
                                                 fontFamily: FontNameDefault,
                                                 fontSize: textBody1(context)),
@@ -679,9 +663,8 @@ class _TaskDetailState extends State<TaskDetail> {
                     ),
                     InkWell(
                         onTap: () async {
-                          StorageReference photoref = await FirebaseStorage
-                              .instance
-                              .getReferenceFromUrl(imgurl);
+                          Reference photoref =
+                              await FirebaseStorage.instance.refFromURL(imgurl);
                           await photoref.delete().then((value) {
                             setState(() {
                               imgurl = '';
@@ -752,8 +735,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                 ownerUid: widget.currentuser.uid);
                             widget.documentSnapshot.reference
                                 .collection("comments")
-                                .document()
-                                .setData(_comment.toMap(_comment))
+                                .doc()
+                                .set(_comment.toMap(_comment))
                                 .whenComplete(() {
                               _commentTextController.text = "";
                               postId = Uuid().v4();
@@ -819,9 +802,8 @@ class _TaskDetailState extends State<TaskDetail> {
                     ),
                     InkWell(
                         onTap: () async {
-                          StorageReference photoref = await FirebaseStorage
-                              .instance
-                              .getReferenceFromUrl(imgurl);
+                          Reference photoref =
+                              await FirebaseStorage.instance.refFromURL(imgurl);
                           await photoref.delete().then((value) {
                             setState(() {
                               imgurl = '';
@@ -890,8 +872,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                 ownerUid: widget.currentuser.uid);
                             widget.documentSnapshot.reference
                                 .collection("comments")
-                                .document()
-                                .setData(_comment.toMap(_comment))
+                                .doc()
+                                .set(_comment.toMap(_comment))
                                 .whenComplete(() {
                               _commentTextController.text = "";
                               postId = Uuid().v4();
@@ -996,9 +978,9 @@ class _TaskDetailState extends State<TaskDetail> {
               return ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) =>
-                      commentItem(snapshot.data.documents[index])));
+                      commentItem(snapshot.data.docs[index])));
             }
           },
         ),
@@ -1009,13 +991,13 @@ class _TaskDetailState extends State<TaskDetail> {
   Widget projectMember() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.teamId)
+          .doc(widget.teamId)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('projects')
-          .document(widget.project.uid)
+          .doc(widget.project.uid)
           .collection('members')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -1027,30 +1009,28 @@ class _TaskDetailState extends State<TaskDetail> {
             child: ListView.builder(
                 shrinkWrap: true,
                 //   scrollDirection: Axis.vertical,
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      Firestore.instance
+                      FirebaseFirestore.instance
                           .collection('teams')
-                          .document(widget.teamId)
+                          .doc(widget.teamId)
                           .collection('departments')
-                          .document(widget.department.uid)
+                          .doc(widget.department.uid)
                           .collection('projects')
-                          .document(widget.project.uid)
+                          .doc(widget.project.uid)
                           .collection('list')
-                          .document(widget.listId)
+                          .doc(widget.listId)
                           .collection('tasks')
-                          .document(widget.documentSnapshot.data['taskId'])
-                          .updateData({
-                        'assigned':
-                            snapshot.data.documents[index].data['ownerUid'],
-                        'assignedName':
-                            snapshot.data.documents[index].data['ownerName'],
-                        'assignedEmail':
-                            snapshot.data.documents[index].data['ownerEmail'],
-                        'assignedPhoto':
-                            snapshot.data.documents[index].data['ownerPhotoUrl']
+                          .doc(widget.documentSnapshot['taskId'])
+                          .update({
+                        'assigned': snapshot.data.docs[index]['ownerUid'],
+                        'assignedName': snapshot.data.docs[index]['ownerName'],
+                        'assignedEmail': snapshot.data.docs[index]
+                            ['ownerEmail'],
+                        'assignedPhoto': snapshot.data.docs[index]
+                            ['ownerPhotoUrl']
                       }).then((value) {
                         Navigator.pop(context);
                       });
@@ -1058,24 +1038,23 @@ class _TaskDetailState extends State<TaskDetail> {
                     child: ListTile(
                         leading: CircleAvatar(
                           radius: screenSize.height * 0.02,
-                          backgroundImage: snapshot.data.documents[index]
-                                          .data['ownerPhotoUrl'] !=
+                          backgroundImage: snapshot.data.docs[index]
+                                          ['ownerPhotoUrl'] !=
                                       '' ||
-                                  snapshot.data.documents[index]
-                                          .data['ownerPhotoUrl'] !=
+                                  snapshot.data.docs[index]['ownerPhotoUrl'] !=
                                       null
-                              ? NetworkImage(snapshot
-                                  .data.documents[index].data['ownerPhotoUrl'])
+                              ? NetworkImage(
+                                  snapshot.data.docs[index]['ownerPhotoUrl'])
                               : AssetImage('assets/images/no_image.png'),
                         ),
                         title: Text(
-                          snapshot.data.documents[index].data['ownerName'],
+                          snapshot.data.docs[index]['ownerName'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context)),
                         ),
                         subtitle: Text(
-                          snapshot.data.documents[index].data['ownerEmail'],
+                          snapshot.data.docs[index]['ownerEmail'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textBody1(context)),
@@ -1118,10 +1097,9 @@ class _TaskDetailState extends State<TaskDetail> {
               Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: snapshot.data['ownerPhotoUrl'] != '' ||
-                            snapshot.data['ownerPhotoUrl'] != null
-                        ? CachedNetworkImageProvider(
-                            snapshot.data['ownerPhotoUrl'])
+                    backgroundImage: snapshot['ownerPhotoUrl'] != '' ||
+                            snapshot['ownerPhotoUrl'] != null
+                        ? CachedNetworkImageProvider(snapshot['ownerPhotoUrl'])
                         : AssetImage('assets/images/no_image.png'),
                     radius: screenSize.height * 0.02,
                   ),
@@ -1131,7 +1109,7 @@ class _TaskDetailState extends State<TaskDetail> {
                   Row(
                     children: <Widget>[
                       Text(
-                        snapshot.data['ownerName'],
+                        snapshot['ownerName'],
                         style: TextStyle(
                           fontFamily: FontNameDefault,
                           color: Colors.black,
@@ -1142,7 +1120,7 @@ class _TaskDetailState extends State<TaskDetail> {
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          snapshot.data['comment'],
+                          snapshot['comment'],
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             color: Colors.black,
@@ -1161,21 +1139,21 @@ class _TaskDetailState extends State<TaskDetail> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  snapshot.data['imgUrl'] != ''
+                  snapshot['imgUrl'] != ''
                       ? InkWell(
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ImageDetail(
-                                          image: snapshot.data['imgUrl'],
+                                          image: snapshot['imgUrl'],
                                         )));
                           },
                           child: CachedNetworkImage(
                             filterQuality: FilterQuality.medium,
                             fadeInCurve: Curves.easeIn,
                             fadeOutCurve: Curves.easeOut,
-                            imageUrl: snapshot.data['imgUrl'],
+                            imageUrl: snapshot['imgUrl'],
                             placeholder: ((context, s) => Center(
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -1195,9 +1173,9 @@ class _TaskDetailState extends State<TaskDetail> {
                   Padding(
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      snapshot.data != null || snapshot.data['timestamp'] != ''
+                      snapshot.data != null || snapshot['timestamp'] != ''
                           ? timeago
-                              .format(snapshot.data['timestamp'].toDate())
+                              .format(snapshot['timestamp'].toDate())
                               .replaceAll('about', '')
                               .replaceAll('ago', '')
                           : '',
@@ -1265,8 +1243,8 @@ class _TaskDetailState extends State<TaskDetail> {
         ownerUid: widget.currentuser.uid);
     widget.documentSnapshot.reference
         .collection("comments")
-        .document()
-        .setData(_comment.toMap(_comment))
+        .doc()
+        .set(_comment.toMap(_comment))
         .whenComplete(() {
       _commentTextController.text = "";
     });

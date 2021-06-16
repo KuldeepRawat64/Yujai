@@ -20,16 +20,16 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
-  User currentUser;
+  UserModel _user = UserModel();
+  UserModel currentUser;
   List<Group> groupList = List<Group>();
-  List<User> companyList = List<User>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -47,7 +47,7 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
 
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
@@ -102,8 +102,8 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -119,27 +119,25 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
       physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
         TabBar(
-           unselectedLabelStyle: TextStyle(
+          unselectedLabelStyle: TextStyle(
             fontFamily: FontNameDefault,
             fontSize: textSubTitle(context),
-           // fontWeight: FontWeight.bold,
+            // fontWeight: FontWeight.bold,
           ),
           controller: _nestedTabController,
           indicatorColor: Colors.purpleAccent,
           labelColor: Colors.deepPurple,
           unselectedLabelColor: Colors.black54,
           labelStyle: TextStyle(
-                   fontFamily: FontNameDefault,
+            fontFamily: FontNameDefault,
             fontSize: textBody1(context),
             fontWeight: FontWeight.bold,
           ),
           isScrollable: true,
           tabs: <Widget>[
+            Tab(text: 'My Teams'),
             Tab(
-              text:'My Teams'
-            ),
-            Tab(
-            text: 'All Teams',
+              text: 'All Teams',
             ),
           ],
         ),
@@ -188,9 +186,9 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
   Widget groupWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('users')
-            .document(_user.uid)
+            .doc(_user.uid)
             .collection('groups')
             // .orderBy('time', descending: true)
             .snapshots(),

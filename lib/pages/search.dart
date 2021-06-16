@@ -20,9 +20,9 @@ class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   var _repository = Repository();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
+  UserModel _user = UserModel();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
   List<String> followingUIDs = List<String>();
   TabController _tabController;
   ScrollController _scrollController;
@@ -35,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen>
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
         setState(() {
@@ -187,82 +187,82 @@ class ButtonBarInspect extends StatelessWidget {
   }
 }
 
-class UserSearch extends SearchDelegate<String> {
-  List<User> userList;
-  UserSearch({this.userList});
+// class UserSearch extends SearchDelegate<String> {
+//   List<User> userList;
+//   UserSearch({this.userList});
 
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = "";
-        },
-      )
-    ];
-  }
+//   @override
+//   List<Widget> buildActions(BuildContext context) {
+//     return [
+//       IconButton(
+//         icon: Icon(Icons.clear),
+//         onPressed: () {
+//           query = "";
+//         },
+//       )
+//     ];
+//   }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
+//   @override
+//   Widget buildLeading(BuildContext context) {
+//     return IconButton(
+//       icon: AnimatedIcon(
+//         icon: AnimatedIcons.menu_arrow,
+//         progress: transitionAnimation,
+//       ),
+//       onPressed: () {
+//         close(context, null);
+//       },
+//     );
+//   }
 
-  @override
-  Widget buildResults(BuildContext context) {
-    final suggestionsList = query.isEmpty
-        ? userList
-        : userList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => ListTile(
-            onTap: () {
-              //   showResults(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => FriendProfileScreen(
-                          name: suggestionsList[index].displayName))));
-            },
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(suggestionsList[index].photoUrl),
-            ),
-            title: Text(suggestionsList[index].displayName),
-          )),
-    );
-  }
+//   @override
+//   Widget buildResults(BuildContext context) {
+//     final suggestionsList = query.isEmpty
+//         ? userList
+//         : userList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => ListTile(
+//             onTap: () {
+//               //   showResults(context);
+//               Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: ((context) => FriendProfileScreen(
+//                           name: suggestionsList[index].displayName))));
+//             },
+//             leading: CircleAvatar(
+//               backgroundImage:
+//                   CachedNetworkImageProvider(suggestionsList[index].photoUrl),
+//             ),
+//             title: Text(suggestionsList[index].displayName),
+//           )),
+//     );
+//   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestionsList = query.isEmpty
-        ? userList
-        : userList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => ListTile(
-            onTap: () {
-              //   showResults(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => FriendProfileScreen(
-                          name: suggestionsList[index].displayName))));
-            },
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(suggestionsList[index].photoUrl),
-            ),
-            title: Text(suggestionsList[index].displayName),
-          )),
-    );
-  }
-}
+//   @override
+//   Widget buildSuggestions(BuildContext context) {
+//     final suggestionsList = query.isEmpty
+//         ? userList
+//         : userList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => ListTile(
+//             onTap: () {
+//               //   showResults(context);
+//               Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: ((context) => FriendProfileScreen(
+//                           name: suggestionsList[index].displayName))));
+//             },
+//             leading: CircleAvatar(
+//               backgroundImage:
+//                   CachedNetworkImageProvider(suggestionsList[index].photoUrl),
+//             ),
+//             title: Text(suggestionsList[index].displayName),
+//           )),
+//     );
+//   }
+// }

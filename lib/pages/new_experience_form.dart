@@ -12,7 +12,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class NewExperienceForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   NewExperienceForm({this.currentUser});
 
@@ -29,7 +29,7 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
   List<Industry> _industry = Industry.getIndustry();
   List<DropdownMenuItem<Industry>> _dropDownMenuIndustry;
   Industry _selectedIndustry;
-  FirebaseUser currentUser;
+  User currentUser;
   final _companyController = TextEditingController();
   final _designationController = TextEditingController();
   int startDate = DateTime.now().millisecondsSinceEpoch;
@@ -203,10 +203,10 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(currentUser.uid)
-          .updateData({
+          .doc(currentUser.uid)
+          .update({
         'experience': FieldValue.arrayUnion([
           {
             'company': _companyController.text,

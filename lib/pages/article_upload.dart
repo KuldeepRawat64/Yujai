@@ -5,6 +5,9 @@ import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/progress.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:core';
 import 'package:image/image.dart' as Im;
@@ -98,6 +101,10 @@ class _ArticleState extends State<Article> {
   String selectedPrice;
   bool isSelectedPriceFree;
   final _repository = Repository();
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
 
   @override
   void initState() {
@@ -367,16 +374,77 @@ class _ArticleState extends State<Article> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    locationController.text = formattedAddress;
+  // getUserLocation() async {
+  //   Position position = await Geolocator
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //     var lat = position.latitude;
+  //     var long = position.longitude;
+
+  //   // setState(() {
+  //   //   locationMessage = ""
+  //   // });
+
+  //   List<Placemark> placemarks = await Geolocator
+  //       .getPositionStream(position.latitude, position.longitude);
+  //   Placemark placemark = placemarks[0];
+  //   String completeAddress =
+  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+  //   print(completeAddress);
+  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
+  //   locationController.text = formattedAddress;
+  // }
+  //    // for getting the position
+  //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  //   geolocator
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+  //       .then((Position position) {
+  //     setState(() {
+  //       _currentPosition = position;
+  //     });
+  //   }).catchError((e) {
+  //     print(e);
+  //   });
+
+  //   // for getting location address
+  //   List<Placemark> p = await geolocator.placemarkFromCoordinates(
+  //         _currentPosition.latitude, _currentPosition.longitude);
+
+  //     Placemark place = p[0];
+
+  //     setState(() {
+  //       _currentAddress =
+  //           "${place.locality}, ${place.postalCode}, ${place.country}";
+  //     });
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    locationController.text = _currentAddress;
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 }

@@ -11,7 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditCompanyContactForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditCompanyContactForm({this.currentUser});
 
@@ -22,12 +22,12 @@ class EditCompanyContactForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditCompanyContactForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _emailController = TextEditingController();
   final _websiteController = TextEditingController();
   final _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -48,8 +48,8 @@ class _EditProfileScreenState extends State<EditCompanyContactForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      _firestore.collection('users').document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      _firestore.collection('users').doc(currentUser.uid).update({
         "email": _emailController.text,
         "phone": _phoneController.text,
         "portfolio": _websiteController.text,

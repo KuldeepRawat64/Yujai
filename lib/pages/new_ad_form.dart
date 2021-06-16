@@ -7,6 +7,7 @@ import 'package:currency_textfield/currency_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,7 +29,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewAdForm extends StatefulWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
   const NewAdForm({Key key, this.group, this.currentUser}) : super(key: key);
   @override
@@ -42,7 +43,7 @@ class _NewAdFormState extends State<NewAdForm> {
   FileType _pickType;
   bool _multiPick = true;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  List<StorageUploadTask> _tasks = <StorageUploadTask>[];
+  List<UploadTask> _tasks = <UploadTask>[];
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
@@ -61,13 +62,17 @@ class _NewAdFormState extends State<NewAdForm> {
   int endTime = 0;
   List<String> imgUrls = [];
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-  Firestore _firestore = Firestore.instance;
-  List<StorageUploadTask> uploadedTasks = [];
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<UploadTask> uploadedTasks = [];
   PickResult selectedPlace;
   final CarouselController _controller = CarouselController();
   String reason = '';
   int _current = 0;
   double lat, lng;
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
 
   var _priceController;
 
@@ -101,17 +106,17 @@ class _NewAdFormState extends State<NewAdForm> {
   }
 
   uploadFileToStorage(File file) {
-    StorageUploadTask task = _firebaseStorage
+    UploadTask task = _firebaseStorage
         .ref()
         .child("images/${DateTime.now().toString()}")
         .putFile(file);
     return task;
   }
 
-  saveImageUrlToFIrebase(StorageUploadTask task) {
-    task.events.listen((snapShot) {
-      if (task.isSuccessful) {
-        snapShot.snapshot.ref.getDownloadURL().then((imageUrl) {
+  saveImageUrlToFirebase(UploadTask task) {
+    task.snapshotEvents.listen((snapShot) {
+      if (task.snapshot.state == TaskState.success) {
+        snapShot.ref.getDownloadURL().then((imageUrl) {
           setState(() {
             imgUrls.add(imageUrl);
           });
@@ -133,8 +138,8 @@ class _NewAdFormState extends State<NewAdForm> {
         });
 
         selectedFiles.forEach((file) {
-          final StorageUploadTask task = uploadFileToStorage(file);
-          saveImageUrlToFIrebase(task);
+          final UploadTask task = uploadFileToStorage(file);
+          saveImageUrlToFirebase(task);
           setState(() {
             uploadedTasks.add(task);
           });
@@ -809,19 +814,37 @@ class _NewAdFormState extends State<NewAdForm> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    setState(() {
-      _locationController.text = formattedAddress;
-    });
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    _locationController.text = _currentAddress;
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 
   _submitForm(BuildContext context) {

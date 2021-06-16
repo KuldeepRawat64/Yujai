@@ -15,7 +15,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditCompanyLocationForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
   EditCompanyLocationForm({this.currentUser});
 
@@ -26,9 +26,9 @@ class EditCompanyLocationForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditCompanyLocationForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   PickResult selectedPlace;
   TextEditingController locationController = TextEditingController();
 
@@ -49,8 +49,8 @@ class _EditProfileScreenState extends State<EditCompanyLocationForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      _firestore.collection('users').document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      _firestore.collection('users').doc(currentUser.uid).update({
         "location": locationController.text,
       });
       _formKey.currentState.save();

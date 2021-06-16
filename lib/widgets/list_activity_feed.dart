@@ -20,8 +20,8 @@ class ListItemActivityFeed extends StatelessWidget {
   ListItemActivityFeed({this.index, this.documentSnapshot});
 
   configureMediaPreview(context) {
-    if (documentSnapshot.data['type'] == 'like' ||
-        documentSnapshot.data['type'] == 'comment') {
+    if (documentSnapshot['type'] == 'like' ||
+        documentSnapshot['type'] == 'comment') {
       mediaPreview = GestureDetector(
         onTap: () => showPost(context),
         child: Container(
@@ -34,7 +34,7 @@ class ListItemActivityFeed extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: CachedNetworkImageProvider(
-                    documentSnapshot.data['imgUrl'],
+                    documentSnapshot['imgUrl'],
                   ),
                 ),
               ),
@@ -42,7 +42,7 @@ class ListItemActivityFeed extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot.data['type'] == 'commentEvent') {
+    } else if (documentSnapshot['type'] == 'commentEvent') {
       mediaPreview = GestureDetector(
         onTap: () => showEvent(context),
         child: Container(
@@ -55,7 +55,7 @@ class ListItemActivityFeed extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: CachedNetworkImageProvider(
-                    documentSnapshot.data['imgUrl'],
+                    documentSnapshot['imgUrl'],
                   ),
                 ),
               ),
@@ -63,7 +63,7 @@ class ListItemActivityFeed extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot.data['type'] == 'commentArticle') {
+    } else if (documentSnapshot['type'] == 'commentArticle') {
       mediaPreview = GestureDetector(
         onTap: () => showArticle(context),
         child: Container(
@@ -76,7 +76,7 @@ class ListItemActivityFeed extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: CachedNetworkImageProvider(
-                    documentSnapshot.data['imgUrl'],
+                    documentSnapshot['imgUrl'],
                   ),
                 ),
               ),
@@ -87,47 +87,47 @@ class ListItemActivityFeed extends StatelessWidget {
     } else {
       mediaPreview = Text('');
     }
-    if (documentSnapshot.data['type'] == 'like') {
+    if (documentSnapshot['type'] == 'like') {
       activityItemText = 'liked your post';
-    } else if (documentSnapshot.data['type'] == 'follow') {
+    } else if (documentSnapshot['type'] == 'follow') {
       activityItemText = 'is following you';
-    } else if (documentSnapshot.data['type'] == 'comment') {
+    } else if (documentSnapshot['type'] == 'comment') {
       activityItemText = 'commented on your post';
-    } else if (documentSnapshot.data['type'] == 'commentEvent') {
+    } else if (documentSnapshot['type'] == 'commentEvent') {
       activityItemText = 'commented on your event';
-    } else if (documentSnapshot.data['type'] == 'commentArticle') {
+    } else if (documentSnapshot['type'] == 'commentArticle') {
       activityItemText = 'commented on your article';
     } else {
-      activityItemText = 'Error:Unknown type ${documentSnapshot.data['type']}';
+      activityItemText = 'Error:Unknown type ${documentSnapshot['type']}';
     }
   }
 
   showPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(
-            userId: documentSnapshot.data['ownerUid'],
-            postId: documentSnapshot.data['postId'])));
+            userId: documentSnapshot['ownerUid'],
+            postId: documentSnapshot['postId'])));
   }
 
   showEvent(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => EventScreen(
-            userId: documentSnapshot.data['ownerUid'],
-            postId: documentSnapshot.data['postId'])));
+            userId: documentSnapshot['ownerUid'],
+            postId: documentSnapshot['postId'])));
   }
 
   showArticle(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ArticleScreen(
-            userId: documentSnapshot.data['ownerUid'],
-            postId: documentSnapshot.data['postId'])));
+            userId: documentSnapshot['ownerUid'],
+            postId: documentSnapshot['postId'])));
   }
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FriendProfileScreen(
-              name: documentSnapshot.data['ownerName'],
-              uid: documentSnapshot.data['ownerUid'],
+              name: documentSnapshot['ownerName'],
+              uid: documentSnapshot['ownerUid'],
             )));
   }
 
@@ -156,7 +156,7 @@ class ListItemActivityFeed extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       backgroundImage: CachedNetworkImageProvider(
-                          documentSnapshot.data['ownerPhotoUrl']),
+                          documentSnapshot['ownerPhotoUrl']),
                     ),
                     SizedBox(
                       width: screenSize.height * 0.01,
@@ -175,7 +175,7 @@ class ListItemActivityFeed extends StatelessWidget {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: documentSnapshot.data['ownerName'],
+                                    text: documentSnapshot['ownerName'],
                                     style: TextStyle(
                                         fontSize: textSubTitle(context),
                                         fontFamily: FontNameDefault,
@@ -191,11 +191,10 @@ class ListItemActivityFeed extends StatelessWidget {
                                 ]),
                           ),
                         ),
-                        documentSnapshot.data['timestamp'] != null
+                        documentSnapshot['timestamp'] != null
                             ? Text(
-                                timeago.format(documentSnapshot
-                                    .data['timestamp']
-                                    .toDate()),
+                                timeago.format(
+                                    documentSnapshot['timestamp'].toDate()),
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     color: Colors.grey,

@@ -43,7 +43,7 @@ class NestedTabBarProject extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final Team team;
   final Department department;
   final Project project;
@@ -67,17 +67,17 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
+  UserModel _user = UserModel();
   Team _team = Team();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -303,13 +303,13 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   Widget discussionsWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('projects')
-          .document(widget.project.uid)
+          .doc(widget.project.uid)
           .collection('discussions')
           .orderBy('time', descending: true)
           .snapshots(),
@@ -339,13 +339,13 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('projects')
-          .document(widget.project.uid)
+          .doc(widget.project.uid)
           .collection('list')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -354,14 +354,14 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
           return ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: (BuildContext context, int index) =>
                   ListItemTaskList(
                     memberlist: widget.memberlist,
                     team: widget.team,
                     department: widget.department,
                     project: widget.project,
-                    documentSnapshot: snapshot.data.documents[index],
+                    documentSnapshot: snapshot.data.docs[index],
                     user: widget.currentUser,
                     currentuser: widget.currentUser,
                   ));
@@ -385,13 +385,13 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   Widget projectMember() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('projects')
-          .document(widget.project.uid)
+          .doc(widget.project.uid)
           .collection('members')
           .orderBy('timestamp', descending: false)
           .snapshots(),
@@ -403,9 +403,9 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  itemCount: snapshot.data.documents.length > 3
+                  itemCount: snapshot.data.docs.length > 3
                       ? 4
-                      : snapshot.data.documents.length,
+                      : snapshot.data.docs.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: EdgeInsets.only(top: screenSize.height * 0.01),
@@ -413,14 +413,14 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                         children: [
                           CircleAvatar(
                             radius: screenSize.height * 0.02,
-                            backgroundImage: CachedNetworkImageProvider(snapshot
-                                .data.documents[index].data['ownerPhotoUrl']),
+                            backgroundImage: CachedNetworkImageProvider(
+                                snapshot.data.docs[index]['ownerPhotoUrl']),
                           ),
                           SizedBox(
                             width: screenSize.width * 0.02,
                           ),
                           Text(
-                            snapshot.data.documents[index].data['ownerName'],
+                            snapshot.data.docs[index]['ownerName'],
                             style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context),
@@ -739,13 +739,13 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                     fontWeight: FontWeight.bold)),
             Divider(),
             StreamBuilder<DocumentSnapshot>(
-              stream: Firestore.instance
+              stream: FirebaseFirestore.instance
                   .collection('teams')
-                  .document(widget.gid)
+                  .doc(widget.gid)
                   .collection('departments')
-                  .document(widget.department.uid)
+                  .doc(widget.department.uid)
                   .collection('projects')
-                  .document(widget.project.uid)
+                  .doc(widget.project.uid)
                   .snapshots(),
               builder: ((context, snapshot) {
                 if (snapshot.hasData) {
@@ -767,25 +767,25 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                       maxLines: 3,
                       onChanged: (newValue) {
                         if (_descriptionController.text.isNotEmpty)
-                          Firestore.instance
+                          FirebaseFirestore.instance
                               .collection('teams')
-                              .document(widget.team.uid)
+                              .doc(widget.team.uid)
                               .collection('departments')
-                              .document(widget.department.uid)
+                              .doc(widget.department.uid)
                               .collection('projects')
-                              .document(widget.project.uid)
-                              .updateData({'description': newValue});
+                              .doc(widget.project.uid)
+                              .update({'description': newValue});
                       },
                       onSubmitted: (newValue) {
                         if (_descriptionController.text.isNotEmpty)
-                          Firestore.instance
+                          FirebaseFirestore.instance
                               .collection('teams')
-                              .document(widget.team.uid)
+                              .doc(widget.team.uid)
                               .collection('departments')
-                              .document(widget.department.uid)
+                              .doc(widget.department.uid)
                               .collection('projects')
-                              .document(widget.project.uid)
-                              .updateData({'description': newValue});
+                              .doc(widget.project.uid)
+                              .update({'description': newValue});
                         setState(() {
                           _isEditingDesc = false;
                         });

@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-final postsRef = Firestore.instance.collection('posts');
+final postsRef = FirebaseFirestore.instance.collection('posts');
 
 class EventScreen extends StatefulWidget {
   final String userId;
@@ -22,7 +22,7 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   var _repository = Repository();
   String currentUserId, followingUserId;
-  static User _user;
+  static UserModel _user;
   Future<List<DocumentSnapshot>> _future;
   ScrollController _scrollController = ScrollController();
 
@@ -39,8 +39,8 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -60,7 +60,7 @@ class _EventScreenState extends State<EventScreen> {
                     controller: _scrollController,
                     itemCount: snapshot.data.length,
                     itemBuilder: ((context, index) =>
-                        snapshot.data[index].data['postId'] == widget.postId
+                        snapshot.data[index]['postId'] == widget.postId
                             ? ListItemEvent(
                                 documentSnapshot: snapshot.data[index],
                                 index: index,

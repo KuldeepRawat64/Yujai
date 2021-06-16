@@ -14,7 +14,7 @@ import '../style.dart';
 
 class NewPollForm extends StatefulWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewPollForm({Key key, this.group, this.currentUser}) : super(key: key);
   @override
@@ -452,20 +452,20 @@ class _NewPollFormState extends State<NewPollForm> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    setState(() {
-      location = formattedAddress;
-    });
-  }
+  // getUserLocation() async {
+  //   Position position = await Geolocator()
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //   List<Placemark> placemarks = await Geolocator()
+  //       .placemarkFromCoordinates(position.latitude, position.longitude);
+  //   Placemark placemark = placemarks[0];
+  //   String completeAddress =
+  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+  //   print(completeAddress);
+  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
+  //   setState(() {
+  //     location = formattedAddress;
+  //   });
+  // }
 
   _submitForm(BuildContext context) {
     //

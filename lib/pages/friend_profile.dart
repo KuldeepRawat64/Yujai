@@ -40,7 +40,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   String currentUserId, followingUserId;
   var _repository = Repository();
   TabController _tabController;
-  static User _user, currentuser;
+  static UserModel _user, currentuser;
   IconData icon;
   Color color;
   bool isFollowing = false;
@@ -133,7 +133,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   }
 
   fetchUserDetailsById(String userId) async {
-    User user = await _repository.fetchUserDetailsById(widget.uid);
+    UserModel user = await _repository.fetchUserDetailsById(widget.uid);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -221,14 +221,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
       timestamp: FieldValue.serverTimestamp(),
       commentData: '',
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(_user.uid)
+        .doc(_user.uid)
         .collection('items')
         // .document(currentUser.uid)
         // .collection('likes')
-        .document(currentuser.uid)
-        .setData(_feed.toMap(_feed))
+        .doc(currentuser.uid)
+        .set(_feed.toMap(_feed))
         .then((value) {
       print('Feed added');
     });
@@ -243,14 +243,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
       timestamp: FieldValue.serverTimestamp(),
       commentData: '',
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(_user.uid)
+        .doc(_user.uid)
         .collection('requests')
         // .document(currentUser.uid)
         // .collection('likes')
-        .document(currentuser.uid)
-        .setData(_feed.toMap(_feed))
+        .doc(currentuser.uid)
+        .set(_feed.toMap(_feed))
         .then((value) {
       print('Follow request sent');
     });
@@ -277,14 +277,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   }
 
   void removeFollowFromActivityFeed() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(_user.uid)
+        .doc(_user.uid)
         .collection('items')
         //.where('postId',isEqualTo:snapshot['postId'])
         // .document(currentuser.uid)
         // .collection('likes')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -294,14 +294,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   }
 
   void removeRequestFromActivityFeed() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(_user.uid)
+        .doc(_user.uid)
         .collection('requests')
         //.where('postId',isEqualTo:snapshot['postId'])
         // .document(currentuser.uid)
         // .collection('likes')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .get()
         .then((doc) {
       if (doc.exists) {

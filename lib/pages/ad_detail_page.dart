@@ -16,7 +16,7 @@ import 'friend_profile.dart';
 
 class AdDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
 
   AdDetailScreen({this.documentSnapshot, this.user, this.currentuser});
 
@@ -33,7 +33,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
     super.initState();
     selectedSubject = 'Spam';
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.documentSnapshot.data['imgUrls'].forEach((urls) {
+      widget.documentSnapshot['imgUrls'].forEach((urls) {
         precacheImage(NetworkImage(urls), context);
       });
     });
@@ -41,8 +41,8 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -270,13 +270,13 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(snapshot.data['ownerUid'])
+        .doc(snapshot['ownerUid'])
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -407,12 +407,12 @@ class _AdStackState extends State<AdStack> {
               Container(
                 child: CarouselSlider.builder(
                     carouselController: _controller,
-                    itemCount: widget.documentSnapshot.data['imgUrls'].length,
+                    itemCount: widget.documentSnapshot['imgUrls'].length,
                     itemBuilder: (context, index, realIdx) {
                       return Container(
                         child: Center(
                           child: Image.network(
-                            widget.documentSnapshot.data['imgUrls'][index],
+                            widget.documentSnapshot['imgUrls'][index],
                             height: screenSize.height * 0.34,
                             width: screenSize.width,
                             fit: BoxFit.cover,
@@ -433,8 +433,7 @@ class _AdStackState extends State<AdStack> {
                         enlargeCenterPage: true,
                         viewportFraction: 1,
                         onPageChanged: (index, reason) {
-                          if (widget.documentSnapshot.data['imgUrls'].length >
-                              1) {
+                          if (widget.documentSnapshot['imgUrls'].length > 1) {
                             setState(() {
                               _current = index;
                             });
@@ -443,10 +442,8 @@ class _AdStackState extends State<AdStack> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                    widget.documentSnapshot.data['imgUrls'].map<Widget>((url) {
-                  int index =
-                      widget.documentSnapshot.data['imgUrls'].indexOf(url);
+                children: widget.documentSnapshot['imgUrls'].map<Widget>((url) {
+                  int index = widget.documentSnapshot['imgUrls'].indexOf(url);
                   return Container(
                     width: 26.0,
                     height: 4.0,
@@ -497,7 +494,7 @@ class _AdStackState extends State<AdStack> {
   }
 
   Widget adBody(BuildContext context) {
-    geopint = widget.documentSnapshot.data['geopoint'];
+    geopint = widget.documentSnapshot['geopoint'];
     _markers.add(
       Marker(
         // This marker id can be anything that uniquely identifies each marker.
@@ -531,15 +528,14 @@ class _AdStackState extends State<AdStack> {
               contentPadding: EdgeInsets.zero,
               trailing: Icon(Icons.person_outline),
               subtitle: Text(
-                  widget.documentSnapshot.data['time'] != null
-                      ? timeago
-                          .format(widget.documentSnapshot.data['time'].toDate())
+                  widget.documentSnapshot['time'] != null
+                      ? timeago.format(widget.documentSnapshot['time'].toDate())
                       : '',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textbody2(context),
                       color: Colors.grey)),
-              title: Text(widget.documentSnapshot.data['postOwnerName'],
+              title: Text(widget.documentSnapshot['postOwnerName'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     //  color: Theme.of(context).primaryColor,
@@ -548,7 +544,7 @@ class _AdStackState extends State<AdStack> {
                   )),
               leading: CircleAvatar(
                   backgroundImage: NetworkImage(
-                      widget.documentSnapshot.data['postOwnerPhotoUrl']))),
+                      widget.documentSnapshot['postOwnerPhotoUrl']))),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -565,7 +561,7 @@ class _AdStackState extends State<AdStack> {
                         fontSize: textHeader(context),
                         fontWeight: FontWeight.bold,
                       )),
-                  Text(widget.documentSnapshot.data['price'],
+                  Text(widget.documentSnapshot['price'],
                       style: TextStyle(
                         fontFamily: FontNameDefault,
                         // color: Theme.of(context).primaryColor,
@@ -578,7 +574,7 @@ class _AdStackState extends State<AdStack> {
                 height: 10.0,
               ),
               Text(
-                widget.documentSnapshot.data['caption'],
+                widget.documentSnapshot['caption'],
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textHeader(context),
@@ -589,7 +585,7 @@ class _AdStackState extends State<AdStack> {
                 height: 10.0,
               ),
               Text(
-                widget.documentSnapshot.data['description'],
+                widget.documentSnapshot['description'],
                 style: TextStyle(
                     fontFamily: FontNameDefault,
                     color: Colors.black54,
@@ -601,7 +597,7 @@ class _AdStackState extends State<AdStack> {
                   vertical: screenSize.height * 0.005,
                 ),
                 child: Text(
-                  widget.documentSnapshot.data['location'],
+                  widget.documentSnapshot['location'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     color: Colors.black54,
@@ -647,8 +643,8 @@ class _AdStackState extends State<AdStack> {
                             fontSize: textBody1(context)),
                       ),
                       subtitle: Text(
-                        widget.documentSnapshot.data['condition'] != ''
-                            ? widget.documentSnapshot.data['condition']
+                        widget.documentSnapshot['condition'] != ''
+                            ? widget.documentSnapshot['condition']
                             : 'Used',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -676,8 +672,8 @@ class _AdStackState extends State<AdStack> {
                             fontSize: textBody1(context)),
                       ),
                       subtitle: Text(
-                        widget.documentSnapshot.data['category'] != ''
-                            ? widget.documentSnapshot.data['category']
+                        widget.documentSnapshot['category'] != ''
+                            ? widget.documentSnapshot['category']
                             : 'Other',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,

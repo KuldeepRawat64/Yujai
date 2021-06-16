@@ -18,7 +18,7 @@ String activityItemText;
 
 class ListItemActivityRequest extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemActivityRequest({
@@ -37,7 +37,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
   String currentUserId, followingUserId;
   var _repository = Repository();
   bool isCompany = false;
-  static User _user, currentuser;
+  static UserModel _user, currentuser;
   IconData icon;
   Color color;
   bool isFollowing = false;
@@ -50,7 +50,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
     String uid = await _repository
-        .fetchUidBySearchedName(widget.documentSnapshot.data['ownerUid']);
+        .fetchUidBySearchedName(widget.documentSnapshot['ownerUid']);
     if (!mounted) return;
     setState(() {
       followingUserId = uid;
@@ -59,8 +59,8 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
   }
 
   fetchUserDetailsById(String userId) async {
-    User user = await _repository
-        .fetchUserDetailsById(widget.documentSnapshot.data['ownerUid']);
+    UserModel user = await _repository
+        .fetchUserDetailsById(widget.documentSnapshot['ownerUid']);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -88,12 +88,12 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
         currentUserId = widget.user.uid;
       });
     });
-    fetchUidBySearchedName(widget.documentSnapshot.data['ownerUid']);
+    fetchUidBySearchedName(widget.documentSnapshot['ownerUid']);
   }
 
   configureMediaPreview(context) {
     var screenSize = MediaQuery.of(context).size;
-    if (widget.documentSnapshot.data['type'] == 'request') {
+    if (widget.documentSnapshot['type'] == 'request') {
       mediaPreview = Wrap(
         children: [
           FlatButton(
@@ -123,7 +123,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
           )
         ],
       );
-    } else if (widget.documentSnapshot.data['type'] == 'group invite') {
+    } else if (widget.documentSnapshot['type'] == 'group invite') {
       mediaPreview = Wrap(
         children: [
           FlatButton(
@@ -155,7 +155,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
           )
         ],
       );
-    } else if (widget.documentSnapshot.data['type'] == 'team invite') {
+    } else if (widget.documentSnapshot['type'] == 'team invite') {
       mediaPreview = Wrap(
         children: [
           InkWell(
@@ -170,7 +170,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                 backgroundImage: AssetImage('assets/images/team_no-image.png'),
               ),
               label: Text(
-                widget.documentSnapshot.data['gname'],
+                widget.documentSnapshot['gname'],
                 style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -183,30 +183,30 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
     } else {
       mediaPreview = Text('');
     }
-    if (widget.documentSnapshot.data['type'] == 'request') {
+    if (widget.documentSnapshot['type'] == 'request') {
       activityItemText = 'requested to follow you';
-    } else if (widget.documentSnapshot.data['type'] == 'group invite') {
+    } else if (widget.documentSnapshot['type'] == 'group invite') {
       activityItemText = 'invited you to join group';
-    } else if (widget.documentSnapshot.data['type'] == 'team invite') {
+    } else if (widget.documentSnapshot['type'] == 'team invite') {
       activityItemText = 'added you to team';
     } else {
       activityItemText =
-          'Error:Unknown type ${widget.documentSnapshot.data['type']}';
+          'Error:Unknown type ${widget.documentSnapshot['type']}';
     }
   }
 
   showPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(
-            userId: widget.documentSnapshot.data['ownerUid'],
-            postId: widget.documentSnapshot.data['postId'])));
+            userId: widget.documentSnapshot['ownerUid'],
+            postId: widget.documentSnapshot['postId'])));
   }
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FriendProfileScreen(
-              name: widget.documentSnapshot.data['ownerName'],
-              uid: widget.documentSnapshot.data['ownerUid'],
+              name: widget.documentSnapshot['ownerName'],
+              uid: widget.documentSnapshot['ownerUid'],
             )));
   }
 
@@ -215,8 +215,8 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
         builder: (context) => GroupPage(
               isMember: false,
               currentUser: currentuser,
-              name: widget.documentSnapshot.data['gname'],
-              gid: widget.documentSnapshot.data['gid'],
+              name: widget.documentSnapshot['gname'],
+              gid: widget.documentSnapshot['gid'],
             )));
   }
 
@@ -225,8 +225,8 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
         builder: (context) => TeamPage(
               isMember: false,
               currentUser: currentuser,
-              name: widget.documentSnapshot.data['gname'],
-              gid: widget.documentSnapshot.data['gid'],
+              name: widget.documentSnapshot['gname'],
+              gid: widget.documentSnapshot['gid'],
             )));
   }
 
@@ -249,22 +249,22 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
       accountType: '',
       timestamp: FieldValue.serverTimestamp(),
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.documentSnapshot.data['gid'])
+        .doc(widget.documentSnapshot['gid'])
         .collection('members')
-        .document(currentuser.uid)
-        .setData(_member.toMap(_member));
+        .doc(currentuser.uid)
+        .set(_member.toMap(_member));
     var _team = Team(
-      uid: widget.documentSnapshot.data['gid'],
-      teamName: widget.documentSnapshot.data['gname'],
+      uid: widget.documentSnapshot['gid'],
+      teamName: widget.documentSnapshot['gname'],
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .collection('teams')
-        .document(widget.documentSnapshot.data['gid'])
-        .setData(_team.toMap(_team));
+        .doc(widget.documentSnapshot['gid'])
+        .set(_team.toMap(_team));
     removeRequestFromActivityFeed();
     showTeam(context);
   }
@@ -278,17 +278,17 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
       timestamp: FieldValue.serverTimestamp(),
     );
 
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.documentSnapshot.data['gid'])
+        .doc(widget.documentSnapshot['gid'])
         .collection('members')
-        .document(currentuser.uid)
-        .setData(_member.toMap(_member));
+        .doc(currentuser.uid)
+        .set(_member.toMap(_member));
 
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.documentSnapshot.data['gid'])
-        .updateData({
+        .doc(widget.documentSnapshot['gid'])
+        .update({
       'members': FieldValue.arrayUnion([currentuser.uid])
     });
     // var _team = Team(
@@ -314,23 +314,23 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
       timestamp: FieldValue.serverTimestamp(),
       commentData: '',
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .collection('items')
-        .document(_user.uid)
-        .setData(_feed.toMap(_feed))
+        .doc(_user.uid)
+        .set(_feed.toMap(_feed))
         .then((value) {
       print('Feed added');
     });
   }
 
   void removeRequestFromActivityFeed() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(currentuser.uid)
+        .doc(currentuser.uid)
         .collection('requests')
-        .document(_user.uid)
+        .doc(_user.uid)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -365,7 +365,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                     CircleAvatar(
                       radius: screenSize.height * 0.04,
                       backgroundImage: CachedNetworkImageProvider(
-                          widget.documentSnapshot.data['ownerPhotoUrl']),
+                          widget.documentSnapshot['ownerPhotoUrl']),
                     ),
                     SizedBox(
                       width: screenSize.width * 0.01,
@@ -384,8 +384,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: widget
-                                        .documentSnapshot.data['ownerName'],
+                                    text: widget.documentSnapshot['ownerName'],
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
                                         fontSize: textSubTitle(context),
@@ -406,10 +405,10 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                             avatar: CircleAvatar(
                               radius: screenSize.height * 0.02,
                               backgroundColor: Colors.white,
-                              backgroundImage: CachedNetworkImageProvider(widget
-                                  .documentSnapshot.data['groupProfilePhoto']),
+                              backgroundImage: CachedNetworkImageProvider(
+                                  widget.documentSnapshot['groupProfilePhoto']),
                             ),
-                            label: Text(widget.documentSnapshot.data['gname'],
+                            label: Text(widget.documentSnapshot['gname'],
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textBody1(context),
@@ -427,13 +426,13 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    widget.documentSnapshot.data['timestamp'] != null
+                    widget.documentSnapshot['timestamp'] != null
                         ? Padding(
                             padding:
                                 EdgeInsets.only(left: screenSize.width / 30),
                             child: Text(
                               timeago.format(widget
-                                  .documentSnapshot.data['timestamp']
+                                  .documentSnapshot['timestamp']
                                   .toDate()),
                               style: TextStyle(
                                   fontFamily: FontNameDefault,

@@ -18,7 +18,7 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
   List<String> followingUIDs = List<String>();
   List<User> usersList = List<User>();
   DocumentReference reference;
-  User _user = User();
+  UserModel _user = UserModel();
   StreamSubscription<DocumentSnapshot> subscription;
   ScrollController _scrollController = ScrollController();
 
@@ -36,12 +36,11 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
-
   }
 
   @override
@@ -49,7 +48,7 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-       backgroundColor:const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xfff6f6f6),
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(
@@ -65,12 +64,12 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
           elevation: 0.5,
           title: Text(
             'Requests and Invites',
-           style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textAppTitle(context),
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                      ),
+            style: TextStyle(
+              fontFamily: FontNameDefault,
+              fontSize: textAppTitle(context),
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         body: _user.uid != null
@@ -86,9 +85,9 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('users')
-          .document(_user.uid)
+          .doc(_user.uid)
           .collection('requests')
           .snapshots(),
       builder: ((context, snapshot) {
@@ -96,7 +95,7 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
-                controller: _scrollController,
+                  controller: _scrollController,
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: ((context, index) => ListItemActivityRequest(
                         documentSnapshot: snapshot.data.documents[index],

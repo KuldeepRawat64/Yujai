@@ -34,7 +34,7 @@ class NestedTabBarTeamHome extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final Team team;
   const NestedTabBarTeamHome({
     this.gid,
@@ -51,17 +51,17 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
+  UserModel _user = UserModel();
   Team _team = Team();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -212,7 +212,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                         children: [
                           CircleAvatar(
                             radius: screenSize.height * 0.015,
-                            backgroundColor: Color(snapshot.data['color']),
+                            backgroundColor: Color(snapshot['color']),
                           ),
                           Padding(
                             padding:
@@ -240,15 +240,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                               content: SingleChildScrollView(
                                 child: BlockPicker(
                                   pickerColor: Color(
-                                    snapshot.data['color'],
+                                    snapshot['color'],
                                   ),
                                   onColorChanged: (Color color) {
-                                    Firestore.instance
+                                    FirebaseFirestore.instance
                                         .collection('teams')
-                                        .document(widget.gid)
+                                        .doc(widget.gid)
                                         .collection('departments')
-                                        .document(snapshot.data['uid'])
-                                        .updateData({'color': color.value})
+                                        .doc(snapshot['uid'])
+                                        .update({'color': color.value})
                                         .then((value) => Navigator.pop(context))
                                         .then(
                                             (value) => Navigator.pop(context));
@@ -335,9 +335,9 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
     var screenSize = MediaQuery.of(context).size;
     return widget.currentUser.uid == widget.team.currentUserUid
         ? StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
+            stream: FirebaseFirestore.instance
                 .collection('teams')
-                .document(widget.gid)
+                .doc(widget.gid)
                 .collection('departments')
                 .snapshots(),
             builder: ((context, snapshot) {
@@ -346,7 +346,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                   child: CircularProgressIndicator(),
                 );
               } else {
-                if (snapshot.data.documents.isEmpty) {
+                if (snapshot.data.docs.isEmpty) {
                   return _team != null &&
                           _team.currentUserUid == currentuser.uid
                       ? Padding(
@@ -375,7 +375,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                   child: ListView.builder(
                     controller: _scrollController,
                     shrinkWrap: true,
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: snapshot.data.docs.length,
                     itemBuilder: ((context, index) => Padding(
                           padding: const EdgeInsets.only(
                               left: 8.0, right: 8.0, top: 8.0),
@@ -385,19 +385,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => DepartmentPage(
-                                            dIcon: snapshot
-                                                .data
-                                                .documents[index]
-                                                .data['departmentProfilePhoto'],
-                                            dColor: snapshot.data
-                                                .documents[index].data['color'],
+                                            dIcon: snapshot.data.docs[index]
+                                                ['departmentProfilePhoto'],
+                                            dColor: snapshot.data.docs[index]
+                                                ['color'],
                                             isMember: false,
-                                            dId: snapshot.data.documents[index]
-                                                .data['uid'],
-                                            dName: snapshot
-                                                .data
-                                                .documents[index]
-                                                .data['departmentName'],
+                                            dId: snapshot.data.docs[index]
+                                                ['uid'],
+                                            dName: snapshot.data.docs[index]
+                                                ['departmentName'],
                                             gid: widget.gid,
                                             name: widget.name,
                                             currentUser: widget.currentUser,
@@ -424,16 +420,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   ),
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: Color(snapshot
-                                      .data.documents[index].data['color']),
+                                  color:
+                                      Color(snapshot.data.docs[index]['color']),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
                               ),
                               title: Text(
-                                snapshot.data.documents[index]
-                                    .data['departmentName'],
+                                snapshot.data.docs[index]['departmentName'],
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
@@ -442,7 +437,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                               trailing: InkWell(
                                 onTap: () {
                                   _showDeptEditDialog(
-                                      snapshot.data.documents[index]);
+                                      snapshot.data.docs[index]);
                                 },
                                 child: Icon(Icons.more_horiz),
                               ),
@@ -455,9 +450,9 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
             }),
           )
         : StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
+            stream: FirebaseFirestore.instance
                 .collection('teams')
-                .document(widget.gid)
+                .doc(widget.gid)
                 .collection('departments')
                 .where('members',
                     arrayContainsAny: [widget.currentUser.uid]).snapshots(),
@@ -467,7 +462,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                   child: CircularProgressIndicator(),
                 );
               } else {
-                if (snapshot.data.documents.isEmpty) {
+                if (snapshot.data.docs.isEmpty) {
                   return Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.25),
                     child: NoContent(
@@ -483,7 +478,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                   child: ListView.builder(
                     controller: _scrollController,
                     shrinkWrap: true,
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: snapshot.data.docs.length,
                     itemBuilder: ((context, index) => Padding(
                           padding: const EdgeInsets.only(
                               left: 8.0, right: 8.0, top: 8.0),
@@ -493,19 +488,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => DepartmentPage(
-                                            dIcon: snapshot
-                                                .data
-                                                .documents[index]
-                                                .data['departmentProfilePhoto'],
-                                            dColor: snapshot.data
-                                                .documents[index].data['color'],
+                                            dIcon: snapshot.data.docs[index]
+                                                ['departmentProfilePhoto'],
+                                            dColor: snapshot.data.docs[index]
+                                                ['color'],
                                             isMember: false,
-                                            dId: snapshot.data.documents[index]
-                                                .data['uid'],
-                                            dName: snapshot
-                                                .data
-                                                .documents[index]
-                                                .data['departmentName'],
+                                            dId: snapshot.data.docs[index]
+                                                ['uid'],
+                                            dName: snapshot.data.docs[index]
+                                                ['departmentName'],
                                             gid: widget.gid,
                                             name: widget.name,
                                             currentUser: widget.currentUser,
@@ -532,16 +523,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   ),
                                 ),
                                 decoration: ShapeDecoration(
-                                  color: Color(snapshot
-                                      .data.documents[index].data['color']),
+                                  color:
+                                      Color(snapshot.data.docs[index]['color']),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
                               ),
                               title: Text(
-                                snapshot.data.documents[index]
-                                    .data['departmentName'],
+                                snapshot.data.docs[index]['departmentName'],
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
@@ -550,7 +540,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                               trailing: InkWell(
                                 onTap: () {
                                   _showDeptEditDialog(
-                                      snapshot.data.documents[index]);
+                                      snapshot.data.docs[index]);
                                 },
                                 child: Icon(Icons.more_horiz),
                               ),
@@ -565,11 +555,11 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.team.uid)
+        .doc(widget.team.uid)
         .collection('departments')
-        .document(snapshot.data['uid'])
+        .doc(snapshot['uid'])
         // .delete();
         .get()
         .then((doc) {

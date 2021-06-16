@@ -21,17 +21,17 @@ class _NetstedTabbarWorkApplicationState
     extends State<NetstedTabbarWorkApplication> with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _listFuture;
-  User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel _user = UserModel();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   ScrollController _scrollController;
   ScrollController _scrollController1 = ScrollController();
   ScrollController _scrollController2 = ScrollController();
@@ -48,7 +48,7 @@ class _NetstedTabbarWorkApplicationState
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
       print("USER : ${user.displayName}");
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
@@ -82,8 +82,8 @@ class _NetstedTabbarWorkApplicationState
   }
 
   void fetchFeed() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.fetchUserDetailsById(currentUser.uid);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.fetchUserDetailsById(currentUser.uid);
     if (!mounted) return;
     setState(() {
       this.currentuser = user;

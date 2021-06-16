@@ -7,7 +7,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class ListItemChatRoom extends StatelessWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemChatRoom(
@@ -20,9 +20,9 @@ class ListItemChatRoom extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ChatDetailScreen(
-                  photoUrl: documentSnapshot.data['ownerPhotoUrl'],
-                  name: documentSnapshot.data['ownerName'],
-                  receiverUid: documentSnapshot.data['ownerUid'],
+                  photoUrl: documentSnapshot['ownerPhotoUrl'],
+                  name: documentSnapshot['ownerName'],
+                  receiverUid: documentSnapshot['ownerUid'],
                 )));
       },
       child: Padding(
@@ -35,11 +35,11 @@ class ListItemChatRoom extends StatelessWidget {
           ),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  documentSnapshot.data['ownerPhotoUrl']),
+              backgroundImage:
+                  CachedNetworkImageProvider(documentSnapshot['ownerPhotoUrl']),
             ),
             title: Text(
-              documentSnapshot.data['ownerName'],
+              documentSnapshot['ownerName'],
               style: TextStyle(fontSize: screenSize.height * 0.018),
             ),
             subtitle: Text(

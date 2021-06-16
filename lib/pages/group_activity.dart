@@ -16,7 +16,7 @@ class GroupActivity extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final Group group;
 
   const GroupActivity(
@@ -34,7 +34,7 @@ class GroupActivity extends StatefulWidget {
 
 class _GroupActivityState extends State<GroupActivity> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -79,8 +79,8 @@ class _GroupActivityState extends State<GroupActivity> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -199,9 +199,9 @@ class _GroupActivityState extends State<GroupActivity> {
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('posts')
           .orderBy('time', descending: true)
           .where('ownerUid', isEqualTo: widget.currentUser.uid)

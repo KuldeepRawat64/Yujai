@@ -9,8 +9,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:shimmer/shimmer.dart';
 
 class FriendActivityNews extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   FriendActivityNews({this.user, this.followingUser});
 
   @override

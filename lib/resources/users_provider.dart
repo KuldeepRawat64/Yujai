@@ -14,11 +14,10 @@ class UsersProvider extends ChangeNotifier {
 
   bool get hasNext => _hasNext;
 
-  List<User> get users => _usersSnapshot.map((snap) {
+  List<UserModel> get users => _usersSnapshot.map((snap) {
         final user = snap.data;
 
-        return User(
-            displayName: user['displayName'], photoUrl: user['photoUrl']);
+        return UserModel(displayName: 'displayName', photoUrl: 'photoUrl');
       }).toList();
 
   Future fetchNextUsers() async {
@@ -32,9 +31,9 @@ class UsersProvider extends ChangeNotifier {
         documentLimit,
         startAfter: _usersSnapshot.isNotEmpty ? _usersSnapshot.last : null,
       );
-      _usersSnapshot.addAll(snap.documents);
+      _usersSnapshot.addAll(snap.docs);
 
-      if (snap.documents.length < documentLimit) _hasNext = false;
+      if (snap.docs.length < documentLimit) _hasNext = false;
       notifyListeners();
     } catch (error) {
       _errorMessage = error.toString();

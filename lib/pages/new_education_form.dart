@@ -12,7 +12,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class NewEducationForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   NewEducationForm({this.currentUser});
 
@@ -23,7 +23,7 @@ class NewEducationForm extends StatefulWidget {
 class _EditProfileScreenState extends State<NewEducationForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _universityController = TextEditingController();
   final _fieldController = TextEditingController();
   final _degreeController = TextEditingController();
@@ -65,10 +65,10 @@ class _EditProfileScreenState extends State<NewEducationForm> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      Firestore.instance
+      FirebaseFirestore.instance
               .collection('users')
-              .document(currentUser.uid)
-              .updateData({
+              .doc(currentUser.uid)
+              .update({
         'education': FieldValue.arrayUnion([
           {
             'university': _universityController.text,

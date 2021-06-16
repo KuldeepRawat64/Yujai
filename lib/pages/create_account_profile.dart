@@ -13,7 +13,7 @@ import '../models/location.dart';
 import '../models/user.dart';
 import 'agreementDialog.dart' as fullDialog;
 
-final usersRef = Firestore.instance.collection('users');
+final usersRef = FirebaseFirestore.instance.collection('users');
 
 class CreateAccountProfile extends StatefulWidget {
   @override
@@ -41,13 +41,13 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
   String selectedStatus;
   bool onPressed = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool userAgreed = false;
   bool valueFirst = false;
   String accountType;
-  User _user = User();
+  UserModel _user = UserModel();
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   int startDate = 0;
 
   @override
@@ -126,7 +126,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
+    User currentUser = await _auth.currentUser;
     setState(() {
       phoneController.text.trim().length < 10 ||
               phoneController.text.trim().length > 10 ||
@@ -143,7 +143,7 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
       //     : _locationValid = true;
     });
 
-    _firestore.collection('users').document(currentUser.uid).updateData({
+    _firestore.collection('users').doc(currentUser.uid).update({
       "displayName": displayNameController.text,
       "phone": phoneController.text,
       "dateOfBirth": startDate.toString(),

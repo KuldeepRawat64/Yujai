@@ -21,14 +21,14 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
-  User currentUser;
+  UserModel _user = UserModel();
+  UserModel currentUser;
   List<Group> groupList = List<Group>();
   List<Group> myGroupList = List<Group>();
   List<Team> myTeamList = List<Team>();
@@ -50,7 +50,7 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
 
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
@@ -117,8 +117,8 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;

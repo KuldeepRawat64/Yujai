@@ -13,7 +13,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 class ListAd extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User currentuser;
+  final UserModel currentuser;
   final int index;
   final String gid;
   final String name;
@@ -38,8 +38,8 @@ class _ListAdState extends State<ListAd> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -174,7 +174,7 @@ class _ListAdState extends State<ListAd> {
                         decoration: ShapeDecoration(
                             image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                    widget.documentSnapshot.data['imgUrls'][0]),
+                                    widget.documentSnapshot['imgUrls'][0]),
                                 fit: BoxFit.cover),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
@@ -192,8 +192,7 @@ class _ListAdState extends State<ListAd> {
                             child: CircleAvatar(
                               radius: screenSize.height * 0.035,
                               backgroundImage: CachedNetworkImageProvider(
-                                widget
-                                    .documentSnapshot.data['postOwnerPhotoUrl'],
+                                widget.documentSnapshot['postOwnerPhotoUrl'],
                               ),
                             ),
                           ),
@@ -210,8 +209,7 @@ class _ListAdState extends State<ListAd> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             child: Text(
-                              '\u{20B9}' +
-                                  widget.documentSnapshot.data['price'],
+                              '\u{20B9}' + widget.documentSnapshot['price'],
                               style: TextStyle(
                                 fontSize: 12.0,
                                 fontFamily: FontNameDefault,
@@ -235,7 +233,7 @@ class _ListAdState extends State<ListAd> {
                           height: 4.0,
                         ),
                         Text(
-                          widget.documentSnapshot.data['caption'],
+                          widget.documentSnapshot['caption'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -247,10 +245,10 @@ class _ListAdState extends State<ListAd> {
                           height: 4.0,
                         ),
                         Text(
-                          widget.documentSnapshot.data['city'] != null &&
-                                  widget.documentSnapshot.data['city'] != ''
-                              ? widget.documentSnapshot.data['city']
-                              : widget.documentSnapshot.data['location'],
+                          widget.documentSnapshot['city'] != null &&
+                                  widget.documentSnapshot['city'] != ''
+                              ? widget.documentSnapshot['city']
+                              : widget.documentSnapshot['location'],
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -436,13 +434,13 @@ class _ListAdState extends State<ListAd> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(snapshot.data['ownerUid'])
+        .doc(snapshot['ownerUid'])
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

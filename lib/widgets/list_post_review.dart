@@ -16,7 +16,7 @@ import '../style.dart';
 
 class ListPostReview extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User currentuser;
+  final UserModel currentuser;
   final int index;
   final String gid;
   final String name;
@@ -52,8 +52,8 @@ class _ListPostReviewState extends State<ListPostReview> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -83,55 +83,55 @@ class _ListPostReviewState extends State<ListPostReview> {
   }
 
   approval() {
-    if (widget.documentSnapshot.data['postType'] == 'post') {
+    if (widget.documentSnapshot['postType'] == 'post') {
       _repository
           .addApprovedPostToForum(
         widget.gid,
-        widget.documentSnapshot.data['postId'],
-        widget.documentSnapshot.data['ownerUid'],
-        widget.documentSnapshot.data['imgUrl'],
-        widget.documentSnapshot.data['caption'],
-        widget.documentSnapshot.data['location'],
-        widget.documentSnapshot.data['postOwnerName'],
-        widget.documentSnapshot.data['postOwnerPhotoUrl'],
-        widget.documentSnapshot.data['postType'],
+        widget.documentSnapshot['postId'],
+        widget.documentSnapshot['ownerUid'],
+        widget.documentSnapshot['imgUrl'],
+        widget.documentSnapshot['caption'],
+        widget.documentSnapshot['location'],
+        widget.documentSnapshot['postOwnerName'],
+        widget.documentSnapshot['postOwnerPhotoUrl'],
+        widget.documentSnapshot['postType'],
       )
           .then((value) {
         deletePost(widget.documentSnapshot);
       });
-    } else if (widget.documentSnapshot.data['postType'] == 'poll') {
+    } else if (widget.documentSnapshot['postType'] == 'poll') {
       _repository
           .addApprovedPollToForum(
         widget.gid,
-        widget.documentSnapshot.data['postId'],
-        widget.documentSnapshot.data['ownerUid'],
-        widget.documentSnapshot.data['caption'],
-        widget.documentSnapshot.data['option1'],
-        widget.documentSnapshot.data['option2'],
-        widget.documentSnapshot.data['option3'],
-        widget.documentSnapshot.data['option4'],
-        widget.documentSnapshot.data['postType'],
-        widget.documentSnapshot.data['postOwnerName'],
-        widget.documentSnapshot.data['postOwnerPhotoUrl'],
+        widget.documentSnapshot['postId'],
+        widget.documentSnapshot['ownerUid'],
+        widget.documentSnapshot['caption'],
+        widget.documentSnapshot['option1'],
+        widget.documentSnapshot['option2'],
+        widget.documentSnapshot['option3'],
+        widget.documentSnapshot['option4'],
+        widget.documentSnapshot['postType'],
+        widget.documentSnapshot['postOwnerName'],
+        widget.documentSnapshot['postOwnerPhotoUrl'],
       )
           .then((value) {
         deletePost(widget.documentSnapshot);
       });
-    } else if (widget.documentSnapshot.data['postType'] == 'marketplace') {
+    } else if (widget.documentSnapshot['postType'] == 'marketplace') {
       _repository
           .addApprovedAdToForum(
         widget.gid,
-        widget.documentSnapshot.data['postId'],
-        widget.documentSnapshot.data['ownerUid'],
-        widget.documentSnapshot.data['imgUrl'],
-        widget.documentSnapshot.data['caption'],
-        widget.documentSnapshot.data['description'],
-        widget.documentSnapshot.data['price'],
-        widget.documentSnapshot.data['condition'],
-        widget.documentSnapshot.data['location'],
-        widget.documentSnapshot.data['postOwnerName'],
-        widget.documentSnapshot.data['postOwnerPhotoUrl'],
-        widget.documentSnapshot.data['postType'],
+        widget.documentSnapshot['postId'],
+        widget.documentSnapshot['ownerUid'],
+        widget.documentSnapshot['imgUrl'],
+        widget.documentSnapshot['caption'],
+        widget.documentSnapshot['description'],
+        widget.documentSnapshot['price'],
+        widget.documentSnapshot['condition'],
+        widget.documentSnapshot['location'],
+        widget.documentSnapshot['postOwnerName'],
+        widget.documentSnapshot['postOwnerPhotoUrl'],
+        widget.documentSnapshot['postType'],
       )
           .then((value) {
         deletePost(widget.documentSnapshot);
@@ -173,7 +173,7 @@ class _ListPostReviewState extends State<ListPostReview> {
   Widget build(BuildContext context) {
     print('build list');
     var screenSize = MediaQuery.of(context).size;
-    return widget.documentSnapshot.data['postType'] == 'marketplace'
+    return widget.documentSnapshot['postType'] == 'marketplace'
         ? Container(
             decoration: ShapeDecoration(
               color: const Color(0xffffffff),
@@ -190,14 +190,14 @@ class _ListPostReviewState extends State<ListPostReview> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ImageDetail(
-                                  image: widget.documentSnapshot.data['imgUrl'],
+                                  image: widget.documentSnapshot['imgUrl'],
                                 )));
                   },
                   child: CachedNetworkImage(
                     filterQuality: FilterQuality.medium,
                     fadeInCurve: Curves.easeIn,
                     fadeOutCurve: Curves.easeOut,
-                    imageUrl: widget.documentSnapshot.data['imgUrl'],
+                    imageUrl: widget.documentSnapshot['imgUrl'],
                     placeholder: ((context, s) => Center(
                           child: CircularProgressIndicator(),
                         )),
@@ -219,7 +219,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                'INR ${widget.documentSnapshot.data['price']}',
+                                'INR ${widget.documentSnapshot['price']}',
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textBody1(context),
@@ -271,12 +271,12 @@ class _ListPostReviewState extends State<ListPostReview> {
                             ],
                           ),
                           Text(
-                            widget.documentSnapshot.data['caption'],
+                            widget.documentSnapshot['caption'],
                             style:
                                 TextStyle(fontSize: screenSize.height * 0.018),
                           ),
                           Text(
-                            widget.documentSnapshot.data['location'],
+                            widget.documentSnapshot['location'],
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textBody1(context),
@@ -294,9 +294,9 @@ class _ListPostReviewState extends State<ListPostReview> {
                     bottom: screenSize.height * 0.012,
                   ),
                   child: Text(
-                    widget.documentSnapshot.data['time'] != null
-                        ? timeago.format(
-                            widget.documentSnapshot.data['time'].toDate())
+                    widget.documentSnapshot['time'] != null
+                        ? timeago
+                            .format(widget.documentSnapshot['time'].toDate())
                         : '',
                     style: TextStyle(
                         fontFamily: FontNameDefault,
@@ -333,7 +333,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                           new CircleAvatar(
                               radius: screenSize.height * 0.03,
                               backgroundImage: CachedNetworkImageProvider(widget
-                                  .documentSnapshot.data['postOwnerPhotoUrl'])),
+                                  .documentSnapshot['postOwnerPhotoUrl'])),
                           new SizedBox(
                             width: screenSize.width / 30,
                           ),
@@ -348,22 +348,22 @@ class _ListPostReviewState extends State<ListPostReview> {
                                           builder: (context) =>
                                               FriendProfileScreen(
                                                   uid:
-                                                      widget.documentSnapshot
-                                                          .data['ownerUid'],
-                                                  name: widget.documentSnapshot
-                                                      .data['postOwnerName'])));
+                                                      widget.documentSnapshot[
+                                                          'ownerUid'],
+                                                  name: widget.documentSnapshot[
+                                                      'postOwnerName'])));
                                 },
                                 child: new Text(
-                                  widget.documentSnapshot.data['postOwnerName'],
+                                  widget.documentSnapshot['postOwnerName'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textSubTitle(context),
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              widget.documentSnapshot.data['location'] != null
+                              widget.documentSnapshot['location'] != null
                                   ? new Text(
-                                      widget.documentSnapshot.data['location'],
+                                      widget.documentSnapshot['location'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           fontSize: textBody1(context),
@@ -377,7 +377,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                     ],
                   ),
                 ),
-                widget.documentSnapshot.data['postType'] == 'poll'
+                widget.documentSnapshot['postType'] == 'poll'
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -395,7 +395,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                 child: Chip(
                                   backgroundColor: Colors.blue[50],
                                   label: Text(
-                                    widget.documentSnapshot.data['pollType'],
+                                    widget.documentSnapshot['pollType'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
@@ -421,7 +421,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot.data['caption'],
+                                widget.documentSnapshot['caption'],
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
@@ -438,7 +438,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                             ),
                             child: Column(
                               children: [
-                                widget.documentSnapshot.data['option1'] != ''
+                                widget.documentSnapshot['option1'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -458,8 +458,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option1'],
+                                                widget.documentSnapshot[
+                                                    'option1'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -474,7 +474,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option2'] != ''
+                                widget.documentSnapshot['option2'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -492,8 +492,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                             ),
                                             child: Center(
                                                 child: Text(
-                                              widget.documentSnapshot
-                                                  .data['option2'],
+                                              widget
+                                                  .documentSnapshot['option2'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   fontSize: textBody1(context),
@@ -505,7 +505,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option3'] != ''
+                                widget.documentSnapshot['option3'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -523,8 +523,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                             ),
                                             child: Center(
                                                 child: Text(
-                                              widget.documentSnapshot
-                                                  .data['option3'],
+                                              widget
+                                                  .documentSnapshot['option3'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   fontSize: textBody1(context),
@@ -536,7 +536,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option4'] != ''
+                                widget.documentSnapshot['option4'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -554,8 +554,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                             ),
                                             child: Center(
                                                 child: Text(
-                                              widget.documentSnapshot
-                                                  .data['option4'],
+                                              widget
+                                                  .documentSnapshot['option4'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   fontSize: textBody1(context),
@@ -567,7 +567,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option5'] != ''
+                                widget.documentSnapshot['option5'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -585,8 +585,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                             ),
                                             child: Center(
                                                 child: Text(
-                                              widget.documentSnapshot
-                                                  .data['option5'],
+                                              widget
+                                                  .documentSnapshot['option5'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   fontSize: textBody1(context),
@@ -598,7 +598,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option6'] != ''
+                                widget.documentSnapshot['option6'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -616,8 +616,8 @@ class _ListPostReviewState extends State<ListPostReview> {
                                             ),
                                             child: Center(
                                                 child: Text(
-                                              widget.documentSnapshot
-                                                  .data['option6'],
+                                              widget
+                                                  .documentSnapshot['option6'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   fontSize: textBody1(context),
@@ -635,7 +635,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                           Divider(),
                         ],
                       )
-                    : widget.documentSnapshot.data['imgUrl'] != null
+                    : widget.documentSnapshot['imgUrl'] != null
                         ? Padding(
                             padding:
                                 EdgeInsets.only(top: screenSize.height * 0.01),
@@ -645,20 +645,20 @@ class _ListPostReviewState extends State<ListPostReview> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ImageDetail(
-                                              image: widget.documentSnapshot
-                                                  .data['imgUrl'],
+                                              image: widget
+                                                  .documentSnapshot['imgUrl'],
                                             )));
                               },
                               child: FadeInImage.memoryNetwork(
                                 placeholder: kTransparentImage,
-                                image: widget.documentSnapshot.data['imgUrl'],
+                                image: widget.documentSnapshot['imgUrl'],
                               ),
                             ),
                           )
                         : Container(),
-                widget.documentSnapshot.data['caption'] != '' &&
-                        widget.documentSnapshot.data['postType'] != 'poll'
-                    ? widget.documentSnapshot.data['imgUrl'] != null
+                widget.documentSnapshot['caption'] != '' &&
+                        widget.documentSnapshot['postType'] != 'poll'
+                    ? widget.documentSnapshot['imgUrl'] != null
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -668,7 +668,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                     top: screenSize.height * 0.01,
                                     left: screenSize.width / 30),
                                 child: Text(
-                                  widget.documentSnapshot.data['caption'],
+                                  widget.documentSnapshot['caption'],
                                   style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context),
@@ -697,7 +697,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                       top: screenSize.height * 0.01,
                                       left: screenSize.width / 30),
                                   child: Text(
-                                    widget.documentSnapshot.data['caption'],
+                                    widget.documentSnapshot['caption'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textSubTitle(context),
@@ -755,9 +755,9 @@ class _ListPostReviewState extends State<ListPostReview> {
                     bottom: screenSize.height * 0.012,
                   ),
                   child: Text(
-                      widget.documentSnapshot.data['time'] != null
-                          ? timeago.format(
-                              widget.documentSnapshot.data['time'].toDate())
+                      widget.documentSnapshot['time'] != null
+                          ? timeago
+                              .format(widget.documentSnapshot['time'].toDate())
                           : '',
                       style: TextStyle(
                           fontFamily: FontNameDefault,
@@ -770,13 +770,13 @@ class _ListPostReviewState extends State<ListPostReview> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('reviews')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -792,7 +792,7 @@ class _ListPostReviewState extends State<ListPostReview> {
 
   showCategory(DocumentSnapshot snapshot, BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    if (snapshot.data['category'] == 'Entertainment') {
+    if (snapshot['category'] == 'Entertainment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -802,7 +802,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -810,7 +810,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Social') {
+    } else if (snapshot['category'] == 'Social') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -820,7 +820,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -828,7 +828,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Science') {
+    } else if (snapshot['category'] == 'Science') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -838,7 +838,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -846,7 +846,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Politics') {
+    } else if (snapshot['category'] == 'Politics') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -856,7 +856,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -864,7 +864,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Technology') {
+    } else if (snapshot['category'] == 'Technology') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -874,7 +874,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -882,7 +882,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Other') {
+    } else if (snapshot['category'] == 'Other') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -892,7 +892,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -900,7 +900,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Environment') {
+    } else if (snapshot['category'] == 'Environment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -910,7 +910,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -918,7 +918,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Sports') {
+    } else if (snapshot['category'] == 'Sports') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -928,7 +928,7 @@ class _ListPostReviewState extends State<ListPostReview> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),

@@ -9,8 +9,8 @@ import 'package:Yujai/widgets/list_promotion.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FriendActivityApplications extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   FriendActivityApplications({this.user, this.followingUser});
 
   @override

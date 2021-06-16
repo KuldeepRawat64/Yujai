@@ -7,7 +7,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewPostMain extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewPostMain({Key key, this.group, this.currentUser}) : super(key: key);
   @override

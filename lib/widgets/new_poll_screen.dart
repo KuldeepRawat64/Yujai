@@ -7,7 +7,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewPollScreen extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewPollScreen({Key key, this.group, this.currentUser})
       : super(key: key);

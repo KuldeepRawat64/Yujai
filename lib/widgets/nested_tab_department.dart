@@ -36,7 +36,7 @@ class NestedTabBarDepartment extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final Team team;
   final Department department;
   const NestedTabBarDepartment({
@@ -55,17 +55,17 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
+  UserModel _user = UserModel();
   Team _team = Team();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -253,7 +253,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                         children: [
                           CircleAvatar(
                             radius: screenSize.height * 0.015,
-                            backgroundColor: Color(snapshot.data['color']),
+                            backgroundColor: Color(snapshot['color']),
                           ),
                           Padding(
                             padding:
@@ -283,17 +283,17 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                               content: SingleChildScrollView(
                                 child: BlockPicker(
                                   pickerColor: Color(
-                                    snapshot.data['color'],
+                                    snapshot['color'],
                                   ),
                                   onColorChanged: (Color color) {
-                                    Firestore.instance
+                                    FirebaseFirestore.instance
                                         .collection('teams')
-                                        .document(widget.gid)
+                                        .doc(widget.gid)
                                         .collection('departments')
-                                        .document(widget.department.uid)
+                                        .doc(widget.department.uid)
                                         .collection('projects')
-                                        .document(snapshot.data['uid'])
-                                        .updateData({'color': color.value})
+                                        .doc(snapshot['uid'])
+                                        .update({'color': color.value})
                                         .then((value) => Navigator.pop(context))
                                         .then(
                                             (value) => Navigator.pop(context));
@@ -378,13 +378,13 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.team.uid)
+        .doc(widget.team.uid)
         .collection('departments')
-        .document(widget.department.uid)
+        .doc(widget.department.uid)
         .collection('projects')
-        .document(snapshot.data['uid'])
+        .doc(snapshot['uid'])
         // .delete();
         .get()
         .then((doc) {
@@ -401,11 +401,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   Widget homeWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('projects')
           .orderBy('timestamp', descending: true)
           .snapshots(),
@@ -515,11 +515,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   Widget discussionsWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('discussions')
           .orderBy('time', descending: true)
           .snapshots(),
@@ -549,11 +549,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   Widget deptMembersWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.department.uid)
+          .doc(widget.department.uid)
           .collection('members')
           .orderBy('timestamp', descending: true)
           .snapshots(),
@@ -676,11 +676,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
             ),
             Divider(),
             StreamBuilder<DocumentSnapshot>(
-              stream: Firestore.instance
+              stream: FirebaseFirestore.instance
                   .collection('teams')
-                  .document(widget.gid)
+                  .doc(widget.gid)
                   .collection('departments')
-                  .document(widget.department.uid)
+                  .doc(widget.department.uid)
                   .snapshots(),
               builder: ((context, snapshot) {
                 if (snapshot.hasData) {

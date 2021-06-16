@@ -15,7 +15,7 @@ import '../style.dart';
 class ListItemTask extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final DocumentSnapshot documentSnapshotList;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
   final String gid;
   final String name;
@@ -64,7 +64,7 @@ class _ListItemTaskState extends State<ListItemTask> {
                       teamId: widget.team.uid,
                       deptId: widget.department.uid,
                       projectId: widget.project.uid,
-                      listId: widget.documentSnapshotList.data['listId'],
+                      listId: widget.documentSnapshotList['listId'],
                     )));
       },
       child: Padding(
@@ -87,10 +87,9 @@ class _ListItemTaskState extends State<ListItemTask> {
                     Row(
                       children: [
                         IconButton(
-                            icon: widget.documentSnapshot.data['isCompleted'] ==
+                            icon: widget.documentSnapshot['isCompleted'] ==
                                         null ||
-                                    widget.documentSnapshot
-                                            .data['isCompleted'] ==
+                                    widget.documentSnapshot['isCompleted'] ==
                                         false
                                 ? Icon(
                                     Icons.check_circle_outline,
@@ -101,39 +100,35 @@ class _ListItemTaskState extends State<ListItemTask> {
                                     color: Colors.green,
                                   ),
                             onPressed: () {
-                              if (widget.documentSnapshot.data['isCompleted'] ==
+                              if (widget.documentSnapshot['isCompleted'] ==
                                       null ||
-                                  widget.documentSnapshot.data['isCompleted'] ==
+                                  widget.documentSnapshot['isCompleted'] ==
                                       false) {
-                                Firestore.instance
+                                FirebaseFirestore.instance
                                     .collection('teams')
-                                    .document(widget.team.uid)
+                                    .doc(widget.team.uid)
                                     .collection('departments')
-                                    .document(widget.department.uid)
+                                    .doc(widget.department.uid)
                                     .collection('projects')
-                                    .document(widget.project.uid)
+                                    .doc(widget.project.uid)
                                     .collection('list')
-                                    .document(widget
-                                        .documentSnapshotList.data['listId'])
+                                    .doc(widget.documentSnapshotList['listId'])
                                     .collection('tasks')
-                                    .document(
-                                        widget.documentSnapshot.data['taskId'])
-                                    .updateData({'isCompleted': true});
+                                    .doc(widget.documentSnapshot['taskId'])
+                                    .update({'isCompleted': true});
                               } else {
-                                Firestore.instance
+                                FirebaseFirestore.instance
                                     .collection('teams')
-                                    .document(widget.team.uid)
+                                    .doc(widget.team.uid)
                                     .collection('departments')
-                                    .document(widget.department.uid)
+                                    .doc(widget.department.uid)
                                     .collection('projects')
-                                    .document(widget.project.uid)
+                                    .doc(widget.project.uid)
                                     .collection('list')
-                                    .document(widget
-                                        .documentSnapshotList.data['listId'])
+                                    .doc(widget.documentSnapshotList['listId'])
                                     .collection('tasks')
-                                    .document(
-                                        widget.documentSnapshot.data['taskId'])
-                                    .updateData({'isCompleted': false});
+                                    .doc(widget.documentSnapshot['taskId'])
+                                    .update({'isCompleted': false});
                               }
                             }),
                         Text(
@@ -181,24 +176,22 @@ class _ListItemTaskState extends State<ListItemTask> {
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: screenSize.height * 0.016,
-                        backgroundImage: widget.documentSnapshot
-                                        .data['assignedPhoto'] !=
-                                    '' &&
-                                widget.documentSnapshot.data['assignedPhoto'] !=
-                                    null
-                            ? CachedNetworkImageProvider(
-                                widget.documentSnapshot.data['assignedPhoto'])
-                            : AssetImage('assets/images/no_image.png'),
+                        backgroundImage:
+                            widget.documentSnapshot['assignedPhoto'] != '' &&
+                                    widget.documentSnapshot['assignedPhoto'] !=
+                                        null
+                                ? CachedNetworkImageProvider(
+                                    widget.documentSnapshot['assignedPhoto'])
+                                : AssetImage('assets/images/no_image.png'),
                       ),
                     ),
                     SizedBox(
                       width: screenSize.width * 0.035,
                     ),
-                    widget.documentSnapshot.data['dueDateRangeStart'] != null &&
-                            widget.documentSnapshot.data['dueDateRangeStart'] !=
-                                ''
+                    widget.documentSnapshot['dueDateRangeStart'] != null &&
+                            widget.documentSnapshot['dueDateRangeStart'] != ''
                         ? Text(
-                            '${widget.documentSnapshot.data['dueDateRangeStart']} - ${widget.documentSnapshot.data['dueDateRangeEnd']}',
+                            '${widget.documentSnapshot['dueDateRangeStart']} - ${widget.documentSnapshot['dueDateRangeEnd']}',
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textBody1(context),
@@ -243,13 +236,13 @@ class _ListItemTaskState extends State<ListItemTask> {
                     ),
                     Expanded(
                       child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance
+                        stream: FirebaseFirestore.instance
                             .collection('teams')
-                            .document(widget.team.uid)
+                            .doc(widget.team.uid)
                             .collection('departments')
-                            .document(widget.department.uid)
+                            .doc(widget.department.uid)
                             .collection('projects')
-                            .document(widget.project.uid)
+                            .doc(widget.project.uid)
                             .collection('members')
                             .orderBy('timestamp', descending: false)
                             .snapshots(),
@@ -261,42 +254,33 @@ class _ListItemTaskState extends State<ListItemTask> {
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   //   scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data.documents.length,
+                                  itemCount: snapshot.data.docs.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return InkWell(
                                       onTap: () {
-                                        Firestore.instance
+                                        FirebaseFirestore.instance
                                             .collection('teams')
-                                            .document(widget.team.uid)
+                                            .doc(widget.team.uid)
                                             .collection('departments')
-                                            .document(widget.department.uid)
+                                            .doc(widget.department.uid)
                                             .collection('projects')
-                                            .document(widget.project.uid)
+                                            .doc(widget.project.uid)
                                             .collection('list')
-                                            .document(widget
-                                                .documentSnapshotList
-                                                .data['listId'])
+                                            .doc(widget
+                                                .documentSnapshotList['listId'])
                                             .collection('tasks')
-                                            .document(widget.documentSnapshot
-                                                .data['taskId'])
-                                            .updateData({
-                                          'assigned': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerUid'],
+                                            .doc(widget
+                                                .documentSnapshot['taskId'])
+                                            .update({
+                                          'assigned': snapshot.data.docs[index]
+                                              ['ownerUid'],
                                           'assignedName': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerName'],
+                                              .data.docs[index]['ownerName'],
                                           'assignedEmail': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerEmail'],
+                                              .data.docs[index]['ownerEmail'],
                                           'assignedPhoto': snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerPhotoUrl']
+                                              .data.docs[index]['ownerPhotoUrl']
                                         }).then((value) {
                                           Navigator.pop(context);
                                         });
@@ -304,36 +288,30 @@ class _ListItemTaskState extends State<ListItemTask> {
                                       child: ListTile(
                                           leading: CircleAvatar(
                                             radius: screenSize.height * 0.02,
-                                            backgroundImage: snapshot
-                                                                .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'] !=
+                                            backgroundImage: snapshot.data
+                                                                .docs[index]
+                                                            ['ownerPhotoUrl'] !=
                                                         '' &&
-                                                    snapshot
-                                                                .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'] !=
+                                                    snapshot.data.docs[index]
+                                                            ['ownerPhotoUrl'] !=
                                                         null
-                                                ? NetworkImage(snapshot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['ownerPhotoUrl'])
+                                                ? NetworkImage(
+                                                    snapshot.data.docs[index]
+                                                        ['ownerPhotoUrl'])
                                                 : AssetImage(
                                                     'assets/images/no_image.png'),
                                           ),
                                           title: Text(
-                                            snapshot.data.documents[index]
-                                                .data['ownerName'],
+                                            snapshot.data.docs[index]
+                                                ['ownerName'],
                                             style: TextStyle(
                                               fontFamily: FontNameDefault,
                                               fontSize: textSubTitle(context),
                                             ),
                                           ),
                                           subtitle: Text(
-                                            snapshot.data.documents[index]
-                                                .data['ownerEmail'],
+                                            snapshot.data.docs[index]
+                                                ['ownerEmail'],
                                             style: TextStyle(
                                               fontFamily: FontNameDefault,
                                               fontSize: textBody1(context),
@@ -396,7 +374,7 @@ class _ListItemTaskState extends State<ListItemTask> {
                                 teamId: widget.team.uid,
                                 deptId: widget.department.uid,
                                 projectId: widget.project.uid,
-                                listId: listSnapshot.data['listId'],
+                                listId: listSnapshot['listId'],
                               ))).then((value) => Navigator.pop(context));
                 },
               ),
@@ -446,17 +424,17 @@ class _ListItemTaskState extends State<ListItemTask> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.team.uid)
+        .doc(widget.team.uid)
         .collection('departments')
-        .document(widget.department.uid)
+        .doc(widget.department.uid)
         .collection('projects')
-        .document(widget.project.uid)
+        .doc(widget.project.uid)
         .collection('list')
-        .document(widget.documentSnapshotList.data['listId'])
+        .doc(widget.documentSnapshotList['listId'])
         .collection('tasks')
-        .document(snapshot.data['taskId'])
+        .doc(snapshot['taskId'])
         .get()
         .then((doc) {
       if (doc.exists) {

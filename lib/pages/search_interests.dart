@@ -21,7 +21,7 @@ class _SearchInterestsState extends State<SearchInterests>
   List<String> _filters;
   bool isLoading = false;
   bool isSelected = false;
-  User user;
+  UserModel user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -77,8 +77,8 @@ class _SearchInterestsState extends State<SearchInterests>
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "interests": FieldValue.arrayUnion(_filters),
     });
     Navigator.pop(context);

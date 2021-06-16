@@ -11,7 +11,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditProfileCompanyAboutForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditProfileCompanyAboutForm({this.currentUser});
 
@@ -22,7 +22,7 @@ class EditProfileCompanyAboutForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileCompanyAboutForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
@@ -31,7 +31,7 @@ class _EditProfileScreenState extends State<EditProfileCompanyAboutForm> {
 
   final _controller = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -51,8 +51,8 @@ class _EditProfileScreenState extends State<EditProfileCompanyAboutForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      _firestore.collection('users').document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      _firestore.collection('users').doc(currentUser.uid).update({
         "bio": _bioController.text,
       });
       _formKey.currentState.save();

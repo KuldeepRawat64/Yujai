@@ -13,7 +13,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PromotionDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
 
   PromotionDetailScreen({this.documentSnapshot, this.user, this.currentuser});
 
@@ -63,8 +63,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
 
   Widget promoStack() {
     var screenSize = MediaQuery.of(context).size;
-    DateTime myDateTime = widget.documentSnapshot.data['time'] != null
-        ? (widget.documentSnapshot.data['time']).toDate()
+    DateTime myDateTime = widget.documentSnapshot['time'] != null
+        ? (widget.documentSnapshot['time']).toDate()
         : DateTime.now();
     //  String toLaunch = widget.documentSnapshot.data['portfolio'];
     return ListView(
@@ -90,8 +90,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                           radius: screenSize.height * 0.045,
                           backgroundColor: Colors.grey,
                           backgroundImage: CachedNetworkImageProvider(
-                            widget.documentSnapshot
-                                .data['promotionOwnerPhotoUrl'],
+                            widget.documentSnapshot['promotionOwnerPhotoUrl'],
                           ),
                         ),
                       ),
@@ -114,7 +113,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                             padding:
                                 EdgeInsets.only(top: screenSize.height * 0.005),
                             child: Text(
-                              widget.documentSnapshot.data['caption'],
+                              widget.documentSnapshot['caption'],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontFamily: FontNameDefault,
@@ -126,8 +125,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                             padding:
                                 EdgeInsets.only(top: screenSize.height * 0.005),
                             child: Text(
-                              widget
-                                  .documentSnapshot.data['promotionOwnerName'],
+                              widget.documentSnapshot['promotionOwnerName'],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontFamily: FontNameDefault,
@@ -146,7 +144,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                 width: 6.0,
                               ),
                               Text(
-                                widget.documentSnapshot.data['location'],
+                                widget.documentSnapshot['location'],
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontFamily: FontNameDefault,
@@ -159,7 +157,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                       ),
                     ],
                   ),
-                  widget.documentSnapshot.data['portfolio'] != ''
+                  widget.documentSnapshot['portfolio'] != ''
                       ? Padding(
                           padding: EdgeInsets.all(screenSize.height * 0.012),
                           child: Row(
@@ -180,8 +178,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => MyWebView(
                                             title: 'Portfolio',
-                                            selectedUrl: widget.documentSnapshot
-                                                .data['portfolio'],
+                                            selectedUrl: widget
+                                                .documentSnapshot['portfolio'],
                                           )));
                                 },
                               ),
@@ -204,7 +202,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.documentSnapshot.data['description'],
+                    widget.documentSnapshot['description'],
                     style: TextStyle(
                         fontFamily: FontNameDefault,
                         color: Colors.black,
@@ -214,8 +212,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                 ],
               ),
             ),
-            widget.documentSnapshot.data['skills'] != null ||
-                    widget.documentSnapshot.data['skills'] != []
+            widget.documentSnapshot['skills'] != null ||
+                    widget.documentSnapshot['skills'] != []
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -242,18 +240,17 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                           padding: EdgeInsets.zero,
                           itemBuilder: (BuildContext context, int index) {
                             return SkillEventRow(SkillEvent(
-                                skill: widget.documentSnapshot.data['skills']
-                                    [index]['skill'],
-                                level: widget.documentSnapshot.data['skills']
-                                    [index]['level']));
+                                skill: widget.documentSnapshot['skills'][index]
+                                    ['skill'],
+                                level: widget.documentSnapshot['skills'][index]
+                                    ['level']));
                           },
-                          itemCount:
-                              widget.documentSnapshot.data['skills'].length),
+                          itemCount: widget.documentSnapshot['skills'].length),
                     ],
                   )
                 : Container(),
-            widget.documentSnapshot.data['experience'] != [] ||
-                    widget.documentSnapshot.data['experience'] != null
+            widget.documentSnapshot['experience'] != [] ||
+                    widget.documentSnapshot['experience'] != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -298,19 +295,20 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return FlowEventRow(FlowEvent(
                                       employmentType:
-                                          widget.documentSnapshot.data['experience']
+                                          widget.documentSnapshot['experience']
                                               [index]['employmentType'],
-                                      isPresent: widget.documentSnapshot.data['experience']
+                                      isPresent: widget.documentSnapshot['experience']
                                           [index]['isPresent'],
-                                      industry: widget.documentSnapshot.data['experience']
+                                      industry: widget.documentSnapshot['experience']
                                           [index]['industry'],
-                                      company: widget.documentSnapshot.data['experience']
+                                      company: widget.documentSnapshot['experience']
                                           [index]['company'],
-                                      designation: widget.documentSnapshot.data['experience']
+                                      designation: widget.documentSnapshot['experience']
                                           [index]['designation'],
-                                      startDate: widget.documentSnapshot.data['experience']
+                                      startDate: widget.documentSnapshot['experience']
                                           [index]['startCompany'],
-                                      endDate: widget.documentSnapshot.data['experience'][index]['endCompany']));
+                                      endDate: widget.documentSnapshot['experience']
+                                          [index]['endCompany']));
                                 },
                                 separatorBuilder:
                                     (BuildContext context, int index) {
@@ -319,15 +317,15 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                   );
                                 },
                                 itemCount: widget
-                                    .documentSnapshot.data['experience'].length)
+                                    .documentSnapshot['experience'].length)
                           ],
                         ),
                       ),
                     ],
                   )
                 : Container(),
-            widget.documentSnapshot.data['education'] != [] ||
-                    widget.documentSnapshot.data['education'] != null
+            widget.documentSnapshot['education'] != [] ||
+                    widget.documentSnapshot['education'] != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -361,17 +359,20 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                               padding: EdgeInsets.zero,
                               itemBuilder: (BuildContext context, int index) {
                                 return FlowEducationRow(FlowEducation(
-                                    isPresent: widget.documentSnapshot
-                                        .data['education'][index]['isPresent'],
-                                    university: widget.documentSnapshot
-                                        .data['education'][index]['university'],
-                                    degree: widget.documentSnapshot.data['education']
+                                    isPresent:
+                                        widget.documentSnapshot['education']
+                                            [index]['isPresent'],
+                                    university:
+                                        widget.documentSnapshot['education']
+                                            [index]['university'],
+                                    degree: widget.documentSnapshot['education']
                                         [index]['degree'],
-                                    field: widget.documentSnapshot.data['education']
+                                    field: widget.documentSnapshot['education']
                                         [index]['field'],
-                                    startDate: widget.documentSnapshot.data['education']
-                                        [index]['startUniversity'],
-                                    endDate: widget.documentSnapshot.data['education']
+                                    startDate:
+                                        widget.documentSnapshot['education']
+                                            [index]['startUniversity'],
+                                    endDate: widget.documentSnapshot['education']
                                         [index]['endUniversity']));
                               },
                               separatorBuilder:
@@ -380,8 +381,8 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                   height: 2,
                                 );
                               },
-                              itemCount: widget
-                                  .documentSnapshot.data['education'].length),
+                              itemCount:
+                                  widget.documentSnapshot['education'].length),
                         ),
                       ),
                     ],
@@ -423,8 +424,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                         radius: screenSize.height * 0.045,
                         backgroundColor: Colors.grey,
                         backgroundImage: CachedNetworkImageProvider(
-                          widget
-                              .documentSnapshot.data['promotionOwnerPhotoUrl'],
+                          widget.documentSnapshot['promotionOwnerPhotoUrl'],
                         )),
                   ),
                   Padding(
@@ -433,7 +433,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.documentSnapshot.data['promotionOwnerName'],
+                          widget.documentSnapshot['promotionOwnerName'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context),
@@ -454,14 +454,14 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                                     color: Colors.white),
                               ),
                               onPressed: () {
-                                if (widget.documentSnapshot.data['ownerUid'] !=
+                                if (widget.documentSnapshot['ownerUid'] !=
                                     widget.currentuser.uid)
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => FriendProfileScreen(
-                                            uid: widget.documentSnapshot
-                                                .data['ownerUid'],
-                                            name: widget.documentSnapshot
-                                                .data['promotionOwnerName'],
+                                            uid: widget
+                                                .documentSnapshot['ownerUid'],
+                                            name: widget.documentSnapshot[
+                                                'promotionOwnerName'],
                                           )));
                               },
                             ),

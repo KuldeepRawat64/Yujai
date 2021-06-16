@@ -16,7 +16,7 @@ import '../models/university.dart';
 import '../models/user.dart';
 import 'package:http/http.dart' as http;
 
-final usersRef = Firestore.instance.collection('users');
+final usersRef = FirebaseFirestore.instance.collection('users');
 
 class ExperienceEdit extends StatefulWidget {
   final String company1;
@@ -69,12 +69,12 @@ class _ExperienceEditState extends State<ExperienceEdit> {
   GlobalKey<AutoCompleteTextFieldState<Company>> ciikey = new GlobalKey();
   static List<Company> companies = new List<Company>();
   var _repository = Repository();
-  FirebaseUser currentUser;
+  User currentUser;
   User user;
   bool isLoading = false;
   final format = DateFormat('yyyy');
   bool loading = true;
-  User _user;
+  UserModel _user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List experience = [
     const Experience(1, 'Years'),
@@ -103,8 +103,8 @@ class _ExperienceEditState extends State<ExperienceEdit> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -120,8 +120,8 @@ class _ExperienceEditState extends State<ExperienceEdit> {
         _company3Controller.text.isNotEmpty &&
             _startCompany3Controller.text.isNotEmpty &&
             _endCompany3Controller.text.isNotEmpty) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      usersRef.document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      usersRef.doc(currentUser.uid).update({
         "company1": _company1Controller.text,
         "company2": _company2Controller.text,
         "company3": _company3Controller.text,
@@ -144,8 +144,8 @@ class _ExperienceEditState extends State<ExperienceEdit> {
 
   void getCompany() async {
     try {
-      final response =
-          await http.get("https://kuldeeprawat64.github.io/data/company.json");
+      final response = await http
+          .get(Uri.parse("https://kuldeeprawat64.github.io/data/company.json"));
       if (response.statusCode == 200) {
         companies = loadCompany(response.body);
         //   print('Company: ${companies.length}');

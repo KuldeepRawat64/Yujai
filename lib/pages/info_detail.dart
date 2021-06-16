@@ -18,7 +18,7 @@ class InformationDetail extends StatefulWidget {
 class _InformationDetailState extends State<InformationDetail> {
   bool isCompany = false;
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   List<User> usersList = List<User>();
@@ -54,8 +54,8 @@ class _InformationDetailState extends State<InformationDetail> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });

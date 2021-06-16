@@ -6,7 +6,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewPostScreen extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewPostScreen({Key key, this.group, this.currentUser})
       : super(key: key);

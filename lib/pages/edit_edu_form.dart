@@ -12,7 +12,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 
 class EditEducationForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
   final Map<String, dynamic> education;
 
   EditEducationForm({this.currentUser, this.education});
@@ -24,7 +24,7 @@ class EditEducationForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditEducationForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _universityController = TextEditingController();
   final _fieldController = TextEditingController();
   final _degreeController = TextEditingController();
@@ -56,10 +56,10 @@ class _EditProfileScreenState extends State<EditEducationForm> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(currentUser.uid)
-          .updateData({
+          .doc(currentUser.uid)
+          .update({
         'education': FieldValue.arrayUnion([
           {
             'university': _universityController.text,
@@ -176,10 +176,7 @@ class _EditProfileScreenState extends State<EditEducationForm> {
   }
 
   deletePost() {
-    Firestore.instance
-        .collection('users')
-        .document(currentUser.uid)
-        .updateData({
+    FirebaseFirestore.instance.collection('users').doc(currentUser.uid).update({
       'education': FieldValue.arrayRemove([widget.education])
     }).then((value) => Navigator.pop(context));
   }

@@ -103,7 +103,7 @@ class _NavyInfoState extends State<NavyInfo> {
   bool isLoading = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User _user;
+  UserModel _user;
   var _repository = Repository();
   // Future<List<DocumentSnapshot>> _future;
 
@@ -122,8 +122,8 @@ class _NavyInfoState extends State<NavyInfo> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -209,8 +209,8 @@ class _NavyInfoState extends State<NavyInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "rank": _selectedOfficerRank.name,
       "command": _selectedCommand.name,
       "regiment": _selectedRegiment.name,

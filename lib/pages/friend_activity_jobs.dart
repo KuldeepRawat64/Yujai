@@ -9,8 +9,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:shimmer/shimmer.dart';
 
 class FriendActivityJobs extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   FriendActivityJobs({this.user, this.followingUser});
 
   @override
@@ -86,7 +86,7 @@ class _FriendActivityJobsState extends State<FriendActivityJobs> {
 
   Widget shimmerJobs() {
     return Container(
-      color: const Color(0xffffffff),
+        color: const Color(0xffffffff),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(mainAxisSize: MainAxisSize.max, children: [

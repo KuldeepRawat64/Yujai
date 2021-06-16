@@ -4,7 +4,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 
 class CompanySearch extends SearchDelegate<String> {
-  List<User> userList;
+  List<UserModel> userList;
   CompanySearch({this.userList});
 
   @override

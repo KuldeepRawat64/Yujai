@@ -15,10 +15,10 @@ class EditCompanyAbout extends StatefulWidget {
 
 class _EditCompanyAboutState extends State<EditCompanyAbout> {
   var _repository = Repository();
-  FirebaseUser currentUser;
+  User currentUser;
   final _controller = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -33,8 +33,8 @@ class _EditCompanyAboutState extends State<EditCompanyAbout> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    _firestore.collection('users').document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    _firestore.collection('users').doc(currentUser.uid).update({
       "bio": _controller.text,
     });
     Navigator.pop(context);

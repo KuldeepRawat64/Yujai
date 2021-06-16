@@ -34,7 +34,7 @@ class GroupPage extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
 
   const GroupPage({
     this.gid,
@@ -62,7 +62,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
   String currentUserId, followingUserId;
   File imageFile;
   bool isCompany = false;
-  static User currentuser;
+  static UserModel currentuser;
   bool isMember;
   bool userAgreed = false;
   bool valueFirst = false;
@@ -1407,17 +1407,17 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         accountType: '',
         timestamp: FieldValue.serverTimestamp(),
       );
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('groups')
-          .document(_group.uid)
+          .doc(_group.uid)
           .collection('members')
-          .document(currentuser.uid)
-          .setData(_member.toMap(_member));
+          .doc(currentuser.uid)
+          .set(_member.toMap(_member));
 
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('groups')
-          .document(_group.uid)
-          .updateData({
+          .doc(_group.uid)
+          .update({
         'members': FieldValue.arrayUnion([currentuser.uid])
       }).then((value) => Navigator.pushReplacement(
               context,
@@ -1436,12 +1436,12 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         accountType: '',
         timestamp: FieldValue.serverTimestamp(),
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('groups')
-          .document(_group.uid)
+          .doc(_group.uid)
           .collection('requests')
-          .document(currentuser.uid)
-          .setData(_member.toMap(_member))
+          .doc(currentuser.uid)
+          .set(_member.toMap(_member))
           .then((value) {
         setState(() {
           isRequested = true;
@@ -1452,22 +1452,22 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
 
   leaveGroup() async {
     if (isMember == true) {
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection('groups')
-          .document(_group.uid)
+          .doc(_group.uid)
           .collection('members')
-          .document(currentuser.uid)
+          .doc(currentuser.uid)
           .delete()
           .then((value) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Home()));
       });
 
-      return Firestore.instance
+      return FirebaseFirestore.instance
           .collection('users')
-          .document(currentuser.uid)
+          .doc(currentuser.uid)
           .collection('groups')
-          .document(_group.uid)
+          .doc(_group.uid)
           .delete()
           .then((value) {
         Navigator.pushReplacement(

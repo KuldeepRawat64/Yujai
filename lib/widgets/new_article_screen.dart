@@ -10,7 +10,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewArticleScreen extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewArticleScreen({Key key, this.group, this.currentUser})
       : super(key: key);

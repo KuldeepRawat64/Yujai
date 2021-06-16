@@ -72,14 +72,14 @@ class _ChooseForceState extends State<ChooseForce> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        FirebaseUser currentUser = await _auth.currentUser();
+                        User currentUser = await _auth.currentUser;
                         setState(() {
                           selectedFirst = true;
                           selectedSecond = false;
                           selectedThird = false;
                           military = "Indian Army";
                         });
-                        usersRef.document(currentUser.uid).updateData({
+                        usersRef.doc(currentUser.uid).update({
                           "military": military,
                         });
                         Navigator.push(
@@ -111,14 +111,14 @@ class _ChooseForceState extends State<ChooseForce> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      FirebaseUser currentUser = await _auth.currentUser();
+                      User currentUser = await _auth.currentUser;
                       setState(() {
                         selectedSecond = true;
                         selectedFirst = false;
                         selectedThird = false;
                         military = "Indian Air Force";
                       });
-                      usersRef.document(currentUser.uid).updateData({
+                      usersRef.doc(currentUser.uid).update({
                         "military": military,
                       });
                       Navigator.push(
@@ -152,14 +152,14 @@ class _ChooseForceState extends State<ChooseForce> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        FirebaseUser currentUser = await _auth.currentUser();
+                        User currentUser = await _auth.currentUser;
                         setState(() {
                           selectedThird = true;
                           selectedFirst = false;
                           selectedSecond = false;
                           military = "Indian Navy";
                         });
-                        usersRef.document(currentUser.uid).updateData({
+                        usersRef.doc(currentUser.uid).update({
                           "military": military,
                         });
                         Navigator.push(

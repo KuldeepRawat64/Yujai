@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 
 class EditProfileForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditProfileForm({this.currentUser});
 
@@ -21,12 +24,13 @@ class EditProfileForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _websiteController = TextEditingController();
+  final _locationController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _EditProfileScreenState extends State<EditProfileForm> {
     _emailController.text = widget.currentUser.email;
     _phoneController.text = widget.currentUser.phone;
     _websiteController.text = widget.currentUser.website;
+    _locationController.text = widget.currentUser.location;
     _repository.getCurrentUser().then((user) {
       setState(() {
         currentUser = user;
@@ -53,12 +58,27 @@ class _EditProfileScreenState extends State<EditProfileForm> {
           _bioController.text,
           _emailController.text,
           _phoneController.text,
-          _websiteController.text);
+          _websiteController.text,
+          _locationController.text);
 
       _formKey.currentState.save();
       Navigator.pop(context);
     }
   }
+
+  // void onError(PlacesAutocompleteResponse response) {
+  //   homeScaffoldKey.currentState.showSnackBar(
+  //     SnackBar(content: Text(response.errorMessage)),
+  //   );
+  // }
+  // Future<void> _onButtonPressed() async {
+  //   Prediction p = await PlacesAutocomplete.show(
+  //     context: context,
+  //     apiKey: APIKeys.apiKey,
+  //     components: [Component(Component.country, "fr")],
+  //   );
+  //   displayPrediction(p);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +272,42 @@ class _EditProfileScreenState extends State<EditProfileForm> {
                     isDense: true,
                   ),
                 ),
+                SizedBox(
+                  height: screenSize.height * 0.02,
+                ),
+                TextFormField(
+                  onChanged: (val) {
+                    //    _onButtonPressed();
+                  },
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textSubTitle(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  controller: _locationController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    icon: IconButton(
+                      icon: Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.black54,
+                      ),
+                      onPressed: null,
+                    ),
+                    // hintText: 'https://www',
+                    labelText: 'Location',
+                    labelStyle: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.grey,
+                      fontSize: textSubTitle(context),
+                      //fontWeight: FontWeight.bold,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                ),
+
                 Padding(
                   padding: EdgeInsets.only(
                     top: screenSize.height * 0.05,
@@ -290,6 +346,24 @@ class _EditProfileScreenState extends State<EditProfileForm> {
         ),
       ),
     );
+  }
+
+  Future<Null> displayPrediction(Prediction p) async {
+    if (p != null) {
+      // get detail (lat/lng)
+      GoogleMapsPlaces _places = GoogleMapsPlaces(
+        apiKey: APIKeys.apiKey,
+        //apiHeaders: await GoogleApiHeaders().getHeaders(),
+      );
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+      final lat = detail.result.geometry.location.lat;
+      final lng = detail.result.geometry.location.lng;
+
+      // scaffold.showSnackBar(
+      //   SnackBar(content: Text("${p.description} - $lat/$lng")),
+      // );
+    }
   }
 
   void compressImage() async {

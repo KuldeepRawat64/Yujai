@@ -7,7 +7,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewAdScreen extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewAdScreen({Key key, this.group, this.currentUser}) : super(key: key);
   @override

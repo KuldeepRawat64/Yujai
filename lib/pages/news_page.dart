@@ -25,8 +25,8 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   var _repository = Repository();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   // User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
   List<String> followingUIDs = List<String>();
   List<Group> groupList = List<Group>();
   List<Team> myTeamList = List<Team>();
@@ -443,7 +443,7 @@ class ButtonBar extends StatelessWidget {
 }
 
 class UserSearch extends SearchDelegate<String> {
-  List<User> userList;
+  List<UserModel> userList;
   UserSearch({this.userList});
 
   @override

@@ -146,8 +146,8 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "startService": _startServiceController.text,
       "endService": _endServiceController.text,
       "bio": _bioController.text,

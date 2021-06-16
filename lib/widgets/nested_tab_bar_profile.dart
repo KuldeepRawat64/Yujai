@@ -18,8 +18,8 @@ import 'list_news.dart';
 import 'list_promotion.dart';
 
 class NestedTabBarProfile extends StatefulWidget {
-  final User profileUser;
-  final User currentUser;
+  final UserModel profileUser;
+  final UserModel currentUser;
 
   const NestedTabBarProfile({Key key, this.profileUser, this.currentUser})
       : super(key: key);
@@ -31,7 +31,7 @@ class _NestedTabBarProfileState extends State<NestedTabBarProfile>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _listFuture;
   Future<List<DocumentSnapshot>> _eventFuture;
@@ -41,10 +41,10 @@ class _NestedTabBarProfileState extends State<NestedTabBarProfile>
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel _user = UserModel();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -62,7 +62,7 @@ class _NestedTabBarProfileState extends State<NestedTabBarProfile>
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
 
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
@@ -144,8 +144,8 @@ class _NestedTabBarProfileState extends State<NestedTabBarProfile>
   }
 
   void fetchFeed() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.fetchUserDetailsById(currentUser.uid);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.fetchUserDetailsById(currentUser.uid);
     if (!mounted) return;
     setState(() {
       this.currentuser = user;
@@ -630,7 +630,7 @@ class _NestedTabBarProfileState extends State<NestedTabBarProfile>
     );
   }
 
-  Widget userBody(User _user) {
+  Widget userBody(UserModel _user) {
     var screenSize = MediaQuery.of(context).size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _user.bio.isNotEmpty

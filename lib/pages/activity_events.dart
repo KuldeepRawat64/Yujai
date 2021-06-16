@@ -15,7 +15,7 @@ class EventUpdates extends StatefulWidget {
 
 class _EventUpdatesState extends State<EventUpdates> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   Future<List<DocumentSnapshot>> _future;
@@ -33,8 +33,8 @@ class _EventUpdatesState extends State<EventUpdates> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;

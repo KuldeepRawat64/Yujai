@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Yujai/widgets/list_Followers.dart';
 
 class FriendFollowing extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   const FriendFollowing({Key key, this.user, this.followingUser})
       : super(key: key);
   @override
@@ -16,7 +16,7 @@ class FriendFollowing extends StatefulWidget {
 
 class _FriendFollowingState extends State<FriendFollowing> {
   var _repository = Repository();
-  List<User> usersList = List<User>();
+  List<UserModel> usersList = List<UserModel>();
   List<DocumentSnapshot> listFriendFollowings = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _future;
   ScrollController _scrollController = ScrollController();
@@ -45,7 +45,7 @@ class _FriendFollowingState extends State<FriendFollowing> {
         if (snapshot.hasData) {
           if (snapshot.connectionState == ConnectionState.done) {
             return SizedBox(
-                height: screenSize.height ,
+                height: screenSize.height,
                 child: ListView.builder(
                     controller: _scrollController,
                     itemCount: snapshot.data.length,
@@ -74,7 +74,7 @@ class _FriendFollowingState extends State<FriendFollowing> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: new Color(0xfff6f6f6),
+        backgroundColor: new Color(0xfff6f6f6),
         appBar: AppBar(
           elevation: 0.5,
           leading: IconButton(
@@ -86,15 +86,15 @@ class _FriendFollowingState extends State<FriendFollowing> {
               onPressed: () {
                 Navigator.of(context).pop();
               }),
-     //     centerTitle: true,
+          //     centerTitle: true,
           backgroundColor: const Color(0xffffffff),
           title: Text(
             'Following',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
-                fontSize:textAppTitle(context)),
+                fontSize: textAppTitle(context)),
           ),
         ),
         body: widget.user != null

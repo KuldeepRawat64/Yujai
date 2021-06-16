@@ -9,7 +9,7 @@ import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
 class EditProfileExperience extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditProfileExperience({Key key, this.currentUser}) : super(key: key);
 

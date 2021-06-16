@@ -13,8 +13,8 @@ import 'package:uuid/uuid.dart';
 class DiscussionComments extends StatefulWidget {
   final DocumentReference documentReference;
   final DocumentSnapshot snapshot;
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   final String gid;
   DiscussionComments(
       {this.documentReference,
@@ -31,7 +31,7 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
   TextEditingController _commentController = TextEditingController();
   var _formKey = GlobalKey<FormState>();
   ScrollController _scrollController = ScrollController();
- String actId = Uuid().v4();
+  String actId = Uuid().v4();
   @override
   void dispose() {
     super.dispose();
@@ -142,14 +142,15 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
         ownerUid: widget.user.uid);
     widget.documentReference
         .collection("comments")
-        .document()
-        .setData(_comment.toMap(_comment))
+        .doc()
+        .set(_comment.toMap(_comment))
         .whenComplete(() {
       _commentController.text = "";
     });
   }
 
-  void addCommentToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addCommentToActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     var _feed = TeamFeed(
       assigned: snapshot['ownerUid'],
       ownerName: currentUser.displayName,
@@ -161,16 +162,16 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
       timestamp: FieldValue.serverTimestamp(),
       commentData: _commentController.text,
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('inbox')
         // .document(currentUser.uid)
         // .collection('comment')
-        .document(actId)
-        .setData(_feed.toMap(_feed))
+        .doc(actId)
+        .set(_feed.toMap(_feed))
         .then((value) {
-          actId = Uuid().v4();
+      actId = Uuid().v4();
       print('Comment Feed added');
     });
   }
@@ -189,9 +190,9 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
           } else {
             return ListView.builder(
               controller: _scrollController,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) =>
-                  commentItem(snapshot.data.documents[index])),
+                  commentItem(snapshot.data.docs[index])),
             );
           }
         }),
@@ -210,8 +211,8 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      snapshot.data['ownerPhotoUrl']),
+                  backgroundImage:
+                      CachedNetworkImageProvider(snapshot['ownerPhotoUrl']),
                   radius: 20,
                 ),
               ),
@@ -220,7 +221,7 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
               ),
               Row(
                 children: <Widget>[
-                  Text(snapshot.data['ownerName'],
+                  Text(snapshot['ownerName'],
                       style: TextStyle(
                         fontSize: textSubTitle(context),
                         fontFamily: FontNameDefault,
@@ -228,7 +229,7 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
                       )),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(snapshot.data['comment'],
+                    child: Text(snapshot['comment'],
                         style: TextStyle(
                           fontSize: textBody1(context),
                           fontFamily: FontNameDefault,
@@ -240,7 +241,7 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Text(timeago.format(snapshot.data['timestamp'].toDate()),
+            child: Text(timeago.format(snapshot['timestamp'].toDate()),
                 style: TextStyle(
                   fontSize: textbody2(context),
                   fontFamily: FontNameDefault,

@@ -16,7 +16,7 @@ class Activity extends StatefulWidget {
 
 class _ActivityState extends State<Activity> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -61,8 +61,8 @@ class _ActivityState extends State<Activity> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -89,7 +89,7 @@ class _ActivityState extends State<Activity> {
           title: Text(
             'Activity',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -181,9 +181,9 @@ class _ActivityState extends State<Activity> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('users')
-          .document(_user.uid)
+          .doc(_user.uid)
           .collection('posts')
           .snapshots(),
       builder: ((context, snapshot) {

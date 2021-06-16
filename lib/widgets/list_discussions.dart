@@ -23,7 +23,7 @@ import 'package:uuid/uuid.dart';
 
 class ListItemDiscussions extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User currentuser;
+  final UserModel currentuser;
   final int index;
   final String gid;
   final String name;
@@ -99,8 +99,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -482,8 +482,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                     children: <Widget>[
                       new CircleAvatar(
                           radius: screenSize.height * 0.02,
-                          backgroundImage: CachedNetworkImageProvider(widget
-                              .documentSnapshot.data['postOwnerPhotoUrl'])),
+                          backgroundImage: CachedNetworkImageProvider(
+                              widget.documentSnapshot['postOwnerPhotoUrl'])),
                       new SizedBox(
                         width: screenSize.width / 30,
                       ),
@@ -496,22 +496,22 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => FriendProfileScreen(
-                                          uid: widget.documentSnapshot
-                                              .data['ownerUid'],
-                                          name: widget.documentSnapshot
-                                              .data['postOwnerName'])));
+                                          uid: widget
+                                              .documentSnapshot['ownerUid'],
+                                          name: widget.documentSnapshot[
+                                              'postOwnerName'])));
                             },
                             child: new Text(
-                              widget.documentSnapshot.data['postOwnerName'],
+                              widget.documentSnapshot['postOwnerName'],
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          widget.documentSnapshot.data['location'] != null
+                          widget.documentSnapshot['location'] != null
                               ? new Text(
-                                  widget.documentSnapshot.data['location'],
+                                  widget.documentSnapshot['location'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
@@ -523,7 +523,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                     ],
                   ),
                   widget.currentuser.uid ==
-                              widget.documentSnapshot.data['ownerUid'] ||
+                              widget.documentSnapshot['ownerUid'] ||
                           widget.group.currentUserUid == widget.currentuser.uid
                       ? InkWell(
                           onTap: () {
@@ -587,7 +587,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                 ],
               ),
             ),
-            widget.documentSnapshot.data['postType'] == 'poll'
+            widget.documentSnapshot['postType'] == 'poll'
                 ? _isVoted == false
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +606,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 child: Chip(
                                   backgroundColor: Colors.blue[50],
                                   label: Text(
-                                    widget.documentSnapshot.data['pollType'],
+                                    widget.documentSnapshot['pollType'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
@@ -632,7 +632,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot.data['caption'],
+                                widget.documentSnapshot['caption'],
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
@@ -650,7 +650,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             ),
                             child: Column(
                               children: [
-                                widget.documentSnapshot.data['option1'] != ''
+                                widget.documentSnapshot['option1'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -683,8 +683,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option1'],
+                                                widget.documentSnapshot[
+                                                    'option1'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -699,7 +699,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option2'] != ''
+                                widget.documentSnapshot['option2'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -732,8 +732,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option2'],
+                                                widget.documentSnapshot[
+                                                    'option2'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -748,7 +748,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option3'] != ''
+                                widget.documentSnapshot['option3'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -781,8 +781,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option3'],
+                                                widget.documentSnapshot[
+                                                    'option3'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -797,7 +797,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option4'] != ''
+                                widget.documentSnapshot['option4'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -830,8 +830,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option4'],
+                                                widget.documentSnapshot[
+                                                    'option4'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -846,7 +846,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option5'] != ''
+                                widget.documentSnapshot['option5'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -879,8 +879,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option5'],
+                                                widget.documentSnapshot[
+                                                    'option5'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -895,7 +895,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option6'] != ''
+                                widget.documentSnapshot['option6'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -928,8 +928,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot
-                                                    .data['option6'],
+                                                widget.documentSnapshot[
+                                                    'option6'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -967,7 +967,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 child: Chip(
                                   backgroundColor: Colors.blue[50],
                                   label: Text(
-                                    widget.documentSnapshot.data['pollType'],
+                                    widget.documentSnapshot['pollType'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
@@ -993,7 +993,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot.data['caption'],
+                                widget.documentSnapshot['caption'],
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context)),
@@ -1009,7 +1009,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             ),
                             child: Column(
                               children: [
-                                widget.documentSnapshot.data['option1'] != ''
+                                widget.documentSnapshot['option1'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1044,8 +1044,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                               screenSize.width /
                                                                   30),
                                                       child: Text(
-                                                        widget.documentSnapshot
-                                                            .data['option1'],
+                                                        widget.documentSnapshot[
+                                                            'option1'],
                                                         style: TextStyle(
                                                             fontFamily:
                                                                 FontNameDefault,
@@ -1066,7 +1066,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option2'] != ''
+                                widget.documentSnapshot['option2'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1094,8 +1094,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                       left: screenSize.width /
                                                           30),
                                                   child: Text(
-                                                    widget.documentSnapshot
-                                                        .data['option2'],
+                                                    widget.documentSnapshot[
+                                                        'option2'],
                                                     style: TextStyle(
                                                         fontFamily:
                                                             FontNameDefault,
@@ -1114,7 +1114,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option3'] != ''
+                                widget.documentSnapshot['option3'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1142,8 +1142,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option3'],
+                                                      widget.documentSnapshot[
+                                                          'option3'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1162,7 +1162,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option4'] != ''
+                                widget.documentSnapshot['option4'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1190,8 +1190,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option4'],
+                                                      widget.documentSnapshot[
+                                                          'option4'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1210,7 +1210,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option5'] != ''
+                                widget.documentSnapshot['option5'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1238,8 +1238,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option5'],
+                                                      widget.documentSnapshot[
+                                                          'option5'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1258,7 +1258,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot.data['option6'] != ''
+                                widget.documentSnapshot['option6'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1286,8 +1286,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot
-                                                          .data['option6'],
+                                                      widget.documentSnapshot[
+                                                          'option6'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1312,7 +1312,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                           Divider(),
                         ],
                       )
-                : widget.documentSnapshot.data['imgUrl'] != null
+                : widget.documentSnapshot['imgUrl'] != null
                     ? Padding(
                         padding: EdgeInsets.only(top: screenSize.height * 0.01),
                         child: GestureDetector(
@@ -1321,15 +1321,15 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ImageDetail(
-                                          image: widget
-                                              .documentSnapshot.data['imgUrl'],
+                                          image:
+                                              widget.documentSnapshot['imgUrl'],
                                         )));
                           },
                           child: CachedNetworkImage(
                             filterQuality: FilterQuality.medium,
                             fadeInCurve: Curves.easeIn,
                             fadeOutCurve: Curves.easeOut,
-                            imageUrl: widget.documentSnapshot.data['imgUrl'],
+                            imageUrl: widget.documentSnapshot['imgUrl'],
                             placeholder: ((context, s) => Center(
                                   child: CircularProgressIndicator(),
                                 )),
@@ -1340,9 +1340,9 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                         ),
                       )
                     : Container(),
-            widget.documentSnapshot.data['caption'] != '' &&
-                    widget.documentSnapshot.data['postType'] != 'poll'
-                ? widget.documentSnapshot.data['imgUrl'] != null
+            widget.documentSnapshot['caption'] != '' &&
+                    widget.documentSnapshot['postType'] != 'poll'
+                ? widget.documentSnapshot['imgUrl'] != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -1352,7 +1352,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 top: screenSize.height * 0.01,
                                 left: screenSize.width / 30),
                             child: Text(
-                              widget.documentSnapshot.data['caption'],
+                              widget.documentSnapshot['caption'],
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context)),
@@ -1380,7 +1380,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot.data['caption'],
+                                widget.documentSnapshot['caption'],
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context)),
@@ -1539,7 +1539,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                           horizontal: screenSize.width / 30),
                       child: likesSnapshot.data.length > 1
                           ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              "Liked by ${likesSnapshot.data[0]['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textBody1(context),
@@ -1547,7 +1547,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             )
                           : Text(
                               likesSnapshot.data.length == 1
-                                  ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                                  ? "Liked by ${likesSnapshot.data[0]['ownerName']}"
                                   : "0 Likes",
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
@@ -1572,9 +1572,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                 bottom: screenSize.height * 0.012,
               ),
               child: Text(
-                  widget.documentSnapshot.data['time'] != null
-                      ? timeago
-                          .format(widget.documentSnapshot.data['time'].toDate())
+                  widget.documentSnapshot['time'] != null
+                      ? timeago.format(widget.documentSnapshot['time'].toDate())
                       : '',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
@@ -1595,8 +1594,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentuser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
@@ -1610,15 +1609,15 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('votes')
-        .document(widget.currentuser.uid)
-        .setData(_vote.toMap(_vote))
+        .doc(widget.currentuser.uid)
+        .set(_vote.toMap(_vote))
         .then((value) {
       print("Post Voted");
     });
   }
 
   void addVoteToSelectedOption(
-      DocumentReference reference, User currentUser, String option) {
+      DocumentReference reference, UserModel currentUser, String option) {
     var _vote = Vote(
         ownerName: widget.currentuser.displayName,
         ownerPhotoUrl: widget.currentuser.photoUrl,
@@ -1626,8 +1625,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection(option)
-        .document(widget.currentuser.uid)
-        .setData(_vote.toMap(_vote))
+        .doc(widget.currentuser.uid)
+        .set(_vote.toMap(_vote))
         .then((value) {
       print("Option Voted");
     });
@@ -1665,7 +1664,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
 
   showCategory(DocumentSnapshot snapshot, BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    if (snapshot.data['category'] == 'Entertainment') {
+    if (snapshot['category'] == 'Entertainment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1675,7 +1674,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1683,7 +1682,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Social') {
+    } else if (snapshot['category'] == 'Social') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1693,7 +1692,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1701,7 +1700,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Science') {
+    } else if (snapshot['category'] == 'Science') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1711,7 +1710,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1719,7 +1718,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Politics') {
+    } else if (snapshot['category'] == 'Politics') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1729,7 +1728,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1737,7 +1736,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Technology') {
+    } else if (snapshot['category'] == 'Technology') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1747,7 +1746,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1755,7 +1754,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Other') {
+    } else if (snapshot['category'] == 'Other') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1765,7 +1764,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1773,7 +1772,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Environment') {
+    } else if (snapshot['category'] == 'Environment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1783,7 +1782,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -1791,7 +1790,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
         ),
       );
-    } else if (snapshot.data['category'] == 'Sports') {
+    } else if (snapshot['category'] == 'Sports') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
         child: Chip(
@@ -1801,7 +1800,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           ),
           backgroundColor: Colors.white,
           label: Text(
-            widget.documentSnapshot.data['category'],
+            widget.documentSnapshot['category'],
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textBody1(context),
@@ -2017,13 +2016,13 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -2037,30 +2036,30 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid == snapshot.data['ownerUid']) {
+    if (widget.currentuser.uid == snapshot['ownerUid']) {
       return print('Owner liked');
     } else {
       var _feed = TeamFeed(
-        assigned: [snapshot.data['ownerUid']],
+        assigned: [snapshot['ownerUid']],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
         type: 'like',
         ownerPhotoUrl: currentUser.photoUrl,
         imgUrl: snapshot['imgUrl'],
-        postId: snapshot.data['postId'],
+        postId: snapshot['postId'],
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
-          .setData(_feed.toMap(_feed))
+          .doc(snapshot['postId'])
+          .set(_feed.toMap(_feed))
           .then((value) {
         // actId = Uuid().v4();
         print('Feed added');
@@ -2071,26 +2070,27 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");
     });
   }
 
-  void removeLikeFromActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void removeLikeFromActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     //  bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (currentUser.uid == snapshot.data['ownerUid']) {
+    if (currentUser.uid == snapshot['ownerUid']) {
       return print('Owner feed');
     } else {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .document(snapshot.data['postId'])
+          .doc(snapshot['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {

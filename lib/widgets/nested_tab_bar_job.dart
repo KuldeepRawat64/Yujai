@@ -20,17 +20,17 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _listFuture;
-  User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel _user = UserModel();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   ScrollController _scrollController;
   ScrollController _scrollController1 = ScrollController();
   ScrollController _scrollController2 = ScrollController();
@@ -47,7 +47,7 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
       print("USER : ${user.displayName}");
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
@@ -81,8 +81,8 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
   }
 
   void fetchFeed() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.fetchUserDetailsById(currentUser.uid);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.fetchUserDetailsById(currentUser.uid);
     if (!mounted) return;
     setState(() {
       this.currentuser = user;
@@ -227,43 +227,43 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
     );
   }
 
-  Widget jobSearch() {
-    var screenSize = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        Divider(),
-        GestureDetector(
-          onTap: () {
-            showSearch(
-                context: context,
-                delegate: JobsSearch(
-                    postList: listJob, user: _user, currentUser: _user));
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.search,
-                size: screenSize.height * 0.04,
-                color: Theme.of(context).primaryColor,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: screenSize.width / 30),
-                child: Text(
-                  'Search for work or jobs',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textBody1(context),
-                      color: Colors.black54),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Divider(),
-      ],
-    );
-  }
+  // Widget jobSearch() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return Column(
+  //     children: [
+  //       Divider(),
+  //       GestureDetector(
+  //         onTap: () {
+  //           showSearch(
+  //               context: context,
+  //               delegate: JobsSearch(
+  //                   postList: listJob, user: _user, currentUser: _user));
+  //         },
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(
+  //               Icons.search,
+  //               size: screenSize.height * 0.04,
+  //               color: Theme.of(context).primaryColor,
+  //             ),
+  //             Padding(
+  //               padding: EdgeInsets.only(left: screenSize.width / 30),
+  //               child: Text(
+  //                 'Search for work or jobs',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textBody1(context),
+  //                     color: Colors.black54),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       Divider(),
+  //     ],
+  //   );
+  // }
 
   Widget shimmerJobs() {
     return Container(

@@ -19,7 +19,7 @@ import '../style.dart';
 
 class ListItemTaskList extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
   final String gid;
   final String name;
@@ -76,7 +76,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
               Container(
                 decoration: ShapeDecoration(
                   color: Color(
-                    widget.documentSnapshot.data['color'],
+                    widget.documentSnapshot['color'],
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -85,9 +85,9 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                 child: Padding(
                   padding: const EdgeInsets.all(6.0),
                   child: Text(
-                    widget.documentSnapshot.data['listName'],
+                    widget.documentSnapshot['listName'],
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                         fontFamily: FontNameDefault,
                         fontSize: textSubTitle(context),
                         color: Colors.white),
@@ -125,14 +125,13 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                 if (widget.documentSnapshot != null && listSnapshot.hasData) {
                   return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: listSnapshot.data.documents.length,
+                      itemCount: listSnapshot.data.docs.length,
                       itemBuilder: ((context, index) => ListItemTask(
                             documentSnapshotList: widget.documentSnapshot,
                             team: widget.team,
                             department: widget.department,
                             project: widget.project,
-                            documentSnapshot:
-                                listSnapshot.data.documents[index],
+                            documentSnapshot: listSnapshot.data.docs[index],
                             user: widget.currentuser,
                             currentuser: widget.currentuser,
                           )));
@@ -146,16 +145,16 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('teams')
-        .document(widget.team.uid)
+        .doc(widget.team.uid)
         .collection('departments')
-        .document(widget.department.uid)
+        .doc(widget.department.uid)
         .collection('projects')
-        .document(widget.project.uid)
+        .doc(widget.project.uid)
         .collection('list')
         // .delete();
-        .document(snapshot.data['listId'])
+        .doc(snapshot['listId'])
         // .delete();
         .get()
         .then((doc) {
@@ -276,8 +275,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                   children: [
                     CircleAvatar(
                       radius: screenSize.height * 0.015,
-                      backgroundColor:
-                          Color(widget.documentSnapshot.data['color']),
+                      backgroundColor: Color(widget.documentSnapshot['color']),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: screenSize.width * 0.01),
@@ -306,21 +304,20 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                         content: SingleChildScrollView(
                           child: BlockPicker(
                             pickerColor: Color(
-                              widget.documentSnapshot.data['color'],
+                              widget.documentSnapshot['color'],
                             ),
                             onColorChanged: (Color color) {
-                              Firestore.instance
+                              FirebaseFirestore.instance
                                   .collection('teams')
-                                  .document(widget.team.uid)
+                                  .doc(widget.team.uid)
                                   .collection('departments')
-                                  .document(widget.department.uid)
+                                  .doc(widget.department.uid)
                                   .collection('projects')
-                                  .document(widget.project.uid)
+                                  .doc(widget.project.uid)
                                   .collection('list')
                                   // .delete();
-                                  .document(
-                                      widget.documentSnapshot.data['listId'])
-                                  .updateData({'color': color.value})
+                                  .doc(widget.documentSnapshot['listId'])
+                                  .update({'color': color.value})
                                   .then((value) => Navigator.pop(context))
                                   .then((value) => Navigator.pop(context));
                             },
@@ -650,11 +647,12 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                                                   newTaskId,
                                                   user,
                                                   _taskNameController.text,
-                                                  _taskDescriptionController.text,
+                                                  _taskDescriptionController
+                                                      .text,
                                                   widget.team.uid,
                                                   widget.department.uid,
                                                   widget.project.uid,
-                                                  snapshot.data['listId'])
+                                                  snapshot['listId'])
                                               .then((value) {
                                             newTaskId = Uuid().v4();
                                             _taskNameController.text = '';
@@ -735,7 +733,8 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
           });
         }));
   }
-    void addInbox(String type, User currentUser) {
+
+  void addInbox(String type, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
     if (currentUser.uid == widget.team.currentUserUid) {
       return print('Owner liked');
@@ -744,21 +743,21 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
         assigned: [widget.team.currentUserUid],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
-        type:type,
+        type: type,
         ownerPhotoUrl: currentUser.photoUrl,
         imgUrl: '',
         postId: actId,
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(actId)
-          .setData(_feed.toMap(_feed))
+          .doc(actId)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Inbox added');
       });

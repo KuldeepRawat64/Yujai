@@ -98,9 +98,9 @@ class _AirforceInfoState extends State<AirforceInfo> {
   List<DropdownMenuItem<Department>> _dropDownMenuDepartment;
   Department _selectedDepartment;
   bool isLoading = false;
-  User user;
+  UserModel user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User _user;
+  UserModel _user;
 
   var _repository = Repository();
 
@@ -118,8 +118,8 @@ class _AirforceInfoState extends State<AirforceInfo> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -199,8 +199,8 @@ class _AirforceInfoState extends State<AirforceInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "rank": _selectedOfficerRank.name,
       "command": _selectedCommand.name,
       "department": _selectedDepartment.name,

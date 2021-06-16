@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget futureWidget() {
     return FutureBuilder(
         future: _repository.getCurrentUser(),
-        builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+        builder: (context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return MyHomePage();

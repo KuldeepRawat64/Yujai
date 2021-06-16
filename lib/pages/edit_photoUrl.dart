@@ -20,7 +20,7 @@ class EditPhotoUrl extends StatefulWidget {
 
 class _EditPhotoUrlState extends State<EditPhotoUrl> {
   var _repository = Repository();
-  FirebaseUser currentUser;
+  User currentUser;
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _EditPhotoUrlState extends State<EditPhotoUrl> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-       elevation: 0,
+          elevation: 0,
           backgroundColor: Colors.white,
           title: Text(
             'Edit Profile',
@@ -117,7 +117,8 @@ class _EditPhotoUrlState extends State<EditPhotoUrl> {
                             borderRadius: BorderRadius.circular(80.0),
                             image: DecorationImage(
                                 image: widget.photoUrl.isEmpty
-                                    ? AssetImage('assets/images/group_no-image.png')
+                                    ? AssetImage(
+                                        'assets/images/group_no-image.png')
                                     : CachedNetworkImageProvider(
                                         widget.group.groupProfilePhoto),
                                 fit: BoxFit.cover),

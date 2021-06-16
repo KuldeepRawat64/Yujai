@@ -10,7 +10,7 @@ import '../style.dart';
 
 class JobDetailScreen extends StatelessWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
 
   JobDetailScreen({this.documentSnapshot, this.user, this.currentuser});
 
@@ -59,8 +59,8 @@ class JobDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    DateTime myDateTime = documentSnapshot.data['time'] != null
-        ? (documentSnapshot.data['time']).toDate()
+    DateTime myDateTime = documentSnapshot['time'] != null
+        ? (documentSnapshot['time']).toDate()
         : DateTime.now();
     return ListView(
       children: [
@@ -83,7 +83,7 @@ class JobDetail extends StatelessWidget {
                     child: CircleAvatar(
                         backgroundColor: Colors.grey,
                         backgroundImage: CachedNetworkImageProvider(
-                            documentSnapshot.data['jobOwnerPhotoUrl']),
+                            documentSnapshot['jobOwnerPhotoUrl']),
                         radius: screenSize.height * 0.04),
                   ),
                   Column(
@@ -105,7 +105,7 @@ class JobDetail extends StatelessWidget {
                         padding: EdgeInsets.only(
                             left: 0, top: screenSize.height * 0.01),
                         child: Text(
-                          documentSnapshot.data['caption'],
+                          documentSnapshot['caption'],
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             color: Colors.black,
@@ -117,7 +117,7 @@ class JobDetail extends StatelessWidget {
                         padding: EdgeInsets.only(
                             left: 0.0, top: screenSize.height * 0.012),
                         child: Text(
-                          documentSnapshot.data['jobOwnerName'],
+                          documentSnapshot['jobOwnerName'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               color: Colors.black,
@@ -136,7 +136,7 @@ class JobDetail extends StatelessWidget {
                             width: 6.0,
                           ),
                           Text(
-                            documentSnapshot.data['location'],
+                            documentSnapshot['location'],
                             style: TextStyle(
                               color: Colors.grey,
                               fontFamily: FontNameDefault,
@@ -149,7 +149,7 @@ class JobDetail extends StatelessWidget {
                   )
                 ],
               ),
-              documentSnapshot.data['website'] != ''
+              documentSnapshot['website'] != ''
                   ? Padding(
                       padding: EdgeInsets.all(screenSize.height * 0.012),
                       child: Row(
@@ -172,8 +172,8 @@ class JobDetail extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: (context) => MyWebView(
                                             title: 'Apply for work',
-                                            selectedUrl: documentSnapshot
-                                                .data['website'],
+                                            selectedUrl:
+                                                documentSnapshot['website'],
                                           )));
                             },
                           ),
@@ -195,7 +195,7 @@ class JobDetail extends StatelessWidget {
           child: Wrap(
             children: [
               Text(
-                documentSnapshot.data['description'],
+                documentSnapshot['description'],
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textBody1(context),
@@ -236,7 +236,7 @@ class JobDetail extends StatelessWidget {
               CircleAvatar(
                 radius: screenSize.height * 0.03,
                 backgroundImage: CachedNetworkImageProvider(
-                    documentSnapshot.data['jobOwnerPhotoUrl']),
+                    documentSnapshot['jobOwnerPhotoUrl']),
                 backgroundColor: Colors.grey,
               ),
               Padding(
@@ -248,12 +248,12 @@ class JobDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => FriendProfileScreen(
-                                  uid: documentSnapshot.data['ownerUid'],
-                                  name: documentSnapshot.data['jobOwnerName'],
+                                  uid: documentSnapshot['ownerUid'],
+                                  name: documentSnapshot['jobOwnerName'],
                                 )));
                       },
                       child: Text(
-                        documentSnapshot.data['jobOwnerName'],
+                        documentSnapshot['jobOwnerName'],
                         style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textBody1(context),
@@ -270,9 +270,8 @@ class JobDetail extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => FriendProfileScreen(
-                                        uid: documentSnapshot.data['ownerUid'],
-                                        name: documentSnapshot
-                                            .data['jobOwnerName'],
+                                        uid: documentSnapshot['ownerUid'],
+                                        name: documentSnapshot['jobOwnerName'],
                                       )));
                             },
                             child: Container(

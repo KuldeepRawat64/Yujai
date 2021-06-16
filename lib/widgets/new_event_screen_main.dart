@@ -7,7 +7,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewEventScreenMain extends StatefulWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewEventScreenMain({Key key, this.group, this.currentUser})
       : super(key: key);

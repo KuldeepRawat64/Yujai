@@ -88,7 +88,7 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
   TextEditingController phoneController = new TextEditingController();
   final format = DateFormat('yyyy');
   bool isLoading = false;
-  User user;
+  UserModel user;
   bool startYear;
   bool endYear;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -144,8 +144,8 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "startService": _startServiceController.text,
       "endService": _endServiceController.text,
       "bio": _bioController.text,

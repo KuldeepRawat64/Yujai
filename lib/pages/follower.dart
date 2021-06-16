@@ -13,7 +13,7 @@ class Follower extends StatefulWidget {
 
 class _FollowerState extends State<Follower> {
   var _repository = Repository();
-  User _user = User();
+  UserModel _user = UserModel();
   List<User> usersList = List<User>();
   List<DocumentSnapshot> listFollowers = List<DocumentSnapshot>();
   Future<List<DocumentSnapshot>> _future;
@@ -32,8 +32,8 @@ class _FollowerState extends State<Follower> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });

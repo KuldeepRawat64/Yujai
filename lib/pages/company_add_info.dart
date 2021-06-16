@@ -122,8 +122,8 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
 
   void getIndustry() async {
     try {
-      final response =
-          await http.get("https://kuldeeprawat64.github.io/data/industry.json");
+      final response = await http.get(
+          Uri.parse("https://kuldeeprawat64.github.io/data/industry.json"));
       if (response.statusCode == 200) {
         industries = loadIndustry(response.body);
         // print('Industry: ${industries.length}');
@@ -167,8 +167,8 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "industry": _industryController.text,
       "companySize": _selectedCompanySize.name,
       "bio": _bioController.text,

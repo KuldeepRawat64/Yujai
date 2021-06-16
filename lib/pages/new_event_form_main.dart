@@ -20,7 +20,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:date_field/date_field.dart';
 
 class NewEventFormMain extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
   final bool isOnline;
   static final kInitialPosition = LatLng(-33.8567844, 151.213108);
 
@@ -877,20 +877,20 @@ class _NewEventFormState extends State<NewEventFormMain> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    setState(() {
-      _locationController.text = formattedAddress;
-    });
-  }
+  // getUserLocation() async {
+  //   Position position = await Geolocator()
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //   List<Placemark> placemarks = await Geolocator()
+  //       .placemarkFromCoordinates(position.latitude, position.longitude);
+  //   Placemark placemark = placemarks[0];
+  //   String completeAddress =
+  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+  //   print(completeAddress);
+  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
+  //   setState(() {
+  //     _locationController.text = formattedAddress;
+  //   });
+  // }
 
   _submitForm(BuildContext context) {
     //

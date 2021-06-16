@@ -15,7 +15,7 @@ class EditPurpose extends StatefulWidget {
 class _EditPurposeState extends State<EditPurpose> {
   bool isSelected = false;
   var _repository = Repository();
-  User _user;
+  UserModel _user;
 
   @override
   void initState() {
@@ -24,8 +24,8 @@ class _EditPurposeState extends State<EditPurpose> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;

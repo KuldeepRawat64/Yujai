@@ -103,7 +103,7 @@ class _ArmyInfoState extends State<ArmyInfo> {
   Department _selectedDepartment;
   bool isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User _user;
+  UserModel _user;
 
   @override
   void initState() {
@@ -120,8 +120,8 @@ class _ArmyInfoState extends State<ArmyInfo> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -206,8 +206,8 @@ class _ArmyInfoState extends State<ArmyInfo> {
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "rank": _selectedOfficerRank.name,
       "command": _selectedCommand.name,
       "regiment": _selectedRegiment.name,

@@ -13,7 +13,7 @@ import 'dart:async';
 import 'package:Yujai/resources/repository.dart';
 
 class EditProfileSkill extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditProfileSkill({Key key, this.currentUser}) : super(key: key);
 
@@ -27,8 +27,8 @@ class _EditProfileSkillState extends State<EditProfileSkill> {
   int _widgetId = 1;
   Map<String, dynamic> currentSkill;
   var _repository = Repository();
-  FirebaseUser currentUser;
-  User _user;
+  User currentUser;
+  UserModel _user;
 
   @override
   void initState() {
@@ -37,8 +37,8 @@ class _EditProfileSkillState extends State<EditProfileSkill> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -151,10 +151,10 @@ class _EditProfileSkillState extends State<EditProfileSkill> {
                   ),
                   InkWell(
                     onTap: () {
-                      Firestore.instance
+                      FirebaseFirestore.instance
                           .collection('users')
-                          .document(widget.currentUser.uid)
-                          .updateData({
+                          .doc(widget.currentUser.uid)
+                          .update({
                         'skills': FieldValue.arrayRemove([skills[index]])
                       }).then((value) {
                         retrieveUserDetails();

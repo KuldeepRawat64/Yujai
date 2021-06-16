@@ -52,14 +52,14 @@ class _ChooseAccountState extends State<ChooseAccount> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        FirebaseUser currentUser = await _auth.currentUser();
+                        User currentUser = await _auth.currentUser;
                         setState(() {
                           isSelected = true;
                           isSelected2 = false;
                           isSelected3 = false;
                           accountType = "Professional";
                         });
-                        usersRef.document(currentUser.uid).updateData({
+                        usersRef.doc(currentUser.uid).update({
                           "accountType": accountType,
                         });
                         Navigator.push(
@@ -95,14 +95,14 @@ class _ChooseAccountState extends State<ChooseAccount> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      FirebaseUser currentUser = await _auth.currentUser();
+                      User currentUser = await _auth.currentUser;
                       setState(() {
                         isSelected2 = true;
                         isSelected = false;
                         isSelected3 = false;
                         accountType = "Student";
                       });
-                      usersRef.document(currentUser.uid).updateData({
+                      usersRef.doc(currentUser.uid).update({
                         "accountType": accountType,
                       });
                       Navigator.push(
@@ -139,14 +139,14 @@ class _ChooseAccountState extends State<ChooseAccount> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        FirebaseUser currentUser = await _auth.currentUser();
+                        User currentUser = await _auth.currentUser;
                         setState(() {
                           isSelected3 = true;
                           isSelected = false;
                           isSelected2 = false;
                           accountType = "Military";
                         });
-                        usersRef.document(currentUser.uid).updateData({
+                        usersRef.doc(currentUser.uid).update({
                           "accountType": accountType,
                         });
                         Navigator.push(

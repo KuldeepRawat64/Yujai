@@ -15,7 +15,7 @@ class ActivityApplications extends StatefulWidget {
 
 class _ActivityApplicationsState extends State<ActivityApplications> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   Future<List<DocumentSnapshot>> _future;
@@ -42,8 +42,8 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -90,7 +90,7 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
 
   Widget shimmerPromotion() {
     return Container(
-      color: const Color(0xffffffff),
+        color: const Color(0xffffffff),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(mainAxisSize: MainAxisSize.max, children: [

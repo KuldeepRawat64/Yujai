@@ -8,7 +8,7 @@ import '../style.dart';
 
 class ListItemFollowers extends StatelessWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemFollowers(
@@ -16,14 +16,14 @@ class ListItemFollowers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return user != null && user.uid == documentSnapshot.data['ownerUid']
+    return user != null && user.uid == documentSnapshot['ownerUid']
         ? ListTile(
             leading: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(
-                  documentSnapshot.data['ownerPhotoUrl']),
+              backgroundImage:
+                  CachedNetworkImageProvider(documentSnapshot['ownerPhotoUrl']),
             ),
             title: Text(
-              documentSnapshot.data['ownerName'],
+              documentSnapshot['ownerName'],
               style: TextStyle(
                   fontSize: textSubTitle(context),
                   fontFamily: FontNameDefault,
@@ -34,17 +34,17 @@ class ListItemFollowers extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => FriendProfileScreen(
-                        name: documentSnapshot.data['ownerName'],
-                        uid: documentSnapshot.data['ownerUid'],
+                        name: documentSnapshot['ownerName'],
+                        uid: documentSnapshot['ownerUid'],
                       )));
             },
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(
-                    documentSnapshot.data['ownerPhotoUrl']),
+                    documentSnapshot['ownerPhotoUrl']),
               ),
               title: Text(
-                documentSnapshot.data['ownerName'],
+                documentSnapshot['ownerName'],
                 style: TextStyle(
                     fontSize: textSubTitle(context),
                     fontFamily: FontNameDefault,

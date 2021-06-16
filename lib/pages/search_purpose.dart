@@ -22,7 +22,7 @@ class _SearchPurposeState extends State<SearchPurpose>
   List<String> _filters;
   bool isLoading = false;
   bool isSelected = false;
-  User user;
+  UserModel user;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -60,8 +60,8 @@ class _SearchPurposeState extends State<SearchPurpose>
   // }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "purpose": _filters,
     });
     Navigator.pushReplacement(

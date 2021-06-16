@@ -8,7 +8,7 @@ import 'package:Yujai/models/group.dart';
 
 class NewWorkScreen extends StatelessWidget {
   final Group group;
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewWorkScreen({Key key, this.group, this.currentUser})
       : super(key: key);

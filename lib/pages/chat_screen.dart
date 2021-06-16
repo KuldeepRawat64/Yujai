@@ -17,8 +17,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   var _repository = Repository();
-  User _user = User();
-  List<User> usersList = List<User>();
+  UserModel _user = UserModel();
+  List<UserModel> usersList = [];
   List<String> userList;
   String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
   //String _senderuid;
@@ -50,8 +50,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -99,9 +99,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget chatRoom() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('messages')
-          .document(_user.uid)
+          .doc(_user.uid)
           .collection('chatRoom')
           .orderBy('timestamp', descending: true)
           .snapshots(),
@@ -113,11 +113,11 @@ class _ChatScreenState extends State<ChatScreen> {
         } else {
           return ListView.builder(
             shrinkWrap: true,
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data.docs.length,
             itemBuilder: ((context, index) {
               return StreamBuilder<QuerySnapshot>(
-                stream: snapshot.data.documents[index].reference != null
-                    ? snapshot.data.documents[index].reference
+                stream: snapshot.data.docs[index].reference != null
+                    ? snapshot.data.docs[index].reference
                         .collection('messages')
                         .orderBy('timestamp', descending: true)
                         .snapshots()
@@ -165,19 +165,16 @@ class _ChatScreenState extends State<ChatScreen> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       ChatDetailScreen(
-                                                        photoUrl: snapshot
-                                                                .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'],
-                                                        name: snapshot
-                                                            .data
-                                                            .documents[index]
-                                                            .data['ownerName'],
+                                                        photoUrl: snapshot.data
+                                                                .docs[index]
+                                                            ['ownerPhotoUrl'],
+                                                        name: snapshot.data
+                                                                .docs[index]
+                                                            ['ownerName'],
                                                         receiverUid: snapshot
-                                                            .data
-                                                            .documents[index]
-                                                            .data['ownerUid'],
+                                                                .data
+                                                                .docs[index]
+                                                            ['ownerUid'],
                                                       )));
                                         },
                                         child: Row(
@@ -190,9 +187,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     backgroundImage:
                                                         NetworkImage(snapshot
                                                                 .data
-                                                                .documents[index]
-                                                                .data[
-                                                            'ownerPhotoUrl'])),
+                                                                .docs[index]
+                                                            ['ownerPhotoUrl'])),
                                                 Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -205,10 +201,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      snapshot
-                                                          .data
-                                                          .documents[index]
-                                                          .data['ownerName'],
+                                                      snapshot.data.docs[index]
+                                                          ['ownerName'],
                                                       style: TextStyle(
                                                         fontFamily:
                                                             FontNameDefault,
@@ -222,19 +216,17 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     SizedBox(
                                                       height: 4.0,
                                                     ),
-                                                    snapshotM.data.documents[0]
-                                                                    .data[
-                                                                'message'] !=
+                                                    snapshotM.data.docs[0]
+                                                                ['message'] !=
                                                             null
                                                         ? Container(
                                                             width: screenSize
                                                                     .width *
                                                                 0.4,
                                                             child: Text(
-                                                              snapshotM
-                                                                  .data
-                                                                  .documents[0]
-                                                                  .data['message'],
+                                                              snapshotM.data
+                                                                      .docs[0]
+                                                                  ['message'],
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -282,31 +274,29 @@ class _ChatScreenState extends State<ChatScreen> {
                                             ),
                                             Row(
                                               children: [
-                                                snapshotM.data.documents[0]
-                                                                .data[
-                                                            'timestamp'] !=
+                                                snapshotM.data.docs[0]
+                                                            ['timestamp'] !=
                                                         null
                                                     ? Text(
                                                         DateFormatter(AppLocalizations.of(
                                                                         context))
                                                                     .getVerboseDateTimeRepresentation(snapshotM
                                                                         .data
-                                                                        .documents[
-                                                                            0]
-                                                                        .data[
+                                                                        .docs[0]
+                                                                            [
                                                                             'timestamp']
                                                                         .toDate()) !=
                                                                 null
                                                             ? DateFormatter(
                                                                     AppLocalizations.of(
                                                                         context))
-                                                                .getVerboseDateTimeRepresentation(snapshotM
-                                                                    .data
-                                                                    .documents[
-                                                                        0]
-                                                                    .data[
-                                                                        'timestamp']
-                                                                    .toDate())
+                                                                .getVerboseDateTimeRepresentation(
+                                                                    snapshotM
+                                                                        .data
+                                                                        .docs[0]
+                                                                            [
+                                                                            'timestamp']
+                                                                        .toDate())
                                                             : '',
                                                         style: TextStyle(
                                                           fontFamily:
@@ -371,107 +361,107 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class ChatSearch extends SearchDelegate<String> {
-  List<User> usersList;
-  ChatSearch({this.usersList});
+// class ChatSearch extends SearchDelegate<String> {
+//   List<User> usersList;
+//   ChatSearch({this.usersList});
 
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = "";
-        },
-      )
-    ];
-  }
+//   @override
+//   List<Widget> buildActions(BuildContext context) {
+//     return [
+//       IconButton(
+//         icon: Icon(Icons.clear),
+//         onPressed: () {
+//           query = "";
+//         },
+//       )
+//     ];
+//   }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
+//   @override
+//   Widget buildLeading(BuildContext context) {
+//     return IconButton(
+//       icon: AnimatedIcon(
+//         icon: AnimatedIcons.menu_arrow,
+//         progress: transitionAnimation,
+//       ),
+//       onPressed: () {
+//         close(context, null);
+//       },
+//     );
+//   }
 
-  @override
-  Widget buildResults(BuildContext context) {
-    final List<User> suggestionsList = query.isEmpty
-        ? usersList
-        : usersList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => Column(
-            children: [
-              ListTile(
-                onTap: () {
-                  //   showResults(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => ChatDetailScreen(
-                                photoUrl: suggestionsList[index].photoUrl,
-                                name: suggestionsList[index].displayName,
-                                receiverUid: suggestionsList[index].uid,
-                              ))));
-                },
-                leading: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      suggestionsList[index].photoUrl),
-                ),
-                title: Text(
-                  suggestionsList[index].displayName,
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.018,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          )),
-    );
-  }
+//   @override
+//   Widget buildResults(BuildContext context) {
+//     final List<User> suggestionsList = query.isEmpty
+//         ? usersList
+//         : usersList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => Column(
+//             children: [
+//               ListTile(
+//                 onTap: () {
+//                   //   showResults(context);
+//                   Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                           builder: ((context) => ChatDetailScreen(
+//                                 photoUrl: suggestionsList[index].photoUrl,
+//                                 name: suggestionsList[index].displayName,
+//                                 receiverUid: suggestionsList[index].uid,
+//                               ))));
+//                 },
+//                 leading: CircleAvatar(
+//                   backgroundImage: CachedNetworkImageProvider(
+//                       suggestionsList[index].photoUrl),
+//                 ),
+//                 title: Text(
+//                   suggestionsList[index].displayName,
+//                   style: TextStyle(
+//                     fontSize: MediaQuery.of(context).size.height * 0.018,
+//                   ),
+//                 ),
+//               ),
+//               Divider()
+//             ],
+//           )),
+//     );
+//   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final List<User> suggestionsList = query.isEmpty
-        ? usersList
-        : usersList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => Column(
-            children: [
-              ListTile(
-                onTap: () {
-                  //   showResults(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => ChatDetailScreen(
-                                photoUrl: suggestionsList[index].photoUrl,
-                                name: suggestionsList[index].displayName,
-                                receiverUid: suggestionsList[index].uid,
-                              ))));
-                },
-                leading: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      suggestionsList[index].photoUrl),
-                ),
-                title: Text(
-                  suggestionsList[index].displayName,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height * 0.018),
-                ),
-              ),
-              Divider()
-            ],
-          )),
-    );
-  }
-}
+//   @override
+//   Widget buildSuggestions(BuildContext context) {
+//     final List<User> suggestionsList = query.isEmpty
+//         ? usersList
+//         : usersList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => Column(
+//             children: [
+//               ListTile(
+//                 onTap: () {
+//                   //   showResults(context);
+//                   Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                           builder: ((context) => ChatDetailScreen(
+//                                 photoUrl: suggestionsList[index].photoUrl,
+//                                 name: suggestionsList[index].displayName,
+//                                 receiverUid: suggestionsList[index].uid,
+//                               ))));
+//                 },
+//                 leading: CircleAvatar(
+//                   backgroundImage: CachedNetworkImageProvider(
+//                       suggestionsList[index].photoUrl),
+//                 ),
+//                 title: Text(
+//                   suggestionsList[index].displayName,
+//                   style: TextStyle(
+//                       fontSize: MediaQuery.of(context).size.height * 0.018),
+//                 ),
+//               ),
+//               Divider()
+//             ],
+//           )),
+//     );
+//   }
+// }

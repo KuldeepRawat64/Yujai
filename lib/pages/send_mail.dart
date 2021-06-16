@@ -22,7 +22,7 @@ class _SendMailState extends State<SendMail> {
   final _bodyController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var _repository = Repository();
-  FirebaseUser currentUser;
+  User currentUser;
 
   @override
   void initState() {

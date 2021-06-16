@@ -48,7 +48,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
   StreamSubscription<DocumentSnapshot> subscription;
   File imageFile;
-  static User _user, currentuser;
+  static UserModel _user, currentuser;
   final ScrollController _scrollController = ScrollController();
   // Keep track of whether a scroll is needed.
   bool _needsScroll = true;
@@ -86,7 +86,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   fetchUserDetailsById(String userId) async {
-    User user = await _repository.fetchUserDetailsById(widget.receiverUid);
+    UserModel user = await _repository.fetchUserDetailsById(widget.receiverUid);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -402,11 +402,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('messages')
-          .document(_senderuid)
+          .doc(_senderuid)
           .collection('chatRoom')
-          .document(widget.receiverUid)
+          .doc(widget.receiverUid)
           .collection('messages')
           .orderBy('timestamp', descending: true)
           .snapshots(),

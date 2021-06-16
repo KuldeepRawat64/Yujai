@@ -9,8 +9,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:shimmer/shimmer.dart';
 
 class FriendActivityEvents extends StatefulWidget {
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   FriendActivityEvents({this.user, this.followingUser});
 
   @override
@@ -52,7 +52,7 @@ class _FriendActivityEventsState extends State<FriendActivityEvents> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: new Color(0xfff6f6f6),
+        backgroundColor: new Color(0xfff6f6f6),
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
@@ -63,12 +63,12 @@ class _FriendActivityEventsState extends State<FriendActivityEvents> {
                 size: screenSize.height * 0.045,
               ),
               onPressed: () => Navigator.pop(context)),
-        //  centerTitle: true,
+          //  centerTitle: true,
           backgroundColor: const Color(0xffffffff),
           title: Text(
             'Events',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -86,7 +86,7 @@ class _FriendActivityEventsState extends State<FriendActivityEvents> {
 
   Widget shimmerEvent() {
     return Container(
-      color: const Color(0xffffffff),
+        color: const Color(0xffffffff),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(mainAxisSize: MainAxisSize.max, children: [
@@ -140,7 +140,6 @@ class _FriendActivityEventsState extends State<FriendActivityEvents> {
                           ]),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 0.0)),
-                   
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.0)),
                       Divider(thickness: 4.0, color: Colors.white)
@@ -165,7 +164,7 @@ class _FriendActivityEventsState extends State<FriendActivityEvents> {
         if (snapshot.hasData) {
           if (snapshot.connectionState == ConnectionState.done) {
             return SizedBox(
-                height: screenSize.height ,
+                height: screenSize.height,
                 child: ListView.builder(
                     controller: _scrollController,
                     //shrinkWrap: true,

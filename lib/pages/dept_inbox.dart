@@ -18,7 +18,7 @@ class DeptInbox extends StatefulWidget {
   final String name;
   final Team team;
   final Department dept;
-  final User currentuser;
+  final UserModel currentuser;
   const DeptInbox({
     this.gid,
     this.name,
@@ -33,7 +33,7 @@ class DeptInbox extends StatefulWidget {
 
 class _DeptInboxState extends State<DeptInbox> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -60,8 +60,8 @@ class _DeptInboxState extends State<DeptInbox> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -182,11 +182,11 @@ class _DeptInboxState extends State<DeptInbox> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('departments')
-          .document(widget.dept.uid)
+          .doc(widget.dept.uid)
           .collection('inbox')
           .orderBy('timestamp')
           .snapshots(),

@@ -6,7 +6,7 @@ import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
 class EditProfileCompany extends StatelessWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditProfileCompany({Key key, this.currentUser}) : super(key: key);
   @override

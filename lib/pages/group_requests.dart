@@ -15,7 +15,7 @@ class GroupRequest extends StatefulWidget {
   final String gid;
   final String name;
   final Group group;
-  final User currentuser;
+  final UserModel currentuser;
   const GroupRequest({this.gid, this.name, this.group, this.currentuser});
 
   @override
@@ -181,9 +181,9 @@ class _GroupRequestState extends State<GroupRequest> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('requests')
           .snapshots(),
       builder: ((context, snapshot) {
@@ -337,29 +337,29 @@ class _GroupRequestState extends State<GroupRequest> {
       accountType: 'Member',
       timestamp: FieldValue.serverTimestamp(),
     );
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('members')
-        .document(snapshot['ownerUid'])
-        .setData(_member.toMap(_member));
+        .doc(snapshot['ownerUid'])
+        .set(_member.toMap(_member));
 
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
-        .updateData({
+        .doc(widget.gid)
+        .update({
       'members': FieldValue.arrayUnion([snapshot['ownerUid']])
     }).then((value) => removeInviteToActivityFeed(snapshot));
   }
 
   removeInviteToActivityFeed(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('groups')
-        .document(widget.gid)
+        .doc(widget.gid)
         .collection('requests')
         // .document(currentUser.uid)
         // .collection('likes')
-        .document(snapshot['ownerUid'])
+        .doc(snapshot['ownerUid'])
         .delete()
         .then((value) {
       print('Group Invite sent');

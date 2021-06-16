@@ -19,7 +19,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   List<String> followingUIDs = List<String>();
   List<User> usersList = List<User>();
   DocumentReference reference;
-  User _user = User();
+  UserModel _user = UserModel();
   StreamSubscription<DocumentSnapshot> subscription;
   ScrollController _scrollController = ScrollController();
 
@@ -37,8 +37,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
@@ -87,9 +87,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('users')
-          .document(_user.uid)
+          .doc(_user.uid)
           .collection('items')
           .orderBy('timestamp', descending: true)
           .limit(50)

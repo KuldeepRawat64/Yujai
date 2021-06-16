@@ -13,7 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'home.dart';
 
 class EditInterestForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditInterestForm({this.currentUser});
 
@@ -30,7 +30,7 @@ class _EditProfileScreenState extends State<EditInterestForm>
     with SingleTickerProviderStateMixin {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  User currentUser;
   final _skillController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
@@ -125,8 +125,8 @@ class _EditProfileScreenState extends State<EditInterestForm>
   // }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "interests": FieldValue.arrayUnion(_filters),
     });
     Navigator.pop(context);

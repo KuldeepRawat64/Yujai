@@ -7,7 +7,7 @@ import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
 class EditOrgInfoScreen extends StatelessWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditOrgInfoScreen({Key key, this.currentUser}) : super(key: key);
   @override

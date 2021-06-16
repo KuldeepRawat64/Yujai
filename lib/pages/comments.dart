@@ -12,8 +12,8 @@ class CommentsScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final DocumentSnapshot snapshot;
   final Group group;
-  final User user;
-  final User followingUser;
+  final UserModel user;
+  final UserModel followingUser;
   final String commentType;
   final bool isGroupFeed;
   CommentsScreen({
@@ -145,34 +145,34 @@ class _CommentsScreenState extends State<CommentsScreen> {
         ownerUid: widget.user.uid);
     widget.documentReference
         .collection("comments")
-        .document()
-        .setData(_comment.toMap(_comment))
+        .doc()
+        .set(_comment.toMap(_comment))
         .whenComplete(() {
       _commentController.text = "";
     });
   }
 
-  void addCommentToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addCommentToActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     var _feed = Feed(
-      postOwnerUid: snapshot.data['ownerUid'],
+      postOwnerUid: snapshot['ownerUid'],
       ownerName: currentUser.displayName,
       ownerUid: currentUser.uid,
       type: widget.commentType == null ? 'comment' : widget.commentType,
       ownerPhotoUrl: currentUser.photoUrl,
-      imgUrl: snapshot.data['imgUrl'],
-      postId: snapshot.data['postId'],
+      imgUrl: snapshot['imgUrl'],
+      postId: snapshot['postId'],
       timestamp: FieldValue.serverTimestamp(),
       commentData: _commentController.text,
     );
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection(widget.isGroupFeed ? 'groups' : 'users')
-        .document(
-            widget.isGroupFeed ? widget.group.uid : snapshot.data['ownerUid'])
+        .doc(widget.isGroupFeed ? widget.group.uid : snapshot['ownerUid'])
         .collection(widget.isGroupFeed ? 'inbox' : 'items')
         // .document(currentUser.uid)
         // .collection('comment')
-        .document(snapshot.data['postId'])
-        .setData(_feed.toMap(_feed))
+        .doc(snapshot['postId'])
+        .set(_feed.toMap(_feed))
         .then((value) {
       print('Comment Feed added');
     });
@@ -192,9 +192,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
           } else {
             return ListView.builder(
               controller: _scrollController,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) =>
-                  commentItem(snapshot.data.documents[index])),
+                  commentItem(snapshot.data.docs[index])),
             );
           }
         }),
@@ -213,8 +213,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                      snapshot.data['ownerPhotoUrl']),
+                  backgroundImage:
+                      CachedNetworkImageProvider(snapshot['ownerPhotoUrl']),
                   radius: 20,
                 ),
               ),
@@ -223,7 +223,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               ),
               Row(
                 children: <Widget>[
-                  Text(snapshot.data['ownerName'],
+                  Text(snapshot['ownerName'],
                       style: TextStyle(
                         fontSize: textSubTitle(context),
                         fontFamily: FontNameDefault,
@@ -231,7 +231,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       )),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(snapshot.data['comment'],
+                    child: Text(snapshot['comment'],
                         style: TextStyle(
                           fontSize: textBody1(context),
                           fontFamily: FontNameDefault,
@@ -243,8 +243,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: snapshot.data['timestamp'] != null
-                ? Text(timeago.format(snapshot.data['timestamp'].toDate()),
+            child: snapshot['timestamp'] != null
+                ? Text(timeago.format(snapshot['timestamp'].toDate()),
                     style: TextStyle(
                       fontSize: textbody2(context),
                       fontFamily: FontNameDefault,

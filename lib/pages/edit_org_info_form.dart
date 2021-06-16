@@ -17,7 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class EditOrgInfoForm extends StatefulWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   EditOrgInfoForm({this.currentUser});
 
@@ -28,9 +28,9 @@ class EditOrgInfoForm extends StatefulWidget {
 class _EditProfileScreenState extends State<EditOrgInfoForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  FirebaseUser currentUser;
+  UserModel currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _employeeController = TextEditingController();
   final _gstController = TextEditingController();
   final _companyNameController = TextEditingController();
@@ -62,17 +62,17 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
     _productController.text = widget.currentUser.products;
     _gstController.text = widget.currentUser.gst;
 
-    _repository.getCurrentUser().then((user) {
-      setState(() {
-        currentUser = user;
-      });
-    });
+    // _repository.getCurrentUser().then((user) {
+    //   setState(() {
+    //     currentUser = user;
+    //   });
+    // });
   }
 
   void getIndustry() async {
     try {
-      final response =
-          await http.get("https://kuldeeprawat64.github.io/data/industry.json");
+      final response = await http.get(
+          Uri.parse("https://kuldeeprawat64.github.io/data/industry.json"));
       if (response.statusCode == 200) {
         industries = loadIndustry(response.body);
         print('industry: ${industries.length}');
@@ -117,8 +117,8 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      FirebaseUser currentUser = await _auth.currentUser();
-      _firestore.collection('users').document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      _firestore.collection('users').doc(currentUser.uid).update({
         "displayName": _companyNameController.text,
         "gst": _gstController.text,
         "employees": valueEmployee,

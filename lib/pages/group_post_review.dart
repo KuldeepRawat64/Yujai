@@ -12,7 +12,7 @@ class GroupPostReview extends StatefulWidget {
   final String gid;
   final String name;
   final Group group;
-  final User currentuser;
+  final UserModel currentuser;
   const GroupPostReview({this.gid, this.name, this.group, this.currentuser});
 
   @override
@@ -43,7 +43,7 @@ class _GroupPostReviewState extends State<GroupPostReview> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-          backgroundColor: new Color(0xfff6f6f6),
+        backgroundColor: new Color(0xfff6f6f6),
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
@@ -54,12 +54,12 @@ class _GroupPostReviewState extends State<GroupPostReview> {
                 size: screenSize.height * 0.045,
               ),
               onPressed: () => Navigator.pop(context)),
-        //  centerTitle: true,
+          //  centerTitle: true,
           backgroundColor: const Color(0xffffffff),
           title: Text(
             'Post Review',
             style: TextStyle(
-              fontFamily: FontNameDefault,
+                fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
                 color: Colors.black54,
                 fontWeight: FontWeight.bold),
@@ -152,9 +152,9 @@ class _GroupPostReviewState extends State<GroupPostReview> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('reviews')
           .snapshots(),
       builder: ((context, snapshot) {

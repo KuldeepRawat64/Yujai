@@ -10,7 +10,7 @@ import '../style.dart';
 
 class LikesScreen extends StatefulWidget {
   final DocumentReference documentReference;
-  final User user;
+  final UserModel user;
   LikesScreen({this.documentReference, this.user});
 
   @override
@@ -89,7 +89,7 @@ class _LikesScreenState extends State<LikesScreen> {
                       child: ListTile(
                         title: GestureDetector(
                           onTap: () {
-                            snapshot.data[index].data['ownerName'] ==
+                            snapshot.data[index]['ownerName'] ==
                                     widget.user.displayName
                                 ? Container()
                                 : Navigator.push(
@@ -97,14 +97,14 @@ class _LikesScreenState extends State<LikesScreen> {
                                     MaterialPageRoute(
                                         builder: ((context) =>
                                             FriendProfileScreen(
-                                              uid: snapshot
-                                                  .data[index].data['ownerUid'],
+                                              uid: snapshot.data[index]
+                                                  ['ownerUid'],
                                               name: snapshot.data[index]
-                                                  .data['ownerName'],
+                                                  ['ownerName'],
                                             ))));
                           },
                           child: Text(
-                            snapshot.data[index].data['ownerName'],
+                            snapshot.data[index]['ownerName'],
                             style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: FontNameDefault,
@@ -114,7 +114,7 @@ class _LikesScreenState extends State<LikesScreen> {
                         ),
                         leading: GestureDetector(
                           onTap: () {
-                            snapshot.data[index].data['ownerName'] ==
+                            snapshot.data[index]['ownerName'] ==
                                     widget.user.displayName
                                 ? Navigator.push(
                                     context,
@@ -127,12 +127,12 @@ class _LikesScreenState extends State<LikesScreen> {
                                         builder: ((context) =>
                                             FriendProfileScreen(
                                               name: snapshot.data[index]
-                                                  .data['ownerName'],
+                                                  ['ownerName'],
                                             ))));
                           },
                           child: CircleAvatar(
                             backgroundImage: CachedNetworkImageProvider(
-                                snapshot.data[index].data['ownerPhotoUrl']),
+                                snapshot.data[index]['ownerPhotoUrl']),
                             radius: screenSize.height * 0.02,
                           ),
                         ),

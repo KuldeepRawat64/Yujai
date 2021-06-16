@@ -31,7 +31,7 @@ class NestedTabBarGroupHome extends StatefulWidget {
   final String gid;
   final String name;
   final bool isMember;
-  final User currentUser;
+  final UserModel currentUser;
   final Group group;
   const NestedTabBarGroupHome({
     this.gid,
@@ -48,17 +48,17 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
     with TickerProviderStateMixin {
   TabController _nestedTabController;
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
   List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
   List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  User _user = User();
+  UserModel _user = UserModel();
   Group _group = Group();
-  User currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
+  UserModel currentUser;
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> companyList = List<UserModel>();
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -339,9 +339,9 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('posts')
           .orderBy('time', descending: true)
           .snapshots(),
@@ -381,9 +381,9 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget eventWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('events')
           .orderBy('time', descending: true)
           .snapshots(),
@@ -423,9 +423,9 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget marketPlaceWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('marketplace')
           .orderBy('time', descending: true)
           .snapshots(),
@@ -545,9 +545,9 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget groupMemberWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('groups')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('members')
           .orderBy('accountType', descending: true)
           .snapshots(),

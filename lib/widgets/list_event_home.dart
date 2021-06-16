@@ -14,7 +14,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEventHome extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
   final String gid;
   final String name;
@@ -51,8 +51,8 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -112,31 +112,31 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                   leading: CircleAvatar(
                       radius: screenSize.height * 0.03,
                       backgroundImage: CachedNetworkImageProvider(
-                          widget.documentSnapshot.data['eventOwnerPhotoUrl'])),
+                          widget.documentSnapshot['eventOwnerPhotoUrl'])),
                   title: InkWell(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => FriendProfileScreen(
-                                  uid: widget.documentSnapshot.data['ownerUid'],
-                                  name: widget.documentSnapshot
-                                      .data['eventOwnerName'])));
+                                  uid: widget.documentSnapshot['ownerUid'],
+                                  name: widget
+                                      .documentSnapshot['eventOwnerName'])));
                     },
                     child: new Text(
-                      widget.documentSnapshot.data['eventOwnerName'],
+                      widget.documentSnapshot['eventOwnerName'],
                       style: TextStyle(
                           fontFamily: FontNameDefault,
                           fontSize: textSubTitle(context),
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  subtitle: widget.documentSnapshot.data['city'] != '' &&
-                          widget.documentSnapshot.data['city'] != null
+                  subtitle: widget.documentSnapshot['city'] != '' &&
+                          widget.documentSnapshot['city'] != null
                       ? Row(
                           children: [
                             new Text(
-                              widget.documentSnapshot.data['city'],
+                              widget.documentSnapshot['city'],
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   //    fontSize: textBody1(context),
@@ -159,9 +159,9 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                                 top: screenSize.height * 0.002,
                               ),
                               child: Text(
-                                  widget.documentSnapshot.data['time'] != null
+                                  widget.documentSnapshot['time'] != null
                                       ? timeago.format(widget
-                                          .documentSnapshot.data['time']
+                                          .documentSnapshot['time']
                                           .toDate())
                                       : '',
                                   style: TextStyle(
@@ -197,9 +197,9 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                                 top: screenSize.height * 0.002,
                               ),
                               child: Text(
-                                  widget.documentSnapshot.data['time'] != null
+                                  widget.documentSnapshot['time'] != null
                                       ? timeago.format(widget
-                                          .documentSnapshot.data['time']
+                                          .documentSnapshot['time']
                                           .toDate())
                                       : '',
                                   style: TextStyle(
@@ -210,7 +210,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                           ],
                         ),
                   trailing: widget.currentuser.uid ==
-                              widget.documentSnapshot.data['ownerUid'] ||
+                              widget.documentSnapshot['ownerUid'] ||
                           widget.group != null &&
                               widget.group.currentUserUid ==
                                   widget.currentuser.uid
@@ -273,7 +273,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                           decoration: ShapeDecoration(
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                    widget.documentSnapshot.data['imgUrl'],
+                                    widget.documentSnapshot['imgUrl'],
                                   ),
                                   fit: BoxFit.cover),
                               color: Colors.grey[100],
@@ -306,7 +306,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                                 width: screenSize.width * 0.25,
                                 // height: screenSize.height * 0.045,
                                 child: Text(
-                                  widget.documentSnapshot.data['caption'],
+                                  widget.documentSnapshot['caption'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textHeader(context),
@@ -337,7 +337,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${convertDate(widget.documentSnapshot.data['startDate'])}',
+                                                '${convertDate(widget.documentSnapshot['startDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -348,7 +348,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                                               ),
 
                                               Text(
-                                                'To \n${convertDate(widget.documentSnapshot.data['endDate'])}',
+                                                'To \n${convertDate(widget.documentSnapshot['endDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -439,7 +439,7 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
                 child: Container(
                   //   height: screenSize.height * 0.055,
                   child: Text(
-                    widget.documentSnapshot.data['description'],
+                    widget.documentSnapshot['description'],
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
@@ -701,13 +701,13 @@ class _ListItemEventHomeState extends State<ListItemEventHome> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.user.uid)
+        .doc(widget.user.uid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

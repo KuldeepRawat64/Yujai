@@ -9,7 +9,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class ListItemPromotion extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
 
   ListItemPromotion(
@@ -24,8 +24,8 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
 
   Future<void> send() async {
     final Email email = Email(
-      body: '\n Owner ID : ${widget.documentSnapshot.data['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data['postId']}' +
+      body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -97,8 +97,8 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                     Padding(
                       padding: EdgeInsets.only(left: 12),
                       child: Text(
-                        timeago.format(
-                            widget.documentSnapshot.data['time'].toDate()),
+                        timeago
+                            .format(widget.documentSnapshot['time'].toDate()),
                         style: TextStyle(
                           fontFamily: FontNameDefault,
                           fontSize: textbody2(context),
@@ -107,7 +107,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                       ),
                     ),
                     widget.currentuser.uid ==
-                            widget.documentSnapshot.data['ownerUid']
+                            widget.documentSnapshot['ownerUid']
                         ? InkWell(
                             onTap: () {
                               showDelete(widget.documentSnapshot);
@@ -169,8 +169,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                             radius: screenSize.height * 0.03,
                             backgroundColor: Colors.grey,
                             backgroundImage: CachedNetworkImageProvider(widget
-                                .documentSnapshot
-                                .data['promotionOwnerPhotoUrl']),
+                                .documentSnapshot['promotionOwnerPhotoUrl']),
                           ),
                         ),
                         new SizedBox(
@@ -197,7 +196,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                                 child: Wrap(
                                   children: [
                                     new Text(
-                                      widget.documentSnapshot.data['caption'],
+                                      widget.documentSnapshot['caption'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           fontWeight: FontWeight.bold,
@@ -215,8 +214,8 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                               child: Wrap(
                                 children: [
                                   new Text(
-                                    widget.documentSnapshot
-                                        .data['promotionOwnerName'],
+                                    widget
+                                        .documentSnapshot['promotionOwnerName'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textSubTitle(context),
@@ -225,12 +224,12 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
                                 ],
                               ),
                             ),
-                            widget.documentSnapshot.data['location'] != null
+                            widget.documentSnapshot['location'] != null
                                 ? Padding(
                                     padding: EdgeInsets.only(
                                         top: screenSize.height * 0.005),
                                     child: new Text(
-                                      widget.documentSnapshot.data['location'],
+                                      widget.documentSnapshot['location'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           fontSize: textBody1(context),
@@ -432,13 +431,13 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
   }
 
   deletePost(DocumentSnapshot snapshot) {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.user.uid)
+        .doc(widget.user.uid)
         .collection('posts')
         // .document()
         // .delete();
-        .document(snapshot.data['postId'])
+        .doc(snapshot['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

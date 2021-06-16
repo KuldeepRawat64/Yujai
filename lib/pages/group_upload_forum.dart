@@ -3,6 +3,7 @@ import 'package:Yujai/pages/group_page.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +28,10 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
   var _locationController;
   var _captionController;
   final _repository = Repository();
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
 
   @override
   void initState() {
@@ -270,7 +275,7 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
                             BorderRadius.circular(screenSize.height * 0.05),
                       ),
                       color: Theme.of(context).accentColor,
-                      onPressed: getUserLocation,
+                      onPressed: _getCurrentPosition,
                       icon: Icon(
                         Icons.my_location,
                         size: screenSize.height * 0.04,
@@ -302,16 +307,36 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    String completeAddress =
-        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
-    String formattedAddress = "${placemark.locality}, ${placemark.country}";
-    _locationController.text = formattedAddress;
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    _locationController.text = _currentAddress;
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 }

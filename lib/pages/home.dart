@@ -13,8 +13,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:new_version/new_version.dart';
 
-final usersRef = Firestore.instance.collection('users');
-final groupsRef = Firestore.instance.collection('groups');
+final usersRef = FirebaseFirestore.instance.collection('users');
+final groupsRef = FirebaseFirestore.instance.collection('groups');
 
 class Home extends StatefulWidget {
   @override
@@ -55,18 +55,18 @@ class _HomeState extends State<Home> {
     );
     newVersion.showAlertIfNecessary();
     _pageController = PageController(initialPage: cupertinoTabBarIIIValue);
-    final fbm = FirebaseMessaging();
-    fbm.requestNotificationPermissions();
-    fbm.configure(onMessage: (msg) {
-      print(msg);
-      return;
-    }, onLaunch: (msg) {
-      print(msg);
-      return;
-    }, onResume: (msg) {
-      print(msg);
-      return;
-    });
+
+    // FirebaseMessaging.instance;
+    // FirebaseMessaging.configure(onMessage: (msg) {
+    //   print(msg);
+    //   return;
+    // }, onLaunch: (msg) {
+    //   print(msg);
+    //   return;
+    // }, onResume: (msg) {
+    //   print(msg);
+    //   return;
+    // });
     // fbm.subscribeToTopic('chat');
   }
 

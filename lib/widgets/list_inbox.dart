@@ -22,8 +22,8 @@ class ListItemInbox extends StatelessWidget {
 */
   configureMediaPreview(context) {
     var screenSize = MediaQuery.of(context).size;
-    if (documentSnapshot.data['type'] == 'like' ||
-        documentSnapshot.data['type'] == 'comment') {
+    if (documentSnapshot['type'] == 'like' ||
+        documentSnapshot['type'] == 'comment') {
       mediaPreview = GestureDetector(
         onTap: () => showPost(context),
         child: Container(
@@ -42,8 +42,8 @@ class ListItemInbox extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot.data['type'] == 'projectAdded' ||
-        documentSnapshot.data['type'] == 'projectDeleted') {
+    } else if (documentSnapshot['type'] == 'projectAdded' ||
+        documentSnapshot['type'] == 'projectDeleted') {
       mediaPreview = GestureDetector(
         //   onTap: () => showPost(context),
         child: Row(
@@ -60,7 +60,7 @@ class ListItemInbox extends StatelessWidget {
                 ),
               ),
               decoration: ShapeDecoration(
-                color: Color(documentSnapshot.data['color']),
+                color: Color(documentSnapshot['color']),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(screenSize.height * 0.01),
                 ),
@@ -70,7 +70,7 @@ class ListItemInbox extends StatelessWidget {
               width: 8.0,
             ),
             Text(
-              documentSnapshot.data['gName'],
+              documentSnapshot['gName'],
               style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
@@ -80,15 +80,15 @@ class ListItemInbox extends StatelessWidget {
           ],
         ),
       );
-    } else if (documentSnapshot.data['type'] == 'taskAdded' ||
-        documentSnapshot.data['type'] == 'taskCompleted') {
+    } else if (documentSnapshot['type'] == 'taskAdded' ||
+        documentSnapshot['type'] == 'taskCompleted') {
       mediaPreview = GestureDetector(
         //   onTap: () => showPost(context),
         child: Row(
           children: [
             Icon(
               Icons.check_circle_outline,
-              color: documentSnapshot.data['type'] == 'taskCompleted'
+              color: documentSnapshot['type'] == 'taskCompleted'
                   ? Colors.greenAccent
                   : Colors.black54,
             ),
@@ -96,7 +96,7 @@ class ListItemInbox extends StatelessWidget {
               width: 8.0,
             ),
             Text(
-              documentSnapshot.data['taskName'],
+              documentSnapshot['taskName'],
               style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
@@ -109,37 +109,37 @@ class ListItemInbox extends StatelessWidget {
     } else {
       mediaPreview = Text('');
     }
-    if (documentSnapshot.data['type'] == 'like') {
+    if (documentSnapshot['type'] == 'like') {
       activityItemText = 'liked your post';
-    } else if (documentSnapshot.data['type'] == 'follow') {
+    } else if (documentSnapshot['type'] == 'follow') {
       activityItemText = 'is following you';
-    } else if (documentSnapshot.data['type'] == 'comment') {
+    } else if (documentSnapshot['type'] == 'comment') {
       activityItemText = 'commented on your post';
-    } else if (documentSnapshot.data['type'] == 'projectAdded') {
+    } else if (documentSnapshot['type'] == 'projectAdded') {
       activityItemText = 'added this project';
-    } else if (documentSnapshot.data['type'] == 'projectDeleted') {
+    } else if (documentSnapshot['type'] == 'projectDeleted') {
       activityItemText = 'deleted this project';
-    } else if (documentSnapshot.data['type'] == 'taskAdded') {
+    } else if (documentSnapshot['type'] == 'taskAdded') {
       activityItemText = 'added this task';
-    } else if (documentSnapshot.data['type'] == 'taskCompleted') {
+    } else if (documentSnapshot['type'] == 'taskCompleted') {
       activityItemText = 'marked this task completed';
     } else {
-      activityItemText = 'Error:Unknown type ${documentSnapshot.data['type']}';
+      activityItemText = 'Error:Unknown type ${documentSnapshot['type']}';
     }
   }
 
   showPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(
-            userId: documentSnapshot.data['ownerUid'],
-            postId: documentSnapshot.data['postId'])));
+            userId: documentSnapshot['ownerUid'],
+            postId: documentSnapshot['postId'])));
   }
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FriendProfileScreen(
-              name: documentSnapshot.data['ownerName'],
-              uid: documentSnapshot.data['ownerUid'],
+              name: documentSnapshot['ownerName'],
+              uid: documentSnapshot['ownerUid'],
             )));
   }
 
@@ -168,7 +168,7 @@ class ListItemInbox extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       backgroundImage: CachedNetworkImageProvider(
-                          documentSnapshot.data['ownerPhotoUrl']),
+                          documentSnapshot['ownerPhotoUrl']),
                     ),
                     SizedBox(
                       width: screenSize.height * 0.01,
@@ -187,7 +187,7 @@ class ListItemInbox extends StatelessWidget {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: documentSnapshot.data['ownerName'],
+                                    text: documentSnapshot['ownerName'],
                                     style: TextStyle(
                                         fontSize: textSubTitle(context),
                                         fontFamily: FontNameDefault,
@@ -203,11 +203,10 @@ class ListItemInbox extends StatelessWidget {
                                 ]),
                           ),
                         ),
-                        documentSnapshot.data['timestamp'] != null
+                        documentSnapshot['timestamp'] != null
                             ? Text(
-                                timeago.format(documentSnapshot
-                                    .data['timestamp']
-                                    .toDate()),
+                                timeago.format(
+                                    documentSnapshot['timestamp'].toDate()),
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     color: Colors.grey,

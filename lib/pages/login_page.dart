@@ -272,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void authenticateUser(FirebaseUser user) {
+  void authenticateUser(User user) {
     print('Inside Login Screen -> authenticateUser');
     _repository.authenticateUser(user).then((value) {
       if (value) {
@@ -290,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void authenticateCompany(FirebaseUser user) async {
+  void authenticateCompany(User user) async {
     print('Inside Login Screen -> authenticateCompany');
     _repository.authenticateUser(user).then((value) {
       if (value) {

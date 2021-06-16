@@ -7,7 +7,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';
 
 class NewTeamScreen extends StatelessWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const NewTeamScreen({Key key, this.currentUser}) : super(key: key);
   @override

@@ -19,14 +19,14 @@ class _CompanyInfoState extends State<CompanyInfo> {
   User user;
   bool isLoading = true;
   bool onPressed;
-  FirebaseUser currentUser;
+  User currentUser;
   TextEditingController companyNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController establishYearController = TextEditingController();
   TextEditingController gstController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final format = DateFormat('yyyy');
-  User _user;
+  UserModel _user;
   final _repository = Repository();
 
   @override
@@ -38,12 +38,12 @@ class _CompanyInfoState extends State<CompanyInfo> {
   }
 
   getUser() async {
-    currentUser = await _auth.currentUser();
+    currentUser = await _auth.currentUser;
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -76,8 +76,8 @@ class _CompanyInfoState extends State<CompanyInfo> {
       return;
     }
     {
-      FirebaseUser currentUser = await _auth.currentUser();
-      usersRef.document(currentUser.uid).updateData({
+      User currentUser = await _auth.currentUser;
+      usersRef.doc(currentUser.uid).update({
         "accountType": 'Company',
         "displayName": companyNameController.text,
         "phone": phoneController.text,

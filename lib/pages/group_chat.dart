@@ -45,7 +45,7 @@ class _GroupChatState extends State<GroupChat> {
   String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
   StreamSubscription<DocumentSnapshot> subscription;
   File imageFile;
-  static User _user, currentuser;
+  static UserModel _user, currentuser;
   final ScrollController _scrollController = ScrollController();
   // Keep track of whether a scroll is needed.
   bool _needsScroll = true;
@@ -304,9 +304,9 @@ class _GroupChatState extends State<GroupChat> {
       flex: 1,
       // fit: FlexFit.tight,
       child: StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('groups')
-            .document(widget.recieverGroup.uid)
+            .doc(widget.recieverGroup.uid)
             .collection('messages')
             .orderBy('timestamp', descending: false)
             .snapshots(),

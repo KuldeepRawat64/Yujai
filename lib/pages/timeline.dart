@@ -47,15 +47,15 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   IconData icon;
   Color color;
-  List<User> usersList = List<User>();
-  List<User> userList = List<User>();
+  List<UserModel> usersList = List<UserModel>();
+  List<UserModel> userList = List<UserModel>();
   Future<List<DocumentSnapshot>> _future;
   bool _isLiked = false;
   List<String> followingUIDs = List<String>();
-  User _user = User();
+  UserModel _user = UserModel();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
   List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
   List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
@@ -73,6 +73,7 @@ class _FeedScreenState extends State<FeedScreen> {
   Future<List<DocumentSnapshot>> _newsFuture;
   Future<List<DocumentSnapshot>> _jobFuture;
   //Offset state <-------------------------------------
+
   double offset = 0.0;
   @override
   void initState() {
@@ -81,7 +82,7 @@ class _FeedScreenState extends State<FeedScreen> {
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
         setState(() {
@@ -161,8 +162,8 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void fetchFeed() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.fetchUserDetailsById(currentUser.uid);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.fetchUserDetailsById(currentUser.uid);
     if (!mounted) return;
     setState(() {
       this.currentuser = user;
@@ -556,221 +557,221 @@ class _FeedScreenState extends State<FeedScreen> {
         });
   }
 
-  _showImageDialog() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => InstaUploadPhotoScreen(
-                                  imageFile: imageFile,
-                                ))));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialog() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Choose from Gallery',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   Navigator.pushReplacement(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: ((context) => InstaUploadPhotoScreen(
+  //                                 imageFile: imageFile,
+  //                               ))));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  _showDialogPromotion() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Proceed',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: ((context) => Promotion())));
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showDialogPromotion() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Proceed',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 // Navigator.push(context,
+  //                 //     MaterialPageRoute(builder: ((context) => Promotion())));
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  _showImageDialogEvent() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Cover photo',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: ((context) => EventUpload(
-                    //               imageFile: imageFile,
-                    //             ))));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialogEvent() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cover photo',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   // Navigator.push(
+  //                   //     context,
+  //                   //     MaterialPageRoute(
+  //                   //         builder: ((context) => EventUpload(
+  //                   //               imageFile: imageFile,
+  //                   //             ))));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
+  // Future<File> _pickImage(String action) async {
+  //   PickedFile selectedImage;
+  //   action == 'Gallery'
+  //       ? selectedImage =
+  //           await ImagePicker().getImage(source: ImageSource.gallery)
+  //       : await ImagePicker().getImage(source: ImageSource.camera);
+  //   return File(selectedImage.path);
+  // }
 
-  _showImageDialogArticle() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => Article(
-                                  imageFile: imageFile,
-                                ))));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialogArticle() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Choose from Gallery',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: ((context) => Article(
+  //                                 imageFile: imageFile,
+  //                               ))));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  _showDialogJob() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Proceed',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) => JobPost())));
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showDialogJob() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Proceed',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.push(context,
+  //                     MaterialPageRoute(builder: ((context) => JobPost())));
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
   Widget shimmer() {
     return Container(
@@ -1266,321 +1267,321 @@ class _FeedScreenState extends State<FeedScreen> {
         });
   }
 
-  Widget listItem(
-      {List<DocumentSnapshot> list, User user, User currentUser, int index}) {
-    var screenSize = MediaQuery.of(context).size;
-    print("dadadadad : ${user.uid}");
-    return Card(
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => FriendProfileScreen(
-                                        uid: list[index].data['ownerUid'],
-                                        name: list[index].data['postOwnerName'],
-                                      )))).then((value) {
-                            fetchFeed();
-                            if (!mounted) return;
-                            setState(() {
-                              _user = _user;
-                            });
-                          });
-                        },
-                        child: new CircleAvatar(
-                          radius: screenSize.height * 0.03,
-                          backgroundImage: CachedNetworkImageProvider(
-                              list[index].data['postOwnerPhotoUrl']),
-                        ),
-                      ),
-                      new SizedBox(
-                        width: 10.0,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: ((context) =>
-                                          FriendProfileScreen(
-                                            uid: list[index].data['ownerUid'],
-                                            name: list[index]
-                                                .data['postOwnerName'],
-                                          )))).then((value) {
-                                fetchFeed();
-                                if (!mounted) return;
-                                setState(() {
-                                  _user = _user;
-                                });
-                              });
-                            },
-                            child: new Text(
-                              list[index].data['postOwnerName'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          list[index].data['location'] != null
-                              ? new Text(
-                                  list[index].data['location'],
-                                  style: TextStyle(color: Colors.grey),
-                                )
-                              : Container(),
-                        ],
-                      )
-                    ],
-                  ),
-                  new IconButton(
-                    icon: Icon(Icons.more_horiz),
-                    onPressed: null,
-                  )
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ImageDetail(
-                          image: list[index].data['imgUrl'],
-                        )));
-              },
-              child: CachedNetworkImage(
-                filterQuality: FilterQuality.medium,
-                fadeInCurve: Curves.easeIn,
-                fadeOutCurve: Curves.easeOut,
-                imageUrl: list[index].data['imgUrl'],
-                placeholder: ((context, s) => Center(
-                      child: Container(),
-                    )),
-                width: screenSize.width,
-                height: screenSize.height * 0.4,
-                fit: BoxFit.contain,
-              ),
-            ),
-            list[index].data['caption'] != ''
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Wrap(
-                        children: <Widget>[
-                          // Text(list[index].data['postOwnerName'],
-                          //     style: TextStyle(fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, top: 8.0),
-                            child: Text(list[index].data['caption']),
-                          )
-                        ],
-                      ),
-                      // Padding(
-                      //     padding: const EdgeInsets.only(top: 4.0),
-                      //     child: commentWidget(list[index].reference))
-                    ],
-                  )
-                : Container(),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                          child: _isLiked
-                              ? Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        side: BorderSide(
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Liked',
-                                      style:
-                                          TextStyle(color: Colors.deepPurple),
-                                    ),
-                                  ))
-                              : Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        side: BorderSide(
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Like',
-                                      style:
-                                          TextStyle(color: Colors.deepPurple),
-                                    ),
-                                  )),
-                          onTap: () {
-                            if (!_isLiked) {
-                              setState(() {
-                                _isLiked = true;
-                              });
-                              // saveLikeValue(_isLiked);
-                              postLike(list[index].reference, currentUser);
-                              addLikeToActivityFeed(list[index], currentUser);
-                            } else {
-                              setState(() {
-                                _isLiked = false;
-                              });
-                              //saveLikeValue(_isLiked);
-                              postUnlike(list[index].reference, currentUser);
-                              removeLikeFromActivityFeed(
-                                  list[index], currentUser);
-                            }
+  // Widget listItem(
+  //     {List<DocumentSnapshot> list, User user, User currentUser, int index}) {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   print("dadadadad : ${user.uid}");
+  //   return Card(
+  //     child: Container(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.start,
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.stretch,
+  //         children: <Widget>[
+  //           Padding(
+  //             padding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 8.0),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: <Widget>[
+  //                 Row(
+  //                   children: <Widget>[
+  //                     InkWell(
+  //                       onTap: () {
+  //                         Navigator.push(
+  //                             context,
+  //                             MaterialPageRoute(
+  //                                 builder: ((context) => FriendProfileScreen(
+  //                                       uid: list[index]['ownerUid'],
+  //                                       name: list[index]['postOwnerName'],
+  //                                     )))).then((value) {
+  //                           fetchFeed();
+  //                           if (!mounted) return;
+  //                           setState(() {
+  //                             _user = _user;
+  //                           });
+  //                         });
+  //                       },
+  //                       child: new CircleAvatar(
+  //                         radius: screenSize.height * 0.03,
+  //                         backgroundImage: CachedNetworkImageProvider(
+  //                             list[index]['postOwnerPhotoUrl']),
+  //                       ),
+  //                     ),
+  //                     new SizedBox(
+  //                       width: 10.0,
+  //                     ),
+  //                     Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: <Widget>[
+  //                         InkWell(
+  //                           onTap: () {
+  //                             Navigator.push(
+  //                                 context,
+  //                                 MaterialPageRoute(
+  //                                     builder: ((context) =>
+  //                                         FriendProfileScreen(
+  //                                           uid: list[index]['ownerUid'],
+  //                                           name: list[index]
+  //                                              ['postOwnerName'],
+  //                                         )))).then((value) {
+  //                               fetchFeed();
+  //                               if (!mounted) return;
+  //                               setState(() {
+  //                                 _user = _user;
+  //                               });
+  //                             });
+  //                           },
+  //                           child: new Text(
+  //                             list[index]['postOwnerName'],
+  //                             style: TextStyle(fontWeight: FontWeight.bold),
+  //                           ),
+  //                         ),
+  //                         list[index]['location'] != null
+  //                             ? new Text(
+  //                                 list[index]['location'],
+  //                                 style: TextStyle(color: Colors.grey),
+  //                               )
+  //                             : Container(),
+  //                       ],
+  //                     )
+  //                   ],
+  //                 ),
+  //                 new IconButton(
+  //                   icon: Icon(Icons.more_horiz),
+  //                   onPressed: null,
+  //                 )
+  //               ],
+  //             ),
+  //           ),
+  //           GestureDetector(
+  //             onTap: () {
+  //               Navigator.of(context).push(MaterialPageRoute(
+  //                   builder: (context) => ImageDetail(
+  //                         image: list[index]['imgUrl'],
+  //                       )));
+  //             },
+  //             child: CachedNetworkImage(
+  //               filterQuality: FilterQuality.medium,
+  //               fadeInCurve: Curves.easeIn,
+  //               fadeOutCurve: Curves.easeOut,
+  //               imageUrl: list[index]['imgUrl'],
+  //               placeholder: ((context, s) => Center(
+  //                     child: Container(),
+  //                   )),
+  //               width: screenSize.width,
+  //               height: screenSize.height * 0.4,
+  //               fit: BoxFit.contain,
+  //             ),
+  //           ),
+  //           list[index]['caption'] != ''
+  //               ? Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: <Widget>[
+  //                     Wrap(
+  //                       children: <Widget>[
+  //                         // Text(list[index].data['postOwnerName'],
+  //                         //     style: TextStyle(fontWeight: FontWeight.bold)),
+  //                         Padding(
+  //                           padding:
+  //                               const EdgeInsets.only(left: 16.0, top: 8.0),
+  //                           child: Text(list[index]['caption']),
+  //                         )
+  //                       ],
+  //                     ),
+  //                     // Padding(
+  //                     //     padding: const EdgeInsets.only(top: 4.0),
+  //                     //     child: commentWidget(list[index].reference))
+  //                   ],
+  //                 )
+  //               : Container(),
+  //           Padding(
+  //             padding:
+  //                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: <Widget>[
+  //                 new Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: <Widget>[
+  //                     GestureDetector(
+  //                         child: _isLiked
+  //                             ? Container(
+  //                                 decoration: ShapeDecoration(
+  //                                   shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(12.0),
+  //                                       side: BorderSide(
+  //                                           color: Colors.deepPurple)),
+  //                                   //color: Theme.of(context).accentColor,
+  //                                 ),
+  //                                 child: Padding(
+  //                                   padding: const EdgeInsets.all(8.0),
+  //                                   child: Text(
+  //                                     'Liked',
+  //                                     style:
+  //                                         TextStyle(color: Colors.deepPurple),
+  //                                   ),
+  //                                 ))
+  //                             : Container(
+  //                                 decoration: ShapeDecoration(
+  //                                   shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(12.0),
+  //                                       side: BorderSide(
+  //                                           color: Colors.deepPurple)),
+  //                                   //color: Theme.of(context).accentColor,
+  //                                 ),
+  //                                 child: Padding(
+  //                                   padding: const EdgeInsets.all(8.0),
+  //                                   child: Text(
+  //                                     'Like',
+  //                                     style:
+  //                                         TextStyle(color: Colors.deepPurple),
+  //                                   ),
+  //                                 )),
+  //                         onTap: () {
+  //                           if (!_isLiked) {
+  //                             setState(() {
+  //                               _isLiked = true;
+  //                             });
+  //                             // saveLikeValue(_isLiked);
+  //                             postLike(list[index].reference, currentUser);
+  //                             addLikeToActivityFeed(list[index], currentUser);
+  //                           } else {
+  //                             setState(() {
+  //                               _isLiked = false;
+  //                             });
+  //                             //saveLikeValue(_isLiked);
+  //                             postUnlike(list[index].reference, currentUser);
+  //                             removeLikeFromActivityFeed(
+  //                                 list[index], currentUser);
+  //                           }
 
-                            // _repository.checkIfUserLikedOrNot(_user.uid, snapshot.data[index].reference).then((isLiked) {
-                            //   print("reef : ${snapshot.data[index].reference.path}");
-                            //   if (!isLiked) {
-                            //     setState(() {
-                            //       icon = Icons.favorite;
-                            //       color = Colors.red;
-                            //     });
-                            //     postLike(snapshot.data[index].reference);
-                            //   } else {
+  //                           // _repository.checkIfUserLikedOrNot(_user.uid, snapshot.data[index].reference).then((isLiked) {
+  //                           //   print("reef : ${snapshot.data[index].reference.path}");
+  //                           //   if (!isLiked) {
+  //                           //     setState(() {
+  //                           //       icon = Icons.favorite;
+  //                           //       color = Colors.red;
+  //                           //     });
+  //                           //     postLike(snapshot.data[index].reference);
+  //                           //   } else {
 
-                            //     setState(() {
-                            //       icon =FontAwesomeIcons.heart;
-                            //       color = null;
-                            //     });
-                            //     postUnlike(snapshot.data[index].reference);
-                            //   }
-                            // });
-                            // updateValues(
-                            //     snapshot.data[index].reference);
-                          }),
-                      new SizedBox(
-                        width: 16.0,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
-                                        snapshot: list[index],
-                                        followingUser: followingUser,
-                                        documentReference:
-                                            list[index].reference,
-                                        user: currentUser,
-                                      ))));
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(color: Colors.deepPurple)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Comment',
-                                style: TextStyle(color: Colors.deepPurple),
-                              ),
-                            )),
-                      ),
-                      new SizedBox(
-                        width: 16.0,
-                      ),
-                      new Icon(
-                        MdiIcons.share,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                  // new IconButton(
-                  //     icon: Icon(_isBookmarked
-                  //         ? MdiIcons.bookmark
-                  //         : MdiIcons.bookmarkOutline),
-                  //     onPressed: () {
-                  //       if (!_isBookmarked) {
-                  //         setState(() {
-                  //           _isBookmarked = true;
-                  //         });
-                  //       } else {
-                  //         setState(() {
-                  //           _isBookmarked = false;
-                  //         });
-                  //       }
-                  //     }),
-                ],
-              ),
-            ),
-            FutureBuilder(
-              future: _repository.fetchPostLikes(list[index].reference),
-              builder: ((context,
-                  AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-                if (likesSnapshot.hasData) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => LikesScreen(
-                                    user: currentUser,
-                                    documentReference: list[index].reference,
-                                  ))));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: likesSnapshot.data.length > 1
-                          ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            )
-                          : Text(likesSnapshot.data.length == 1
-                              ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
-                              : "0 Likes"),
-                    ),
-                  );
-                } else {
-                  return Center(child: Container());
-                }
-              }),
-            ),
-            Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
-                child: commentWidget(list[index].reference, list[index])),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(timeago.format(list[index]['time'].toDate()),
-                  style: TextStyle(color: Colors.grey)),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+  //                           //     setState(() {
+  //                           //       icon =FontAwesomeIcons.heart;
+  //                           //       color = null;
+  //                           //     });
+  //                           //     postUnlike(snapshot.data[index].reference);
+  //                           //   }
+  //                           // });
+  //                           // updateValues(
+  //                           //     snapshot.data[index].reference);
+  //                         }),
+  //                     new SizedBox(
+  //                       width: 16.0,
+  //                     ),
+  //                     GestureDetector(
+  //                       onTap: () {
+  //                         Navigator.push(
+  //                             context,
+  //                             MaterialPageRoute(
+  //                                 builder: ((context) => CommentsScreen(
+  //                                       snapshot: list[index],
+  //                                       followingUser: followingUser,
+  //                                       documentReference:
+  //                                           list[index].reference,
+  //                                       user: currentUser,
+  //                                     ))));
+  //                       },
+  //                       child: Container(
+  //                           decoration: ShapeDecoration(
+  //                             shape: RoundedRectangleBorder(
+  //                                 borderRadius: BorderRadius.circular(12.0),
+  //                                 side: BorderSide(color: Colors.deepPurple)),
+  //                             //color: Theme.of(context).accentColor,
+  //                           ),
+  //                           child: Padding(
+  //                             padding: const EdgeInsets.all(8.0),
+  //                             child: Text(
+  //                               'Comment',
+  //                               style: TextStyle(color: Colors.deepPurple),
+  //                             ),
+  //                           )),
+  //                     ),
+  //                     new SizedBox(
+  //                       width: 16.0,
+  //                     ),
+  //                     new Icon(
+  //                       MdiIcons.share,
+  //                       color: Colors.white,
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 // new IconButton(
+  //                 //     icon: Icon(_isBookmarked
+  //                 //         ? MdiIcons.bookmark
+  //                 //         : MdiIcons.bookmarkOutline),
+  //                 //     onPressed: () {
+  //                 //       if (!_isBookmarked) {
+  //                 //         setState(() {
+  //                 //           _isBookmarked = true;
+  //                 //         });
+  //                 //       } else {
+  //                 //         setState(() {
+  //                 //           _isBookmarked = false;
+  //                 //         });
+  //                 //       }
+  //                 //     }),
+  //               ],
+  //             ),
+  //           ),
+  //           FutureBuilder(
+  //             future: _repository.fetchPostLikes(list[index].reference),
+  //             builder: ((context,
+  //                 AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+  //               if (likesSnapshot.hasData) {
+  //                 return GestureDetector(
+  //                   onTap: () {
+  //                     Navigator.push(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                             builder: ((context) => LikesScreen(
+  //                                   user: currentUser,
+  //                                   documentReference: list[index].reference,
+  //                                 ))));
+  //                   },
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                     child: likesSnapshot.data.length > 1
+  //                         ? Text(
+  //                             "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+  //                             style: TextStyle(fontWeight: FontWeight.bold),
+  //                           )
+  //                         : Text(likesSnapshot.data.length == 1
+  //                             ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+  //                             : "0 Likes"),
+  //                   ),
+  //                 );
+  //               } else {
+  //                 return Center(child: Container());
+  //               }
+  //             }),
+  //           ),
+  //           Padding(
+  //               padding:
+  //                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+  //               child: commentWidget(list[index].reference, list[index])),
+  //           Padding(
+  //             padding:
+  //                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  //             child: Text(timeago.format(list[index]['time'].toDate()),
+  //                 style: TextStyle(color: Colors.grey)),
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget commentWidget(
       DocumentReference reference, DocumentSnapshot documentSnapshot) {
@@ -1612,7 +1613,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  void postLike(DocumentReference reference, User currentUser) {
+  void postLike(DocumentReference reference, UserModel currentUser) {
     var _like = Like(
         ownerName: currentUser.displayName,
         ownerPhotoUrl: currentUser.photoUrl,
@@ -1620,15 +1621,15 @@ class _FeedScreenState extends State<FeedScreen> {
         timestamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(currentUser.uid)
-        .setData(_like.toMap(_like))
+        .doc(currentUser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
       //addLikeToActivityFeed();
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
     bool ownerId = followingUser.uid == _user.uid;
     if (!ownerId) {
       var _feed = Feed(
@@ -1641,14 +1642,14 @@ class _FeedScreenState extends State<FeedScreen> {
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(followingUser.uid)
+          .doc(followingUser.uid)
           .collection('items')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(snapshot['postId'])
-          .setData(_feed.toMap(_feed))
+          .doc(snapshot['postId'])
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Feed added');
       });
@@ -1657,28 +1658,25 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
-  void postUnlike(DocumentReference reference, User currentUser) {
-    reference
-        .collection("likes")
-        .document(currentUser.uid)
-        .delete()
-        .then((value) {
+  void postUnlike(DocumentReference reference, UserModel currentUser) {
+    reference.collection("likes").doc(currentUser.uid).delete().then((value) {
       print("Post Unliked");
       // removeLikeFromActivityFeed();
     });
   }
 
-  void removeLikeFromActivityFeed(DocumentSnapshot snapshot, User currentUser) {
+  void removeLikeFromActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
     bool ownerId = followingUser.uid == _user.uid;
     if (!ownerId) {
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(followingUser.uid)
+          .doc(followingUser.uid)
           .collection('items')
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .document(snapshot['postId'])
+          .doc(snapshot['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {

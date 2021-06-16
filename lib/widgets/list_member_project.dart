@@ -14,7 +14,7 @@ import '../style.dart';
 
 class ListItemMemberProject extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final UserModel user, currentuser;
   final int index;
   final String gid;
   final String name;
@@ -81,7 +81,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot.data['ownerUid'], widget.gid)
+        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -111,10 +111,10 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
         child: widget.currentuser.uid == widget.team.currentUserUid
             ? ListTile(
                 subtitle: Text(
-                  widget.documentSnapshot.data['ownerUid'] ==
+                  widget.documentSnapshot['ownerUid'] ==
                               widget.dept.currentUserUid &&
-                          widget.documentSnapshot.data['accountType'] == 'Admin'
-                      ? widget.documentSnapshot.data['accountType']
+                          widget.documentSnapshot['accountType'] == 'Admin'
+                      ? widget.documentSnapshot['accountType']
                       : 'Member',
                   style: TextStyle(
                     fontFamily: FontNameDefault,
@@ -122,7 +122,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                   ),
                 ),
                 title: Text(
-                  widget.documentSnapshot.data['ownerName'],
+                  widget.documentSnapshot['ownerName'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -130,7 +130,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                 ),
                 leading: CircleAvatar(
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot.data['ownerPhotoUrl']),
+                      widget.documentSnapshot['ownerPhotoUrl']),
                 ),
                 trailing: InkWell(
                   onTap: () {
@@ -143,10 +143,10 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
               )
             : ListTile(
                 subtitle: Text(
-                  widget.documentSnapshot.data['ownerUid'] ==
+                  widget.documentSnapshot['ownerUid'] ==
                               widget.dept.currentUserUid &&
-                          widget.documentSnapshot.data['accountType'] == 'Admin'
-                      ? widget.documentSnapshot.data['accountType']
+                          widget.documentSnapshot['accountType'] == 'Admin'
+                      ? widget.documentSnapshot['accountType']
                       : 'Member',
                   style: TextStyle(
                     fontFamily: FontNameDefault,
@@ -154,7 +154,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                   ),
                 ),
                 title: Text(
-                  widget.documentSnapshot.data['ownerName'],
+                  widget.documentSnapshot['ownerName'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -162,10 +162,10 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                 ),
                 leading: CircleAvatar(
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot.data['ownerPhotoUrl']),
+                      widget.documentSnapshot['ownerPhotoUrl']),
                 ),
-                trailing: widget.documentSnapshot.data != null &&
-                        widget.documentSnapshot.data['ownerUid'] ==
+                trailing: widget.documentSnapshot != null &&
+                        widget.documentSnapshot['ownerUid'] ==
                             widget.dept.currentUserUid
                     ? Icon(Icons.admin_panel_settings_outlined)
                     : widget.currentuser.uid == widget.dept.currentUserUid
@@ -208,7 +208,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                     ),
                   ),
                   widget.currentuser.uid == widget.team.currentUserUid
-                      ? widget.documentSnapshot.data['ownerUid'] ==
+                      ? widget.documentSnapshot['ownerUid'] ==
                               widget.dept.currentUserUid
                           ? Column(mainAxisSize: MainAxisSize.min, children: [
                               ListTile(
@@ -369,9 +369,9 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                       Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -384,12 +384,12 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                   icon: Icon(Icons.keyboard_arrow_down),
                                   value: _currentDept,
                                   isDense: true,
-                                  items: snapshot.data.documents
+                                  items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return DropdownMenuItem(
-                                        value: doc.data['uid'],
+                                        value: doc['uid'],
                                         child: Text(
-                                          doc.data['departmentName'],
+                                          doc['departmentName'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontFamily: FontNameDefault,
@@ -422,13 +422,13 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                   _repository.addDeptAdmin(
                                       currentTeam: widget.team,
                                       currentDeptId: _currentDept,
-                                      followerId: widget
-                                          .documentSnapshot.data['ownerUid'],
-                                      followerName: widget
-                                          .documentSnapshot.data['ownerName'],
+                                      followerId:
+                                          widget.documentSnapshot['ownerUid'],
+                                      followerName:
+                                          widget.documentSnapshot['ownerName'],
                                       followerAccountType: 'Admin',
-                                      followerPhotoUrl: widget.documentSnapshot
-                                          .data['ownerPhotoUrl']);
+                                      followerPhotoUrl: widget
+                                          .documentSnapshot['ownerPhotoUrl']);
                                   Navigator.pop(context);
                                 },
                                 child: Container(
@@ -535,9 +535,9 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                       Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -553,12 +553,12 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                       icon: Icon(Icons.keyboard_arrow_down),
                                       value: _currentDept,
                                       isDense: true,
-                                      items: snapshot.data.documents
+                                      items: snapshot.data.docs
                                           .map((DocumentSnapshot doc) {
                                         return DropdownMenuItem(
-                                            value: doc.data['uid'],
+                                            value: doc['uid'],
                                             child: Text(
-                                              doc.data['departmentName'],
+                                              doc['departmentName'],
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontFamily: FontNameDefault,
@@ -590,17 +590,17 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                                 _repository.addDeptMember(
                                                     currentTeam: widget.team,
                                                     currentDeptId: _currentDept,
-                                                    followerId: widget
-                                                        .documentSnapshot
-                                                        .data['ownerUid'],
-                                                    followerName: widget
-                                                        .documentSnapshot
-                                                        .data['ownerName'],
+                                                    followerId:
+                                                        widget.documentSnapshot[
+                                                            'ownerUid'],
+                                                    followerName:
+                                                        widget.documentSnapshot[
+                                                            'ownerName'],
                                                     followerAccountType:
                                                         'Member',
-                                                    followerPhotoUrl: widget
-                                                        .documentSnapshot
-                                                        .data['ownerPhotoUrl']);
+                                                    followerPhotoUrl:
+                                                        widget.documentSnapshot[
+                                                            'ownerPhotoUrl']);
                                                 Navigator.pop(context);
                                               },
                                               child: Container(
@@ -720,11 +720,11 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                       Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection('teams')
-                                .document(widget.gid)
+                                .doc(widget.gid)
                                 .collection('departments')
-                                .document(widget.dept.uid)
+                                .doc(widget.dept.uid)
                                 .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
@@ -740,12 +740,12 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                       icon: Icon(Icons.keyboard_arrow_down),
                                       value: _currentProject,
                                       isDense: true,
-                                      items: snapshot.data.documents
+                                      items: snapshot.data.docs
                                           .map((DocumentSnapshot doc) {
                                         return DropdownMenuItem(
-                                            value: doc.data['uid'],
+                                            value: doc['uid'],
                                             child: Text(
-                                              doc.data['projectName'],
+                                              doc['projectName'],
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontFamily: FontNameDefault,
@@ -780,17 +780,17 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
                                                         widget.dept.uid,
                                                     currentProjectId:
                                                         _currentProject,
-                                                    followerId: widget
-                                                        .documentSnapshot
-                                                        .data['ownerUid'],
-                                                    followerName: widget
-                                                        .documentSnapshot
-                                                        .data['ownerName'],
+                                                    followerId:
+                                                        widget.documentSnapshot[
+                                                            'ownerUid'],
+                                                    followerName:
+                                                        widget.documentSnapshot[
+                                                            'ownerName'],
                                                     followerAccountType:
                                                         'Member',
-                                                    followerPhotoUrl: widget
-                                                        .documentSnapshot
-                                                        .data['ownerPhotoUrl']);
+                                                    followerPhotoUrl:
+                                                        widget.documentSnapshot[
+                                                            'ownerPhotoUrl']);
                                                 Navigator.pop(context);
                                               },
                                               child: Container(
@@ -871,10 +871,10 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
   addMember(DocumentSnapshot snapshot) {
     _repository.addTeamMember(
         currentTeam: widget.team,
-        followerId: snapshot.data['ownerUid'],
-        followerName: snapshot.data['ownerName'],
+        followerId: snapshot['ownerUid'],
+        followerName: snapshot['ownerName'],
         followerAccountType: widget.team.teamName + 'Member',
-        followerPhotoUrl: snapshot.data['ownerPhotoUrl']);
+        followerPhotoUrl: snapshot['ownerPhotoUrl']);
     addInviteToActivityFeed();
   }
 
@@ -882,7 +882,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
     print('User Invited');
     _repository.inviteUser(
         currentGroupId: widget.gid,
-        followingUserId: widget.documentSnapshot.data['ownerUid']);
+        followingUserId: widget.documentSnapshot['ownerUid']);
     addInviteToActivityFeed();
   }
 
@@ -898,14 +898,14 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
         groupProfilePhoto: widget.group.groupProfilePhoto,
         timestamp: FieldValue.serverTimestamp(),
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(widget.documentSnapshot.data['ownerUid'])
+          .doc(widget.documentSnapshot['ownerUid'])
           .collection('requests')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(widget.currentuser.uid)
-          .setData(_feed.toMap(_feed))
+          .doc(widget.currentuser.uid)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Team Invite sent');
       });
@@ -920,14 +920,14 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
         groupProfilePhoto: widget.team.teamProfilePhoto,
         timestamp: FieldValue.serverTimestamp(),
       );
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection('users')
-          .document(widget.documentSnapshot.data['ownerUid'])
+          .doc(widget.documentSnapshot['ownerUid'])
           .collection('requests')
           // .document(currentUser.uid)
           // .collection('likes')
-          .document(widget.currentuser.uid)
-          .setData(_feed.toMap(_feed))
+          .doc(widget.currentuser.uid)
+          .set(_feed.toMap(_feed))
           .then((value) {
         print('Team Invite sent');
       });
@@ -938,18 +938,18 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
     print('Invite deleted');
     _repository.deleteInvite(
         currentGroupId: widget.gid,
-        followingUserId: widget.documentSnapshot.data['ownerUid']);
+        followingUserId: widget.documentSnapshot['ownerUid']);
     removeInviteToActivityFeed();
   }
 
   void removeInviteToActivityFeed() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('users')
-        .document(widget.documentSnapshot.data['ownerUid'])
+        .doc(widget.documentSnapshot['ownerUid'])
         .collection('requests')
         // .document(currentUser.uid)
         // .collection('likes')
-        .document(widget.currentuser.uid)
+        .doc(widget.currentuser.uid)
         .delete()
         .then((value) {
       print('Group Invite sent');

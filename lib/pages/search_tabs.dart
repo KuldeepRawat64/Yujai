@@ -34,8 +34,8 @@ class SearchTabs extends StatefulWidget {
 class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   var _repository = Repository();
   List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  User _user = User();
-  User currentUser;
+  UserModel _user = UserModel();
+  UserModel currentUser;
   List<User> usersList = List<User>();
   List<User> companyList = List<User>();
   List<DocumentSnapshot> resultList = List<DocumentSnapshot>();
@@ -58,7 +58,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.displayName = user.displayName;
-      _user.photoUrl = user.photoUrl;
+      _user.photoUrl = user.photoURL;
       _repository.fetchUserDetailsById(user.uid).then((user) {
         if (!mounted) return;
         setState(() {
@@ -320,16 +320,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
 
   Widget postSearch() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
             return Container();
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
-                  stream: snapshot.data.documents[index].reference
+                  stream: snapshot.data.docs[index].reference
                       .collection('posts')
                       .snapshots(),
                   builder: ((context, snapshotResult) {
@@ -340,12 +340,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         List<DocumentSnapshot> tempList =
                             List<DocumentSnapshot>();
                         for (int i = 0;
-                            i < snapshotResult.data.documents.length;
+                            i < snapshotResult.data.docs.length;
                             i++) {
-                          if (snapshotResult.data.documents[i].data['caption']
+                          if (snapshotResult.data.docs[i]['caption']
                               .toString()
                               .startsWith(_searchTerm)) {
-                            tempList.add(snapshotResult.data.documents[i]);
+                            tempList.add(snapshotResult.data.docs[i]);
                           }
                         }
                         resultList = tempList;
@@ -372,16 +372,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
 
   Widget eventSearch() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
             return NoEvent();
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
-                  stream: snapshot.data.documents[index].reference
+                  stream: snapshot.data.docs[index].reference
                       .collection('events')
                       .snapshots(),
                   builder: ((context, snapshotEvents) {
@@ -392,12 +392,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         List<DocumentSnapshot> tempList =
                             List<DocumentSnapshot>();
                         for (int i = 0;
-                            i < snapshotEvents.data.documents.length;
+                            i < snapshotEvents.data.docs.length;
                             i++) {
-                          if (snapshotEvents.data.documents[i].data['caption']
+                          if (snapshotEvents.data.docs[i]['caption']
                               .toString()
                               .startsWith(_searchTerm)) {
-                            tempList.add(snapshotEvents.data.documents[i]);
+                            tempList.add(snapshotEvents.data.docs[i]);
                           }
                         }
                         resultList = tempList;
@@ -425,16 +425,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   Widget promoSearch() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
-                  stream: snapshot.data.documents[index].reference
+                  stream: snapshot.data.docs[index].reference
                       .collection('promotion')
                       .snapshots(),
                   builder: ((context, snapshotResult) {
@@ -445,12 +445,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         List<DocumentSnapshot> tempList =
                             List<DocumentSnapshot>();
                         for (int i = 0;
-                            i < snapshotResult.data.documents.length;
+                            i < snapshotResult.data.docs.length;
                             i++) {
-                          if (snapshotResult.data.documents[i].data['caption']
+                          if (snapshotResult.data.docs[i]['caption']
                               .toString()
                               .startsWith(_searchTerm)) {
-                            tempList.add(snapshotResult.data.documents[i]);
+                            tempList.add(snapshotResult.data.docs[i]);
                           }
                         }
                         resultList = tempList;
@@ -481,16 +481,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
 
   Widget articleSearch() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
             return Container();
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
-                  stream: snapshot.data.documents[index].reference
+                  stream: snapshot.data.docs[index].reference
                       .collection('news')
                       .snapshots(),
                   builder: ((context, snapshotResult) {
@@ -501,12 +501,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         List<DocumentSnapshot> tempList =
                             List<DocumentSnapshot>();
                         for (int i = 0;
-                            i < snapshotResult.data.documents.length;
+                            i < snapshotResult.data.docs.length;
                             i++) {
-                          if (snapshotResult.data.documents[i].data['caption']
+                          if (snapshotResult.data.docs[i]['caption']
                               .toString()
                               .startsWith(_searchTerm)) {
-                            tempList.add(snapshotResult.data.documents[i]);
+                            tempList.add(snapshotResult.data.docs[i]);
                           }
                         }
                         resultList = tempList;
@@ -534,7 +534,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   Widget companiesSearch() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('users')
             .where('accountType', isEqualTo: 'Company')
             .snapshots(),
@@ -544,11 +544,11 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
-              for (int i = 0; i < snapshot.data.documents.length; i++) {
-                if (snapshot.data.documents[i].data['displayName']
+              for (int i = 0; i < snapshot.data.docs.length; i++) {
+                if (snapshot.data.docs[i]['displayName']
                     .toString()
                     .startsWith(_searchTerm)) {
-                  tempList.add(snapshot.data.documents[i]);
+                  tempList.add(snapshot.data.docs[i]);
                 }
               }
               resultList = tempList;
@@ -576,9 +576,9 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                 context,
                                 MaterialPageRoute(
                                     builder: ((context) => FriendProfileScreen(
-                                        uid: resultList[index].data['uid'],
+                                        uid: resultList[index]['uid'],
                                         name: resultList[index]
-                                            .data['displayName']))));
+                                            ['displayName']))));
                           },
                           leading: Container(
                             decoration: ShapeDecoration(
@@ -592,26 +592,25 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                   EdgeInsets.all(screenSize.height * 0.012),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                    resultList[index].data['photoUrl']),
+                                    resultList[index]['photoUrl']),
                               ),
                             ),
                           ),
                           title: Text(
-                            resultList[index].data['displayName'],
+                            resultList[index]['displayName'],
                             style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context),
                             ),
                           ),
                           subtitle: Text(
-                            resultList[index].data['location'].isNotEmpty
-                                ? resultList[index].data['location'].length > 10
-                                    ? resultList[index]
-                                            .data['location']
+                            resultList[index]['location'].isNotEmpty
+                                ? resultList[index]['location'].length > 10
+                                    ? resultList[index]['location']
                                             .contains('Mumbai')
                                         ? 'Mumbai'
                                         : 'India'
-                                    : resultList[index].data['location']
+                                    : resultList[index]['location']
                                 : '',
                             style: TextStyle(
                               fontFamily: FontNameDefault,
@@ -630,7 +629,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   Widget groupsSearch() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('groups')
             //   .where('isHidden', isEqualTo: 'false')
             .snapshots(),
@@ -640,12 +639,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
-              for (int i = 0; i < snapshot.data.documents.length; i++) {
-                if (snapshot.data.documents[i].data['groupName']
+              for (int i = 0; i < snapshot.data.docs.length; i++) {
+                if (snapshot.data.docs[i]['groupName']
                         .toString()
                         .startsWith(_searchTerm) &&
-                    snapshot.data.documents[i].data['isHidden'] == false) {
-                  tempList.add(snapshot.data.documents[i]);
+                    snapshot.data.docs[i]['isHidden'] == false) {
+                  tempList.add(snapshot.data.docs[i]);
                 }
               }
               resultList = tempList;
@@ -665,9 +664,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                     builder: (context) => GroupPage(
                                           currentUser: _user,
                                           isMember: false,
-                                          gid: resultList[index].data['uid'],
-                                          name: resultList[index]
-                                              .data['groupName'],
+                                          gid: resultList[index]['uid'],
+                                          name: resultList[index]['groupName'],
                                         )));
                           },
                           child: Padding(
@@ -688,21 +686,19 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.white,
                                   backgroundImage: NetworkImage(
-                                      resultList[index]
-                                          .data['groupProfilePhoto']),
+                                      resultList[index]['groupProfilePhoto']),
                                 ),
                                 title: Text(
                                   // userList[index].toString(),
-                                  resultList[index].data['groupName'],
+                                  resultList[index]['groupName'],
                                   style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context),
                                   ),
                                 ),
-                                trailing:
-                                    resultList[index].data['isPrivate'] == true
-                                        ? Icon(Icons.lock_outline)
-                                        : Icon(Icons.public),
+                                trailing: resultList[index]['isPrivate'] == true
+                                    ? Icon(Icons.lock_outline)
+                                    : Icon(Icons.public),
                               ),
                             ),
                           ),
@@ -843,7 +839,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   Widget usersSearch() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').where('accountType',
+        stream: FirebaseFirestore.instance.collection('users').where(
+            'accountType',
             whereIn: ['Professional', 'Military', 'Student']).snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
@@ -851,11 +848,11 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
-              for (int i = 0; i < snapshot.data.documents.length; i++) {
-                if (snapshot.data.documents[i].data['displayName']
+              for (int i = 0; i < snapshot.data.docs.length; i++) {
+                if (snapshot.data.docs[i]['displayName']
                     .toString()
                     .startsWith(_searchTerm)) {
-                  tempList.add(snapshot.data.documents[i]);
+                  tempList.add(snapshot.data.docs[i]);
                 }
               }
               resultList = tempList;
@@ -870,9 +867,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => FriendProfileScreen(
-                                    uid: resultList[index].data['uid'],
-                                    name: resultList[index]
-                                        .data['displayName'])));
+                                    uid: resultList[index]['uid'],
+                                    name: resultList[index]['displayName'])));
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -905,13 +901,13 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                           backgroundImage:
                                               CachedNetworkImageProvider(
                                                   resultList[index]
-                                                      .data['photoUrl'])),
+                                                      ['photoUrl'])),
                                     ),
                                   ),
                                   SizedBox(
                                     width: 10.0,
                                   ),
-                                  Text(resultList[index].data['displayName'],
+                                  Text(resultList[index]['displayName'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           fontSize: textSubTitle(context))),
@@ -921,15 +917,13 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  checkLabel(
-                                      resultList[index].data['accountType']),
-                                  checkPrivacy(
-                                      resultList[index].data['isPrivate']),
+                                  checkLabel(resultList[index]['accountType']),
+                                  checkPrivacy(resultList[index]['isPrivate']),
                                 ],
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(resultList[index].data['location'],
+                                child: Text(resultList[index]['location'],
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
                                         fontSize: textBody1(context))),
@@ -947,16 +941,16 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
 
   Widget jobSearch() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
             return Container();
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
-                  stream: snapshot.data.documents[index].reference
+                  stream: snapshot.data.docs[index].reference
                       .collection('jobs')
                       .snapshots(),
                   builder: ((context, snapshotResult) {
@@ -967,12 +961,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         List<DocumentSnapshot> tempList =
                             List<DocumentSnapshot>();
                         for (int i = 0;
-                            i < snapshotResult.data.documents.length;
+                            i < snapshotResult.data.docs.length;
                             i++) {
-                          if (snapshotResult.data.documents[i].data['caption']
+                          if (snapshotResult.data.docs[i]['caption']
                               .toString()
                               .startsWith(_searchTerm)) {
-                            tempList.add(snapshotResult.data.documents[i]);
+                            tempList.add(snapshotResult.data.docs[i]);
                           }
                         }
                         resultList = tempList;
@@ -1026,82 +1020,82 @@ class ButtonBarInspect extends StatelessWidget {
   }
 }
 
-class UserSearch extends SearchDelegate<String> {
-  List<User> userList;
-  UserSearch({this.userList});
+// class UserSearch extends SearchDelegate<String> {
+//   List<User> userList;
+//   UserSearch({this.userList});
 
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = "";
-        },
-      )
-    ];
-  }
+//   @override
+//   List<Widget> buildActions(BuildContext context) {
+//     return [
+//       IconButton(
+//         icon: Icon(Icons.clear),
+//         onPressed: () {
+//           query = "";
+//         },
+//       )
+//     ];
+//   }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
+//   @override
+//   Widget buildLeading(BuildContext context) {
+//     return IconButton(
+//       icon: AnimatedIcon(
+//         icon: AnimatedIcons.menu_arrow,
+//         progress: transitionAnimation,
+//       ),
+//       onPressed: () {
+//         close(context, null);
+//       },
+//     );
+//   }
 
-  @override
-  Widget buildResults(BuildContext context) {
-    final suggestionsList = query.isEmpty
-        ? userList
-        : userList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => ListTile(
-            onTap: () {
-              //   showResults(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => FriendProfileScreen(
-                          name: suggestionsList[index].displayName))));
-            },
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(suggestionsList[index].photoUrl),
-            ),
-            title: Text(suggestionsList[index].displayName),
-          )),
-    );
-  }
+//   @override
+//   Widget buildResults(BuildContext context) {
+//     final suggestionsList = query.isEmpty
+//         ? userList
+//         : userList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => ListTile(
+//             onTap: () {
+//               //   showResults(context);
+//               Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: ((context) => FriendProfileScreen(
+//                           name: suggestionsList[index].displayName))));
+//             },
+//             leading: CircleAvatar(
+//               backgroundImage:
+//                   CachedNetworkImageProvider(suggestionsList[index].photoUrl),
+//             ),
+//             title: Text(suggestionsList[index].displayName),
+//           )),
+//     );
+//   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestionsList = query.isEmpty
-        ? userList
-        : userList.where((p) => p.displayName.startsWith(query)).toList();
-    return ListView.builder(
-      itemCount: suggestionsList.length,
-      itemBuilder: ((context, index) => ListTile(
-            onTap: () {
-              //   showResults(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => FriendProfileScreen(
-                          name: suggestionsList[index].displayName))));
-            },
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(suggestionsList[index].photoUrl),
-            ),
-            title: Text(suggestionsList[index].displayName),
-          )),
-    );
-  }
-}
+//   @override
+//   Widget buildSuggestions(BuildContext context) {
+//     final suggestionsList = query.isEmpty
+//         ? userList
+//         : userList.where((p) => p.displayName.startsWith(query)).toList();
+//     return ListView.builder(
+//       itemCount: suggestionsList.length,
+//       itemBuilder: ((context, index) => ListTile(
+//             onTap: () {
+//               //   showResults(context);
+//               Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                       builder: ((context) => FriendProfileScreen(
+//                           name: suggestionsList[index].displayName))));
+//             },
+//             leading: CircleAvatar(
+//               backgroundImage:
+//                   CachedNetworkImageProvider(suggestionsList[index].photoUrl),
+//             ),
+//             title: Text(suggestionsList[index].displayName),
+//           )),
+//     );
+//   }
+// }

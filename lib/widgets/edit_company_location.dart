@@ -8,7 +8,7 @@ import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
 class EditCompanyLocationScreen extends StatelessWidget {
-  final User currentUser;
+  final UserModel currentUser;
 
   const EditCompanyLocationScreen({Key key, this.currentUser})
       : super(key: key);

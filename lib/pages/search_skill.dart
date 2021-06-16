@@ -334,8 +334,8 @@ class _SearchSkillState extends State<SearchSkill>
   }
 
   submit() async {
-    FirebaseUser currentUser = await _auth.currentUser();
-    usersRef.document(currentUser.uid).updateData({
+    User currentUser = await _auth.currentUser;
+    usersRef.doc(currentUser.uid).update({
       "skills": _filters,
     });
     Navigator.pop(context);

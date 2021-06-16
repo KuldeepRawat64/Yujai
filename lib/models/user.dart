@@ -2,7 +2,7 @@ import 'package:Yujai/models/education.dart';
 import 'package:Yujai/models/experience.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class UserModel {
   String uid;
   String username;
   String phone;
@@ -46,7 +46,7 @@ class User {
   bool isHidden;
   String gst;
 
-  User({
+  UserModel({
     this.posts,
     this.followers,
     this.following,
@@ -91,7 +91,7 @@ class User {
     this.gst,
   });
 
-  Map toMap(User user) {
+  Map toMap(UserModel user) {
     var data = Map<String, dynamic>();
     data['uid'] = user.uid;
     data['username'] = user.username;
@@ -139,7 +139,7 @@ class User {
     return data;
   }
 
-  User.fromMap(Map<String, dynamic> mapData) {
+  UserModel.fromMap(Map<String, dynamic> mapData) {
     this.uid = mapData['uid'];
     this.username = mapData['username'];
     this.phone = mapData['phone'];

@@ -17,7 +17,7 @@ class TeamInbox extends StatefulWidget {
   final String gid;
   final String name;
   final Team team;
-  final User currentuser;
+  final UserModel currentuser;
   const TeamInbox({this.gid, this.name, this.team, this.currentuser});
 
   @override
@@ -26,7 +26,7 @@ class TeamInbox extends StatefulWidget {
 
 class _TeamInboxState extends State<TeamInbox> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   final TextStyle style =
@@ -53,8 +53,8 @@ class _TeamInboxState extends State<TeamInbox> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;
@@ -175,9 +175,9 @@ class _TeamInboxState extends State<TeamInbox> {
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection('teams')
-          .document(widget.gid)
+          .doc(widget.gid)
           .collection('inbox')
           .where('assigned', arrayContains: widget.currentuser.uid)
           .orderBy('timestamp', descending: true)

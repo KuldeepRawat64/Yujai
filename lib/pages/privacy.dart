@@ -13,7 +13,7 @@ class Privacy extends StatefulWidget {
 class _PrivacyState extends State<Privacy> {
   bool isPrivate = false;
   bool isHidden = false;
-  User _user;
+  UserModel _user;
   var _repository = Repository();
   @override
   void initState() {
@@ -22,15 +22,15 @@ class _PrivacyState extends State<Privacy> {
   }
 
   submit() {
-    usersRef.document(_user.uid).updateData({
+    usersRef.doc(_user.uid).update({
       "isPrivate": isPrivate,
       "isHidden": isHidden,
     });
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     if (!mounted) return;
     setState(() {
       _user = user;

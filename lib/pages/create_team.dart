@@ -35,9 +35,9 @@ class _CreateTeamState extends State<CreateTeam> {
   bool userAgreed = false;
   bool valueFirst = false;
   String accountType;
-  User _user = User();
+  UserModel _user = UserModel();
   var _repository = Repository();
-  User currentuser, user, followingUser;
+  UserModel currentuser, user, followingUser;
   bool isSelected = false;
   List<String> reportList = [
     "Marketing",

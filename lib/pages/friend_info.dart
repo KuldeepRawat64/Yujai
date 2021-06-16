@@ -8,7 +8,7 @@ import 'package:Yujai/pages/friend_following.dart';
 import 'package:Yujai/pages/friend_follower.dart';
 
 class FriendInformationDetail extends StatefulWidget {
-  final User user;
+  final UserModel user;
   FriendInformationDetail({this.user});
   @override
   _FriendInformationDetailState createState() =>
@@ -18,7 +18,7 @@ class FriendInformationDetail extends StatefulWidget {
 class _FriendInformationDetailState extends State<FriendInformationDetail> {
   bool isCompany = false;
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   bool isUser = false;

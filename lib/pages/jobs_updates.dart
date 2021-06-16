@@ -18,7 +18,7 @@ class JobUpdates extends StatefulWidget {
 
 class _JobUpdatesState extends State<JobUpdates> {
   var _repository = Repository();
-  User _user;
+  UserModel _user;
   IconData icon;
   Color color;
   Future<List<DocumentSnapshot>> _future;
@@ -35,8 +35,8 @@ class _JobUpdatesState extends State<JobUpdates> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
-    User user = await _repository.retreiveUserDetails(currentUser);
+    User currentUser = await _repository.getCurrentUser();
+    UserModel user = await _repository.retreiveUserDetails(currentUser);
     setState(() {
       _user = user;
     });
