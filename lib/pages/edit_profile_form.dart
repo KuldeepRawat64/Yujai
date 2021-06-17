@@ -1,9 +1,15 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/blocs/location_bloc.dart';
+import 'package:Yujai/models/place_search.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/resources/repository.dart';
+import 'package:Yujai/services/places_services.dart';
 import 'package:Yujai/style.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileForm extends StatefulWidget {
   final UserModel currentUser;
@@ -31,6 +38,17 @@ class _EditProfileScreenState extends State<EditProfileForm> {
   final _phoneController = TextEditingController();
   final _websiteController = TextEditingController();
   final _locationController = TextEditingController();
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
+  List<PlaceSearch> searchResults = [];
+  final placesService = PlacesService();
+  AutoCompleteTextField placesTextField;
+  GlobalKey<AutoCompleteTextFieldState<PlaceSearch>> placeSearchkey =
+      new GlobalKey();
+  static List<PlaceSearch> places = new List<PlaceSearch>();
+  bool isEnabled = false;
 
   @override
   void initState() {
@@ -80,8 +98,30 @@ class _EditProfileScreenState extends State<EditProfileForm> {
   //   displayPrediction(p);
   // }
 
+  Widget placeRow(PlaceSearch place) {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Divider(),
+        Text(
+          place.description,
+          style: TextStyle(fontSize: screenSize.height * 0.025),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.012,
+        ),
+        // Text(
+        //   user.email,
+        // ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final locationBloc = Provider.of<LocationBloc>(context);
     var screenSize = MediaQuery.of(context).size;
     return Form(
       key: _formKey,
@@ -275,37 +315,77 @@ class _EditProfileScreenState extends State<EditProfileForm> {
                 SizedBox(
                   height: screenSize.height * 0.02,
                 ),
-                TextFormField(
-                  onChanged: (val) {
-                    //    _onButtonPressed();
-                  },
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textSubTitle(context),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  controller: _locationController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    icon: IconButton(
-                      icon: Icon(
-                        Icons.location_on_outlined,
-                        color: Colors.black54,
+                Stack(
+                  children: [
+                    TextFormField(
+                      onChanged: (val) {
+                        setState(() {
+                          isEnabled = true;
+                        });
+                        locationBloc.searchPlaces(val);
+                      },
+                      onFieldSubmitted: (val) {
+                        setState(() {
+                          isEnabled = false;
+                        });
+                      },
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
+                        fontWeight: FontWeight.bold,
                       ),
-                      onPressed: null,
+                      controller: _locationController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        icon: IconButton(
+                          icon: Icon(
+                            Icons.location_on_outlined,
+                            color: Colors.black54,
+                          ),
+                          onPressed: null,
+                        ),
+                        // hintText: 'https://www',
+                        labelText: 'Location',
+                        labelStyle: TextStyle(
+                          fontFamily: FontNameDefault,
+                          color: Colors.grey,
+                          fontSize: textSubTitle(context),
+                          //fontWeight: FontWeight.bold,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
                     ),
-                    // hintText: 'https://www',
-                    labelText: 'Location',
-                    labelStyle: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.grey,
-                      fontSize: textSubTitle(context),
-                      //fontWeight: FontWeight.bold,
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                  ),
+                    isEnabled && _locationController.text.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 60.0),
+                            child: Container(
+                              decoration: BoxDecoration(boxShadow: [
+                                BoxShadow(color: Colors.grey[100])
+                              ]),
+                              height: 100.0,
+                              child: ListView.builder(
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        isEnabled = false;
+                                        _locationController.text = locationBloc
+                                            .searchResults[index].description;
+                                      });
+                                    },
+                                    title: Text(locationBloc
+                                        .searchResults[index].description),
+                                  );
+                                },
+                                itemCount:
+                                    locationBloc.searchResults.length ?? 0,
+                              ),
+                            ),
+                          )
+                        : Container()
+                  ],
                 ),
 
                 Padding(
@@ -364,6 +444,39 @@ class _EditProfileScreenState extends State<EditProfileForm> {
       //   SnackBar(content: Text("${p.description} - $lat/$lng")),
       // );
     }
+  }
+
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    _locationController.text = _currentAddress;
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 
   void compressImage() async {
