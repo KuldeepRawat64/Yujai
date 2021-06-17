@@ -2,6 +2,7 @@
 // import 'package:Yujai/pages/login_page.dart';
 // import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'widgets/app_localizations.dart';
 void main() async {
   // add these lines
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

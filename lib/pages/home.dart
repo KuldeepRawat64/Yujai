@@ -76,16 +76,16 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  void _checkVersion() async {
-    final newVersion = NewVersion(
-      context: context,
-      androidId: "com.animusit.yujai",
-    );
-    newVersion.showAlertIfNecessary();
+  // void _checkVersion() async {
+  //   final newVersion = NewVersion(
+  //     context: context,
+  //     androidId: "com.animusit.yujai",
+  //   );
+  //   newVersion.showAlertIfNecessary();
 
-    // print("DEVICE : " + status.localVersion);
-    // print("STORE : " + status.storeVersion);
-  }
+  //   // print("DEVICE : " + status.localVersion);
+  //   // print("STORE : " + status.storeVersion);
+  // }
 
   @override
   Widget build(BuildContext context) {
