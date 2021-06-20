@@ -1636,7 +1636,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
       child: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         children: <Widget>[
           NestedTabBarGroupHome(
             group: _group,

@@ -128,6 +128,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
               if (_commentController.text != '') {
                 postComment();
                 addCommentToActivityFeed(widget.snapshot, widget.user);
+                _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.fastOutSlowIn);
               }
             },
           )
@@ -184,13 +188,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
       child: StreamBuilder(
         stream: widget.documentReference
             .collection("comments")
-            .orderBy('timestamp', descending: false)
+            .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
+              reverse: true,
               controller: _scrollController,
               itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) =>

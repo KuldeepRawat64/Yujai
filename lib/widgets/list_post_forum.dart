@@ -22,7 +22,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ListPostForum extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel currentuser;
   final int index;
   final String gid;
@@ -102,8 +102,8 @@ class _ListPostForumState extends State<ListPostForum> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot.data()['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot.data()['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -479,7 +479,7 @@ class _ListPostForumState extends State<ListPostForum> {
                   top: screenSize.height * 0.01,
                   left: screenSize.width / 30),
               child: Text(
-                widget.documentSnapshot['caption'],
+                widget.documentSnapshot.data()['caption'],
                 style: TextStyle(
                     //   color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -497,7 +497,7 @@ class _ListPostForumState extends State<ListPostForum> {
             ),
             child: Column(
               children: [
-                widget.documentSnapshot['option1'] != ''
+                widget.documentSnapshot.data()['option1'] != ''
                     ? Column(
                         children: [
                           //     SizedBox(height: screenSize.height * 0.01),
@@ -529,7 +529,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                 child: !_isVoted
                                     ? Center(
                                         child: Text(
-                                        widget.documentSnapshot['option1'],
+                                        widget.documentSnapshot
+                                            .data()['option1'],
                                         style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textBody1(context),
@@ -575,7 +576,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot['option2'] != ''
+                widget.documentSnapshot.data()['option2'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -607,7 +608,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot['option2'],
+                                      widget.documentSnapshot.data()['option2'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           color: Theme.of(context).primaryColor,
@@ -628,8 +629,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget
-                                                  .documentSnapshot['option2'],
+                                              widget.documentSnapshot
+                                                  .data()['option2'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -651,7 +652,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot['option3'] != ''
+                widget.documentSnapshot.data()['option3'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -683,7 +684,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot['option3'],
+                                      widget.documentSnapshot.data()['option3'],
                                       style: TextStyle(
                                           fontFamily: FontNameDefault,
                                           color: Theme.of(context).primaryColor,
@@ -704,8 +705,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget
-                                                  .documentSnapshot['option3'],
+                                              widget.documentSnapshot
+                                                  .data()['option3'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -727,7 +728,7 @@ class _ListPostForumState extends State<ListPostForum> {
                         ],
                       )
                     : Container(),
-                widget.documentSnapshot['option4'] != ''
+                widget.documentSnapshot.data()['option4'] != ''
                     ? Column(
                         children: [
                           SizedBox(height: screenSize.height * 0.01),
@@ -759,7 +760,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: !_isVoted
                                   ? Center(
                                       child: Text(
-                                      widget.documentSnapshot['option4'],
+                                      widget.documentSnapshot.data()['option4'],
                                       style: TextStyle(
                                           color: Theme.of(context).primaryColor,
                                           fontWeight: FontWeight.bold,
@@ -780,8 +781,8 @@ class _ListPostForumState extends State<ListPostForum> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              widget
-                                                  .documentSnapshot['option4'],
+                                              widget.documentSnapshot
+                                                  .data()['option4'],
                                               style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black54,
@@ -814,7 +815,7 @@ class _ListPostForumState extends State<ListPostForum> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       checkPollStatus(
-                        widget.documentSnapshot['pollLength'],
+                        widget.documentSnapshot.data()['pollLength'],
                       ),
                       Text(
                         '${totalVotes.length} Total votes',
@@ -908,30 +909,31 @@ class _ListPostForumState extends State<ListPostForum> {
               leading: CircleAvatar(
                   radius: screenSize.height * 0.03,
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot['postOwnerPhotoUrl'])),
+                      widget.documentSnapshot.data()['postOwnerPhotoUrl'])),
               title: InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FriendProfileScreen(
-                              uid: widget.documentSnapshot['ownerUid'],
-                              name: widget.documentSnapshot['postOwnerName'])));
+                              uid: widget.documentSnapshot.data()['ownerUid'],
+                              name: widget.documentSnapshot
+                                  .data()['postOwnerName'])));
                 },
                 child: new Text(
-                  widget.documentSnapshot['postOwnerName'],
+                  widget.documentSnapshot.data()['postOwnerName'],
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context),
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              subtitle: widget.documentSnapshot['location'] != '' &&
-                      widget.documentSnapshot['location'] != null
+              subtitle: widget.documentSnapshot.data()['location'] != '' &&
+                      widget.documentSnapshot.data()['location'] != null
                   ? Row(
                       children: [
                         new Text(
-                          widget.documentSnapshot['location'],
+                          widget.documentSnapshot.data()['location'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //    fontSize: textBody1(context),
@@ -954,9 +956,10 @@ class _ListPostForumState extends State<ListPostForum> {
                             top: screenSize.height * 0.002,
                           ),
                           child: Text(
-                              widget.documentSnapshot['time'] != null
-                                  ? timeago.format(
-                                      widget.documentSnapshot['time'].toDate())
+                              widget.documentSnapshot.data()['time'] != null
+                                  ? timeago.format(widget.documentSnapshot
+                                      .data()['time']
+                                      .toDate())
                                   : '',
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
@@ -971,9 +974,10 @@ class _ListPostForumState extends State<ListPostForum> {
                         top: screenSize.height * 0.002,
                       ),
                       child: Text(
-                          widget.documentSnapshot['time'] != null
-                              ? timeago.format(
-                                  widget.documentSnapshot['time'].toDate())
+                          widget.documentSnapshot.data()['time'] != null
+                              ? timeago.format(widget.documentSnapshot
+                                  .data()['time']
+                                  .toDate())
                               : '',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
@@ -981,7 +985,7 @@ class _ListPostForumState extends State<ListPostForum> {
                               color: Colors.grey)),
                     ),
               trailing: widget.currentuser.uid ==
-                          widget.documentSnapshot['ownerUid'] ||
+                          widget.documentSnapshot.data()['ownerUid'] ||
                       widget.group != null &&
                           widget.group.currentUserUid == widget.currentuser.uid
                   ? InkWell(
@@ -1024,12 +1028,12 @@ class _ListPostForumState extends State<ListPostForum> {
                               child: Icon(Icons.more_horiz_outlined))),
                     ),
             ),
-            widget.documentSnapshot['postType'] == 'poll'
+            widget.documentSnapshot.data()['postType'] == 'poll'
                 ? Container(
                     // constraints: BoxConstraints.tight(Size.square(screenSize.height)),
                     child: _buildFlipAnimation())
-                : widget.documentSnapshot['imgUrl'] == null ||
-                        widget.documentSnapshot['imgUrl'] == ''
+                : widget.documentSnapshot.data()['imgUrl'] == null ||
+                        widget.documentSnapshot.data()['imgUrl'] == ''
                     ? Container()
                     : Center(
                         child: FadeInImage.assetNetwork(
@@ -1039,7 +1043,7 @@ class _ListPostForumState extends State<ListPostForum> {
                           image: widget.documentSnapshot['imgUrl'],
                         ),
                       ),
-            widget.documentSnapshot['postType'] == 'poll'
+            widget.documentSnapshot.data()['postType'] == 'poll'
                 ? Container()
                 : Padding(
                     padding: EdgeInsets.only(
@@ -1055,7 +1059,7 @@ class _ListPostForumState extends State<ListPostForum> {
                           top: screenSize.height * 0.01,
                           left: screenSize.width * 0.05),
                       child: Text(
-                        widget.documentSnapshot['caption'],
+                        widget.documentSnapshot.data()['caption'],
                         style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context)),

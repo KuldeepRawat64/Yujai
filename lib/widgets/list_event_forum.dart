@@ -1,3 +1,4 @@
+import 'package:Yujai/models/event.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
@@ -12,7 +13,7 @@ import '../style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEventForum extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final int index;
   final String gid;
@@ -108,31 +109,31 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                 leading: CircleAvatar(
                     radius: screenSize.height * 0.03,
                     backgroundImage: CachedNetworkImageProvider(
-                        widget.documentSnapshot['eventOwnerPhotoUrl'])),
+                        widget.documentSnapshot.data()['eventOwnerPhotoUrl'])),
                 title: InkWell(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => FriendProfileScreen(
-                                uid: widget.documentSnapshot['ownerUid'],
-                                name: widget
-                                    .documentSnapshot['eventOwnerName'])));
+                                uid: widget.documentSnapshot.data()['ownerUid'],
+                                name: widget.documentSnapshot
+                                    .data()['eventOwnerName'])));
                   },
                   child: new Text(
-                    widget.documentSnapshot['eventOwnerName'],
+                    widget.documentSnapshot.data()['eventOwnerName'],
                     style: TextStyle(
                         fontFamily: FontNameDefault,
                         fontSize: textSubTitle(context),
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                subtitle: widget.documentSnapshot['city'] != '' &&
-                        widget.documentSnapshot['city'] != null
+                subtitle: widget.documentSnapshot.data()['city'] != '' &&
+                        widget.documentSnapshot.data()['city'] != null
                     ? Row(
                         children: [
                           new Text(
-                            widget.documentSnapshot['city'],
+                            widget.documentSnapshot.data()['city'],
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 //    fontSize: textBody1(context),
@@ -155,9 +156,9 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                               top: screenSize.height * 0.002,
                             ),
                             child: Text(
-                                widget.documentSnapshot['time'] != null
-                                    ? timeago.format(widget
-                                        .documentSnapshot['time']
+                                widget.documentSnapshot.data()['time'] != null
+                                    ? timeago.format(widget.documentSnapshot
+                                        .data()['time']
                                         .toDate())
                                     : '',
                                 style: TextStyle(
@@ -193,9 +194,9 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                               top: screenSize.height * 0.002,
                             ),
                             child: Text(
-                                widget.documentSnapshot['time'] != null
-                                    ? timeago.format(widget
-                                        .documentSnapshot['time']
+                                widget.documentSnapshot.data()['time'] != null
+                                    ? timeago.format(widget.documentSnapshot
+                                        .data()['time']
                                         .toDate())
                                     : '',
                                 style: TextStyle(
@@ -206,7 +207,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                         ],
                       ),
                 trailing: widget.currentuser.uid ==
-                            widget.documentSnapshot['ownerUid'] ||
+                            widget.documentSnapshot.data()['ownerUid'] ||
                         widget.group != null &&
                             widget.group.currentUserUid ==
                                 widget.currentuser.uid
@@ -268,7 +269,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                           decoration: ShapeDecoration(
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                    widget.documentSnapshot['imgUrl'],
+                                    widget.documentSnapshot.data()['imgUrl'],
                                   ),
                                   fit: BoxFit.cover),
                               color: Colors.grey[100],
@@ -301,7 +302,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                                 width: screenSize.width * 0.3,
                                 // height: screenSize.height * 0.045,
                                 child: Text(
-                                  widget.documentSnapshot['caption'],
+                                  widget.documentSnapshot.data()['caption'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textH1(context),
@@ -332,7 +333,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${convertDate(widget.documentSnapshot['startDate'])}',
+                                                '${convertDate(widget.documentSnapshot.data()['startDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -343,7 +344,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                                               ),
 
                                               Text(
-                                                'To \n${convertDate(widget.documentSnapshot['endDate'])}',
+                                                'To \n${convertDate(widget.documentSnapshot.data()['endDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -434,7 +435,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                 child: Container(
                   //   height: screenSize.height * 0.055,
                   child: Text(
-                    widget.documentSnapshot['description'],
+                    widget.documentSnapshot.data()['description'],
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(

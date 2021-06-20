@@ -123,30 +123,30 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
     fetchUidBySearchedName(widget.gid);
     _nestedTabController =
         new TabController(length: 5, vsync: this, initialIndex: 0);
-    _scrollController = ScrollController()
-      ..addListener(() {
-        setState(() {
-          //<----------------
-          offset = _scrollController.offset;
-          //force arefresh so the app bar can be updated
-        });
-      });
-    _scrollController1 = ScrollController()
-      ..addListener(() {
-        setState(() {
-          //<----------------
-          offset = _scrollController1.offset;
-          //force arefresh so the app bar can be updated
-        });
-      });
-    _scrollController2 = ScrollController()
-      ..addListener(() {
-        setState(() {
-          //<----------------
-          offset = _scrollController2.offset;
-          //force arefresh so the app bar can be updated
-        });
-      });
+    _scrollController = ScrollController();
+    // ..addListener(() {
+    //   setState(() {
+    //     //<----------------
+    //     offset = _scrollController.offset;
+    //     //force arefresh so the app bar can be updated
+    //   });
+    // });
+    _scrollController1 = ScrollController();
+    // ..addListener(() {
+    //   setState(() {
+    //     //<----------------
+    //     offset = _scrollController1.offset;
+    //     //force arefresh so the app bar can be updated
+    //   });
+    // });
+    _scrollController2 = ScrollController();
+    // ..addListener(() {
+    //   setState(() {
+    //     //<----------------
+    //     offset = _scrollController2.offset;
+    //     //force arefresh so the app bar can be updated
+    //   });
+    // });
   }
 
   @override
@@ -241,6 +241,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           color: const Color(0xfff6f6f6),
           height: screenHeight * 0.8,
           child: TabBarView(
+            //  physics: AlwaysScrollableScrollPhysics(),
             controller: _nestedTabController,
             children: <Widget>[
               widget.isMember == true || _group.isPrivate == false
@@ -338,41 +339,41 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
 
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
           .collection('posts')
           .orderBy('time', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: shimmerPromotion(),
-          );
-        } else {
-          if (snapshot.data.documents.isEmpty) {
-            return _group.members.contains(currentuser.uid)
-                ? NoContent('No posts', 'assets/images/picture.png', true,
-                    'Create a Post', '')
-                : NoContent('No posts', 'assets/images/picture.png', false,
-                    'When a post is created it will show up in this tab', '');
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                //  controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) =>
+                    //  Text(snapshot.data.docs[index]['postId']))
+                    ListPostForum(
+                        documentSnapshot: snapshot.data.docs[index],
+                        index: index,
+                        // user: followingUser,
+                        group: _group,
+                        currentuser: currentuser,
+                        gid: widget.gid,
+                        name: widget.name)));
+          } else {
+            return const Text('Empty data');
           }
-          return SizedBox(
-            height: screenSize.height * 0.9,
-            child: ListView.builder(
-              controller: _scrollController,
-              //shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: ((context, index) => ListPostForum(
-                  documentSnapshot: snapshot.data.documents[index],
-                  index: index,
-                  currentuser: widget.currentUser,
-                  group: _group,
-                  gid: widget.gid,
-                  name: widget.name)),
-            ),
-          );
+        } else {
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
@@ -380,41 +381,41 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
 
   Widget eventWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
           .collection('events')
           .orderBy('time', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: shimmerPromotion(),
-          );
-        } else {
-          if (snapshot.data.documents.length > 0) {
-            return SizedBox(
-              height: screenSize.height * 0.9,
-              child: ListView.builder(
-                controller: _scrollController1,
-                //shrinkWrap: true,
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: ((context, index) => ListItemEventForum(
-                    group: _group,
-                    documentSnapshot: snapshot.data.documents[index],
-                    index: index,
-                    currentuser: currentuser,
-                    gid: widget.gid,
-                    name: widget.name)),
-              ),
-            );
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+//controller: _scrollController1,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) =>
+                    //  Text(snapshot.data.docs[index]['postId']))
+                    ListItemEventForum(
+                        documentSnapshot: snapshot.data.docs[index],
+                        index: index,
+                        // user: followingUser,
+                        group: _group,
+                        currentuser: currentuser,
+                        gid: widget.gid,
+                        name: widget.name)));
+          } else {
+            return const Text('Empty data');
           }
-          return currentuser.uid == _group.currentUserUid
-              ? NoContent('No events', 'assets/images/calendar.png', true,
-                  'Create an Event', '')
-              : NoContent('No events', 'assets/images/calendar.png', false,
-                  'When an event is created it will show up in this tab', '');
+        } else {
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
@@ -422,49 +423,89 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
 
   Widget marketPlaceWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    // return StreamBuilder(
+    //   stream: FirebaseFirestore.instance
+    //       .collection('groups')
+    //       .doc(widget.gid)
+    //       .collection('marketplace')
+    //       .orderBy('time', descending: true)
+    //       .snapshots(),
+    //   builder: ((context, snapshot) {
+    //     if (!snapshot.hasData) {
+    //       return Center(
+    //         child: shimmerPromotion(),
+    //       );
+    //     } else {
+    //       if (snapshot.data.documents.isEmpty) {
+    //         return _group.members.contains(currentuser.uid)
+    //             ? NoContent('No products', 'assets/images/marketplace.png',
+    //                 true, 'Post an ad', '')
+    //             : NoContent(
+    //                 'No products',
+    //                 'assets/images/marketplace.png',
+    //                 false,
+    //                 'When the products are added for selling it will show up in this tab',
+    //                 '');
+    //       }
+    //       return SizedBox(
+    //         height: screenSize.height * 0.9,
+    //         child: GridView.builder(
+    //           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+    //               childAspectRatio: screenSize.height * 0.0012,
+    //               maxCrossAxisExtent: 300,
+    //               mainAxisSpacing: 5.0,
+    //               crossAxisSpacing: 5.0),
+    //           //   controller: _scrollController2,
+    //           //shrinkWrap: true,
+    //           itemCount: snapshot.data.documents.length,
+    //           itemBuilder: ((context, index) => ListAd(
+    //               documentSnapshot: snapshot.data.documents[index],
+    //               index: index,
+    //               currentuser: currentuser,
+    //               gid: widget.gid,
+    //               name: widget.name)),
+    //         ),
+    //       );
+    //     }
+    //   }),
+    // );
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
           .collection('marketplace')
           .orderBy('time', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: shimmerPromotion(),
-          );
-        } else {
-          if (snapshot.data.documents.isEmpty) {
-            return _group.members.contains(currentuser.uid)
-                ? NoContent('No products', 'assets/images/marketplace.png',
-                    true, 'Post an ad', '')
-                : NoContent(
-                    'No products',
-                    'assets/images/marketplace.png',
-                    false,
-                    'When the products are added for selling it will show up in this tab',
-                    '');
-          }
-          return SizedBox(
-            height: screenSize.height * 0.9,
-            child: GridView.builder(
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   childAspectRatio: screenSize.height * 0.0012,
                   maxCrossAxisExtent: 300,
                   mainAxisSpacing: 5.0,
                   crossAxisSpacing: 5.0),
-              controller: _scrollController2,
+              //   controller: _scrollController2,
               //shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) => ListAd(
-                  documentSnapshot: snapshot.data.documents[index],
+                  documentSnapshot: snapshot.data.docs[index],
                   index: index,
                   currentuser: currentuser,
                   gid: widget.gid,
                   name: widget.name)),
-            ),
-          );
+            );
+          } else {
+            return const Text('Empty data');
+          }
+        } else {
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
@@ -544,7 +585,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
 
   Widget groupMemberWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
@@ -643,21 +684,21 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                           )
                         : Container(),
                 ListView.builder(
-                  controller: _scrollController4,
+                  //  controller: _scrollController4,
                   shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => InkWell(
                       onTap: () {
                         if (currentuser.uid !=
-                            snapshot.data.documents[index].data['ownerUid']) {
+                            snapshot.data.docs[index].data()['ownerUid']) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FriendProfileScreen(
-                                      uid: snapshot.data.documents[index]
-                                          .data['ownerUid'],
-                                      name: snapshot.data.documents[index]
-                                          .data['ownerName'])));
+                                      uid: snapshot.data.docs[index]
+                                          .data()['ownerUid'],
+                                      name: snapshot.data.docs[index]
+                                          .data()['ownerName'])));
                         }
                       },
                       child: Padding(
@@ -671,8 +712,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                           ),
                           child: ListTile(
                             trailing: Text(
-                              snapshot
-                                  .data.documents[index].data['accountType'],
+                              snapshot.data.docs[index].data()['accountType'],
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textBody1(context),
@@ -680,11 +720,10 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                             ),
                             leading: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                    snapshot.data.documents[index]
-                                        .data['ownerPhotoUrl'])),
+                                    snapshot.data.docs[index]
+                                        .data()['ownerPhotoUrl'])),
                             title: Text(
-                                snapshot
-                                    .data.documents[index].data['ownerName'],
+                                snapshot.data.docs[index].data()['ownerName'],
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),

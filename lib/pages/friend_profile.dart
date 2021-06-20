@@ -1114,6 +1114,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   }
 
   Widget overviewProfile() {
+    var screenSize = MediaQuery.of(context).size;
     return ListView(
       //   controller: _scrollController1,
       //  physics: NeverScrollableScrollPhysics(),
@@ -1157,6 +1158,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
               color: Color(0xffffffff),
             ),
             child: userBody()),
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+            padding: EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              color: Color(0xffffffff),
+            ),
+            child: userActivityButtons()),
       ],
     );
   }
@@ -1174,6 +1183,145 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
         ],
         controller: _tabController,
       ),
+    );
+  }
+
+  Widget userActivityButtons() {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            if (isPrivate && !isFollowing) {
+              return;
+            } else {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FriendActivity(
+                        followingUser: currentuser,
+                        user: _user,
+                      )));
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenSize.width / 30,
+              vertical: screenSize.height * 0.012,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Activity',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black,
+                      fontSize: textSubTitle(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    isPrivate && !isFollowing
+                        ? Icon(
+                            MdiIcons.lockOutline,
+                            color: Colors.black54,
+                            //  size: screenSize.height * 0.05,
+                          )
+                        : Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.black54,
+                            size: screenSize.height * 0.05,
+                          ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            if (isPrivate && !isFollowing) {
+              return;
+            } else {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FriendInformationDetail(
+                        user: _user,
+                      )));
+            }
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenSize.width / 30,
+              vertical: screenSize.height * 0.012,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Information',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black,
+                      fontSize: textSubTitle(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    isPrivate && !isFollowing
+                        ? Icon(
+                            Icons.lock_outline,
+                            color: Colors.black54,
+                            //    size: screenSize.height * 0.05,
+                          )
+                        : Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.black54,
+                            size: screenSize.height * 0.05,
+                          ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => FriendActivityApplications(
+                      followingUser: currentuser,
+                      user: _user,
+                    )));
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenSize.width / 30,
+              vertical: screenSize.height * 0.012,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Work Applications',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black,
+                      fontSize: textSubTitle(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_right,
+                  color: Colors.black54,
+                  size: screenSize.height * 0.05,
+                )
+              ],
+            ),
+          ),
+        ),
+        Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+            height: screenSize.height * 0.05,
+          ),
+        ]),
+      ],
     );
   }
 
@@ -1856,7 +2004,9 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                           fontSize: textHeader(context),
                           fontWeight: FontWeight.bold),
                     ),
-
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
                     _user.rank.isNotEmpty && _user.rank != 'Select a Rank'
                         ? Wrap(
                             children: [
@@ -1983,13 +2133,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                     //  Divider(),
                   ],
                 ),
-                Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: screenSize.height * 0.012),
-                  child: Container(
-                    height: screenSize.height * 0.02,
-                    color: Colors.grey[200],
-                  ),
+                SizedBox(
+                  height: screenSize.height * 0.02,
                 ),
               ],
             )
@@ -2181,140 +2326,6 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
               ],
             )
           : Container(),
-      SizedBox(
-        height: screenSize.height * 0.02,
-      ),
-      InkWell(
-        onTap: () {
-          if (isPrivate && !isFollowing) {
-            return;
-          } else {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => FriendActivity(
-                      followingUser: currentuser,
-                      user: _user,
-                    )));
-          }
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width / 30,
-            vertical: screenSize.height * 0.012,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Activity',
-                style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    color: Colors.black,
-                    fontSize: textSubTitle(context),
-                    fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  isPrivate && !isFollowing
-                      ? Icon(
-                          MdiIcons.lockOutline,
-                          color: Colors.black54,
-                          //  size: screenSize.height * 0.05,
-                        )
-                      : Icon(
-                          Icons.keyboard_arrow_right,
-                          color: Colors.black54,
-                          size: screenSize.height * 0.05,
-                        ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-      InkWell(
-        onTap: () {
-          if (isPrivate && !isFollowing) {
-            return;
-          } else {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => FriendInformationDetail(
-                      user: _user,
-                    )));
-          }
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width / 30,
-            vertical: screenSize.height * 0.012,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Information',
-                style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    color: Colors.black,
-                    fontSize: textSubTitle(context),
-                    fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  isPrivate && !isFollowing
-                      ? Icon(
-                          Icons.lock_outline,
-                          color: Colors.black54,
-                          //    size: screenSize.height * 0.05,
-                        )
-                      : Icon(
-                          Icons.keyboard_arrow_right,
-                          color: Colors.black54,
-                          size: screenSize.height * 0.05,
-                        ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-      InkWell(
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => FriendActivityApplications(
-                    followingUser: currentuser,
-                    user: _user,
-                  )));
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width / 30,
-            vertical: screenSize.height * 0.012,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Work Applications',
-                style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    color: Colors.black,
-                    fontSize: textSubTitle(context),
-                    fontWeight: FontWeight.bold),
-              ),
-              Icon(
-                Icons.keyboard_arrow_right,
-                color: Colors.black54,
-                size: screenSize.height * 0.05,
-              )
-            ],
-          ),
-        ),
-      ),
-      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Container(
-          height: screenSize.height * 0.05,
-        ),
-      ]),
     ]);
   }
 }
