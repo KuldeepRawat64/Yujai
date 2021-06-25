@@ -16,12 +16,14 @@ import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/pages/team_inbox.dart';
 import 'package:Yujai/pages/team_invite.dart';
 import 'package:Yujai/pages/team_members.dart';
+import 'package:Yujai/pages/team_settings.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_team_home.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -152,28 +154,45 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                 //     ),
                 //   )
               ],
-              title: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      'assets/images/team_no-image.png',
-                      height: 30.0,
-                      width: 30.0,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8.0,
-                  ),
-                  Text(
-                    widget.name,
-                    style: TextStyle(
-                      fontSize: screenSize.height * 0.022,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
+              title: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: teamsRef.doc(widget.gid).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container();
+                    } else if (snapshot.connectionState ==
+                            ConnectionState.active ||
+                        snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return Text('Error');
+                      }
+                      if (snapshot.hasData) {
+                        return Row(
+                          children: [
+                            CircleAvatar(
+                              //  radius: screenSize.height * 0.045,
+                              backgroundImage: CachedNetworkImageProvider(
+                                  snapshot.data['teamProfilePhoto']),
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            Container(
+                              width: screenSize.width * 0.45,
+                              child: Text(
+                                snapshot.data['teamName'],
+                                style: TextStyle(
+                                  fontSize: screenSize.height * 0.022,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    }
+
+                    return Container();
+                  }),
               leading: IconButton(
                   icon: Icon(Icons.keyboard_arrow_left,
                       color: Colors.black54, size: screenSize.height * 0.045),
@@ -248,7 +267,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                             name: widget.name)));
                               },
                               leading: Icon(
-                                Icons.people_outline,
+                                Icons.people_alt_outlined,
                                 color: Colors.white,
                               ),
                               title: Text(
@@ -268,8 +287,8 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                         builder: (context) => TeamInbox(
                                             team: _team,
                                             currentuser: currentuser,
-                                            gid: widget.gid,
-                                            name: widget.name)));
+                                            gid: _team.uid,
+                                            name: _team.teamName)));
                               },
                               leading: Icon(
                                 Icons.notifications_outlined,
@@ -296,14 +315,28 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                     thickness: 0.1,
                                   ),
                                   InkWell(
-                                      onTap: deleteDialog,
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TeamSettings(
+                                                      team: _team,
+                                                      gid: _team.uid,
+                                                      name: _team.teamName,
+                                                      description:
+                                                          _team.teamDescription,
+                                                      currentuser: currentuser,
+                                                    )));
+                                      },
                                       child: ListTile(
                                           leading: Icon(
-                                            Icons.remove_circle_outline,
+                                            Icons.settings_outlined,
                                             color: Colors.white,
                                           ),
                                           title: Text(
-                                            'Close team',
+                                            'Settings',
                                             style: TextStyle(
                                                 fontFamily: FontNameDefault,
                                                 color: Colors.white,
@@ -506,18 +539,26 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  fetchUidBySearchedName(String name) async {
-    print("NAME : $name");
-    String uid = await _repository.fetchUidBySearchedName(name);
-    if (!mounted) return;
-    setState(() {
-      followingUserId = uid;
-    });
-    fetchUserDetailsById(uid);
-  }
+  // fetchUidBySearchedName(String name) async {
+  //   print("NAME : $name");
+  //   String uid = await _repository.fetchUidBySearchedName(name);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     followingUserId = uid;
+  //   });
+  //   fetchUserDetailsById(uid);
+  // }
 
-  fetchUserDetailsById(String userId) async {
-    Team team = await _repository.fetchTeamDetailsById(widget.gid);
+  // fetchUserDetailsById(String userId) async {
+  //   Team team = await _repository.fetchTeamDetailsById(widget.gid);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _team = team;
+  //   });
+  // }
+  retrieveTeamDetails() async {
+    //FirebaseUser currentUser = await _repository.getCurrentUser();
+    Team team = await _repository.retreiveTeamDetails(widget.gid);
     if (!mounted) return;
     setState(() {
       _team = team;
@@ -529,7 +570,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
     super.initState();
     isMember = false;
     isRequested = false;
-    fetchUidBySearchedName(widget.gid);
+    retrieveTeamDetails();
     _repository.getCurrentUser().then((user) {
       if (!mounted) return;
       setState(() {
@@ -542,7 +583,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
         });
       });
       _repository
-          .checkIsMember(widget.currentUser.uid, widget.gid)
+          .checkIsMember(widget.currentUser.uid, widget.gid, false)
           .then((value) {
         print("VALUE : $value");
         if (!mounted) return;
@@ -866,7 +907,8 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                                                   _departmentNameController
                                                       .text,
                                                   isPrivate,
-                                                  60152,
+                                                  serializeIcon(
+                                                      Icons.work_outline),
                                                   Colors
                                                       .primaries[Random()
                                                           .nextInt(Colors

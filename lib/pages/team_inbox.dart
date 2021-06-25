@@ -5,6 +5,7 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -174,7 +175,7 @@ class _TeamInboxState extends State<TeamInbox> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -183,16 +184,16 @@ class _TeamInboxState extends State<TeamInbox> {
           .orderBy('timestamp', descending: true)
           .snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data.docs.length > 0) {
           //     if (snapshot.connectionState == ConnectionState.done) {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
                   controller: _scrollController,
                   //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemInbox(
-                        documentSnapshot: snapshot.data.documents[index],
+                        documentSnapshot: snapshot.data.docs[index],
                         index: index,
                       ))));
           //   } else {
@@ -201,9 +202,8 @@ class _TeamInboxState extends State<TeamInbox> {
           //      );
           //      }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return NoContent(
+              'No notifications', 'assets/images/notification.png', '', '');
         }
       }),
     );

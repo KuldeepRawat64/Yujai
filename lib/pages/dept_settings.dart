@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/models/department.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
@@ -15,81 +18,65 @@ import 'package:path_provider/path_provider.dart';
 
 import 'create_group.dart';
 
-class TeamSettings extends StatefulWidget {
+class DeptSettings extends StatefulWidget {
   final String gid;
-
+  final String dId;
   final String name;
   final String description;
   final Team team;
+  final Department dept;
   final UserModel currentuser;
-  const TeamSettings({
+  const DeptSettings({
     this.gid,
+    this.dId,
     this.name,
     this.currentuser,
     this.team,
+    this.dept,
     this.description,
   });
   @override
-  _TeamSettingsState createState() => _TeamSettingsState();
+  _DeptSettingsState createState() => _DeptSettingsState();
 }
 
-class _TeamSettingsState extends State<TeamSettings> {
-  Team _team;
+class _DeptSettingsState extends State<DeptSettings> {
+  //Team _team;
+  // Department _department;
   bool isPrivate = false;
   bool isHidden = false;
   UserModel _user;
-  File imageFile;
+  Icon _icon;
   var _repository = Repository();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  List<String> reportList = [
-    "Be Kind and Courteous",
-    "No Hate Speech or Bullying",
-    "No Promotions or Spam",
-    "Respect Everyone's Privacy",
-    "No 18+ content",
-    "It’s OK to agree to disagree",
-    "Confidentiality"
-  ];
 
-  retrieveTeamDetails() async {
-    //FirebaseUser currentUser = await _repository.getCurrentUser();
-    Team team = await _repository.retreiveTeamDetails(widget.gid);
-    if (!mounted) return;
-    setState(() {
-      _team = team;
-    });
-  }
+  // retrieveTeamDetails() async {
+  //   //FirebaseUser currentUser = await _repository.getCurrentUser();
+  //   Team team = await _repository.retreiveTeamDetails(widget.gid);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _team = team;
+  //   });
+  //     Department department =
+  //       await _repository.fetchDepartmentDetailsById(widget.gid, widget.dId);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _department = department;
+  //   });
+  // }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
+  Future<IconData> _pickIcon() async {
+    IconData icon = await FlutterIconPicker.showIconPicker(context,
+        iconPackMode: IconPack.fontAwesomeIcons);
 
-  void compressImage() async {
-    print('starting compression');
-    final tempDir = await getTemporaryDirectory();
-    final path = tempDir.path;
-    int rand = Random().nextInt(10000);
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
-    //Im.copyResize(image, height: 500);
-    var newim2 = new File('$path/img_$rand.jpg')
-      ..writeAsBytesSync(Im.encodeJpg(image, quality: 25));
-    setState(() {
-      imageFile = newim2;
-    });
-    print('done');
+    return icon;
   }
 
   @override
   void initState() {
     super.initState();
-    retrieveTeamDetails();
+    // retrieveTeamDetails();
     if (!mounted) return;
     _nameController.text = widget.name;
     _descriptionController.text = widget.description;
@@ -97,9 +84,13 @@ class _TeamSettingsState extends State<TeamSettings> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      teamsRef.doc(_team.uid).update({
-        "teamName": _nameController.text,
-        "teamDescription": _descriptionController.text,
+      teamsRef
+          .doc(widget.team.uid)
+          .collection('departments')
+          .doc(widget.dept.uid)
+          .update({
+        "departmentName": _nameController.text,
+        "description": _descriptionController.text,
       });
       _formKey.currentState.save();
       Navigator.pop(context);
@@ -114,7 +105,7 @@ class _TeamSettingsState extends State<TeamSettings> {
         backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
           title: Text(
-            'Team settings',
+            'Department settings',
             style: TextStyle(
               fontFamily: FontNameDefault,
               fontSize: textAppTitle(context),
@@ -143,7 +134,7 @@ class _TeamSettingsState extends State<TeamSettings> {
                 screenSize.height * 0.025,
               ),
               children: [
-                _team != null
+                widget.dept != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -160,86 +151,185 @@ class _TeamSettingsState extends State<TeamSettings> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              children: [
-                                StreamBuilder<
-                                        DocumentSnapshot<Map<String, dynamic>>>(
-                                    stream: teamsRef.doc(_team.uid).snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      } else if (snapshot.connectionState ==
-                                              ConnectionState.active ||
-                                          snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                        if (snapshot.hasError) {
-                                          return CircleAvatar(
-                                            radius: screenSize.height * 0.045,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/error.png'),
-                                          );
-                                        }
-                                        if (snapshot.hasData) {
-                                          return CircleAvatar(
-                                            radius: screenSize.height * 0.045,
-                                            backgroundImage:
-                                                CachedNetworkImageProvider(
-                                                    snapshot.data[
-                                                        'teamProfilePhoto']),
-                                          );
-                                        }
-                                      }
-
-                                      return Center(
-                                        child: CircularProgressIndicator(),
+                            child: StreamBuilder(
+                                stream: teamsRef
+                                    .doc(widget.gid)
+                                    .collection('departments')
+                                    .doc(widget.dId)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.connectionState ==
+                                          ConnectionState.active ||
+                                      snapshot.connectionState ==
+                                          ConnectionState.done) {
+                                    if (snapshot.hasError) {
+                                      return CircleAvatar(
+                                        radius: screenSize.height * 0.045,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/error.png'),
                                       );
-                                    }),
-                                SizedBox(
-                                  width: screenSize.width * 0.08,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    _pickImage('Gallery').then((selectedImage) {
-                                      setState(() {
-                                        imageFile = selectedImage;
-                                      });
-                                      compressImage();
-                                      _repository
-                                          .uploadImageToStorage(imageFile)
-                                          .then((url) {
-                                        teamsRef.doc(_team.uid).update({
-                                          'teamProfilePhoto': url
-                                        }).catchError((e) => print(
-                                            'Error changing team icon : $e'));
-                                      }).catchError((e) => print(
-                                              'Error upload icon to storage : $e'));
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6.0),
-                                    decoration: ShapeDecoration(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            side: BorderSide(
-                                                width: 0.3,
-                                                color: Colors.grey))),
-                                    child: Text(
-                                      'Change Icon',
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.bold,
-                                        // fontSize: textSubTitle(context)
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                                    }
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        children: [
+                                          Container(
+                                            width: screenSize.width * 0.1,
+                                            height: screenSize.height * 0.06,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(
+                                                  screenSize.height * 0.01),
+                                              child: Icon(
+                                                deserializeIcon(snapshot.data[
+                                                    'departmentProfilePhoto']),
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            decoration: ShapeDecoration(
+                                              color:
+                                                  Color(snapshot.data['color']),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        screenSize.height *
+                                                            0.01),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: screenSize.width * 0.08,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              _pickIcon().then((icon) {
+                                                teamsRef
+                                                    .doc(widget.team.uid)
+                                                    .collection('departments')
+                                                    .doc(widget.dept.uid)
+                                                    .update({
+                                                  'departmentProfilePhoto':
+                                                      serializeIcon(icon)
+                                                }).catchError((e) => print(
+                                                        'Error changing department icon : $e'));
+                                              }).catchError((e) =>
+                                                  print('Error picking : $e'));
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.all(6.0),
+                                              decoration: ShapeDecoration(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.0),
+                                                      side: BorderSide(
+                                                          width: 0.3,
+                                                          color: Colors.grey))),
+                                              child: Text(
+                                                'Change icon',
+                                                style: TextStyle(
+                                                  fontFamily: FontNameDefault,
+                                                  color: Colors.black87,
+                                                  fontWeight: FontWeight.bold,
+                                                  // fontSize: textSubTitle(context)
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20.0,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title:
+                                                        Text('Select a color',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  FontNameDefault,
+                                                              fontSize:
+                                                                  textSubTitle(
+                                                                      context),
+                                                            )),
+                                                    content:
+                                                        SingleChildScrollView(
+                                                      child: BlockPicker(
+                                                        pickerColor: Color(
+                                                            snapshot
+                                                                .data['color']),
+                                                        onColorChanged:
+                                                            (Color color) {
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'teams')
+                                                              .doc(widget.gid)
+                                                              .collection(
+                                                                  'departments')
+                                                              .doc(widget.dId)
+                                                              .update({
+                                                            'color': color.value
+                                                          }).then((value) =>
+                                                                  Navigator.pop(
+                                                                      context));
+                                                        },
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Stack(
+                                              overflow: Overflow.visible,
+                                              children: [
+                                                StreamBuilder(
+                                                    stream: teamsRef
+                                                        .doc(widget.gid)
+                                                        .collection(
+                                                            'departments')
+                                                        .doc(widget.dId)
+                                                        .snapshots(),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot.hasData) {
+                                                        return CircleAvatar(
+                                                          backgroundColor:
+                                                              Color(
+                                                                  snapshot.data[
+                                                                      'color']),
+                                                        );
+                                                      }
+                                                      return Container();
+                                                    }),
+                                                Positioned(
+                                                    top: 0,
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    child: Icon(
+                                                      Icons.check,
+                                                      color: Colors.white,
+                                                    )),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }
+                                  }
+
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }),
                           ),
                           Container(
                             //   color: const Color(0xffffffff),
@@ -308,46 +398,46 @@ class _TeamSettingsState extends State<TeamSettings> {
                         ],
                       )
                     : Container(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: screenSize.height * 0.02,
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: Text(
-                        'Danger zone',
-                        style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            //color: Colors.black54,
-                            fontWeight: FontWeight.bold,
-                            fontSize: textHeader(context)),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: deleteDialog,
-                      child: Container(
-                        decoration: ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                                side:
-                                    BorderSide(width: 0.5, color: Colors.red))),
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Delete team',
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                            // fontSize: textSubTitle(context)
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     SizedBox(
+                //       height: screenSize.height * 0.02,
+                //     ),
+                //     Divider(),
+                //     Padding(
+                //       padding: const EdgeInsets.only(bottom: 10.0),
+                //       child: Text(
+                //         'Danger zone',
+                //         style: TextStyle(
+                //             fontFamily: FontNameDefault,
+                //             //color: Colors.black54,
+                //             fontWeight: FontWeight.bold,
+                //             fontSize: textHeader(context)),
+                //       ),
+                //     ),
+                //     InkWell(
+                //       onTap: deleteDialog,
+                //       child: Container(
+                //         decoration: ShapeDecoration(
+                //             shape: RoundedRectangleBorder(
+                //                 borderRadius: BorderRadius.circular(6.0),
+                //                 side:
+                //                     BorderSide(width: 0.5, color: Colors.red))),
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Text(
+                //           'Delete team',
+                //           style: TextStyle(
+                //             fontFamily: FontNameDefault,
+                //             color: Colors.red,
+                //             fontWeight: FontWeight.bold,
+                //             // fontSize: textSubTitle(context)
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 //  Divider(),
                 SizedBox(
                   height: screenSize.height * 0.02,

@@ -15,6 +15,7 @@ import 'package:Yujai/resources/firebase_provider.dart';
 //import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 class Repository {
   final _firebaseProvider = FirebaseProvider();
@@ -182,9 +183,10 @@ class Repository {
           String currentDeptId,
           String currentProjectId,
           UserModel currentUser,
-          String caption) =>
-      _firebaseProvider.addDiscussionToProject(
-          currentTeamId, currentDeptId, currentProjectId, currentUser, caption);
+          String caption,
+          String discussId) =>
+      _firebaseProvider.addDiscussionToProject(currentTeamId, currentDeptId,
+          currentProjectId, currentUser, caption, discussId);
 
   Future<void> addDiscussionToReview(String currentGroupId,
           UserModel currentUser, String caption, String postType) =>
@@ -225,7 +227,8 @@ class Repository {
           String option1,
           String option2,
           String option3,
-          String option4) =>
+          String option4,
+          String newPollId) =>
       _firebaseProvider.addPollToProject(
           currentTeamId,
           currentDeptId,
@@ -237,7 +240,8 @@ class Repository {
           option1,
           option2,
           option3,
-          option4);
+          option4,
+          newPollId);
 
   Future<void> addPollToDept(
           String currentTeamId,
@@ -330,7 +334,7 @@ class Repository {
           String departmentUid,
           String departmentName,
           bool isPrivate,
-          int img,
+          Map<String, dynamic> img,
           int color) =>
       _firebaseProvider.addDepartmentToTeam(currentUser, teamUid, departmentUid,
           departmentName, isPrivate, img, color);
@@ -501,6 +505,9 @@ class Repository {
   Future<Group> retreiveGroupDetails(String group) =>
       _firebaseProvider.retrieveGroupDetails(group);
 
+  Future<Team> retreiveTeamDetails(String group) =>
+      _firebaseProvider.retrieveTeamDetails(group);
+
   Future<List<DocumentSnapshot>> retreiveUserPosts(String userId) =>
       _firebaseProvider.retrieveUserPosts(userId);
 
@@ -635,14 +642,22 @@ class Repository {
           {Team currentTeam,
           String followerId,
           String followerName,
-          String followerAccountType,
+          //  String followerAccountType,
           String followerPhotoUrl}) =>
       _firebaseProvider.addTeamMember(
           currentTeam: currentTeam,
           followerId: followerId,
           followerName: followerName,
-          followerAccountType: followerAccountType,
           followerPhotoUrl: followerPhotoUrl);
+
+  Future<void> removeTeamMember({
+    Team currentTeam,
+    String followerId,
+  }) =>
+      _firebaseProvider.removeTeamMember(
+        currentTeam: currentTeam,
+        followerId: followerId,
+      );
 
   Future<void> addDeptMember(
           {Team currentTeam,
@@ -663,7 +678,7 @@ class Repository {
           {Team currentTeam,
           int currentDeptColor,
           String currentDeptName,
-          int currentDeptProfile,
+          Map<String, dynamic> currentDeptProfile,
           String currentDeptDesc,
           String currentDeptId,
           String followerId,
@@ -756,8 +771,8 @@ class Repository {
   Future<bool> checkIsRequestedGroup(String name, String currentGroupId) =>
       _firebaseProvider.checkIsRequestedGroup(name, currentGroupId);
 
-  Future<bool> checkIsMember(String name, String currentGroupId) =>
-      _firebaseProvider.checkIsMember(name, currentGroupId);
+  Future<bool> checkIsMember(String name, String id, bool isGroup) =>
+      _firebaseProvider.checkIsMember(name, id, isGroup);
 
   Future<bool> checkDeptMember(
           String name, String currentTeamId, String currentDeptId) =>

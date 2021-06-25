@@ -174,7 +174,7 @@ class _GroupInviteState extends State<GroupInvite> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(_user.uid)
@@ -196,13 +196,13 @@ class _GroupInviteState extends State<GroupInvite> {
               child: ListView.builder(
                   controller: _scrollController,
                   //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemUser(
                       group: widget.group,
                       team: widget.team,
                       gid: widget.gid,
                       name: widget.name,
-                      documentSnapshot: snapshot.data.documents[index],
+                      documentSnapshot: snapshot.data.docs[index],
                       index: index,
                       currentuser: _user,
                       user: _user))));

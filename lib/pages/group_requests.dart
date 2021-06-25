@@ -180,7 +180,7 @@ class _GroupRequestState extends State<GroupRequest> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
@@ -194,7 +194,7 @@ class _GroupRequestState extends State<GroupRequest> {
               child: ListView.builder(
                   controller: _scrollController,
                   //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -215,11 +215,12 @@ class _GroupRequestState extends State<GroupRequest> {
                                         top: screenSize.height * 0.01,
                                         right: screenSize.width / 30),
                                     child: Text(
-                                        snapshot.data.documents[index]
-                                                    .data['time'] !=
+                                        snapshot.data.docs[index]
+                                                    .data()['time'] !=
                                                 null
-                                            ? timeago.format(snapshot.data
-                                                .documents[index].data['time']
+                                            ? timeago.format(snapshot
+                                                .data.docs[index]
+                                                .data()['time']
                                                 .toDate())
                                             : '',
                                         style: TextStyle(
@@ -239,9 +240,8 @@ class _GroupRequestState extends State<GroupRequest> {
                                     child: CircleAvatar(
                                       backgroundImage:
                                           CachedNetworkImageProvider(snapshot
-                                              .data
-                                              .documents[index]
-                                              .data['ownerPhotoUrl']),
+                                              .data.docs[index]
+                                              .data()['ownerPhotoUrl']),
                                     ),
                                   ),
                                   Padding(
@@ -250,8 +250,8 @@ class _GroupRequestState extends State<GroupRequest> {
                                       top: screenSize.height * 0.02,
                                     ),
                                     child: Text(
-                                      snapshot.data.documents[index]
-                                          .data['ownerName'],
+                                      snapshot.data.docs[index]
+                                          .data()['ownerName'],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontFamily: FontNameDefault,
@@ -270,7 +270,7 @@ class _GroupRequestState extends State<GroupRequest> {
                                         //disabledColor: Theme.of(context).accentColor,
                                         color: Theme.of(context).accentColor,
                                         onPressed: () => joinGroup(
-                                            snapshot.data.documents[index]),
+                                            snapshot.data.docs[index]),
                                         child: Text(
                                           'Approve',
                                           style: TextStyle(
@@ -283,7 +283,7 @@ class _GroupRequestState extends State<GroupRequest> {
                                         color: Colors.grey[200],
                                         onPressed: () =>
                                             removeInviteToActivityFeed(
-                                                snapshot.data.documents[index]),
+                                                snapshot.data.docs[index]),
                                         child: Text(
                                           'Decline',
                                           style: TextStyle(

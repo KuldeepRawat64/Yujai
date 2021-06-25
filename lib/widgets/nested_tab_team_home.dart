@@ -5,6 +5,7 @@ import 'package:Yujai/models/team.dart';
 import 'package:Yujai/pages/department.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:icon_picker/icon_picker.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/team.dart';
@@ -167,7 +168,7 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
       // mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         forumWidget(),
@@ -334,13 +335,15 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
     return widget.currentUser.uid == widget.team.currentUserUid
-        ? StreamBuilder<QuerySnapshot>(
+        ? StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
             stream: FirebaseFirestore.instance
                 .collection('teams')
                 .doc(widget.gid)
                 .collection('departments')
+                .orderBy('timestamp')
                 .snapshots(),
-            builder: ((context, snapshot) {
+            builder: ((context,
+                AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
               if (!snapshot.hasData) {
                 return Center(
                   child: CircularProgressIndicator(),
@@ -353,27 +356,22 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                           padding:
                               EdgeInsets.only(top: screenSize.height * 0.25),
                           child: NoContent(
-                              'No posts',
-                              'assets/images/picture.png',
-                              true,
-                              'Create a Post',
-                              ''),
+                              'No departments',
+                              'assets/images/department.png',
+                              'Add a department',
+                              ' by clicking on the + icon above'),
                         )
                       : Padding(
                           padding:
                               EdgeInsets.only(top: screenSize.height * 0.25),
-                          child: NoContent(
-                              'No posts',
-                              'assets/images/picture.png',
-                              false,
-                              'When a post is created it will show up in this tab',
-                              ''),
+                          child: NoContent('No departments',
+                              'assets/images/department.png', '', ''),
                         );
                 }
                 return SizedBox(
-                  height: screenSize.height,
+                  height: screenSize.height * 0.86,
                   child: ListView.builder(
-                    controller: _scrollController,
+                    //    controller: _scrollController,
                     shrinkWrap: true,
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: ((context, index) => Padding(
@@ -411,11 +409,9 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   padding:
                                       EdgeInsets.all(screenSize.height * 0.01),
                                   child: Icon(
-                                    Icons.work_outline,
-                                    // IconData(
-                                    //     snapshot.data.documents[index]
-                                    //         .data['departmentProfilePhoto'],
-                                    //     fontFamily: 'MaterialIcons'),
+                                    //  Icons.work_outline,
+                                    deserializeIcon(snapshot.data.docs[index]
+                                        ['departmentProfilePhoto']),
                                     color: Colors.white,
                                   ),
                                 ),
@@ -468,15 +464,14 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                     child: NoContent(
                         'No departments',
                         'assets/images/picture.png',
-                        false,
                         'Departments in which you are a member will appear here',
-                        '\nContact your Team Supervisor or Team Admin for further information.'),
+                        ''),
                   );
                 }
                 return SizedBox(
-                  height: screenSize.height,
+                  height: screenSize.height * 0.86,
                   child: ListView.builder(
-                    controller: _scrollController,
+                    //    controller: _scrollController,
                     shrinkWrap: true,
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: ((context, index) => Padding(

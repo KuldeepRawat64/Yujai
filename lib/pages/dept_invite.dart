@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:Yujai/models/group.dart';
+import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_activity_feed.dart';
-import 'package:Yujai/widgets/list_inbox.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/list_user_dept.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,18 +14,20 @@ import 'package:shimmer/shimmer.dart';
 
 import '../style.dart';
 
-class GroupInbox extends StatefulWidget {
+class DeptInvite extends StatefulWidget {
   final String gid;
   final String name;
-  final Group group;
+  final Team group;
   final UserModel currentuser;
-  const GroupInbox({this.gid, this.name, this.group, this.currentuser});
+  final Department dept;
+  const DeptInvite(
+      {this.gid, this.name, this.group, this.currentuser, this.dept});
 
   @override
-  _GroupInboxState createState() => _GroupInboxState();
+  _DeptInviteState createState() => _DeptInviteState();
 }
 
-class _GroupInboxState extends State<GroupInbox> {
+class _DeptInviteState extends State<DeptInvite> {
   var _repository = Repository();
   UserModel _user;
   IconData icon;
@@ -81,7 +83,7 @@ class _GroupInboxState extends State<GroupInbox> {
           //    centerTitle: true,
           backgroundColor: const Color(0xffffffff),
           title: Text(
-            'Group Inbox',
+            'Add members',
             style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
@@ -177,14 +179,13 @@ class _GroupInboxState extends State<GroupInbox> {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
-          .collection('groups')
+          .collection('teams')
           .doc(widget.gid)
-          .collection('inbox')
-          .where('postOwnerUid', isEqualTo: widget.currentuser.uid)
-          .orderBy('timestamp', descending: true)
-          .snapshots(),
+          .collection('members')
+          .where('accountType',
+              whereIn: ['${widget.group.teamName} Member']).snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data.docs.length > 0) {
           //     if (snapshot.connectionState == ConnectionState.done) {
           return SizedBox(
               height: screenSize.height,
@@ -192,19 +193,22 @@ class _GroupInboxState extends State<GroupInbox> {
                   controller: _scrollController,
                   //shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => ListItemInbox(
-                        documentSnapshot: snapshot.data.docs[index],
-                        index: index,
-                      ))));
+                  itemBuilder: ((context, index) => ListItemUserDept(
+                      dept: widget.dept,
+                      team: widget.group,
+                      gid: widget.gid,
+                      name: widget.name,
+                      documentSnapshot: snapshot.data.docs[index],
+                      index: index,
+                      currentuser: _user,
+                      user: _user))));
           //   } else {
           //     return Center(
           //       child: shimmer(),
           //      );
           //      }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return NoContent('No members', 'assets/images/members.png', '', '');
         }
       }),
     );

@@ -172,7 +172,7 @@ class _TeamInviteState extends State<TeamInvite> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(_user.uid)
@@ -194,12 +194,12 @@ class _TeamInviteState extends State<TeamInvite> {
               child: ListView.builder(
                   controller: _scrollController,
                   //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemUser(
                       team: widget.group,
                       gid: widget.gid,
                       name: widget.name,
-                      documentSnapshot: snapshot.data.documents[index],
+                      documentSnapshot: snapshot.data.docs[index],
                       index: index,
                       currentuser: _user,
                       user: _user))));

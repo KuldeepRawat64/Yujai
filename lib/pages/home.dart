@@ -15,6 +15,7 @@ import 'package:new_version/new_version.dart';
 
 final usersRef = FirebaseFirestore.instance.collection('users');
 final groupsRef = FirebaseFirestore.instance.collection('groups');
+final teamsRef = FirebaseFirestore.instance.collection('teams');
 
 class Home extends StatefulWidget {
   @override

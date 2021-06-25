@@ -401,7 +401,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('messages')
           .doc(_senderuid)
@@ -410,7 +410,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           .collection('messages')
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: (context, snapshot) {
+      builder: (context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (!snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(),
@@ -427,8 +428,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 //   ListItemChat(
                 //   documentSnapshot: snapshot.data.documents[index],
                 //  ),
-                chatMessageItem(snapshot.data.documents[index]),
-            itemCount: snapshot.data.documents.length,
+                chatMessageItem(snapshot.data.docs[index]),
+            itemCount: snapshot.data.docs.length,
           );
         }
       },

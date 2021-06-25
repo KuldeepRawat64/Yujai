@@ -303,7 +303,7 @@ class _GroupChatState extends State<GroupChat> {
     return Flexible(
       flex: 1,
       // fit: FlexFit.tight,
-      child: StreamBuilder(
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
             .collection('groups')
             .doc(widget.recieverGroup.uid)
@@ -324,8 +324,8 @@ class _GroupChatState extends State<GroupChat> {
                   //   ListItemChat(
                   //   documentSnapshot: snapshot.data.documents[index],
                   //  ),
-                  chatMessageItem(snapshot.data.documents[index]),
-              itemCount: snapshot.data.documents.length,
+                  chatMessageItem(snapshot.data.docs[index]),
+              itemCount: snapshot.data.docs.length,
             );
           }
         },

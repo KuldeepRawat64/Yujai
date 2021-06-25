@@ -30,6 +30,8 @@ import 'package:Yujai/models/following.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/Serialization/iconDataSerialization.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:uuid/uuid.dart';
 import 'package:Yujai/models/ad.dart';
@@ -190,15 +192,15 @@ class FirebaseProvider {
     int color,
   ) async {
     team = Team(
-      uid: teamId,
-      teamName: teamName,
-      teamProfilePhoto:
-          'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/team_no-image.png?alt=media&token=aa43c6f9-3bd2-4647-b7f5-68824a943630',
-      currentUserUid: currentUser.uid,
-      teamOwnerEmail: currentUser.email,
-      teamOwnerName: currentUser.displayName,
-      teamOwnerPhotoUrl: currentUser.photoUrl,
-    );
+        uid: teamId,
+        teamName: teamName,
+        teamProfilePhoto:
+            'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/team_no-image.png?alt=media&token=aa43c6f9-3bd2-4647-b7f5-68824a943630',
+        currentUserUid: currentUser.uid,
+        teamOwnerEmail: currentUser.email,
+        teamOwnerName: currentUser.displayName,
+        teamOwnerPhotoUrl: currentUser.photoUrl,
+        timestamp: Timestamp.now());
 
     await _firestore.collection('teams').doc(teamId).set(team.toMap(team));
 
@@ -206,7 +208,7 @@ class FirebaseProvider {
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
         ownerPhotoUrl: currentUser.photoUrl,
-        accountType: 'Supervisor',
+        accountType: 'Admin',
         timestamp: FieldValue.serverTimestamp());
     await _firestore
         .collection('teams')
@@ -227,15 +229,15 @@ class FirebaseProvider {
     String dId = Uuid().v4();
     for (var i = 0; i < department.length; i++) {
       departments = Department(
-        departmentOwnerName: '',
-        departmentOwnerEmail: '',
-        departmentOwnerPhotoUrl: '',
-        description: '',
-        departmentProfilePhoto: 59251,
-        color: color,
-        uid: dId,
-        departmentName: department[i],
-      );
+          departmentOwnerName: '',
+          departmentOwnerEmail: '',
+          departmentOwnerPhotoUrl: '',
+          description: '',
+          departmentProfilePhoto: serializeIcon(Icons.work),
+          color: color,
+          uid: dId,
+          departmentName: department[i],
+          timestamp: Timestamp.now());
       await _firestore
           .collection('teams')
           .doc(teamId)
@@ -302,19 +304,19 @@ class FirebaseProvider {
       String departmentUid,
       String departmentName,
       bool isPrivate,
-      int img,
+      Map<String, dynamic> img,
       int color) {
     departments = Department(
-      uid: departmentUid,
-      departmentName: departmentName,
-      currentUserUid: currentUser.uid,
-      departmentOwnerName: currentUser.displayName,
-      departmentOwnerEmail: currentUser.email,
-      departmentOwnerPhotoUrl: currentUser.photoUrl,
-      departmentProfilePhoto: img,
-      description: '',
-      color: 4284513675,
-    );
+        uid: departmentUid,
+        departmentName: departmentName,
+        currentUserUid: currentUser.uid,
+        departmentOwnerName: currentUser.displayName,
+        departmentOwnerEmail: currentUser.email,
+        departmentOwnerPhotoUrl: currentUser.photoUrl,
+        departmentProfilePhoto: img,
+        description: '',
+        color: 4284513675,
+        timestamp: Timestamp.now());
 
     return _firestore
         .collection('teams')
@@ -760,12 +762,12 @@ class FirebaseProvider {
   }
 
   Future<void> addDiscussionToProject(
-    String currentTeamId,
-    String currentDeptId,
-    String currentProjectId,
-    UserModel currentUser,
-    String caption,
-  ) {
+      String currentTeamId,
+      String currentDeptId,
+      String currentProjectId,
+      UserModel currentUser,
+      String caption,
+      String discussId) {
     CollectionReference _collectionRef = _firestore
         .collection('teams')
         .doc(currentTeamId)
@@ -776,14 +778,14 @@ class FirebaseProvider {
         .collection('discussions');
 
     discussion = Discussion(
-      postId: postId,
+      postId: discussId,
       currentUserUid: currentUser.uid,
       caption: caption,
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
       time: FieldValue.serverTimestamp(),
     );
-    return _collectionRef.doc(postId).set(discussion.toMap(discussion));
+    return _collectionRef.doc(discussId).set(discussion.toMap(discussion));
   }
 
   Future<void> addDiscussionToDept(
@@ -871,18 +873,18 @@ class FirebaseProvider {
   }
 
   Future<void> addPollToProject(
-    String currentTeamId,
-    String currentDeptId,
-    String currentProjectId,
-    UserModel currentUser,
-    String caption,
-    int pollLength,
-    String postType,
-    String option1,
-    String option2,
-    String option3,
-    String option4,
-  ) {
+      String currentTeamId,
+      String currentDeptId,
+      String currentProjectId,
+      UserModel currentUser,
+      String caption,
+      int pollLength,
+      String postType,
+      String option1,
+      String option2,
+      String option3,
+      String option4,
+      String newPollId) {
     CollectionReference _collectionRef = _firestore
         .collection('teams')
         .doc(currentTeamId)
@@ -893,7 +895,7 @@ class FirebaseProvider {
         .collection('discussions');
 
     poll = Poll(
-      postId: postId,
+      postId: newPollId,
       currentUserUid: currentUser.uid,
       caption: caption,
       time: FieldValue.serverTimestamp(),
@@ -906,7 +908,7 @@ class FirebaseProvider {
       postOwnerName: currentUser.displayName,
       postOwnerPhotoUrl: currentUser.photoUrl,
     );
-    return _collectionRef.doc(postId).set(poll.toMap(poll));
+    return _collectionRef.doc(newPollId).set(poll.toMap(poll));
   }
 
   Future<void> addPollToForum(
@@ -1234,6 +1236,12 @@ class FirebaseProvider {
     DocumentSnapshot _documentSnapshot =
         await _firestore.collection('groups').doc(group).get();
     return Group.fromMap(_documentSnapshot.data());
+  }
+
+  Future<Team> retrieveTeamDetails(String team) async {
+    DocumentSnapshot _documentSnapshot =
+        await _firestore.collection('teams').doc(team).get();
+    return Team.fromMap(_documentSnapshot.data());
   }
 
   Future<List<DocumentSnapshot>> retrieveUserPosts(String userId) async {
@@ -1853,13 +1861,13 @@ class FirebaseProvider {
   Future<void> addTeamMember(
       {Team currentTeam,
       String followerId,
-      String followerAccountType,
+      // String followerAccountType,
       String followerName,
       String followerPhotoUrl}) async {
     var member = Member(
       ownerUid: followerId,
       ownerName: followerName,
-      accountType: followerAccountType,
+      accountType: 'member',
       ownerPhotoUrl: followerPhotoUrl,
       timestamp: FieldValue.serverTimestamp(),
     );
@@ -1872,6 +1880,27 @@ class FirebaseProvider {
 
     await _firestore.collection('teams').doc(currentTeam.uid).update({
       'members': FieldValue.arrayUnion([followerId])
+    });
+  }
+
+  Future<void> removeTeamMember({
+    Team currentTeam,
+    String followerId,
+  }) async {
+    await _firestore
+        .collection('teams')
+        .doc(currentTeam.uid)
+        .collection('members')
+        .doc(followerId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    await _firestore.collection('teams').doc(currentTeam.uid).update({
+      'members': FieldValue.arrayRemove([followerId])
     });
   }
 
@@ -2061,7 +2090,7 @@ class FirebaseProvider {
       String currentDeptId,
       int currentDeptColor,
       String currentDeptName,
-      int currentDeptProfile,
+      Map<String, dynamic> currentDeptProfile,
       String currentDeptDesc,
       String followerId,
       String followerAccountType,
@@ -2225,12 +2254,12 @@ class FirebaseProvider {
     return isHidden;
   }
 
-  Future<bool> checkIsMember(String name, String currentGroupId) async {
+  Future<bool> checkIsMember(String name, String id, bool isGroup) async {
     bool isMember = false;
     String uid = await fetchUidBySearchedName(name);
     QuerySnapshot querySnapshot = await _firestore
-        .collection('groups')
-        .doc(currentGroupId)
+        .collection(isGroup ? 'groups' : 'teams')
+        .doc(id)
         .collection('members')
         // .where('type', isEqualTo: 'request')
         .get();
@@ -2493,8 +2522,9 @@ class FirebaseProvider {
 
   Future<List<Team>> fetchMyTeams(User user) async {
     List<Team> myTeamList = List<Team>();
-    QuerySnapshot querySnapshot = await _firestore.collection('teams')
-        //   .where('isPrivate', isEqualTo: false)
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('teams')
+        .orderBy('timestamp')
         .where('members', arrayContainsAny: [user.uid]).get();
     for (var i = 0; i < querySnapshot.docs.length; i++) {
       if (querySnapshot.docs[i].id != user.uid) {

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+
 class Department {
   String uid;
   String departmentName;
   String currentUserUid;
-  int departmentProfilePhoto;
+  Map<String, dynamic> departmentProfilePhoto;
   String description;
   String location;
   String departmentOwnerName;
@@ -15,25 +18,26 @@ class Department {
   String customRules;
   int color;
   List<dynamic> members;
+  Timestamp timestamp;
 
-  Department({
-    this.uid,
-    this.departmentName,
-    this.currentUserUid,
-    this.description,
-    this.departmentProfilePhoto,
-    this.location,
-    this.departmentOwnerName,
-    this.departmentOwnerPhotoUrl,
-    this.agenda,
-    this.isPrivate,
-    this.isHidden,
-    this.departmentOwnerEmail,
-    this.rules,
-    this.customRules,
-    this.color,
-    this.members,
-  });
+  Department(
+      {this.uid,
+      this.departmentName,
+      this.currentUserUid,
+      this.description,
+      this.departmentProfilePhoto,
+      this.location,
+      this.departmentOwnerName,
+      this.departmentOwnerPhotoUrl,
+      this.agenda,
+      this.isPrivate,
+      this.isHidden,
+      this.departmentOwnerEmail,
+      this.rules,
+      this.customRules,
+      this.color,
+      this.members,
+      this.timestamp});
 
   Map toMap(Department department) {
     var data = Map<String, dynamic>();
@@ -53,7 +57,7 @@ class Department {
     data['customRules'] = department.customRules;
     data['color'] = department.color;
     data['members'] = department.members;
-
+    data['timestamp'] = department.timestamp;
     return data;
   }
 
@@ -73,6 +77,6 @@ class Department {
     this.rules = mapData['rules'];
     this.customRules = mapData['customRules'];
     this.color = mapData['color'];
-    this.members = mapData['members'];
+    this.timestamp = mapData['timestamp'];
   }
 }

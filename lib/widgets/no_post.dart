@@ -110,7 +110,7 @@ class NoPost extends StatelessWidget {
               ),
               Center(
                   child: Text(
-                'No post to see',
+                'No posts to see',
                 style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),

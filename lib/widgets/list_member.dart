@@ -75,7 +75,8 @@ class _ListItemMemberState extends State<ListItemMember> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid)
+        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid,
+            widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -131,7 +132,7 @@ class _ListItemMemberState extends State<ListItemMember> {
                     widget.documentSnapshot['ownerPhotoUrl']),
               ),
               trailing: widget.documentSnapshot != null &&
-                      widget.documentSnapshot['accountType'] != 'Supervisor'
+                      widget.documentSnapshot['accountType'] != 'admin'
                   ? InkWell(
                       onTap: optionTeam,
                       child: Icon(Icons.more_vert,
@@ -172,6 +173,20 @@ class _ListItemMemberState extends State<ListItemMember> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      ListTile(
+                        onTap: () {
+                          Navigator.pop(context);
+                          deleteDialog();
+                        },
+                        leading: Icon(Icons.remove_circle_outline),
+                        title: Text(
+                          'Remove',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context),
+                          ),
+                        ),
+                      ),
                       ListTile(
                         onTap: () {
                           Navigator.pop(context);
@@ -406,6 +421,121 @@ class _ListItemMemberState extends State<ListItemMember> {
                 ],
               ));
             }),
+          );
+        }));
+  }
+
+  deleteDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Remove member',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to remove this member from team?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              _repository
+                                  .removeTeamMember(
+                                      currentTeam: widget.team,
+                                      followerId:
+                                          widget.documentSnapshot['ownerUid'])
+                                  .then((value) {
+                                Navigator.pop(context);
+                              });
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Remove',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           );
         }));
   }

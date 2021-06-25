@@ -7,8 +7,10 @@ import 'package:Yujai/pages/depratment_member.dart';
 import 'package:Yujai/pages/dept_members.dart';
 import 'package:Yujai/pages/project_page.dart';
 import 'package:Yujai/style.dart';
-import 'package:Yujai/widgets/list_discussions.dart';
+import 'package:Yujai/widgets/list_discussions_dept.dart';
 import 'package:Yujai/widgets/list_post.dart';
+import 'package:Yujai/widgets/no_content.dart';
+import 'package:Yujai/widgets/no_post.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:icon_picker/icon_picker.dart';
 import 'package:image/image.dart' as Im;
@@ -167,7 +169,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
     double screenHeight = MediaQuery.of(context).size.height;
     var screenSize = MediaQuery.of(context).size;
     return ListView(
-      // physics: NeverScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
         TabBar(
           unselectedLabelStyle: TextStyle(
@@ -200,7 +202,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
         ),
         Container(
           color: const Color(0xfff6f6f6),
-          height: screenHeight * 0.89,
+          height: screenHeight * 0.8,
           child: TabBarView(
             //   physics: NeverScrollableScrollPhysics(),
             controller: _nestedTabController,
@@ -400,7 +402,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
 
   Widget homeWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -409,8 +411,9 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
           .collection('projects')
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.hasData && snapshot.data.docs.length > 0) {
           return SizedBox(
             height: screenSize.height * 0.9,
             child: GridView.builder(
@@ -419,24 +422,24 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                   crossAxisCount: 3,
                   crossAxisSpacing: 4.0,
                   mainAxisSpacing: 4.0),
-              controller: _scrollController,
+              // controller: _scrollController,
               //shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) => InkWell(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ProjectPage(
-                                    pColor: snapshot
-                                        .data.documents[index].data['color'],
-                                    pIcon: snapshot.data.documents[index]
-                                        .data['projectProfilePhoto'],
-                                    projectName: snapshot.data.documents[index]
-                                        .data['projectName'],
+                                    pColor: snapshot.data.docs[index]
+                                        .data()['color'],
+                                    pIcon: snapshot.data.docs[index]
+                                        .data()['projectProfilePhoto'],
+                                    projectName: snapshot.data.docs[index]
+                                        .data()['projectName'],
                                     label: widget.department.uid,
-                                    projectId: snapshot
-                                        .data.documents[index].data['uid'],
+                                    projectId:
+                                        snapshot.data.docs[index].data()['uid'],
                                     gid: widget.gid,
                                     name: widget.name,
                                     currentUser: widget.currentUser,
@@ -460,8 +463,8 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                                 color: Colors.white,
                               ),
                               decoration: ShapeDecoration(
-                                color: Color(snapshot
-                                    .data.documents[index].data['color']),
+                                color: Color(
+                                    snapshot.data.docs[index].data()['color']),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       screenSize.height * 0.015),
@@ -471,7 +474,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                             InkWell(
                               onTap: () {
                                 _showProjectEditDialog(
-                                    snapshot.data.documents[index]);
+                                    snapshot.data.docs[index]);
                               },
                               child: Padding(
                                 padding: EdgeInsets.only(
@@ -489,8 +492,8 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              snapshot
-                                  .data.documents[index].data['projectName'],
+                              snapshot.data.docs[index].data()['projectName'],
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textSubTitle(context),
@@ -504,8 +507,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
             ),
           );
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
+          return NoContent(
+            'No projects',
+            'assets/images/briefing.png',
+            'Add a project',
+            ' by clicking on the + button above',
           );
         }
       }),
@@ -514,7 +520,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
 
   Widget discussionsWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -523,24 +529,35 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
           .collection('discussions')
           .orderBy('time', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          return SizedBox(
-              height: screenSize.height * 0.9,
-              child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: ((context, index) => ListItemDiscussions(
-                      documentSnapshot: snapshot.data.documents[index],
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                //  controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) =>
+                    //  Text(snapshot.data.docs[index]['postId']))
+                    ListItemDiscussions(
+                      documentSnapshot: snapshot.data.docs[index],
                       index: index,
                       currentuser: widget.currentUser,
-                      group: widget.team,
+                      team: widget.team,
                       gid: widget.gid,
-                      name: widget.name))));
+                      name: widget.name,
+                      deptId: widget.department.uid,
+                    )));
+          } else {
+            return NoPost();
+          }
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
@@ -548,7 +565,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
 
   Widget deptMembersWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -557,38 +574,44 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
           .collection('members')
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.hasData) {
           return Column(
             children: [
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  controller: _scrollController,
-                  itemCount: snapshot.data.documents.length > 3
+                  //   controller: _scrollController,
+                  itemCount: snapshot.data.docs.length > 3
                       ? 4
-                      : snapshot.data.documents.length,
-                  itemBuilder: ((context, index) => Row(
-                        children: [
-                          CircleAvatar(
-                            radius: screenSize.height * 0.02,
-                            backgroundImage: CachedNetworkImageProvider(snapshot
-                                .data.documents[index].data['ownerPhotoUrl']),
-                          ),
-                          SizedBox(
-                            width: screenSize.width * 0.02,
-                          ),
-                          Text(
-                            snapshot.data.documents[index].data['ownerName'],
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
+                      : snapshot.data.docs.length,
+                  itemBuilder: ((context, index) => Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: screenSize.height * 0.02,
+                              backgroundImage: CachedNetworkImageProvider(
+                                  snapshot.data.docs[index]
+                                      .data()['ownerPhotoUrl']),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              width: screenSize.width * 0.02,
+                            ),
+                            Text(
+                              snapshot.data.docs[index].data()['ownerName'],
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textSubTitle(context),
+                              ),
+                            ),
+                          ],
+                        ),
                       ))),
               Padding(
-                padding: EdgeInsets.only(top: screenSize.height * 0.01),
+                padding:
+                    EdgeInsets.only(left: 4, top: screenSize.height * 0.01),
                 child: InkWell(
                   onTap: () {
                     Navigator.push(
@@ -638,14 +661,14 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   Widget teamInfoPublic() {
     var screenSize = MediaQuery.of(context).size;
     return ListView(
-      // physics: NeverScrollableScrollPhysics(),
+      physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         screenSize.width * 0.02,
         screenSize.height * 0.01,
         screenSize.width * 0.02,
         screenSize.height * 0.01,
       ),
-      controller: _scrollController5,
+      // controller: _scrollController5,
       children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -665,43 +688,58 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
               height: screenSize.height * 0.3,
               child: deptMembersWidget(),
             ),
-            Text(
-              'Description',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                //  color: Colors.black54,
-                fontWeight: FontWeight.bold,
-                fontSize: textHeader(context),
-              ),
-            ),
-            Divider(),
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('teams')
-                  .doc(widget.gid)
-                  .collection('departments')
-                  .doc(widget.department.uid)
-                  .snapshots(),
-              builder: ((context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    snapshot.data['description'] != null
-                        ? snapshot.data['description']
-                        : '',
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textAppTitle(context),
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-            ),
+            // Text(
+            //   'Description',
+            //   style: TextStyle(
+            //     fontFamily: FontNameDefault,
+            //     //  color: Colors.black54,
+            //     fontWeight: FontWeight.bold,
+            //     fontSize: textHeader(context),
+            //   ),
+            // ),
+            // Divider(),
+            // StreamBuilder<DocumentSnapshot>(
+            //   stream: FirebaseFirestore.instance
+            //       .collection('teams')
+            //       .doc(widget.gid)
+            //       .collection('departments')
+            //       .doc(widget.department.uid)
+            //       .snapshots(),
+            //   builder: ((context, snapshot) {
+            //     if (snapshot.hasData &&
+            //         snapshot.data['description'] != null &&
+            //         snapshot.data['description'] != '') {
+            //       return Text(
+            //         snapshot.data['description'],
+            //         style: TextStyle(
+            //           fontFamily: FontNameDefault,
+            //           color: Colors.black54,
+            //           fontWeight: FontWeight.bold,
+            //           fontSize: textAppTitle(context),
+            //         ),
+            //       );
+            //     } else {
+            //       return TextFormField(
+            //         controller: _controller,
+            //         keyboardType: TextInputType.multiline,
+            //         minLines: 5,
+            //         maxLines: 8,
+            //         decoration: InputDecoration(
+            //           filled: true,
+            //           fillColor: Colors.white,
+            //           labelStyle: TextStyle(
+            //             fontFamily: FontNameDefault,
+            //             color: Colors.grey,
+            //             fontSize: textSubTitle(context),
+            //             //fontWeight: FontWeight.bold,
+            //           ),
+            //           border: InputBorder.none,
+            //           isDense: true,
+            //         ),
+            //       );
+            //     }
+            //   }),
+            // ),
           ],
         ),
       ],

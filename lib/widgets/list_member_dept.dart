@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import '../style.dart';
 
 class ListItemMemberDept extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final int index;
   final String gid;
@@ -78,7 +78,8 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid)
+        .checkIsMember(widget.documentSnapshot.data()['ownerUid'], widget.gid,
+            widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -108,10 +109,11 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
         child: widget.currentuser.uid == widget.team.currentUserUid
             ? ListTile(
                 subtitle: Text(
-                  widget.documentSnapshot['ownerUid'] ==
+                  widget.documentSnapshot.data()['ownerUid'] ==
                               widget.dept.currentUserUid &&
-                          widget.documentSnapshot['accountType'] == 'Admin'
-                      ? widget.documentSnapshot['accountType']
+                          widget.documentSnapshot.data()['accountType'] ==
+                              'Admin'
+                      ? widget.documentSnapshot.data()['accountType']
                       : 'Member',
                   style: TextStyle(
                     fontFamily: FontNameDefault,
@@ -119,7 +121,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                   ),
                 ),
                 title: Text(
-                  widget.documentSnapshot['ownerName'],
+                  widget.documentSnapshot.data()['ownerName'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -127,7 +129,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                 ),
                 leading: CircleAvatar(
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot['ownerPhotoUrl']),
+                      widget.documentSnapshot.data()['ownerPhotoUrl']),
                 ),
                 trailing: InkWell(
                   onTap: () {
@@ -140,10 +142,11 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
               )
             : ListTile(
                 subtitle: Text(
-                  widget.documentSnapshot['ownerUid'] ==
+                  widget.documentSnapshot.data()['ownerUid'] ==
                               widget.dept.currentUserUid &&
-                          widget.documentSnapshot['accountType'] == 'Admin'
-                      ? widget.documentSnapshot['accountType']
+                          widget.documentSnapshot.data()['accountType'] ==
+                              'Admin'
+                      ? widget.documentSnapshot.data()['accountType']
                       : 'Member',
                   style: TextStyle(
                     fontFamily: FontNameDefault,
@@ -151,7 +154,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                   ),
                 ),
                 title: Text(
-                  widget.documentSnapshot['ownerName'],
+                  widget.documentSnapshot.data()['ownerName'],
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -159,10 +162,10 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                 ),
                 leading: CircleAvatar(
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot['ownerPhotoUrl']),
+                      widget.documentSnapshot.data()['ownerPhotoUrl']),
                 ),
                 trailing: widget.documentSnapshot != null &&
-                        widget.documentSnapshot['ownerUid'] ==
+                        widget.documentSnapshot.data()['ownerUid'] ==
                             widget.dept.currentUserUid
                     ? Icon(Icons.admin_panel_settings_outlined)
                     : widget.currentuser.uid == widget.dept.currentUserUid
@@ -205,13 +208,13 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                     ),
                   ),
                   widget.currentuser.uid == widget.team.currentUserUid
-                      ? widget.documentSnapshot['ownerUid'] ==
+                      ? widget.documentSnapshot.data()['ownerUid'] ==
                               widget.dept.currentUserUid
                           ? Column(mainAxisSize: MainAxisSize.min, children: [
                               ListTile(
                                 onTap: () {
                                   Navigator.pop(context);
-                                  addToDeptMember();
+                                  //  addToMember();
                                 },
                                 leading: Icon(Icons.remove_circle_outline),
                                 title: Text(
@@ -229,7 +232,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                 },
                                 leading: Icon(Icons.addchart_outlined),
                                 title: Text(
-                                  'Assign project',
+                                  'Assign member',
                                   style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context),
@@ -243,7 +246,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                 ListTile(
                                   onTap: () {
                                     Navigator.pop(context);
-                                    addToDeptMember();
+                                    // addToDeptMember();
                                   },
                                   leading: Icon(Icons.remove_circle_outline),
                                   title: Text(
@@ -257,7 +260,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                 ListTile(
                                   onTap: () {
                                     Navigator.pop(context);
-                                    addToDeptAdmin();
+                                    addToProjectAdmin();
                                   },
                                   leading: Icon(Icons.add_moderator),
                                   title: Text(
@@ -275,7 +278,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                   },
                                   leading: Icon(Icons.addchart_outlined),
                                   title: Text(
-                                    'Assign project',
+                                    'Assign member',
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textSubTitle(context),
@@ -290,7 +293,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                             ListTile(
                               onTap: () {
                                 Navigator.pop(context);
-                                addToDeptMember();
+                                //    addToDeptMember();
                               },
                               leading: Icon(Icons.remove_circle_outline),
                               title: Text(
@@ -304,11 +307,11 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                             ListTile(
                               onTap: () {
                                 Navigator.pop(context);
-                                addToDeptAdmin();
+                                addToProjectMember();
                               },
                               leading: Icon(Icons.addchart_outlined),
                               title: Text(
-                                'Assign project',
+                                'Assign member',
                                 style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context),
@@ -324,7 +327,173 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
         }));
   }
 
-  addToDeptAdmin() {
+  // addToDeptAdmin() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       builder: ((context) {
+  //         return StatefulBuilder(
+  //           builder: ((context, setState) {
+  //             return AlertDialog(
+  //                 content: Stack(
+  //               overflow: Overflow.visible,
+  //               children: [
+  //                 Positioned(
+  //                   right: -40.0,
+  //                   top: -40.0,
+  //                   child: InkResponse(
+  //                     onTap: () {
+  //                       Navigator.pop(context);
+  //                       setState(() {
+  //                         _currentDept = null;
+  //                       });
+  //                     },
+  //                     child: CircleAvatar(
+  //                       child: Icon(Icons.close),
+  //                       backgroundColor: Colors.grey,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     Text(
+  //                       'Select department',
+  //                       style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontFamily: FontNameDefault,
+  //                         fontSize: textHeader(context),
+  //                       ),
+  //                     ),
+  //                     Container(
+  //                         padding: EdgeInsets.all(5),
+  //                         child: StreamBuilder<QuerySnapshot>(
+  //                           stream: FirebaseFirestore.instance
+  //                               .collection('teams')
+  //                               .doc(widget.gid)
+  //                               .collection('departments')
+  //                               .snapshots(),
+  //                           builder: (context, snapshot) {
+  //                             if (!snapshot.hasData)
+  //                               return const Center(
+  //                                   child: const CircularProgressIndicator());
+  //                             return Container(
+  //                               padding: const EdgeInsets.all(5.0),
+  //                               child: DropdownButton(
+  //                                 icon: Icon(Icons.keyboard_arrow_down),
+  //                                 value: _currentDept,
+  //                                 isDense: true,
+  //                                 items: snapshot.data.docs
+  //                                     .map((DocumentSnapshot doc) {
+  //                                   return DropdownMenuItem(
+  //                                       value: doc['uid'],
+  //                                       child: Text(
+  //                                         doc['departmentName'],
+  //                                         style: TextStyle(
+  //                                             fontWeight: FontWeight.bold,
+  //                                             fontFamily: FontNameDefault,
+  //                                             fontSize: textSubTitle(context)),
+  //                                       ));
+  //                                 }).toList(),
+  //                                 hint: Text(
+  //                                   'Department',
+  //                                   style: TextStyle(
+  //                                       fontFamily: FontNameDefault,
+  //                                       fontSize: textBody1(context)),
+  //                                 ),
+  //                                 onChanged: (val) {
+  //                                   setState(() {
+  //                                     _currentDept = val;
+  //                                   });
+  //                                 },
+  //                               ),
+  //                             );
+  //                           },
+  //                         )),
+  //                     _currentDept != null
+  //                         ? Padding(
+  //                             padding: EdgeInsets.symmetric(
+  //                               vertical: screenSize.height * 0.015,
+  //                               horizontal: screenSize.width * 0.01,
+  //                             ),
+  //                             child: InkWell(
+  //                               onTap: () {
+  //                                 _repository.addDeptAdmin(
+  //                                     currentTeam: widget.team,
+  //                                     currentDeptId: _currentDept,
+  //                                     followerId:
+  //                                         widget.documentSnapshot['ownerUid'],
+  //                                     followerName:
+  //                                         widget.documentSnapshot['ownerName'],
+  //                                     followerAccountType: 'Admin',
+  //                                     followerPhotoUrl: widget
+  //                                         .documentSnapshot['ownerPhotoUrl']);
+  //                                 Navigator.pop(context);
+  //                               },
+  //                               child: Container(
+  //                                 height: screenSize.height * 0.055,
+  //                                 width: screenSize.width * 0.4,
+  //                                 child: Center(
+  //                                   child: Text(
+  //                                     'Add admin',
+  //                                     style: TextStyle(
+  //                                       fontFamily: FontNameDefault,
+  //                                       color: Colors.white,
+  //                                       fontSize: textSubTitle(context),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 decoration: ShapeDecoration(
+  //                                   color: Theme.of(context).primaryColor,
+  //                                   shape: RoundedRectangleBorder(
+  //                                     borderRadius: BorderRadius.circular(12.0),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           )
+  //                         : Padding(
+  //                             padding: EdgeInsets.symmetric(
+  //                               vertical: screenSize.height * 0.015,
+  //                               horizontal: screenSize.width * 0.01,
+  //                             ),
+  //                             child: GestureDetector(
+  //                               onTap: () {},
+  //                               child: Container(
+  //                                 height: screenSize.height * 0.055,
+  //                                 width: screenSize.width * 0.4,
+  //                                 child: Center(
+  //                                   child: Text(
+  //                                     'Add admin',
+  //                                     style: TextStyle(
+  //                                       fontFamily: FontNameDefault,
+  //                                       color: Colors.grey[600],
+  //                                       fontSize: textSubTitle(context),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 decoration: ShapeDecoration(
+  //                                   color: Colors.grey[100],
+  //                                   shape: RoundedRectangleBorder(
+  //                                     borderRadius: BorderRadius.circular(8.0),
+  //                                     side: BorderSide(
+  //                                         width: 0.2, color: Colors.grey),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                   ],
+  //                 )
+  //               ],
+  //             ));
+  //           }),
+  //         );
+  //       }));
+  // }
+
+  addToProjectAdmin() {
     var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
@@ -356,7 +525,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Select department',
+                        'Select project',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: FontNameDefault,
@@ -370,6 +539,8 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                 .collection('teams')
                                 .doc(widget.gid)
                                 .collection('departments')
+                                .doc(widget.dept.uid)
+                                .collection('projects')
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
@@ -379,14 +550,14 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                 padding: const EdgeInsets.all(5.0),
                                 child: DropdownButton(
                                   icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentDept,
+                                  value: _currentProject,
                                   isDense: true,
                                   items: snapshot.data.docs
                                       .map((DocumentSnapshot doc) {
                                     return DropdownMenuItem(
                                         value: doc['uid'],
                                         child: Text(
-                                          doc['departmentName'],
+                                          doc['projectName'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontFamily: FontNameDefault,
@@ -394,21 +565,21 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                                         ));
                                   }).toList(),
                                   hint: Text(
-                                    'Department',
+                                    'Project',
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
                                         fontSize: textBody1(context)),
                                   ),
                                   onChanged: (val) {
                                     setState(() {
-                                      _currentDept = val;
+                                      _currentProject = val;
                                     });
                                   },
                                 ),
                               );
                             },
                           )),
-                      _currentDept != null
+                      _currentProject != null
                           ? Padding(
                               padding: EdgeInsets.symmetric(
                                 vertical: screenSize.height * 0.015,
@@ -416,9 +587,10 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  _repository.addDeptAdmin(
+                                  _repository.addProjectAdmin(
                                       currentTeam: widget.team,
                                       currentDeptId: _currentDept,
+                                      currentProjectId: _currentProject,
                                       followerId:
                                           widget.documentSnapshot['ownerUid'],
                                       followerName:
@@ -490,190 +662,190 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
         }));
   }
 
-  addToDeptMember() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        builder: ((context) {
-          return StatefulBuilder(
-            builder: ((context, setState) {
-              return AlertDialog(
-                  content: Stack(
-                overflow: Overflow.visible,
-                children: [
-                  Positioned(
-                    right: -40.0,
-                    top: -40.0,
-                    child: InkResponse(
-                      onTap: () {
-                        Navigator.pop(context);
-                        setState(() {
-                          _currentDept = null;
-                        });
-                      },
-                      child: CircleAvatar(
-                        child: Icon(Icons.close),
-                        backgroundColor: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Select department',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textHeader(context),
-                        ),
-                      ),
-                      Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                    child: const CircularProgressIndicator());
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: DropdownButton(
-                                      icon: Icon(Icons.keyboard_arrow_down),
-                                      value: _currentDept,
-                                      isDense: true,
-                                      items: snapshot.data.docs
-                                          .map((DocumentSnapshot doc) {
-                                        return DropdownMenuItem(
-                                            value: doc['uid'],
-                                            child: Text(
-                                              doc['departmentName'],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: FontNameDefault,
-                                                  fontSize:
-                                                      textSubTitle(context)),
-                                            ));
-                                      }).toList(),
-                                      hint: Text(
-                                        'Department',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          _currentDept = val;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  _currentDept != null
-                                      ? Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: screenSize.height * 0.015,
-                                            horizontal: screenSize.width * 0.01,
-                                          ),
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                _repository.addDeptMember(
-                                                    currentTeam: widget.team,
-                                                    currentDeptId: _currentDept,
-                                                    followerId:
-                                                        widget.documentSnapshot[
-                                                            'ownerUid'],
-                                                    followerName:
-                                                        widget.documentSnapshot[
-                                                            'ownerName'],
-                                                    followerAccountType:
-                                                        'Member',
-                                                    followerPhotoUrl:
-                                                        widget.documentSnapshot[
-                                                            'ownerPhotoUrl']);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Container(
-                                                height:
-                                                    screenSize.height * 0.055,
-                                                width: screenSize.width * 0.4,
-                                                child: Center(
-                                                  child: Text(
-                                                    'Add member',
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          FontNameDefault,
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          textSubTitle(context),
-                                                    ),
-                                                  ),
-                                                ),
-                                                decoration: ShapeDecoration(
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                  ),
-                                                ),
-                                              )),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: screenSize.height * 0.015,
-                                            horizontal: screenSize.width * 0.01,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () {},
-                                            child: Container(
-                                              height: screenSize.height * 0.055,
-                                              width: screenSize.width * 0.4,
-                                              child: Center(
-                                                child: Text(
-                                                  'Add member',
-                                                  style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    color: Colors.grey[600],
-                                                    fontSize:
-                                                        textSubTitle(context),
-                                                  ),
-                                                ),
-                                              ),
-                                              decoration: ShapeDecoration(
-                                                color: Colors.grey[100],
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0),
-                                                  side: BorderSide(
-                                                      width: 0.2,
-                                                      color: Colors.grey),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                ],
-                              );
-                            },
-                          )),
-                    ],
-                  )
-                ],
-              ));
-            }),
-          );
-        }));
-  }
+  // addToDeptMember() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       builder: ((context) {
+  //         return StatefulBuilder(
+  //           builder: ((context, setState) {
+  //             return AlertDialog(
+  //                 content: Stack(
+  //               overflow: Overflow.visible,
+  //               children: [
+  //                 Positioned(
+  //                   right: -40.0,
+  //                   top: -40.0,
+  //                   child: InkResponse(
+  //                     onTap: () {
+  //                       Navigator.pop(context);
+  //                       setState(() {
+  //                         _currentDept = null;
+  //                       });
+  //                     },
+  //                     child: CircleAvatar(
+  //                       child: Icon(Icons.close),
+  //                       backgroundColor: Colors.grey,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     Text(
+  //                       'Select department',
+  //                       style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontFamily: FontNameDefault,
+  //                         fontSize: textHeader(context),
+  //                       ),
+  //                     ),
+  //                     Container(
+  //                         padding: EdgeInsets.all(5),
+  //                         child: StreamBuilder<QuerySnapshot>(
+  //                           stream: FirebaseFirestore.instance
+  //                               .collection('teams')
+  //                               .doc(widget.gid)
+  //                               .collection('departments')
+  //                               .snapshots(),
+  //                           builder: (context, snapshot) {
+  //                             if (!snapshot.hasData)
+  //                               return const Center(
+  //                                   child: const CircularProgressIndicator());
+  //                             return Column(
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Container(
+  //                                   padding: const EdgeInsets.all(5.0),
+  //                                   child: DropdownButton(
+  //                                     icon: Icon(Icons.keyboard_arrow_down),
+  //                                     value: _currentDept,
+  //                                     isDense: true,
+  //                                     items: snapshot.data.docs
+  //                                         .map((DocumentSnapshot doc) {
+  //                                       return DropdownMenuItem(
+  //                                           value: doc['uid'],
+  //                                           child: Text(
+  //                                             doc['departmentName'],
+  //                                             style: TextStyle(
+  //                                                 fontWeight: FontWeight.bold,
+  //                                                 fontFamily: FontNameDefault,
+  //                                                 fontSize:
+  //                                                     textSubTitle(context)),
+  //                                           ));
+  //                                     }).toList(),
+  //                                     hint: Text(
+  //                                       'Department',
+  //                                       style: TextStyle(
+  //                                           fontFamily: FontNameDefault,
+  //                                           fontSize: textBody1(context)),
+  //                                     ),
+  //                                     onChanged: (val) {
+  //                                       setState(() {
+  //                                         _currentDept = val;
+  //                                       });
+  //                                     },
+  //                                   ),
+  //                                 ),
+  //                                 _currentDept != null
+  //                                     ? Padding(
+  //                                         padding: EdgeInsets.symmetric(
+  //                                           vertical: screenSize.height * 0.015,
+  //                                           horizontal: screenSize.width * 0.01,
+  //                                         ),
+  //                                         child: GestureDetector(
+  //                                             onTap: () {
+  //                                               _repository.addDeptMember(
+  //                                                   currentTeam: widget.team,
+  //                                                   currentDeptId: _currentDept,
+  //                                                   followerId:
+  //                                                       widget.documentSnapshot[
+  //                                                           'ownerUid'],
+  //                                                   followerName:
+  //                                                       widget.documentSnapshot[
+  //                                                           'ownerName'],
+  //                                                   followerAccountType:
+  //                                                       'Member',
+  //                                                   followerPhotoUrl:
+  //                                                       widget.documentSnapshot[
+  //                                                           'ownerPhotoUrl']);
+  //                                               Navigator.pop(context);
+  //                                             },
+  //                                             child: Container(
+  //                                               height:
+  //                                                   screenSize.height * 0.055,
+  //                                               width: screenSize.width * 0.4,
+  //                                               child: Center(
+  //                                                 child: Text(
+  //                                                   'Add member',
+  //                                                   style: TextStyle(
+  //                                                     fontFamily:
+  //                                                         FontNameDefault,
+  //                                                     color: Colors.white,
+  //                                                     fontSize:
+  //                                                         textSubTitle(context),
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                               decoration: ShapeDecoration(
+  //                                                 color: Theme.of(context)
+  //                                                     .primaryColor,
+  //                                                 shape: RoundedRectangleBorder(
+  //                                                   borderRadius:
+  //                                                       BorderRadius.circular(
+  //                                                           12.0),
+  //                                                 ),
+  //                                               ),
+  //                                             )),
+  //                                       )
+  //                                     : Padding(
+  //                                         padding: EdgeInsets.symmetric(
+  //                                           vertical: screenSize.height * 0.015,
+  //                                           horizontal: screenSize.width * 0.01,
+  //                                         ),
+  //                                         child: GestureDetector(
+  //                                           onTap: () {},
+  //                                           child: Container(
+  //                                             height: screenSize.height * 0.055,
+  //                                             width: screenSize.width * 0.4,
+  //                                             child: Center(
+  //                                               child: Text(
+  //                                                 'Add member',
+  //                                                 style: TextStyle(
+  //                                                   fontFamily: FontNameDefault,
+  //                                                   color: Colors.grey[600],
+  //                                                   fontSize:
+  //                                                       textSubTitle(context),
+  //                                                 ),
+  //                                               ),
+  //                                             ),
+  //                                             decoration: ShapeDecoration(
+  //                                               color: Colors.grey[100],
+  //                                               shape: RoundedRectangleBorder(
+  //                                                 borderRadius:
+  //                                                     BorderRadius.circular(
+  //                                                         8.0),
+  //                                                 side: BorderSide(
+  //                                                     width: 0.2,
+  //                                                     color: Colors.grey),
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                         ),
+  //                                       ),
+  //                               ],
+  //                             );
+  //                           },
+  //                         )),
+  //                   ],
+  //                 )
+  //               ],
+  //             ));
+  //           }),
+  //         );
+  //       }));
+  // }
 
   addToProjectMember() {
     var screenSize = MediaQuery.of(context).size;
@@ -870,7 +1042,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
         currentTeam: widget.team,
         followerId: snapshot['ownerUid'],
         followerName: snapshot['ownerName'],
-        followerAccountType: widget.team.teamName + 'Member',
+        //  followerAccountType: widget.team.teamName + 'Member',
         followerPhotoUrl: snapshot['ownerPhotoUrl']);
     addInviteToActivityFeed();
   }

@@ -143,7 +143,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         });
       });
       _repository
-          .checkIsMember(widget.currentUser.uid, widget.gid)
+          .checkIsMember(widget.currentUser.uid, widget.gid, true)
           .then((value) {
         print("VALUE : $value");
         if (!mounted) return;

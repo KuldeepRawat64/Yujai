@@ -148,7 +148,10 @@ class _ProjectPageState extends State<ProjectPage>
   List<PollLength> _pollLength = PollLength.getPollLength();
   List<DropdownMenuItem<PollLength>> _dropDownMenuPollLength;
   PollLength _selectedPollLength;
-  bool option1, option2, option3, option4, option5, option6 = false;
+  bool option1 = false;
+  bool option2 = false;
+  bool option3 = false;
+  bool option4 = false;
   int counter = 0;
   TextEditingController _option1Controller = new TextEditingController();
   TextEditingController _option2Controller = new TextEditingController();
@@ -159,6 +162,7 @@ class _ProjectPageState extends State<ProjectPage>
   String newListId = Uuid().v4();
   String newPId = Uuid().v4();
   String actId = Uuid().v4();
+  String discuddId = Uuid().v4();
   final GlobalKey<ScaffoldState> _scaffold1Key = new GlobalKey<ScaffoldState>();
   var _currentDate = DateTime.now();
   var threeHoursFromNow = DateTime.now().add(new Duration(hours: 3));
@@ -328,7 +332,7 @@ class _ProjectPageState extends State<ProjectPage>
       });
 
       _repository
-          .checkIsMember(widget.currentUser.uid, widget.gid)
+          .checkIsMember(widget.currentUser.uid, widget.gid, false)
           .then((value) {
         print("VALUE : $value");
         if (!mounted) return;
@@ -387,6 +391,7 @@ class _ProjectPageState extends State<ProjectPage>
       child: Scaffold(
         backgroundColor: Color(0xffffffff),
         body: CustomScrollView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
             SliverAppBar(
@@ -408,12 +413,21 @@ class _ProjectPageState extends State<ProjectPage>
                 ),
                 InkWell(
                   onTap: () {
-                    optionProject();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProjectInbox(
+                                dept: _department,
+                                team: _team,
+                                project: _project,
+                                currentuser: currentuser,
+                                gid: widget.gid,
+                                name: widget.name)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
-                      Icons.more_vert_outlined,
+                      Icons.notifications_none_outlined,
                       color: Colors.black54,
                     ),
                   ),
@@ -444,13 +458,17 @@ class _ProjectPageState extends State<ProjectPage>
                     width: 8.0,
                   ),
                   widget.projectName != null
-                      ? Text(
-                          widget.projectName,
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                              fontSize: textAppTitle(context)),
+                      ? Container(
+                          width: screenSize.width * 0.45,
+                          child: Text(
+                            widget.projectName,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold,
+                                fontSize: textAppTitle(context)),
+                          ),
                         )
                       : Container(),
                 ],
@@ -1006,56 +1024,56 @@ class _ProjectPageState extends State<ProjectPage>
                             controller: _listNameController,
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textSubTitle(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontWeight: FontWeight.bold,
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textSubTitle(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         valueFirst
                             ? Padding(
                                 padding: EdgeInsets.symmetric(
@@ -1079,9 +1097,7 @@ class _ProjectPageState extends State<ProjectPage>
                                                   _listNameController.text,
                                                   _team.uid,
                                                   _department.uid,
-                                                  _currentProject != null
-                                                      ? _currentProject
-                                                      : _project.uid,
+                                                  _project.uid,
                                                   Colors
                                                       .primaries[Random()
                                                           .nextInt(Colors
@@ -1306,8 +1322,6 @@ class _ProjectPageState extends State<ProjectPage>
                                           setState(() {
                                             option3 = false;
                                             option4 = false;
-                                            option5 = false;
-                                            option6 = false;
                                           });
                                         } else if (counter == 1) {
                                           setState(() {
@@ -1316,14 +1330,6 @@ class _ProjectPageState extends State<ProjectPage>
                                         } else if (counter == 2) {
                                           setState(() {
                                             option4 = true;
-                                          });
-                                        } else if (counter == 3) {
-                                          setState(() {
-                                            option5 = true;
-                                          });
-                                        } else if (counter >= 4) {
-                                          setState(() {
-                                            option6 = true;
                                           });
                                         }
                                       });
@@ -1341,16 +1347,6 @@ class _ProjectPageState extends State<ProjectPage>
                                             } else if (counter == 2) {
                                               setState(() {
                                                 option4 = false;
-                                                counter = counter - 1;
-                                              });
-                                            } else if (counter == 3) {
-                                              setState(() {
-                                                option5 = false;
-                                                counter = counter - 1;
-                                              });
-                                            } else if (counter >= 4) {
-                                              setState(() {
-                                                option6 = false;
                                                 counter = counter - 1;
                                               });
                                             }
@@ -1427,57 +1423,59 @@ class _ProjectPageState extends State<ProjectPage>
                                 ],
                               )
                             : Container(),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  underline: Container(),
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textSubTitle(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        valueFirst
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           underline: Container(),
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textSubTitle(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+                        valueFirst &&
+                                _option1Controller.text.isNotEmpty &&
+                                _option2Controller.text.isNotEmpty
                             ? Padding(
                                 padding: EdgeInsets.only(
                                   top: screenSize.height * 0.015,
@@ -1493,11 +1491,40 @@ class _ProjectPageState extends State<ProjectPage>
                                         _repository
                                             .retreiveUserDetails(currentuser)
                                             .then((user) {
-                                          _currentProject == null
-                                              ? _repository
-                                                  .addPollToDept(
+                                          // _currentProject == null
+                                          //     ? _repository
+                                          //         .addPollToDept(
+                                          //         _team.uid,
+                                          //         _department.uid,
+                                          //         user,
+                                          //         _pollTitleController.text,
+                                          //         _currentDate
+                                          //             .millisecondsSinceEpoch,
+                                          //         'poll',
+                                          //         _option1Controller.text,
+                                          //         _option2Controller.text,
+                                          //         _option3Controller.text,
+                                          //         _option4Controller.text,
+                                          //       )
+                                          //         .then((value) {
+                                          //         valueFirst = false;
+                                          //         _pollTitleController.text =
+                                          //             '';
+                                          //         _option1Controller.text = '';
+                                          //         _option2Controller.text = '';
+                                          //         _option3Controller.text = '';
+                                          //         _option4Controller.text = '';
+                                          //         print(
+                                          //             'Poll added to department');
+                                          //         Navigator.pop(context);
+                                          //       }).catchError((e) => print(
+                                          //             'Error adding poll: $e'))
+                                          //     :
+                                          _repository
+                                              .addPollToProject(
                                                   _team.uid,
                                                   _department.uid,
+                                                  _project.uid,
                                                   user,
                                                   _pollTitleController.text,
                                                   _currentDate
@@ -1507,50 +1534,20 @@ class _ProjectPageState extends State<ProjectPage>
                                                   _option2Controller.text,
                                                   _option3Controller.text,
                                                   _option4Controller.text,
-                                                )
-                                                  .then((value) {
-                                                  valueFirst = false;
-                                                  _pollTitleController.text =
-                                                      '';
-                                                  _option1Controller.text = '';
-                                                  _option2Controller.text = '';
-                                                  _option3Controller.text = '';
-                                                  _option4Controller.text = '';
-                                                  print(
-                                                      'Poll added to department');
-                                                  Navigator.pop(context);
-                                                }).catchError((e) => print(
-                                                      'Error adding poll: $e'))
-                                              : _repository
-                                                  .addPollToProject(
-                                                  _team.uid,
-                                                  _department.uid,
-                                                  _currentProject != null
-                                                      ? _currentProject
-                                                      : _project.uid,
-                                                  user,
-                                                  _pollTitleController.text,
-                                                  _currentDate
-                                                      .millisecondsSinceEpoch,
-                                                  'poll',
-                                                  _option1Controller.text,
-                                                  _option2Controller.text,
-                                                  _option3Controller.text,
-                                                  _option4Controller.text,
-                                                )
-                                                  .then((value) {
-                                                  valueFirst = false;
-                                                  _pollTitleController.text =
-                                                      '';
-                                                  _option1Controller.text = '';
-                                                  _option2Controller.text = '';
-                                                  _option3Controller.text = '';
-                                                  _option4Controller.text = '';
-                                                  print(
-                                                      'Poll added to project');
-                                                  Navigator.pop(context);
-                                                }).catchError((e) => print(
-                                                      'Error adding poll: $e'));
+                                                  newPId)
+                                              .then((value) {
+                                            valueFirst = false;
+                                            _pollTitleController.text = '';
+                                            _option1Controller.text = '';
+                                            _option2Controller.text = '';
+                                            _option3Controller.text = '';
+                                            _option4Controller.text = '';
+                                            newPId = Uuid().v4();
+
+                                            print('Poll added to project');
+                                            Navigator.pop(context);
+                                          }).catchError((e) => print(
+                                                  'Error adding poll: $e'));
                                         });
                                       } else {
                                         print('Current User is null');
@@ -1727,55 +1724,55 @@ class _ProjectPageState extends State<ProjectPage>
                         // Text(
                         //   'Add to',
                         // ),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textSubTitle(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textSubTitle(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
 
                         valueFirst
                             ? Padding(
@@ -1795,20 +1792,26 @@ class _ProjectPageState extends State<ProjectPage>
                                             .then((user) {
                                           _repository
                                               .addDiscussionToProject(
-                                            _team.uid,
-                                            _department.uid,
-                                            _currentProject != null
-                                                ? _currentProject
-                                                : _project.uid,
-                                            user,
-                                            _taskNameController.text,
-                                          )
+                                                  _team.uid,
+                                                  _department.uid,
+                                                  // _currentProject != null
+                                                  //     ? _currentProject
+                                                  //     :
+                                                  _project.uid,
+                                                  user,
+                                                  _discussionTitleController
+                                                      .text,
+                                                  discuddId)
                                               .then((value) {
+                                            valueFirst = false;
+                                            _discussionTitleController.text =
+                                                '';
+                                            discuddId = Uuid().v4();
                                             print(
-                                                'Project added to department');
+                                                'Discussion added to project');
                                             Navigator.pop(context);
                                           }).catchError((e) => print(
-                                                  'Error adding project: $e'));
+                                                  'Error adding discussion: $e'));
                                         });
                                       } else {
                                         print('Current User is null');
@@ -1983,55 +1986,55 @@ class _ProjectPageState extends State<ProjectPage>
                         // Text(
                         //   'Add to',
                         // ),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textSubTitle(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textSubTitle(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         Container(
                           padding: EdgeInsets.all(5),
                           child: StreamBuilder<QuerySnapshot>(
@@ -2106,9 +2109,7 @@ class _ProjectPageState extends State<ProjectPage>
                                                       .text,
                                                   _team.uid,
                                                   _department.uid,
-                                                  _currentProject != null
-                                                      ? _currentProject
-                                                      : _project.uid,
+                                                  _project.uid,
                                                   _currentList)
                                               .then((value) {
                                             newTaskId = Uuid().v4();
@@ -2222,115 +2223,139 @@ class _ProjectPageState extends State<ProjectPage>
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.5,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.assignment_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Project',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showProjectDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.list_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'List',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showListDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.check_circle_outline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Task',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showFormDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.commentOutline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Discussion',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showDiscussionDialog()
-                        .then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.poll_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Poll',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showPollDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.closeCircleOutline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
                   onTap: () {
                     Navigator.pop(context);
                   },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: screenSize.height * 0.36,
+                child: Column(
+                  children: [
+                    // ListTile(
+                    //   leading: Icon(
+                    //     Icons.assignment_outlined,
+                    //     size: screenSize.height * 0.04,
+                    //   ),
+                    //   title: Text(
+                    //     'Project',
+                    //     style: TextStyle(
+                    //         fontFamily: FontNameDefault,
+                    //         color: Colors.black54,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: textSubTitle(context)),
+                    //   ),
+                    //   onTap: () {
+                    //     _showProjectDialog().then((val) => Navigator.pop(context));
+                    //   },
+                    // ),
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.list_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'List',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showListDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.check_circle_outline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Task',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showFormDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        MdiIcons.commentOutline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Discussion',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showDiscussionDialog()
+                            .then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.poll_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Poll',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showPollDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    // ListTile(
+                    //   leading: Icon(
+                    //     MdiIcons.closeCircleOutline,
+                    //     size: screenSize.height * 0.04,
+                    //   ),
+                    //   title: Text(
+                    //     'Cancel',
+                    //     style: TextStyle(
+                    //         fontFamily: FontNameDefault,
+                    //         color: Colors.black54,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: textSubTitle(context)),
+                    //   ),
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    // ),
+                  ],
+                ),
+              ),
+            ],
           );
         });
   }

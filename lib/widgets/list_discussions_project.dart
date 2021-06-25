@@ -21,27 +21,32 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:uuid/uuid.dart';
 
-class ListItemDiscussions extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+class ListItemDiscussionsProject extends StatefulWidget {
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel currentuser;
   final int index;
   final String gid;
   final String name;
-  final Team group;
-  ListItemDiscussions({
-    this.index,
-    this.currentuser,
-    this.documentSnapshot,
-    this.gid,
-    this.name,
-    this.group,
-  });
+  final Team team;
+  final String deptId;
+  final String projectId;
+  ListItemDiscussionsProject(
+      {this.index,
+      this.currentuser,
+      this.documentSnapshot,
+      this.gid,
+      this.name,
+      this.team,
+      this.deptId,
+      this.projectId});
 
   @override
-  _ListItemDiscussionsState createState() => _ListItemDiscussionsState();
+  _ListItemDiscussionsProjectState createState() =>
+      _ListItemDiscussionsProjectState();
 }
 
-class _ListItemDiscussionsState extends State<ListItemDiscussions> {
+class _ListItemDiscussionsProjectState
+    extends State<ListItemDiscussionsProject> {
   var _repository = Repository();
   bool _isLiked = false;
   bool _selected1 = false;
@@ -72,9 +77,12 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              '${snapshot.data.length}',
               style: TextStyle(
-                  fontSize: screenSize.height * 0.017, color: Colors.grey),
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.grey),
             ),
             onTap: () {
               Navigator.push(
@@ -90,7 +98,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return Container();
         }
       }),
     );
@@ -99,8 +107,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot.data()['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot.data()['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -176,26 +184,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         _selected4 = value;
       });
     });
-    _repository
-        .checkIfUserVotedOrNot(widget.currentuser.uid,
-            widget.documentSnapshot.reference, 'option5')
-        .then((value) {
-      print("VALUE : $value");
-      if (!mounted) return;
-      setState(() {
-        _selected5 = value;
-      });
-    });
-    _repository
-        .checkIfUserVotedOrNot(widget.currentuser.uid,
-            widget.documentSnapshot.reference, 'option6')
-        .then((value) {
-      print("VALUE : $value");
-      if (!mounted) return;
-      setState(() {
-        _selected6 = value;
-      });
-    });
+
     _repository
         .fetchPerVotes(widget.documentSnapshot.reference, 'option1')
         .then((value) {
@@ -237,26 +226,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         });
       }
     });
-    _repository
-        .fetchPerVotes(widget.documentSnapshot.reference, 'option5')
-        .then((value) {
-      if (value != null) {
-        if (!mounted) return;
-        setState(() {
-          listVotes5 = value;
-        });
-      }
-    });
-    _repository
-        .fetchPerVotes(widget.documentSnapshot.reference, 'option6')
-        .then((value) {
-      if (value != null) {
-        if (!mounted) return;
-        setState(() {
-          listVotes6 = value;
-        });
-      }
-    });
+
     _repository
         .fetchPerVotes(widget.documentSnapshot.reference, 'votes')
         .then((value) {
@@ -388,43 +358,43 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
     );
   }
 
-  Widget option5Widget() {
-    var screenSize = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: () {},
-      child: Text(
-          _getPercentage5() == double.nan
-              ? ''
-              : '${_getPercentage5()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
-    );
-  }
+  // Widget option5Widget() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Text(
+  //         _getPercentage5() == double.nan
+  //             ? ''
+  //             : '${_getPercentage5()}'
+  //                 .replaceAll('.0', ' %  ')
+  //                 .replaceAll('NaN', ' %  ')
+  //                 .replaceAll('Infinity', ' %  '),
+  //         style: TextStyle(
+  //             fontFamily: FontNameDefault,
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: textBody1(context),
+  //             color: Colors.black54)),
+  //   );
+  // }
 
-  Widget option6Widget() {
-    var screenSize = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: () {},
-      child: Text(
-          _getPercentage6() == double.nan
-              ? ''
-              : '${_getPercentage6()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
-    );
-  }
+  // Widget option6Widget() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Text(
+  //         _getPercentage6() == double.nan
+  //             ? ''
+  //             : '${_getPercentage6()}'
+  //                 .replaceAll('.0', ' %  ')
+  //                 .replaceAll('NaN', ' %  ')
+  //                 .replaceAll('Infinity', ' %  '),
+  //         style: TextStyle(
+  //             fontFamily: FontNameDefault,
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: textBody1(context),
+  //             color: Colors.black54)),
+  //   );
+  // }
 
   Widget chip(String label, Color color) {
     var screenSize = MediaQuery.of(context).size;
@@ -448,15 +418,15 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
   _getPercentage() => (listVotes.length / totalVotes.length) * 100;
   _getPercentage2() => (listVotes2.length / totalVotes.length) * 100;
   _getPercentage3() => (listVotes3.length / totalVotes.length) * 100;
-  _getPercentage5() => (listVotes5.length / totalVotes.length) * 100;
-  _getPercentage6() => (listVotes6.length / totalVotes.length) * 100;
+  //_getPercentage5() => (listVotes5.length / totalVotes.length) * 100;
+  //_getPercentage6() => (listVotes6.length / totalVotes.length) * 100;
 
   @override
   Widget build(BuildContext context) {
     print('build list');
     var screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
       child: Container(
         decoration: ShapeDecoration(
             color: const Color(0xffffffff),
@@ -468,126 +438,127 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                screenSize.width / 30,
-                screenSize.height * 0.012,
-                screenSize.width / 50,
-                0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      new CircleAvatar(
-                          radius: screenSize.height * 0.02,
-                          backgroundImage: CachedNetworkImageProvider(
-                              widget.documentSnapshot['postOwnerPhotoUrl'])),
-                      new SizedBox(
-                        width: screenSize.width / 30,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FriendProfileScreen(
-                                          uid: widget
-                                              .documentSnapshot['ownerUid'],
-                                          name: widget.documentSnapshot[
-                                              'postOwnerName'])));
-                            },
-                            child: new Text(
-                              widget.documentSnapshot['postOwnerName'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          widget.documentSnapshot['location'] != null
-                              ? new Text(
-                                  widget.documentSnapshot['location'],
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.grey),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    ],
+            ListTile(
+                leading: new CircleAvatar(
+                    radius: screenSize.height * 0.02,
+                    backgroundImage: CachedNetworkImageProvider(
+                        widget.documentSnapshot.data()['postOwnerPhotoUrl'])),
+                title: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FriendProfileScreen(
+                                uid: widget.documentSnapshot.data()['ownerUid'],
+                                name: widget.documentSnapshot
+                                    .data()['postOwnerName'])));
+                  },
+                  child: new Text(
+                    widget.documentSnapshot.data()['postOwnerName'],
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textSubTitle(context),
+                        fontWeight: FontWeight.bold),
                   ),
-                  widget.currentuser.uid ==
-                              widget.documentSnapshot['ownerUid'] ||
-                          widget.group.currentUserUid == widget.currentuser.uid
-                      ? InkWell(
-                          onTap: () {
-                            showDelete(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
+                ),
+                subtitle: widget.documentSnapshot.data()['location'] != null &&
+                        widget.documentSnapshot.data()['location'] != ''
+                    ? Row(
+                        children: [
+                          new Text(
+                            widget.documentSnapshot.data()['location'],
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //    fontSize: textBody1(context),
+                                color: Colors.grey),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Icon(
+                            Icons.circle,
+                            size: 6.0,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              //   left: screenSize.width / 30,
+                              top: screenSize.height * 0.002,
+                            ),
+                            child: Text(
+                                widget.documentSnapshot.data()['time'] != null
+                                    ? timeago.format(widget.documentSnapshot
+                                        .data()['time']
+                                        .toDate())
+                                    : '',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    //   fontSize: textbody2(context),
+                                    color: Colors.grey)),
+                          ),
+                        ],
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(
+                          //   left: screenSize.width / 30,
+                          top: screenSize.height * 0.002,
+                        ),
+                        child: Text(
+                            widget.documentSnapshot.data()['time'] != null
+                                ? timeago.format(widget.documentSnapshot
+                                    .data()['time']
+                                    .toDate())
+                                : '',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //   fontSize: textbody2(context),
+                                color: Colors.grey)),
+                      ),
+                trailing: widget.currentuser.uid ==
+                            widget.documentSnapshot.data()['ownerUid'] ||
+                        widget.team.currentUserUid == widget.currentuser.uid
+                    ? InkWell(
+                        onTap: () {
+                          showDelete(widget.documentSnapshot);
+                        },
+                        child: Container(
+                            decoration: ShapeDecoration(
+                              shape: CircleBorder(
+                                  //          borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                      width: 0.1, color: Colors.black54)),
+                              //color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.005,
+                                  horizontal: screenSize.width * 0.02,
                                 ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textButton(context),
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
+                                child: Icon(Icons.more_horiz_outlined))),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          showReport(widget.documentSnapshot);
+                        },
+                        child: Container(
+                            decoration: ShapeDecoration(
+                              shape: CircleBorder(
+                                  //          borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                      width: 0.1, color: Colors.black54)),
+                              //color: Theme.of(context).accentColor,
+                            ),
+                            child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.005,
+                                  horizontal: screenSize.width * 0.02,
                                 ),
-                              )),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            showReport(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 1.5, color: Colors.deepPurple)),
-                                //color: Theme.of(context).accentColor,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 8.0,
-                                  right: 8.0,
-                                  top: 6.0,
-                                  bottom: 6.0,
-                                ),
-                                child: Text(
-                                  'More',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textButton(context),
-                                      color: Colors.deepPurple,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )),
-                        )
-                ],
-              ),
-            ),
-            widget.documentSnapshot['postType'] == 'poll'
+                                child: Icon(Icons.more_horiz_outlined))),
+                      )),
+            widget.documentSnapshot.data()['postType'] == 'poll'
                 ? _isVoted == false
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -597,49 +568,44 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             height: screenSize.height * 0.005,
                           ),
                           Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              showCategory(widget.documentSnapshot, context),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     showCategory(widget.documentSnapshot, context),
+                          //     Padding(
+                          //       padding: EdgeInsets.only(right: 8.0),
+                          //       child: Chip(
+                          //         backgroundColor: Colors.blue[50],
+                          //         label: Text(
+                          //           widget.documentSnapshot.data()['pollType'],
+                          //           style: TextStyle(
+                          //             fontFamily: FontNameDefault,
+                          //             fontSize: textBody1(context),
+                          //             color: Colors.blue,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     )
+                          //   ],
+                          // ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
                               Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Chip(
-                                  backgroundColor: Colors.blue[50],
-                                  label: Text(
-                                    widget.documentSnapshot['pollType'],
-                                    style: TextStyle(
+                                padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.01,
+                                    left: screenSize.width / 30),
+                                child: Text(
+                                  widget.documentSnapshot.data()['caption'],
+                                  style: TextStyle(
                                       fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: screenSize.height * 0.01,
-                            ),
-                            child: Container(
-                              decoration: ShapeDecoration(
-                                  color: Colors.grey[50],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(40.0))),
-                              padding: EdgeInsets.only(
-                                  bottom: screenSize.height * 0.01,
-                                  top: screenSize.height * 0.01,
-                                  left: screenSize.width / 30),
-                              child: Text(
-                                widget.documentSnapshot['caption'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                  color: Colors.blue,
+                                      fontSize: textSubTitle(context),
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                            ),
+                              // commentWidget(widget.documentSnapshot.reference)
+                            ],
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(
@@ -650,7 +616,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             ),
                             child: Column(
                               children: [
-                                widget.documentSnapshot['option1'] != ''
+                                widget.documentSnapshot.data()['option1'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -683,8 +649,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot[
-                                                    'option1'],
+                                                widget.documentSnapshot
+                                                    .data()['option1'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -699,7 +665,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option2'] != ''
+                                widget.documentSnapshot.data()['option2'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -732,8 +698,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot[
-                                                    'option2'],
+                                                widget.documentSnapshot
+                                                    .data()['option2'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -748,7 +714,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option3'] != ''
+                                widget.documentSnapshot.data()['option3'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -781,8 +747,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot[
-                                                    'option3'],
+                                                widget.documentSnapshot
+                                                    .data()['option3'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -797,7 +763,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option4'] != ''
+                                widget.documentSnapshot.data()['option4'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -830,8 +796,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                               ),
                                               child: Center(
                                                   child: Text(
-                                                widget.documentSnapshot[
-                                                    'option4'],
+                                                widget.documentSnapshot
+                                                    .data()['option4'],
                                                 style: TextStyle(
                                                     fontFamily: FontNameDefault,
                                                     fontSize:
@@ -846,104 +812,104 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option5'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
+                                // widget.documentSnapshot.data()['option5'] != ''
+                                //     ? Column(
+                                //         children: [
+                                //           SizedBox(
+                                //               height: screenSize.height * 0.01),
+                                //           InkWell(
+                                //             onTap: () {
+                                //               setState(() {
+                                //                 _isVoted = true;
+                                //               });
 
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option5');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot[
-                                                    'option5'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context),
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot['option6'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _isVoted = true;
-                                              });
+                                //               postVote(widget
+                                //                   .documentSnapshot.reference);
+                                //               addVoteToSelectedOption(
+                                //                   widget.documentSnapshot
+                                //                       .reference,
+                                //                   widget.currentuser,
+                                //                   'option5');
+                                //               buildPollDetail();
+                                //             },
+                                //             child: Container(
+                                //               height: screenSize.height * 0.05,
+                                //               width: screenSize.width / 1.2,
+                                //               decoration: BoxDecoration(
+                                //                 border: Border.all(
+                                //                     color: Theme.of(context)
+                                //                         .primaryColor),
+                                //                 color: Colors.white,
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(40),
+                                //               ),
+                                //               child: Center(
+                                //                   child: Text(
+                                //                 widget.documentSnapshot
+                                //                     .data()['option5'],
+                                //                 style: TextStyle(
+                                //                     fontFamily: FontNameDefault,
+                                //                     fontSize:
+                                //                         textBody1(context),
+                                //                     color: Theme.of(context)
+                                //                         .primaryColor,
+                                //                     fontWeight:
+                                //                         FontWeight.bold),
+                                //               )),
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       )
+                                //     : Container(),
+                                // widget.documentSnapshot.data()['option6'] != ''
+                                //     ? Column(
+                                //         children: [
+                                //           SizedBox(
+                                //               height: screenSize.height * 0.01),
+                                //           InkWell(
+                                //             onTap: () {
+                                //               setState(() {
+                                //                 _isVoted = true;
+                                //               });
 
-                                              postVote(widget
-                                                  .documentSnapshot.reference);
-                                              addVoteToSelectedOption(
-                                                  widget.documentSnapshot
-                                                      .reference,
-                                                  widget.currentuser,
-                                                  'option6');
-                                              buildPollDetail();
-                                            },
-                                            child: Container(
-                                              height: screenSize.height * 0.05,
-                                              width: screenSize.width / 1.2,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Theme.of(context)
-                                                        .primaryColor),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(40),
-                                              ),
-                                              child: Center(
-                                                  child: Text(
-                                                widget.documentSnapshot[
-                                                    'option6'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textBody1(context),
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
+                                //               postVote(widget
+                                //                   .documentSnapshot.reference);
+                                //               addVoteToSelectedOption(
+                                //                   widget.documentSnapshot
+                                //                       .reference,
+                                //                   widget.currentuser,
+                                //                   'option6');
+                                //               buildPollDetail();
+                                //             },
+                                //             child: Container(
+                                //               height: screenSize.height * 0.05,
+                                //               width: screenSize.width / 1.2,
+                                //               decoration: BoxDecoration(
+                                //                 border: Border.all(
+                                //                     color: Theme.of(context)
+                                //                         .primaryColor),
+                                //                 color: Colors.white,
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(40),
+                                //               ),
+                                //               child: Center(
+                                //                   child: Text(
+                                //                 widget.documentSnapshot
+                                //                     .data()['option6'],
+                                //                 style: TextStyle(
+                                //                     fontFamily: FontNameDefault,
+                                //                     fontSize:
+                                //                         textBody1(context),
+                                //                     color: Theme.of(context)
+                                //                         .primaryColor,
+                                //                     fontWeight:
+                                //                         FontWeight.bold),
+                                //               )),
+                                //             ),
+                                //           ),
+                                //         ],
+                                //       )
+                                //     : Container(),
                               ],
                             ),
                           ),
@@ -958,26 +924,26 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             height: screenSize.height * 0.005,
                           ),
                           Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              showCategory(widget.documentSnapshot, context),
-                              Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Chip(
-                                  backgroundColor: Colors.blue[50],
-                                  label: Text(
-                                    widget.documentSnapshot['pollType'],
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context),
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     showCategory(widget.documentSnapshot, context),
+                          //     Padding(
+                          //       padding: EdgeInsets.only(right: 8.0),
+                          //       child: Chip(
+                          //         backgroundColor: Colors.blue[50],
+                          //         label: Text(
+                          //           widget.documentSnapshot.data()['pollType'],
+                          //           style: TextStyle(
+                          //             fontFamily: FontNameDefault,
+                          //             fontSize: textBody1(context),
+                          //             color: Colors.blue,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     )
+                          //   ],
+                          // ),
                           Padding(
                             padding: EdgeInsets.only(
                               top: screenSize.height * 0.01,
@@ -993,7 +959,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot['caption'],
+                                widget.documentSnapshot.data()['caption'],
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context)),
@@ -1009,7 +975,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             ),
                             child: Column(
                               children: [
-                                widget.documentSnapshot['option1'] != ''
+                                widget.documentSnapshot.data()['option1'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1044,8 +1010,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                               screenSize.width /
                                                                   30),
                                                       child: Text(
-                                                        widget.documentSnapshot[
-                                                            'option1'],
+                                                        widget.documentSnapshot
+                                                            .data()['option1'],
                                                         style: TextStyle(
                                                             fontFamily:
                                                                 FontNameDefault,
@@ -1066,7 +1032,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option2'] != ''
+                                widget.documentSnapshot.data()['option2'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1094,8 +1060,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                       left: screenSize.width /
                                                           30),
                                                   child: Text(
-                                                    widget.documentSnapshot[
-                                                        'option2'],
+                                                    widget.documentSnapshot
+                                                        .data()['option2'],
                                                     style: TextStyle(
                                                         fontFamily:
                                                             FontNameDefault,
@@ -1114,7 +1080,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option3'] != ''
+                                widget.documentSnapshot.data()['option3'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1142,8 +1108,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot[
-                                                          'option3'],
+                                                      widget.documentSnapshot
+                                                          .data()['option3'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1162,7 +1128,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option4'] != ''
+                                widget.documentSnapshot.data()['option4'] != ''
                                     ? Column(
                                         children: [
                                           SizedBox(
@@ -1190,8 +1156,8 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                         left: screenSize.width /
                                                             30),
                                                     child: Text(
-                                                      widget.documentSnapshot[
-                                                          'option4'],
+                                                      widget.documentSnapshot
+                                                          .data()['option4'],
                                                       style: TextStyle(
                                                           fontFamily:
                                                               FontNameDefault,
@@ -1210,109 +1176,13 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                         ],
                                       )
                                     : Container(),
-                                widget.documentSnapshot['option5'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected5 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot[
-                                                          'option5'],
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context),
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                                option5Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                widget.documentSnapshot['option6'] != ''
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                              height: screenSize.height * 0.01),
-                                          Container(
-                                            height: screenSize.height * 0.05,
-                                            width: screenSize.width / 1.2,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .primaryColor),
-                                              color: _selected6 == false
-                                                  ? Colors.white
-                                                  : Colors.deepPurple[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(40),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: screenSize.width /
-                                                            30),
-                                                    child: Text(
-                                                      widget.documentSnapshot[
-                                                          'option6'],
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              FontNameDefault,
-                                                          fontSize: textBody1(
-                                                              context),
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                                option6Widget()
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
                               ],
                             ),
                           ),
                           Divider(),
                         ],
                       )
-                : widget.documentSnapshot['imgUrl'] != null
+                : widget.documentSnapshot.data()['imgUrl'] != null
                     ? Padding(
                         padding: EdgeInsets.only(top: screenSize.height * 0.01),
                         child: GestureDetector(
@@ -1321,15 +1191,15 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ImageDetail(
-                                          image:
-                                              widget.documentSnapshot['imgUrl'],
+                                          image: widget.documentSnapshot
+                                              .data()['imgUrl'],
                                         )));
                           },
                           child: CachedNetworkImage(
                             filterQuality: FilterQuality.medium,
                             fadeInCurve: Curves.easeIn,
                             fadeOutCurve: Curves.easeOut,
-                            imageUrl: widget.documentSnapshot['imgUrl'],
+                            imageUrl: widget.documentSnapshot.data()['imgUrl'],
                             placeholder: ((context, s) => Center(
                                   child: CircularProgressIndicator(),
                                 )),
@@ -1340,9 +1210,9 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                         ),
                       )
                     : Container(),
-            widget.documentSnapshot['caption'] != '' &&
-                    widget.documentSnapshot['postType'] != 'poll'
-                ? widget.documentSnapshot['imgUrl'] != null
+            widget.documentSnapshot.data()['caption'] != '' &&
+                    widget.documentSnapshot.data()['postType'] != 'poll'
+                ? widget.documentSnapshot.data()['imgUrl'] != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -1352,7 +1222,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 top: screenSize.height * 0.01,
                                 left: screenSize.width / 30),
                             child: Text(
-                              widget.documentSnapshot['caption'],
+                              widget.documentSnapshot.data()['caption'],
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   fontSize: textSubTitle(context)),
@@ -1380,7 +1250,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                   top: screenSize.height * 0.01,
                                   left: screenSize.width / 30),
                               child: Text(
-                                widget.documentSnapshot['caption'],
+                                widget.documentSnapshot.data()['caption'],
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context)),
@@ -1390,195 +1260,203 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                         ],
                       )
                 : Container(),
-            Padding(
-              padding: EdgeInsets.all(screenSize.height * 0.012),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      GestureDetector(
-                          child: _isLiked
-                              ? Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Liked',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ))
-                              : Container(
-                                  decoration: ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 1.5,
-                                            color: Colors.deepPurple)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Text(
-                                      'Like',
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textButton(context),
-                                          color: Colors.deepPurple,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )),
-                          onTap: () {
-                            if (!_isLiked) {
-                              setState(() {
-                                _isLiked = true;
-                              });
-
-                              postLike(widget.documentSnapshot.reference);
-                              addLikeToActivityFeed(
-                                  widget.documentSnapshot, widget.currentuser);
-                            } else {
-                              setState(() {
-                                _isLiked = false;
-                              });
-
-                              postUnlike(widget.documentSnapshot.reference);
-                              removeLikeFromActivityFeed(
-                                  widget.documentSnapshot, widget.currentuser);
-                            }
-                          }),
-                      new SizedBox(
-                        width: screenSize.width / 30,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
-                                        snapshot: widget.documentSnapshot,
-                                        followingUser: widget.currentuser,
-                                        documentReference:
-                                            widget.documentSnapshot.reference,
-                                        user: widget.currentuser,
-                                      ))));
-                        },
-                        child: Container(
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
-                                  side: BorderSide(
-                                      width: 1.5, color: Colors.deepPurple)),
-                              //color: Theme.of(context).accentColor,
-                            ),
-                            child: Padding(
+            ListTile(
+              leading: GestureDetector(
+                  child: _isLiked
+                      ? Container(
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 8.0,
                                 right: 8.0,
                                 top: 6.0,
                                 bottom: 6.0,
                               ),
-                              child: Text(
-                                'Comment',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textButton(context),
-                                    color: Colors.deepPurple,
-                                    fontWeight: FontWeight.bold),
+                              child: Icon(Icons.thumb_up_alt)))
+                      : Container(
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                                right: 8.0,
+                                top: 6.0,
+                                bottom: 6.0,
                               ),
-                            )),
+                              child: Icon(Icons.thumb_up_alt_outlined))),
+                  onTap: () {
+                    if (!_isLiked) {
+                      setState(() {
+                        _isLiked = true;
+                      });
+
+                      postLike(widget.documentSnapshot.reference);
+                      addLikeToActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    } else {
+                      setState(() {
+                        _isLiked = false;
+                      });
+
+                      postUnlike(widget.documentSnapshot.reference);
+                      removeLikeFromActivityFeed(
+                          widget.documentSnapshot, widget.currentuser);
+                    }
+                  }),
+              title: FutureBuilder(
+                future: _repository
+                    .fetchPostLikes(widget.documentSnapshot.reference),
+                builder: ((context,
+                    AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+                  if (likesSnapshot.hasData) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => LikesScreen(
+                                      user: widget.currentuser,
+                                      documentReference:
+                                          widget.documentSnapshot.reference,
+                                    ))));
+                      },
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 6.0),
+                          child: likesSnapshot.data.length > 0
+                              ? SizedBox(
+                                  height: screenSize.height * 0.06,
+                                  width: screenSize.width * 0.2,
+                                  child: Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 15.0,
+                                        backgroundColor: Colors.black,
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                likesSnapshot.data[0]
+                                                    ['ownerPhotoUrl']),
+                                      ),
+                                      likesSnapshot.data.length > 1
+                                          ? Positioned(
+                                              left: 15.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot.data[1]
+                                                            ['ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 2
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot.data[2]
+                                                            ['ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 3
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                        likesSnapshot.data[3]
+                                                            ['ownerPhotoUrl']),
+                                              ),
+                                            )
+                                          : Container(),
+                                      likesSnapshot.data.length > 4
+                                          ? Positioned(
+                                              left: 30.0,
+                                              child: CircleAvatar(
+                                                radius: 15.0,
+                                                backgroundColor: Colors.grey,
+                                                child: Text(
+                                                    '${likesSnapshot.data.length}'),
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                )
+
+                              //  Text(
+                              //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              //     style: TextStyle(
+                              //         fontFamily: FontNameDefault,
+                              //         fontSize: textBody1(context),
+                              //         fontWeight: FontWeight.bold),
+                              //   )
+                              : Text(
+                                  "0 ",
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                        ),
                       ),
-                    ],
-                  ),
-                ],
+                    );
+                  } else {
+                    return Center(child: Container());
+                  }
+                }),
               ),
-            ),
-            FutureBuilder(
-              future:
-                  _repository.fetchPostLikes(widget.documentSnapshot.reference),
-              builder: ((context,
-                  AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-                if (likesSnapshot.hasData) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => LikesScreen(
-                                    user: widget.currentuser,
-                                    documentReference:
-                                        widget.documentSnapshot.reference,
-                                  ))));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenSize.width / 30),
-                      child: likesSnapshot.data.length > 1
-                          ? Text(
-                              "Liked by ${likesSnapshot.data[0]['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : Text(
-                              likesSnapshot.data.length == 1
-                                  ? "Liked by ${likesSnapshot.data[0]['ownerName']}"
-                                  : "0 Likes",
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                            ),
+              trailing: SizedBox(
+                height: 40,
+                width: 50,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => CommentsScreen(
+                                  snapshot: widget.documentSnapshot,
+                                  followingUser: widget.currentuser,
+                                  documentReference:
+                                      widget.documentSnapshot.reference,
+                                  user: widget.currentuser,
+                                ))));
+                  },
+                  child: Container(
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(60.0),
+                    //       side: BorderSide(width: 0.1, color: Colors.black54)),
+                    //   //color: Theme.of(context).accentColor,
+                    // ),
+                    child: Row(
+                      children: [
+                        commentWidget(widget.documentSnapshot.reference),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Icon(Icons.messenger_outline_sharp),
+                      ],
                     ),
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-            ),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width / 30,
-                  vertical: screenSize.height * 0.005,
+                  ),
                 ),
-                child: commentWidget(widget.documentSnapshot.reference)),
-            Padding(
-              padding: EdgeInsets.only(
-                left: screenSize.width / 30,
-                bottom: screenSize.height * 0.012,
               ),
-              child: Text(
-                  widget.documentSnapshot['time'] != null
-                      ? timeago.format(widget.documentSnapshot['time'].toDate())
-                      : '',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textbody2(context),
-                      color: Colors.grey)),
             ),
           ],
         ),
@@ -1630,36 +1508,6 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         .then((value) {
       print("Option Voted");
     });
-  }
-
-  showDelete(DocumentSnapshot snapshot) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            children: [
-              SimpleDialogOption(
-                child: Text(
-                  'Confirm delete',
-                  style: TextStyle(color: Colors.redAccent),
-                ),
-                onPressed: () {
-                  deletePost(snapshot);
-                  //  Navigator.pop(context);
-                  //   Navigator.pop(context);
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
   }
 
   showCategory(DocumentSnapshot snapshot, BuildContext context) {
@@ -2015,14 +1863,162 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         }));
   }
 
-  deletePost(DocumentSnapshot snapshot) {
+  deleteDialog(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: Text(
+                  'Delete',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  deletePost(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     FirebaseFirestore.instance
-        .collection('groups')
+        .collection('teams')
         .doc(widget.gid)
-        .collection('posts')
-        // .document()
-        // .delete();
-        .doc(snapshot['postId'])
+        .collection('departments')
+        .doc(widget.deptId)
+        .collection('projects')
+        .doc(widget.projectId)
+        .collection('discussions')
+        .doc(snapshot.data()['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {

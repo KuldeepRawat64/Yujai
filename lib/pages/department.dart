@@ -8,6 +8,8 @@ import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/dept_inbox.dart';
+import 'package:Yujai/pages/dept_invite.dart';
+import 'package:Yujai/pages/dept_settings.dart';
 import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/pages/group_upload_ad.dart';
 import 'package:Yujai/pages/group_upload_discussion.dart';
@@ -16,6 +18,7 @@ import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/pages/team_invite.dart';
 import 'package:Yujai/pages/team_members.dart';
+import 'package:Yujai/pages/team_page.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/custom_radio_button.dart';
@@ -24,6 +27,7 @@ import 'package:Yujai/widgets/nested_tab_team_home.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'dart:async';
@@ -39,7 +43,7 @@ class DepartmentPage extends StatefulWidget {
   final UserModel currentUser;
   final String dName;
   final String dId;
-  final int dIcon;
+  final Map<String, dynamic> dIcon;
   final int dColor;
 
   DepartmentPage({
@@ -143,7 +147,10 @@ class _DepartmentPageState extends State<DepartmentPage>
   List<PollLength> _pollLength = PollLength.getPollLength();
   List<DropdownMenuItem<PollLength>> _dropDownMenuPollLength;
   PollLength _selectedPollLength;
-  bool option1, option2, option3, option4, option5, option6 = false;
+  bool option1 = false;
+  bool option2 = false;
+  bool option3 = false;
+  bool option4 = false;
   int counter = 0;
   TextEditingController _option1Controller = new TextEditingController();
   TextEditingController _option2Controller = new TextEditingController();
@@ -276,7 +283,7 @@ class _DepartmentPageState extends State<DepartmentPage>
         });
       });
       _repository
-          .checkIsMember(widget.currentUser.uid, widget.gid)
+          .checkIsMember(widget.currentUser.uid, widget.gid, false)
           .then((value) {
         print("VALUE : $value");
         if (!mounted) return;
@@ -324,6 +331,120 @@ class _DepartmentPageState extends State<DepartmentPage>
     super.dispose();
   }
 
+  deleteDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Close Department',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to close this department? This action will delete the department permanently!',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              FirebaseFirestore.instance
+                                  .collection('teams')
+                                  .doc(widget.gid)
+                                  .collection('departments')
+                                  .doc(widget.dId)
+                                  .delete()
+                                  .then((value) => Navigator.pop(context));
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -332,9 +453,12 @@ class _DepartmentPageState extends State<DepartmentPage>
         backgroundColor: const Color(0xffffffff),
         key: _scaffoldKey,
         body: CustomScrollView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
             SliverAppBar(
+              pinned: true,
+              //   collapsedHeight: screenSize.height * 0.09,
               elevation: 0.5,
               actions: [
                 Padding(
@@ -371,40 +495,72 @@ class _DepartmentPageState extends State<DepartmentPage>
                       )
                     : Container(),
               ],
-              title: Row(
-                children: [
-                  Container(
-                    width: screenSize.width * 0.1,
-                    height: screenSize.height * 0.06,
-                    child: Padding(
-                      padding: EdgeInsets.all(screenSize.height * 0.01),
-                      child: Icon(
-                        Icons.work_outline,
-                        //  IconData(widget.dIcon, fontFamily: 'MaterialIcons'),
-                        color: Colors.white,
-                      ),
-                    ),
-                    decoration: ShapeDecoration(
-                      color: Color(widget.dColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(screenSize.height * 0.01),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8.0,
-                  ),
-                  Text(
-                    widget.dName,
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textAppTitle(context),
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
+              title: StreamBuilder(
+                  stream: teamsRef
+                      .doc(widget.gid)
+                      .collection('departments')
+                      .doc(widget.dId)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.connectionState ==
+                            ConnectionState.active ||
+                        snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return CircleAvatar(
+                          radius: screenSize.height * 0.045,
+                          backgroundImage:
+                              AssetImage('assets/images/error.png'),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        return Row(
+                          children: [
+                            Container(
+                              width: screenSize.width * 0.1,
+                              height: screenSize.height * 0.06,
+                              child: Padding(
+                                padding:
+                                    EdgeInsets.all(screenSize.height * 0.01),
+                                child: Icon(
+                                  deserializeIcon(
+                                      snapshot.data['departmentProfilePhoto']),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Color(snapshot.data['color']),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      screenSize.height * 0.01),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            Container(
+                              width: screenSize.width * 0.45,
+                              child: Text(
+                                snapshot.data['departmentName'],
+                                style: TextStyle(
+                                  fontSize: screenSize.height * 0.022,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    }
+
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }),
               leading: IconButton(
                   icon: Icon(Icons.keyboard_arrow_left,
                       color: Colors.black54, size: screenSize.height * 0.045),
@@ -489,7 +645,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                             )));
                               },
                               leading: Icon(
-                                Icons.check_circle_outline,
+                                Icons.people_alt_outlined,
                                 color: Colors.white,
                               ),
                               title: Text(
@@ -514,7 +670,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                             name: widget.name)));
                               },
                               leading: Icon(
-                                Icons.notifications,
+                                Icons.notifications_none_outlined,
                                 color: Colors.white,
                               ),
                               title: Text(
@@ -534,25 +690,43 @@ class _DepartmentPageState extends State<DepartmentPage>
                               child: Column(
                                 children: <Widget>[
                                   Divider(),
-                                  ListTile(
-                                      leading: Icon(
-                                        Icons.settings,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Settings',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.white,
-                                            fontSize: textSubTitle(context)),
-                                      )),
                                   InkWell(
                                     onTap: () {
                                       Navigator.pop(context);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => TeamInvite(
+                                              builder: (context) =>
+                                                  DeptSettings(
+                                                    gid: widget.gid,
+                                                    dId: widget.dId,
+                                                    name: widget.dName,
+                                                    team: _team,
+                                                    dept: _department,
+                                                    currentuser: currentuser,
+                                                  )));
+                                    },
+                                    child: ListTile(
+                                        leading: Icon(
+                                          Icons.settings_outlined,
+                                          color: Colors.white,
+                                        ),
+                                        title: Text(
+                                          'Settings',
+                                          style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              color: Colors.white,
+                                              fontSize: textSubTitle(context)),
+                                        )),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => DeptInvite(
+                                                  dept: _department,
                                                   group: _team,
                                                   currentuser: currentuser,
                                                   gid: widget.gid,
@@ -572,6 +746,9 @@ class _DepartmentPageState extends State<DepartmentPage>
                                       ),
                                     ),
                                   ),
+                                  SizedBox(
+                                    height: 20,
+                                  )
                                 ],
                               ))),
                     ],
@@ -640,7 +817,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                                                 )));
                                   },
                                   leading: Icon(
-                                    Icons.check_circle_outline,
+                                    Icons.people_alt_outlined,
                                     color: Colors.white,
                                   ),
                                   title: Text(
@@ -687,11 +864,11 @@ class _DepartmentPageState extends State<DepartmentPage>
                                       Divider(),
                                       ListTile(
                                           leading: Icon(
-                                            Icons.settings,
+                                            Icons.close_outlined,
                                             color: Colors.white,
                                           ),
                                           title: Text(
-                                            'Settings',
+                                            'Close',
                                             style: TextStyle(
                                                 fontFamily: FontNameDefault,
                                                 color: Colors.white,
@@ -1498,93 +1675,118 @@ class _DepartmentPageState extends State<DepartmentPage>
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.42,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.assignment_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Project',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        //  color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showFormDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.check_circle_outline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Task',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        //   color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showTaskDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.commentOutline,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Discussion',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        //  color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showDiscussionDialog()
-                        .then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.poll_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Poll',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        //  color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showPollDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel_outlined,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        //   color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
                   onTap: () {
                     Navigator.pop(context);
                   },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: screenSize.height * 0.36,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.assignment_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Project',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //  color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showFormDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.check_circle_outline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Task',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //   color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showTaskDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        MdiIcons.commentOutline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Discussion',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //  color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showDiscussionDialog()
+                            .then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.poll_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Poll',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //  color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showPollDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.cancel_outlined,
+              //     size: screenSize.height * 0.04,
+              //   ),
+              //   title: Text(
+              //     'Cancel',
+              //     style: TextStyle(
+              //         fontFamily: FontNameDefault,
+              //         //   color: Colors.white,
+              //         fontSize: textSubTitle(context)),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //   },
+              // ),
+            ],
           );
         });
   }
@@ -1686,55 +1888,55 @@ class _DepartmentPageState extends State<DepartmentPage>
                             controller: _discussionTitleController,
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textBody1(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         valueFirst
                             ? Padding(
                                 padding: EdgeInsets.symmetric(
@@ -1751,34 +1953,35 @@ class _DepartmentPageState extends State<DepartmentPage>
                                         _repository
                                             .retreiveUserDetails(currentuser)
                                             .then((user) {
-                                          _currentProject != null
-                                              ? _repository
-                                                  .addDiscussionToProject(
+                                          // _currentProject != null
+                                          //     ? _repository
+                                          //         .addDiscussionToProject(
+                                          //         _team.uid,
+                                          //         _department.uid,
+                                          //         _currentProject,
+                                          //         user,
+                                          //         _discussionTitleController
+                                          //             .text,
+                                          //       )
+                                          //     :
+                                          _repository
+                                              .addDiscussionToDept(
                                                   _team.uid,
                                                   _department.uid,
-                                                  _currentProject,
                                                   user,
                                                   _discussionTitleController
                                                       .text,
-                                                )
-                                              : _repository
-                                                  .addDiscussionToDept(
-                                                      _team.uid,
-                                                      _department.uid,
-                                                      user,
-                                                      _discussionTitleController
-                                                          .text,
-                                                      newDId)
-                                                  .then((value) {
-                                                  newDId = Uuid().v4();
-                                                  _discussionTitleController
-                                                      .text = '';
-                                                  valueFirst = false;
-                                                  print(
-                                                      'Discussion added to project');
-                                                  Navigator.pop(context);
-                                                }).catchError((e) => print(
-                                                      'Error adding department: $e'));
+                                                  newDId)
+                                              .then((value) {
+                                            newDId = Uuid().v4();
+                                            _discussionTitleController.text =
+                                                '';
+                                            valueFirst = false;
+                                            print(
+                                                'Discussion added to project');
+                                            Navigator.pop(context);
+                                          }).catchError((e) => print(
+                                                  'Error adding department: $e'));
                                         });
                                       } else {
                                         print('Current User is null');
@@ -2026,10 +2229,6 @@ class _DepartmentPageState extends State<DepartmentPage>
                                       setState(() {
                                         option1 = true;
                                       });
-                                    } else {
-                                      setState(() {
-                                        option1 = false;
-                                      });
                                     }
                                   },
                                   controller: _option1Controller,
@@ -2054,8 +2253,6 @@ class _DepartmentPageState extends State<DepartmentPage>
                                           setState(() {
                                             option3 = false;
                                             option4 = false;
-                                            option5 = false;
-                                            option6 = false;
                                           });
                                         } else if (counter == 1) {
                                           setState(() {
@@ -2065,14 +2262,14 @@ class _DepartmentPageState extends State<DepartmentPage>
                                           setState(() {
                                             option4 = true;
                                           });
-                                        } else if (counter == 3) {
-                                          setState(() {
-                                            option5 = true;
-                                          });
-                                        } else if (counter >= 4) {
-                                          setState(() {
-                                            option6 = true;
-                                          });
+                                          // } else if (counter == 3) {
+                                          //   setState(() {
+                                          //     option5 = true;
+                                          //   });
+                                          // } else if (counter >= 4) {
+                                          //   setState(() {
+                                          //     option6 = true;
+                                          //   });
                                         }
                                       });
                                     }),
@@ -2089,16 +2286,6 @@ class _DepartmentPageState extends State<DepartmentPage>
                                             } else if (counter == 2) {
                                               setState(() {
                                                 option4 = false;
-                                                counter = counter - 1;
-                                              });
-                                            } else if (counter == 3) {
-                                              setState(() {
-                                                option5 = false;
-                                                counter = counter - 1;
-                                              });
-                                            } else if (counter >= 4) {
-                                              setState(() {
-                                                option6 = false;
                                                 counter = counter - 1;
                                               });
                                             }
@@ -2175,57 +2362,59 @@ class _DepartmentPageState extends State<DepartmentPage>
                                 ],
                               )
                             : Container(),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('teams')
-                                .doc(widget.gid)
-                                .collection('departments')
-                                .doc(_department.uid)
-                                .collection('projects')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData)
-                                return const Center(
-                                  child: const CircularProgressIndicator(),
-                                );
+                        // Container(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: StreamBuilder<QuerySnapshot>(
+                        //     stream: FirebaseFirestore.instance
+                        //         .collection('teams')
+                        //         .doc(widget.gid)
+                        //         .collection('departments')
+                        //         .doc(_department.uid)
+                        //         .collection('projects')
+                        //         .snapshots(),
+                        //     builder: (context, snapshot) {
+                        //       if (!snapshot.hasData)
+                        //         return const Center(
+                        //           child: const CircularProgressIndicator(),
+                        //         );
 
-                              return Container(
-                                padding: EdgeInsets.all(5),
-                                child: new DropdownButton(
-                                  underline: Container(),
-                                  icon: Icon(Icons.keyboard_arrow_down),
-                                  value: _currentProject,
-                                  isDense: true,
-                                  items: snapshot.data.docs
-                                      .map((DocumentSnapshot doc) {
-                                    return new DropdownMenuItem(
-                                        value: doc["uid"],
-                                        child: Text(
-                                          doc["projectName"],
-                                          style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                  hint: Text("project",
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                      )),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _currentProject = value;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        valueFirst
+                        //       return Container(
+                        //         padding: EdgeInsets.all(5),
+                        //         child: new DropdownButton(
+                        //           underline: Container(),
+                        //           icon: Icon(Icons.keyboard_arrow_down),
+                        //           value: _currentProject,
+                        //           isDense: true,
+                        //           items: snapshot.data.docs
+                        //               .map((DocumentSnapshot doc) {
+                        //             return new DropdownMenuItem(
+                        //                 value: doc["uid"],
+                        //                 child: Text(
+                        //                   doc["projectName"],
+                        //                   style: TextStyle(
+                        //                     fontFamily: FontNameDefault,
+                        //                     fontSize: textBody1(context),
+                        //                   ),
+                        //                 ));
+                        //           }).toList(),
+                        //           hint: Text("project",
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textBody1(context),
+                        //               )),
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               _currentProject = value;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+                        valueFirst &&
+                                _option1Controller.text.isNotEmpty &&
+                                _option2Controller.text.isNotEmpty
                             ? Padding(
                                 padding: EdgeInsets.only(
                                   top: screenSize.height * 0.015,
@@ -2241,62 +2430,59 @@ class _DepartmentPageState extends State<DepartmentPage>
                                         _repository
                                             .retreiveUserDetails(currentuser)
                                             .then((user) {
-                                          _currentProject == null
-                                              ? _repository
-                                                  .addPollToDept(
-                                                  _team.uid,
-                                                  _department.uid,
-                                                  user,
-                                                  _pollTitleController.text,
-                                                  _currentDate
-                                                      .millisecondsSinceEpoch,
-                                                  'poll',
-                                                  _option1Controller.text,
-                                                  _option2Controller.text,
-                                                  _option3Controller.text,
-                                                  _option4Controller.text,
-                                                )
-                                                  .then((value) {
-                                                  valueFirst = false;
-                                                  _pollTitleController.text =
-                                                      '';
-                                                  _option1Controller.text = '';
-                                                  _option2Controller.text = '';
-                                                  _option3Controller.text = '';
-                                                  _option4Controller.text = '';
-                                                  print(
-                                                      'Poll added to department');
-                                                  Navigator.pop(context);
-                                                }).catchError((e) => print(
-                                                      'Error adding poll: $e'))
-                                              : _repository
-                                                  .addPollToProject(
-                                                  _team.uid,
-                                                  _department.uid,
-                                                  _currentProject,
-                                                  user,
-                                                  _pollTitleController.text,
-                                                  _currentDate
-                                                      .millisecondsSinceEpoch,
-                                                  'poll',
-                                                  _option1Controller.text,
-                                                  _option2Controller.text,
-                                                  _option3Controller.text,
-                                                  _option4Controller.text,
-                                                )
-                                                  .then((value) {
-                                                  valueFirst = false;
-                                                  _pollTitleController.text =
-                                                      '';
-                                                  _option1Controller.text = '';
-                                                  _option2Controller.text = '';
-                                                  _option3Controller.text = '';
-                                                  _option4Controller.text = '';
-                                                  print(
-                                                      'Poll added to project');
-                                                  Navigator.pop(context);
-                                                }).catchError((e) => print(
-                                                      'Error adding poll: $e'));
+                                          // _currentProject == null
+                                          // ?
+                                          _repository
+                                              .addPollToDept(
+                                            _team.uid,
+                                            _department.uid,
+                                            user,
+                                            _pollTitleController.text,
+                                            _currentDate.millisecondsSinceEpoch,
+                                            'poll',
+                                            _option1Controller.text,
+                                            _option2Controller.text,
+                                            _option3Controller.text,
+                                            _option4Controller.text,
+                                          )
+                                              .then((value) {
+                                            valueFirst = false;
+                                            _pollTitleController.text = '';
+                                            _option1Controller.text = '';
+                                            _option2Controller.text = '';
+                                            _option3Controller.text = '';
+                                            _option4Controller.text = '';
+                                            print('Poll added to department');
+                                            Navigator.pop(context);
+                                          }).catchError((e) => print(
+                                                  'Error adding poll: $e'));
+
+                                          // :
+                                          //   _repository
+                                          //       .addPollToProject(
+                                          //     _team.uid,
+                                          //     _department.uid,
+                                          //     _currentProject,
+                                          //     user,
+                                          //     _pollTitleController.text,
+                                          //     _currentDate.millisecondsSinceEpoch,
+                                          //     'poll',
+                                          //     _option1Controller.text,
+                                          //     _option2Controller.text,
+                                          //     _option3Controller.text,
+                                          //     _option4Controller.text,
+                                          //   )
+                                          //       .then((value) {
+                                          //     valueFirst = false;
+                                          //     _pollTitleController.text = '';
+                                          //     _option1Controller.text = '';
+                                          //     _option2Controller.text = '';
+                                          //     _option3Controller.text = '';
+                                          //     _option4Controller.text = '';
+                                          //     print('Poll added to project');
+                                          //     Navigator.pop(context);
+                                          //   }).catchError((e) => print(
+                                          //           'Error adding poll: $e'));
                                         });
                                       } else {
                                         print('Current User is null');

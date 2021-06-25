@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/main.dart';
@@ -29,7 +30,7 @@ import 'package:uuid/uuid.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class TaskDetail extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final String teamId, deptId, projectId, listId;
   final Project project;
@@ -69,7 +70,7 @@ class _TaskDetailState extends State<TaskDetail> {
   bool _isEditingReply = false;
   TextEditingController _taskNameController;
   String initialText = "Initial Text";
-  TextEditingController _taskDescriptionController;
+  TextEditingController _descriptionController;
   TextEditingController _commentTextController;
   String initialDescription = "Initial Text";
   DateTimeRange myDateRange;
@@ -94,9 +95,9 @@ class _TaskDetailState extends State<TaskDetail> {
         });
       });
     _taskNameController =
-        TextEditingController(text: widget.documentSnapshot['taskName']);
-    _taskDescriptionController =
-        TextEditingController(text: widget.documentSnapshot['taskDescription']);
+        TextEditingController(text: widget.documentSnapshot['taskName'] ?? '');
+    _descriptionController = TextEditingController(
+        text: widget.documentSnapshot['description'] ?? '');
     _commentTextController = TextEditingController(text: '');
   }
 
@@ -108,7 +109,7 @@ class _TaskDetailState extends State<TaskDetail> {
   @override
   void dispose() {
     _taskNameController.dispose();
-    _taskDescriptionController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -250,18 +251,18 @@ class _TaskDetailState extends State<TaskDetail> {
           onChanged: (newValue) {
             if (_taskNameController.text.isNotEmpty)
               widget.documentSnapshot.reference
-                  .update({'taskDescription': newValue});
+                  .update({'description': newValue});
           },
           onSubmitted: (newValue) {
             if (_taskNameController.text.isNotEmpty)
               widget.documentSnapshot.reference
-                  .update({'taskDescription': newValue});
+                  .update({'description': newValue});
             setState(() {
               _isEditingDesc = false;
             });
           },
           autofocus: true,
-          controller: _taskDescriptionController,
+          controller: _descriptionController,
         ),
       );
     return InkWell(
@@ -275,9 +276,9 @@ class _TaskDetailState extends State<TaskDetail> {
           builder: (context, snapshot) {
             if (snapshot.hasData)
               return Text(
-                snapshot.data['taskDescription'] != '' &&
-                        snapshot.data['taskDescription'] != null
-                    ? snapshot.data['taskDescription']
+                snapshot.data['description'] != '' &&
+                        snapshot.data['description'] != null
+                    ? snapshot.data['description']
                     : 'Add description',
                 style: TextStyle(
                   fontFamily: FontNameDefault,
@@ -325,7 +326,8 @@ class _TaskDetailState extends State<TaskDetail> {
               }
               return null;
             },
-            onSaved: (value) {
+            autoValidate: true,
+            onChanged: (value) {
               widget.documentSnapshot.reference.update({
                 'dueDateRangeStart': DateFormat.MMMd().format(value.start),
                 'dueDateRangeEnd': DateFormat.MMMd().format(value.end)
@@ -393,62 +395,55 @@ class _TaskDetailState extends State<TaskDetail> {
     return SafeArea(
         child: Scaffold(
             backgroundColor: Color(0xfff6f6f6),
-            body: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  elevation: 0.5,
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                          onPressed: () => _showTaskEditDialog(),
-                          icon: Icon(
-                            Icons.more_horiz,
-                            color: Colors.black87,
-                          )),
-                    )
-                  ],
-                  title: Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        'Detail',
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          fontSize: textAppTitle(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                  leading: IconButton(
-                      icon: Icon(Icons.keyboard_arrow_left,
-                          color: Colors.black87,
-                          size: screenSize.height * 0.045),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
-                  backgroundColor: const Color(0xffffffff),
-                ),
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  SizedBox(
-                    height: screenSize.height * 0.88,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: eventStack(),
-                        ),
-                        commentInputWidget(),
-                      ],
-                    ),
-                  )
-                ]))
+            //  body: CustomScrollView(
+            //    controller: _scrollController,
+            appBar: AppBar(
+              elevation: 0.5,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                      onPressed: () => _showTaskEditDialog(),
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: Colors.black87,
+                      )),
+                )
               ],
+              title: Row(
+                children: [
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Text(
+                    'Detail',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: FontNameDefault,
+                      fontSize: textAppTitle(context),
+                    ),
+                  ),
+                ],
+              ),
+              leading: IconButton(
+                  icon: Icon(Icons.keyboard_arrow_left,
+                      color: Colors.black87, size: screenSize.height * 0.045),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              backgroundColor: const Color(0xffffffff),
+            ),
+            body: Container(
+              height: screenSize.height * 0.88,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: eventStack(),
+                  ),
+                  Container(child: commentInputWidget()),
+                ],
+              ),
             )));
   }
 
@@ -536,7 +531,8 @@ class _TaskDetailState extends State<TaskDetail> {
                             .orderBy('timestamp', descending: false)
                             .snapshots(),
                         builder: ((context, snapshot) {
-                          if (snapshot.hasData) {
+                          if (snapshot.hasData &&
+                              snapshot.data.docs.length > 0) {
                             return Container(
                               height: screenSize.height * 0.3,
                               width: screenSize.width * 0.8,
@@ -612,9 +608,11 @@ class _TaskDetailState extends State<TaskDetail> {
                                   }),
                             );
                           } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
+                            return NoContent(
+                                'No members',
+                                'assets/images/members.png',
+                                'Add members to this project first',
+                                '');
                           }
                         }),
                       ),
@@ -739,6 +737,11 @@ class _TaskDetailState extends State<TaskDetail> {
                                 .set(_comment.toMap(_comment))
                                 .whenComplete(() {
                               _commentTextController.text = "";
+                              imageFile = null;
+                              _scrollController.animateTo(
+                                  _scrollController.position.maxScrollExtent,
+                                  duration: Duration(milliseconds: 500),
+                                  curve: Curves.fastOutSlowIn);
                               postId = Uuid().v4();
                             });
 
@@ -906,6 +909,8 @@ class _TaskDetailState extends State<TaskDetail> {
   Widget eventStack() {
     var screenSize = MediaQuery.of(context).size;
     return ListView(
+      // reverse: true,
+      controller: _scrollController,
       shrinkWrap: true,
       padding: EdgeInsets.fromLTRB(
         screenSize.width * 0.05,
@@ -1173,16 +1178,15 @@ class _TaskDetailState extends State<TaskDetail> {
                   Padding(
                     padding: EdgeInsets.only(top: 5.0),
                     child: Text(
-                      snapshot.data != null || snapshot['timestamp'] != ''
-                          ? timeago
-                              .format(snapshot['timestamp'].toDate())
-                              .replaceAll('about', '')
-                              .replaceAll('ago', '')
+                      snapshot.data != null && snapshot['timestamp'] != null
+                          ? timeago.format(snapshot['timestamp'].toDate())
+                          // .replaceAll('about', '')
+                          // .replaceAll('ago', '')
                           : '',
                       style: TextStyle(
                         fontFamily: FontNameDefault,
                         color: Colors.grey,
-                        fontSize: textbody2(context),
+                        //  fontSize: textbody2(context),
                       ),
                     ),
                   )

@@ -8,6 +8,7 @@ import 'package:Yujai/widgets/list_member.dart';
 import 'package:Yujai/widgets/list_member_dept.dart';
 import 'package:Yujai/widgets/list_member_project.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +187,7 @@ class _ProjectMembersState extends State<ProjectMembers> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -197,21 +198,21 @@ class _ProjectMembersState extends State<ProjectMembers> {
           .collection('members')
           .snapshots(),
       builder: ((context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data.docs.length > 0) {
           //     if (snapshot.connectionState == ConnectionState.done) {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
                   controller: _scrollController,
                   //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemMemberProject(
                       dept: widget.dept,
                       team: widget.group,
                       project: widget.project,
                       gid: widget.gid,
                       name: widget.name,
-                      documentSnapshot: snapshot.data.documents[index],
+                      documentSnapshot: snapshot.data.docs[index],
                       index: index,
                       currentuser: _user,
                       user: _user))));
@@ -221,9 +222,7 @@ class _ProjectMembersState extends State<ProjectMembers> {
           //      );
           //      }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return NoContent('No members', 'assets/images/members.png', '', '');
         }
       }),
     );

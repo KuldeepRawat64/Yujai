@@ -1,3 +1,4 @@
+import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../style.dart';
 
-class ListItemUser extends StatefulWidget {
+class ListItemUserDept extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final UserModel user, currentuser;
   final int index;
@@ -18,7 +19,8 @@ class ListItemUser extends StatefulWidget {
   final String name;
   final Group group;
   final Team team;
-  ListItemUser(
+  final Department dept;
+  ListItemUserDept(
       {this.user,
       this.index,
       this.currentuser,
@@ -26,13 +28,14 @@ class ListItemUser extends StatefulWidget {
       this.gid,
       this.name,
       this.group,
-      this.team});
+      this.team,
+      this.dept});
 
   @override
-  _ListItemUserState createState() => _ListItemUserState();
+  _ListItemUserDeptState createState() => _ListItemUserDeptState();
 }
 
-class _ListItemUserState extends State<ListItemUser> {
+class _ListItemUserDeptState extends State<ListItemUserDept> {
   var _repository = Repository();
   bool _isInvited;
   //bool isGroup;
@@ -72,8 +75,8 @@ class _ListItemUserState extends State<ListItemUser> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid,
-            widget.group != null ? true : false)
+        .checkDeptMember(
+            widget.documentSnapshot['ownerUid'], widget.gid, widget.dept.uid)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -143,11 +146,12 @@ class _ListItemUserState extends State<ListItemUser> {
   }
 
   addMember(DocumentSnapshot snapshot) {
-    _repository.addTeamMember(
+    _repository.addDeptMember(
         currentTeam: widget.team,
+        currentDeptId: widget.dept.uid,
         followerId: snapshot['ownerUid'],
         followerName: snapshot['ownerName'],
-        //  followerAccountType: '${widget.team.teamName} Member',
+        followerAccountType: '${widget.team.teamName} Member',
         followerPhotoUrl: snapshot['ownerPhotoUrl']);
     addInviteToActivityFeed();
   }
@@ -203,7 +207,7 @@ class _ListItemUserState extends State<ListItemUser> {
           .doc(widget.currentuser.uid)
           .set(_feed.toMap(_feed))
           .then((value) {
-        print('Team Invite sent');
+        print('Added to dept');
       });
     }
   }

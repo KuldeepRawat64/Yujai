@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'widgets/app_localizations.dart';
+//import 'package:firebase_app_check/firebase_app_check.dart';
 // import 'style.dart';
 
 void main() async {

@@ -12,6 +12,7 @@ import 'package:Yujai/widgets/nested_tab_bar_group.dart';
 import 'package:Yujai/widgets/nested_tab_bar_team.dart';
 import 'package:Yujai/widgets/new_group_screen.dart';
 import 'package:Yujai/widgets/new_team_screen.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -353,64 +354,67 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
   Widget myTeamsList() {
     var screenSize = MediaQuery.of(context).size;
-    return ListView.builder(
-      controller: _scrollController1,
-      itemCount: myTeamList.length,
-      itemBuilder: ((context, index) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TeamPage(
-                              currentUser: currentUser,
-                              isMember: false,
-                              gid: myTeamList[index].uid,
-                              name: myTeamList[index].teamName,
-                            )));
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 8.0,
-                  right: 8.0,
-                  top: 8.0,
-                ),
-                child: Container(
-                  decoration: ShapeDecoration(
-                    color: const Color(0xffffffff),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      //  side: BorderSide(color: Colors.grey[300]),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      backgroundImage:
-                          NetworkImage(myTeamList[index].teamProfilePhoto),
-                    ),
-                    title: Text(
-                      // userList[index].toString(),
-                      myTeamList[index].teamName,
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
+    return myTeamList.length > 0
+        ? ListView.builder(
+            controller: _scrollController1,
+            itemCount: myTeamList.length,
+            itemBuilder: ((context, index) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TeamPage(
+                                    currentUser: currentUser,
+                                    isMember: false,
+                                    gid: myTeamList[index].uid,
+                                    name: myTeamList[index].teamName,
+                                  )));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8.0,
+                        right: 8.0,
+                        top: 8.0,
+                      ),
+                      child: Container(
+                        decoration: ShapeDecoration(
+                          color: const Color(0xffffffff),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            //  side: BorderSide(color: Colors.grey[300]),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(
+                                myTeamList[index].teamProfilePhoto),
+                          ),
+                          title: Text(
+                            // userList[index].toString(),
+                            myTeamList[index].teamName,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                            ),
+                          ),
+                          trailing: myTeamList[index].isPrivate == true
+                              ? Icon(Icons.lock_outline)
+                              : Icon(Icons.public),
+                        ),
                       ),
                     ),
-                    trailing: myTeamList[index].isPrivate == true
-                        ? Icon(Icons.lock_outline)
-                        : Icon(Icons.public),
                   ),
-                ),
-              ),
-            ),
-          ],
-        );
-      }),
-    );
+                ],
+              );
+            }),
+          )
+        : NoContent('No teams', 'assets/images/team_no-image.png',
+            'Create a team', ' by clicking on the + icon above');
   }
 }
 

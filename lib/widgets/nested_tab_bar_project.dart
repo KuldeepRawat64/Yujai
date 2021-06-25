@@ -9,8 +9,11 @@ import 'package:Yujai/models/task_list.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/pages/project_members.dart';
 import 'package:Yujai/pages/task_detail.dart';
-import 'package:Yujai/widgets/list_discussions.dart';
+import 'package:Yujai/widgets/list_discussions_dept.dart';
+import 'package:Yujai/widgets/list_discussions_project.dart';
 import 'package:Yujai/widgets/list_task_list.dart';
+import 'package:Yujai/widgets/no_content.dart';
+import 'package:Yujai/widgets/no_post.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/team.dart';
@@ -285,9 +288,9 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
         ),
         Container(
           color: const Color(0xfff6f6f6),
-          height: screenHeight * 0.89,
+          height: screenHeight * 0.8,
           child: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
+            //  physics: NeverScrollableScrollPhysics(),
             controller: _nestedTabController,
             children: <Widget>[
               forumWidget(),
@@ -302,7 +305,7 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
 
   Widget discussionsWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -313,24 +316,55 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
           .collection('discussions')
           .orderBy('time', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          return SizedBox(
-              height: screenSize.height * 0.9,
-              child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: ((context, index) => ListItemDiscussions(
-                      documentSnapshot: snapshot.data.documents[index],
+      // builder: ((context,
+      //     AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      //   if (snapshot.hasData) {
+      //     return SizedBox(
+      //         height: screenSize.height * 0.9,
+      //         child: ListView.builder(
+      //             controller: _scrollController,
+      //             itemCount: snapshot.data.docs.length,
+      //             itemBuilder: ((context, index) => ListItemDiscussions(
+      //                 documentSnapshot: snapshot.data.docs[index],
+      //                 index: index,
+      //                 currentuser: widget.currentUser,
+      //                 group: widget.team,
+      //                 gid: widget.gid,
+      //                 name: widget.name))));
+      //   } else {
+      //     return Center(
+      //       child: CircularProgressIndicator(),
+      //     );
+      //   }
+      // }),
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                //  controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) => ListItemDiscussionsProject(
+                      documentSnapshot: snapshot.data.docs[index],
                       index: index,
                       currentuser: widget.currentUser,
-                      group: widget.team,
+                      team: widget.team,
                       gid: widget.gid,
-                      name: widget.name))));
+                      name: widget.name,
+                      deptId: widget.department.uid,
+                      projectId: widget.project.uid,
+                    )));
+          } else {
+            return NoPost();
+          }
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
@@ -715,7 +749,7 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
         screenSize.width * 0.02,
         screenSize.height * 0.01,
       ),
-      controller: _scrollController5,
+      //  controller: _scrollController5,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -732,87 +766,87 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
               height: screenSize.height * 0.3,
               child: projectMember(),
             ),
-            Text('Description',
-                style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    fontSize: textHeader(context),
-                    fontWeight: FontWeight.bold)),
-            Divider(),
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('teams')
-                  .doc(widget.gid)
-                  .collection('departments')
-                  .doc(widget.department.uid)
-                  .collection('projects')
-                  .doc(widget.project.uid)
-                  .snapshots(),
-              builder: ((context, snapshot) {
-                if (snapshot.hasData) {
-                  if (_isEditingDesc)
-                    return TextField(
-                      autofocus: true,
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xffffffff),
-                      ),
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                      ),
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.multiline,
-                      minLines: 3,
-                      maxLines: 3,
-                      onChanged: (newValue) {
-                        if (_descriptionController.text.isNotEmpty)
-                          FirebaseFirestore.instance
-                              .collection('teams')
-                              .doc(widget.team.uid)
-                              .collection('departments')
-                              .doc(widget.department.uid)
-                              .collection('projects')
-                              .doc(widget.project.uid)
-                              .update({'description': newValue});
-                      },
-                      onSubmitted: (newValue) {
-                        if (_descriptionController.text.isNotEmpty)
-                          FirebaseFirestore.instance
-                              .collection('teams')
-                              .doc(widget.team.uid)
-                              .collection('departments')
-                              .doc(widget.department.uid)
-                              .collection('projects')
-                              .doc(widget.project.uid)
-                              .update({'description': newValue});
-                        setState(() {
-                          _isEditingDesc = false;
-                        });
-                      },
-                    );
-                  return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isEditingDesc = true;
-                        });
-                      },
-                      child: Text(
-                        snapshot.data['description'] != null
-                            ? snapshot.data['description']
-                            : '',
-                        style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textBody1(context),
-                        ),
-                      ));
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-            ),
+            // Text('Description',
+            //     style: TextStyle(
+            //         fontFamily: FontNameDefault,
+            //         fontSize: textHeader(context),
+            //         fontWeight: FontWeight.bold)),
+            // Divider(),
+            // StreamBuilder<DocumentSnapshot>(
+            //   stream: FirebaseFirestore.instance
+            //       .collection('teams')
+            //       .doc(widget.gid)
+            //       .collection('departments')
+            //       .doc(widget.department.uid)
+            //       .collection('projects')
+            //       .doc(widget.project.uid)
+            //       .snapshots(),
+            //   builder: ((context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       if (_isEditingDesc)
+            //         return TextField(
+            //           autofocus: true,
+            //           controller: _descriptionController,
+            //           decoration: InputDecoration(
+            //             filled: true,
+            //             fillColor: const Color(0xffffffff),
+            //           ),
+            //           style: TextStyle(
+            //             fontFamily: FontNameDefault,
+            //             fontSize: textBody1(context),
+            //           ),
+            //           textInputAction: TextInputAction.next,
+            //           keyboardType: TextInputType.multiline,
+            //           minLines: 3,
+            //           maxLines: 3,
+            //           onChanged: (newValue) {
+            //             if (_descriptionController.text.isNotEmpty)
+            //               FirebaseFirestore.instance
+            //                   .collection('teams')
+            //                   .doc(widget.team.uid)
+            //                   .collection('departments')
+            //                   .doc(widget.department.uid)
+            //                   .collection('projects')
+            //                   .doc(widget.project.uid)
+            //                   .update({'description': newValue});
+            //           },
+            //           onSubmitted: (newValue) {
+            //             if (_descriptionController.text.isNotEmpty)
+            //               FirebaseFirestore.instance
+            //                   .collection('teams')
+            //                   .doc(widget.team.uid)
+            //                   .collection('departments')
+            //                   .doc(widget.department.uid)
+            //                   .collection('projects')
+            //                   .doc(widget.project.uid)
+            //                   .update({'description': newValue});
+            //             setState(() {
+            //               _isEditingDesc = false;
+            //             });
+            //           },
+            //         );
+            //       return InkWell(
+            //           onTap: () {
+            //             setState(() {
+            //               _isEditingDesc = true;
+            //             });
+            //           },
+            //           child: Text(
+            //             snapshot.data['description'] != null
+            //                 ? snapshot.data['description']
+            //                 : '',
+            //             style: TextStyle(
+            //               fontFamily: FontNameDefault,
+            //               fontSize: textBody1(context),
+            //             ),
+            //           ));
+            //     } else {
+            //       return Center(
+            //         child: CircularProgressIndicator(),
+            //       );
+            //     }
+            //   }),
+            // ),
           ],
         ),
       ],

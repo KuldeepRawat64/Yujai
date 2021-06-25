@@ -198,7 +198,7 @@ class _GroupActivityState extends State<GroupActivity> {
 
   Widget forumWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
           .doc(widget.gid)
@@ -206,39 +206,68 @@ class _GroupActivityState extends State<GroupActivity> {
           .orderBy('time', descending: true)
           .where('ownerUid', isEqualTo: widget.currentUser.uid)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: shimmer(),
-          );
-        } else {
-          if (snapshot.data.documents.isEmpty) {
-            if (snapshot.data.documents.isEmpty) {
-              return NoContent(
-                  'No activity',
-                  'assets/images/picture.png',
-                  false,
-                  'Posts, polls and Discussions created by you will appear here',
-                  '\n<-- To Create Post -->\n<-- Go to Group -->\n<-- Press the + button -->\n<-- Upload Post --> or \n<-- Start Discussion --> or \n<-- Create Poll -->');
-            }
+      // builder: ((context, snapshot) {
+      //   if (!snapshot.hasData) {
+      //     return Center(
+      //       child: shimmer(),
+      //     );
+      //   } else {
+      //     if (snapshot.data.documents.isEmpty) {
+      //       if (snapshot.data.documents.isEmpty) {
+      //         return NoContent(
+      //             'No activity',
+      //             'assets/images/picture.png',
+      //             false,
+      //             'Posts, polls and Discussions created by you will appear here',
+      //             '\n<-- To Create Post -->\n<-- Go to Group -->\n<-- Press the + button -->\n<-- Upload Post --> or \n<-- Start Discussion --> or \n<-- Create Poll -->');
+      //       }
 
-            //NoContent('assets/images/no_content.svg', 'No activity');
+      //       //NoContent('assets/images/no_content.svg', 'No activity');
+      //     }
+      //     return SizedBox(
+      //       height: screenSize.height * 0.9,
+      //       child: ListView.builder(
+      //         controller: _scrollController,
+      //         //shrinkWrap: true,
+      //         itemCount: snapshot.data.documents.length,
+      //         itemBuilder: ((context, index) => ListPostForum(
+      //             documentSnapshot: snapshot.data.documents[index],
+      //             index: index,
+      //             currentuser: widget.currentUser,
+      //             group: widget.group,
+      //             gid: widget.gid,
+      //             name: widget.name)),
+      //       ),
+      //     );
+      //   }
+      // }),
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                //  controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) =>
+                    //  Text(snapshot.data.docs[index]['postId']))
+                    ListPostForum(
+                        documentSnapshot: snapshot.data.docs[index],
+                        index: index,
+                        currentuser: widget.currentUser,
+                        group: widget.group,
+                        gid: widget.gid,
+                        name: widget.name)));
+          } else {
+            return const Text('Empty data');
           }
-          return SizedBox(
-            height: screenSize.height * 0.9,
-            child: ListView.builder(
-              controller: _scrollController,
-              //shrinkWrap: true,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: ((context, index) => ListPostForum(
-                  documentSnapshot: snapshot.data.documents[index],
-                  index: index,
-                  currentuser: widget.currentUser,
-                  group: widget.group,
-                  gid: widget.gid,
-                  name: widget.name)),
-            ),
-          );
+        } else {
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );

@@ -11,7 +11,7 @@ Widget mediaPreview;
 String activityItemText;
 
 class ListItemInbox extends StatelessWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final int index;
 
   ListItemInbox({this.index, this.documentSnapshot});
@@ -22,8 +22,8 @@ class ListItemInbox extends StatelessWidget {
 */
   configureMediaPreview(context) {
     var screenSize = MediaQuery.of(context).size;
-    if (documentSnapshot['type'] == 'like' ||
-        documentSnapshot['type'] == 'comment') {
+    if (documentSnapshot.data()['type'] == 'like' ||
+        documentSnapshot.data()['type'] == 'comment') {
       mediaPreview = GestureDetector(
         onTap: () => showPost(context),
         child: Container(
@@ -42,8 +42,8 @@ class ListItemInbox extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot['type'] == 'projectAdded' ||
-        documentSnapshot['type'] == 'projectDeleted') {
+    } else if (documentSnapshot.data()['type'] == 'projectAdded' ||
+        documentSnapshot.data()['type'] == 'projectDeleted') {
       mediaPreview = GestureDetector(
         //   onTap: () => showPost(context),
         child: Row(
@@ -60,7 +60,7 @@ class ListItemInbox extends StatelessWidget {
                 ),
               ),
               decoration: ShapeDecoration(
-                color: Color(documentSnapshot['color']),
+                color: Color(documentSnapshot.data()['color']),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(screenSize.height * 0.01),
                 ),
@@ -70,7 +70,7 @@ class ListItemInbox extends StatelessWidget {
               width: 8.0,
             ),
             Text(
-              documentSnapshot['gName'],
+              documentSnapshot.data()['gName'],
               style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
@@ -80,15 +80,15 @@ class ListItemInbox extends StatelessWidget {
           ],
         ),
       );
-    } else if (documentSnapshot['type'] == 'taskAdded' ||
-        documentSnapshot['type'] == 'taskCompleted') {
+    } else if (documentSnapshot.data()['type'] == 'taskAdded' ||
+        documentSnapshot.data()['type'] == 'taskCompleted') {
       mediaPreview = GestureDetector(
         //   onTap: () => showPost(context),
         child: Row(
           children: [
             Icon(
               Icons.check_circle_outline,
-              color: documentSnapshot['type'] == 'taskCompleted'
+              color: documentSnapshot.data()['type'] == 'taskCompleted'
                   ? Colors.greenAccent
                   : Colors.black54,
             ),
@@ -96,7 +96,7 @@ class ListItemInbox extends StatelessWidget {
               width: 8.0,
             ),
             Text(
-              documentSnapshot['taskName'],
+              documentSnapshot.data()['taskName'],
               style: TextStyle(
                 fontFamily: FontNameDefault,
                 fontSize: textAppTitle(context),
@@ -109,37 +109,38 @@ class ListItemInbox extends StatelessWidget {
     } else {
       mediaPreview = Text('');
     }
-    if (documentSnapshot['type'] == 'like') {
+    if (documentSnapshot.data()['type'] == 'like') {
       activityItemText = 'liked your post';
-    } else if (documentSnapshot['type'] == 'follow') {
+    } else if (documentSnapshot.data()['type'] == 'follow') {
       activityItemText = 'is following you';
-    } else if (documentSnapshot['type'] == 'comment') {
+    } else if (documentSnapshot.data()['type'] == 'comment') {
       activityItemText = 'commented on your post';
-    } else if (documentSnapshot['type'] == 'projectAdded') {
+    } else if (documentSnapshot.data()['type'] == 'projectAdded') {
       activityItemText = 'added this project';
-    } else if (documentSnapshot['type'] == 'projectDeleted') {
+    } else if (documentSnapshot.data()['type'] == 'projectDeleted') {
       activityItemText = 'deleted this project';
-    } else if (documentSnapshot['type'] == 'taskAdded') {
+    } else if (documentSnapshot.data()['type'] == 'taskAdded') {
       activityItemText = 'added this task';
-    } else if (documentSnapshot['type'] == 'taskCompleted') {
+    } else if (documentSnapshot.data()['type'] == 'taskCompleted') {
       activityItemText = 'marked this task completed';
     } else {
-      activityItemText = 'Error:Unknown type ${documentSnapshot['type']}';
+      activityItemText =
+          'Error:Unknown type ${documentSnapshot.data()['type']}';
     }
   }
 
   showPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(
-            userId: documentSnapshot['ownerUid'],
-            postId: documentSnapshot['postId'])));
+            userId: documentSnapshot.data()['ownerUid'],
+            postId: documentSnapshot.data()['postId'])));
   }
 
   showProfile(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FriendProfileScreen(
-              name: documentSnapshot['ownerName'],
-              uid: documentSnapshot['ownerUid'],
+              name: documentSnapshot.data()['ownerName'],
+              uid: documentSnapshot.data()['ownerUid'],
             )));
   }
 
@@ -168,7 +169,7 @@ class ListItemInbox extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       backgroundImage: CachedNetworkImageProvider(
-                          documentSnapshot['ownerPhotoUrl']),
+                          documentSnapshot.data()['ownerPhotoUrl']),
                     ),
                     SizedBox(
                       width: screenSize.height * 0.01,
@@ -187,7 +188,7 @@ class ListItemInbox extends StatelessWidget {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: documentSnapshot['ownerName'],
+                                    text: documentSnapshot.data()['ownerName'],
                                     style: TextStyle(
                                         fontSize: textSubTitle(context),
                                         fontFamily: FontNameDefault,
@@ -203,10 +204,11 @@ class ListItemInbox extends StatelessWidget {
                                 ]),
                           ),
                         ),
-                        documentSnapshot['timestamp'] != null
+                        documentSnapshot.data()['timestamp'] != null
                             ? Text(
-                                timeago.format(
-                                    documentSnapshot['timestamp'].toDate()),
+                                timeago.format(documentSnapshot
+                                    .data()['timestamp']
+                                    .toDate()),
                                 style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     color: Colors.grey,

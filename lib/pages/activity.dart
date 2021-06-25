@@ -180,36 +180,60 @@ class _ActivityState extends State<Activity> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(_user.uid)
           .collection('posts')
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          //     if (snapshot.connectionState == ConnectionState.done) {
-          return SizedBox(
-              height: screenSize.height,
-              child: ListView.builder(
-                  controller: _scrollController,
-                  //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: ((context, index) => ListItemPost(
-                        documentSnapshot: snapshot.data.documents[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user,
-                      ))));
-          //   } else {
-          //     return Center(
-          //       child: shimmer(),
-          //      );
-          //      }
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        // if (snapshot.hasData) {
+        //   //     if (snapshot.connectionState == ConnectionState.done) {
+        //   return SizedBox(
+        //       height: screenSize.height,
+        //       child: ListView.builder(
+        //           controller: _scrollController,
+        //           //shrinkWrap: true,
+        //           itemCount: snapshot.data.docs.length,
+        //           itemBuilder: ((context, index) => ListItemPost(
+        //                 documentSnapshot: snapshot.data.docs[index],
+        //                 index: index,
+        //                 user: _user,
+        //                 currentuser: _user,
+        //               ))));
+        //   //   } else {
+        //   //     return Center(
+        //   //       child: shimmer(),
+        //   //      );
+        //   //      }
+        // } else {
+        //   return Center(
+        //     child: shimmer(),
+        //   );
+        // }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                //   controller: _scrollController,
+                //shrinkWrap: true,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) => ListItemPost(
+                      documentSnapshot: snapshot.data.docs[index],
+                      index: index,
+                      user: _user,
+                      currentuser: _user,
+                    )));
+          } else {
+            return const Text('Empty data');
+          }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );

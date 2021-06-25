@@ -6,6 +6,7 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -181,7 +182,7 @@ class _DeptInboxState extends State<DeptInbox> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
           .doc(widget.gid)
@@ -190,29 +191,59 @@ class _DeptInboxState extends State<DeptInbox> {
           .collection('inbox')
           .orderBy('timestamp')
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          //     if (snapshot.connectionState == ConnectionState.done) {
-          return SizedBox(
-              height: screenSize.height,
-              child: ListView.builder(
-                  controller: _scrollController,
-                  //shrinkWrap: true,
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: ((context, index) => ListItemInbox(
-                        documentSnapshot: snapshot.data.documents[index],
-                        index: index,
-                      ))));
-          //   } else {
-          //     return Center(
-          //       child: shimmer(),
-          //      );
-          //      }
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: AlwaysScrollableScrollPhysics(),
+                //  controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) =>
+                    //  Text(snapshot.data.docs[index]['postId']))
+                    ListView.builder(
+                        //  controller: _scrollController,
+                        //shrinkWrap: true,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: ((context, index) => ListItemInbox(
+                              documentSnapshot: snapshot.data.docs[index],
+                              index: index,
+                            )))));
+          } else {
+            return NoContent(
+                'No notifications', 'assets/images/notification.png', '', '');
+          }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
+        // builder: ((context,AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        //   if (snapshot.hasData) {
+        //     //     if (snapshot.connectionState == ConnectionState.done) {
+        //     return SizedBox(
+        //         height: screenSize.height,
+        //         child: ListView.builder(
+        //             controller: _scrollController,
+        //             //shrinkWrap: true,
+        //             itemCount: snapshot.data.docs.length,
+        //             itemBuilder: ((context, index) => ListItemInbox(
+        //                   documentSnapshot: snapshot.data.docs[index],
+        //                   index: index,
+        //                 ))));
+        //     //   } else {
+        //     //     return Center(
+        //     //       child: shimmer(),
+        //     //      );
+        //     //      }
+        //   } else {
+        //     return Center(
+        //       child: shimmer(),
+        //     );
+        //   }
       }),
     );
   }

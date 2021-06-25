@@ -84,7 +84,7 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(_user.uid)
@@ -96,9 +96,9 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
               height: screenSize.height,
               child: ListView.builder(
                   controller: _scrollController,
-                  itemCount: snapshot.data.documents.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemActivityRequest(
-                        documentSnapshot: snapshot.data.documents[index],
+                        documentSnapshot: snapshot.data.docs[index],
                         index: index,
                         user: _user,
                         currentuser: _user,

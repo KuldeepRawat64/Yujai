@@ -6,11 +6,15 @@ import '../style.dart';
 class NoContent extends StatelessWidget {
   final String text;
   final String image;
-  final bool isAdmin;
-  final String header;
   final String subText;
+  final String infoText;
+
   const NoContent(
-      this.text, this.image, this.isAdmin, this.header, this.subText);
+    this.text,
+    this.image,
+    this.subText,
+    this.infoText,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,61 +38,36 @@ class NoContent extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontFamily: FontNameDefault,
-                fontSize: textSubTitle(context)),
+                fontSize: textAppTitle(context)),
           ),
           SizedBox(
             height: 10.0,
           ),
-          isAdmin
-              ? Container(
-                  height: screenSize.height * 0.05,
-                  width: screenSize.width * 0.45,
-                  alignment: Alignment.center,
-                  child: OutlineButton(
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(header,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context))),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Icon(
-                          Icons.add_circle_outline,
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              : Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: screenSize.width * 0.2),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                            text: header,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
-                                color: Colors.black)),
-                        TextSpan(
-                            text: subText,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
-                                color: Colors.black54))
-                      ],
-                    ),
-                  ),
-                )
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.2),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.black),
+                children: [
+                  TextSpan(
+                      text: subText,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          color: Colors.black54)),
+                  TextSpan(
+                      text: infoText,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          color: Colors.black))
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

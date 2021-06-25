@@ -5,6 +5,7 @@ import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/event_detail_page.dart';
 import 'package:Yujai/pages/task_detail.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -131,11 +132,15 @@ class _ListItemTaskState extends State<ListItemTask> {
                                     .update({'isCompleted': false});
                               }
                             }),
-                        Text(
-                          widget.documentSnapshot['taskName'],
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textSubTitle(context),
+                        Container(
+                          width: screenSize.width * 0.5,
+                          child: Text(
+                            widget.documentSnapshot['taskName'],
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                            ),
                           ),
                         ),
                       ],
@@ -247,7 +252,8 @@ class _ListItemTaskState extends State<ListItemTask> {
                             .orderBy('timestamp', descending: false)
                             .snapshots(),
                         builder: ((context, snapshot) {
-                          if (snapshot.hasData) {
+                          if (snapshot.hasData &&
+                              snapshot.data.docs.length > 0) {
                             return Container(
                               height: screenSize.height * 0.3,
                               width: screenSize.width * 0.8,
@@ -321,9 +327,11 @@ class _ListItemTaskState extends State<ListItemTask> {
                                   }),
                             );
                           } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
+                            return NoContent(
+                                'No members',
+                                'assets/images/members.png',
+                                'Add members to this project first',
+                                '');
                           }
                         }),
                       ),

@@ -124,6 +124,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
               builder: ((context, listSnapshot) {
                 if (widget.documentSnapshot != null && listSnapshot.hasData) {
                   return ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: listSnapshot.data.docs.length,
                       itemBuilder: ((context, index) => ListItemTask(

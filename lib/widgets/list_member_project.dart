@@ -81,7 +81,8 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
     super.initState();
     _isInvited = false;
     _repository
-        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid)
+        .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid,
+            widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
       if (!mounted) return;
@@ -873,7 +874,7 @@ class _ListItemMemberProjectState extends State<ListItemMemberProject> {
         currentTeam: widget.team,
         followerId: snapshot['ownerUid'],
         followerName: snapshot['ownerName'],
-        followerAccountType: widget.team.teamName + 'Member',
+        //   followerAccountType: widget.team.teamName + 'Member',
         followerPhotoUrl: snapshot['ownerPhotoUrl']);
     addInviteToActivityFeed();
   }

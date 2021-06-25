@@ -17,7 +17,7 @@ import 'package:transparent_image/transparent_image.dart';
 import '../style.dart';
 
 class ListItemPost extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final int index;
 
@@ -77,8 +77,8 @@ class _ListItemPostState extends State<ListItemPost> {
   Future<void> send() async {
     final Email email = Email(
       body: _bodyController.text +
-          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\n Owner ID : ${widget.documentSnapshot.data()['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot.data()['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
@@ -130,8 +130,8 @@ class _ListItemPostState extends State<ListItemPost> {
     return Padding(
       padding: EdgeInsets.only(
         bottom: screenSize.height * 0.025,
-        left: screenSize.width * 0.05,
-        right: screenSize.width * 0.05,
+        left: screenSize.width * 0.02,
+        right: screenSize.width * 0.02,
       ),
       child: Container(
         decoration: ShapeDecoration(
@@ -152,30 +152,31 @@ class _ListItemPostState extends State<ListItemPost> {
               leading: CircleAvatar(
                   radius: screenSize.height * 0.03,
                   backgroundImage: CachedNetworkImageProvider(
-                      widget.documentSnapshot['postOwnerPhotoUrl'])),
+                      widget.documentSnapshot.data()['postOwnerPhotoUrl'])),
               title: InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => FriendProfileScreen(
-                              uid: widget.documentSnapshot['ownerUid'],
-                              name: widget.documentSnapshot['postOwnerName'])));
+                              uid: widget.documentSnapshot.data()['ownerUid'],
+                              name: widget.documentSnapshot
+                                  .data()['postOwnerName'])));
                 },
                 child: new Text(
-                  widget.documentSnapshot['postOwnerName'],
+                  widget.documentSnapshot.data()['postOwnerName'],
                   style: TextStyle(
                       fontFamily: FontNameDefault,
                       fontSize: textSubTitle(context),
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              subtitle: widget.documentSnapshot['location'] != '' &&
-                      widget.documentSnapshot['location'] != null
+              subtitle: widget.documentSnapshot.data()['location'] != '' &&
+                      widget.documentSnapshot.data()['location'] != null
                   ? Row(
                       children: [
                         new Text(
-                          widget.documentSnapshot['location'],
+                          widget.documentSnapshot.data()['location'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //    fontSize: textBody1(context),
@@ -198,9 +199,10 @@ class _ListItemPostState extends State<ListItemPost> {
                             top: screenSize.height * 0.002,
                           ),
                           child: Text(
-                              widget.documentSnapshot['time'] != null
-                                  ? timeago.format(
-                                      widget.documentSnapshot['time'].toDate())
+                              widget.documentSnapshot.data()['time'] != null
+                                  ? timeago.format(widget.documentSnapshot
+                                      .data()['time']
+                                      .toDate())
                                   : '',
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
@@ -215,65 +217,70 @@ class _ListItemPostState extends State<ListItemPost> {
                         top: screenSize.height * 0.002,
                       ),
                       child: Text(
-                          widget.documentSnapshot['time'] != null
-                              ? timeago.format(
-                                  widget.documentSnapshot['time'].toDate())
+                          widget.documentSnapshot.data()['time'] != null
+                              ? timeago.format(widget.documentSnapshot
+                                  .data()['time']
+                                  .toDate())
                               : '',
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               //   fontSize: textbody2(context),
                               color: Colors.grey)),
                     ),
-              trailing:
-                  widget.currentuser.uid == widget.documentSnapshot['ownerUid']
-                      ? InkWell(
-                          onTap: () {
-                            //    showDelete(widget.documentSnapshot);
-                            //    deleteDialog(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    side: BorderSide(
-                                        width: 0.1, color: Colors.black54)),
-                                //color: Theme.of(context).accentColor,
+              trailing: widget.currentuser.uid ==
+                      widget.documentSnapshot.data()['ownerUid']
+                  ? InkWell(
+                      onTap: () {
+                        //    showDelete(widget.documentSnapshot);
+                        //    deleteDialog(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                //          borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: screenSize.height * 0.005,
-                                    horizontal: screenSize.width * 0.02,
-                                  ),
-                                  child: Icon(Icons.more_horiz_outlined))),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            showReport(widget.documentSnapshot);
-                          },
-                          child: Container(
-                              decoration: ShapeDecoration(
-                                shape: CircleBorder(
-                                    side: BorderSide(
-                                        width: 0.1, color: Colors.purple)),
-                                //  color: Theme.of(context).accentColor,
+                              child: Icon(Icons.more_horiz_outlined))),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        showReport(widget.documentSnapshot);
+                      },
+                      child: Container(
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(
+                                //          borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(
+                                    width: 0.1, color: Colors.black54)),
+                            //color: Theme.of(context).accentColor,
+                          ),
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.height * 0.005,
+                                horizontal: screenSize.width * 0.02,
                               ),
-                              child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: screenSize.height * 0.005,
-                                    horizontal: screenSize.width * 0.02,
-                                  ),
-                                  child: Icon(Icons.more_horiz_outlined))),
-                        ),
+                              child: Icon(Icons.more_horiz_outlined))),
+                    ),
             ),
-            Center(
-              child: FadeInImage.assetNetwork(
-                fadeInDuration: const Duration(milliseconds: 300),
-                placeholder: 'assets/images/placeholder.png',
-                placeholderScale: 10,
-                image: widget.documentSnapshot['imgUrl'],
-              ),
-            ),
-            widget.documentSnapshot['caption'] != ''
+            widget.documentSnapshot.data()['imgUrl'] != null &&
+                    widget.documentSnapshot.data()['imgUrl'] != ''
+                ? Center(
+                    child: FadeInImage.assetNetwork(
+                      fadeInDuration: const Duration(milliseconds: 300),
+                      placeholder: 'assets/images/placeholder.png',
+                      placeholderScale: 10,
+                      image: widget.documentSnapshot.data()['imgUrl'],
+                    ),
+                  )
+                : Container(),
+            widget.documentSnapshot.data()['caption'] != ''
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -283,7 +290,7 @@ class _ListItemPostState extends State<ListItemPost> {
                             top: screenSize.height * 0.01,
                             left: screenSize.width / 30),
                         child: Text(
-                          widget.documentSnapshot['caption'],
+                          widget.documentSnapshot.data()['caption'],
                           style: TextStyle(
                               fontFamily: FontNameDefault,
                               fontSize: textSubTitle(context),
@@ -456,7 +463,7 @@ class _ListItemPostState extends State<ListItemPost> {
               ),
               trailing: SizedBox(
                 height: 40,
-                width: 50,
+                width: 60,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(

@@ -7,6 +7,7 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -191,7 +192,7 @@ class _ProjectInboxState extends State<ProjectInbox> {
             //         widget.currentuser.uid == widget.dept.currentUserUid ||
             //         widget.currentuser.uid == widget.project.currentUserUid
             //     ?
-            StreamBuilder(
+            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('teams')
               .doc(widget.gid)
@@ -204,17 +205,17 @@ class _ProjectInboxState extends State<ProjectInbox> {
               .where('assigned', isEqualTo: widget.currentuser.uid)
               .snapshots(),
           builder: ((context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data.docs.length > 0) {
               //     if (snapshot.connectionState == ConnectionState.done) {
               return ListView.builder(
                 controller: _scrollController,
                 shrinkWrap: true,
-                itemCount: snapshot.data.documents.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: ((context, index) =>
-                    snapshot.data.documents[index].data['ownerUid'] !=
+                    snapshot.data.docs[index].data()['ownerUid'] !=
                             widget.currentuser.uid
                         ? ListItemInbox(
-                            documentSnapshot: snapshot.data.documents[index],
+                            documentSnapshot: snapshot.data.docs[index],
                             index: index,
                           )
                         : Container()),
@@ -225,9 +226,8 @@ class _ProjectInboxState extends State<ProjectInbox> {
               //      );
               //      }
             } else {
-              return Center(
-                child: Container(),
-              );
+              return NoContent(
+                  'No notifications', 'assets/images/notification.png', '', '');
             }
           }),
         )
