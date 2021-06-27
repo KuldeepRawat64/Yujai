@@ -286,18 +286,27 @@ class _ListItemDiscussionsProjectState
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          _getPercentage() == double.nan
-              ? ''
-              : '${_getPercentage()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage()}'.substring(0, 3).replaceAll('.', ''),
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -305,18 +314,28 @@ class _ListItemDiscussionsProjectState
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          _getPercentage2() == double.nan
-              ? ''
-              : '${_getPercentage2()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage2()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -324,18 +343,28 @@ class _ListItemDiscussionsProjectState
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          _getPercentage3() == double.nan
-              ? ''
-              : '${_getPercentage3()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage3()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -343,18 +372,28 @@ class _ListItemDiscussionsProjectState
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          _getPercentage4() == double.nan
-              ? ''
-              : '${_getPercentage4()}'
-                  .replaceAll('.0', ' %  ')
-                  .replaceAll('NaN', ' %  ')
-                  .replaceAll('Infinity', ' %  '),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage4()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -1841,7 +1880,9 @@ class _ListItemDiscussionsProjectState
                           ),
                           InkWell(
                             onTap: () {
-                              send().then((value) => Navigator.pop(context));
+                              send()
+                                  .then((value) => Navigator.pop(context))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: Text(
                               'Submit',
@@ -1906,6 +1947,7 @@ class _ListItemDiscussionsProjectState
                           ),
                           child: GestureDetector(
                             onTap: () {
+                              Navigator.pop(context);
                               deletePost(snapshot);
                             },
                             child: Container(
@@ -2023,7 +2065,7 @@ class _ListItemDiscussionsProjectState
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {

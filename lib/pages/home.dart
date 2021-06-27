@@ -16,16 +16,15 @@ import 'package:new_version/new_version.dart';
 final usersRef = FirebaseFirestore.instance.collection('users');
 final groupsRef = FirebaseFirestore.instance.collection('groups');
 final teamsRef = FirebaseFirestore.instance.collection('teams');
+PageController _pageController = PageController();
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-PageController _pageController;
-
 class _HomeState extends State<Home> {
-  int cupertinoTabBarIIIValue = 0;
+  int cupertinoTabBarIIIValue;
   int cupertinoTabBarIIIValueGetter() => cupertinoTabBarIIIValue;
 
   //int _page = 0;
@@ -50,12 +49,13 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    cupertinoTabBarIIIValue = 0;
+    _pageController = PageController(initialPage: cupertinoTabBarIIIValue);
     final newVersion = NewVersion(
       context: context,
       androidId: "com.animusit.yujai",
     );
     newVersion.showAlertIfNecessary();
-    _pageController = PageController(initialPage: cupertinoTabBarIIIValue);
 
     // FirebaseMessaging.instance;
     // FirebaseMessaging.configure(onMessage: (msg) {
@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
             controller: _pageController,
             physics: new NeverScrollableScrollPhysics(),
             // scrollDirection: Axis.horizontal,
-            onPageChanged: onPageChanged,
+            onPageChanged: onPageChanged ?? 0,
           ),
           bottomNavigationBar: CupertinoTabBar.CupertinoTabBar(
             const Color(0xFFf6f6f6),
@@ -132,11 +132,11 @@ class _HomeState extends State<Home> {
                 color: Colors.black54,
               ),
             ],
-            cupertinoTabBarIIIValueGetter,
+            cupertinoTabBarIIIValueGetter ?? 0,
             (int index) {
               navigationTapped(index);
               setState(() {
-                cupertinoTabBarIIIValue = index;
+                cupertinoTabBarIIIValue = index ?? 0;
               });
             },
             useShadow: false,

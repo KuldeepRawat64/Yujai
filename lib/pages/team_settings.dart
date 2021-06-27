@@ -34,7 +34,7 @@ class TeamSettings extends StatefulWidget {
 }
 
 class _TeamSettingsState extends State<TeamSettings> {
-  Team _team;
+  //Team _team;
   bool isPrivate = false;
   bool isHidden = false;
   UserModel _user;
@@ -53,14 +53,14 @@ class _TeamSettingsState extends State<TeamSettings> {
     "Confidentiality"
   ];
 
-  retrieveTeamDetails() async {
-    //FirebaseUser currentUser = await _repository.getCurrentUser();
-    Team team = await _repository.retreiveTeamDetails(widget.gid);
-    if (!mounted) return;
-    setState(() {
-      _team = team;
-    });
-  }
+  // retrieveTeamDetails() async {
+  //   //FirebaseUser currentUser = await _repository.getCurrentUser();
+  //   Team team = await _repository.retreiveTeamDetails(widget.gid);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _team = team;
+  //   });
+  // }
 
   Future<File> _pickImage(String action) async {
     PickedFile selectedImage;
@@ -89,7 +89,7 @@ class _TeamSettingsState extends State<TeamSettings> {
   @override
   void initState() {
     super.initState();
-    retrieveTeamDetails();
+    // retrieveTeamDetails();
     if (!mounted) return;
     _nameController.text = widget.name;
     _descriptionController.text = widget.description;
@@ -97,7 +97,7 @@ class _TeamSettingsState extends State<TeamSettings> {
 
   submit(BuildContext context) {
     if (_formKey.currentState.validate()) {
-      teamsRef.doc(_team.uid).update({
+      teamsRef.doc(widget.gid).update({
         "teamName": _nameController.text,
         "teamDescription": _descriptionController.text,
       });
@@ -143,171 +143,164 @@ class _TeamSettingsState extends State<TeamSettings> {
                 screenSize.height * 0.025,
               ),
               children: [
-                _team != null
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: Text(
+                        'Basic Info',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textHeader(context)),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 5.0),
-                            child: Text(
-                              'Basic Info',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  //color: Colors.black54,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: textHeader(context)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              children: [
-                                StreamBuilder<
-                                        DocumentSnapshot<Map<String, dynamic>>>(
-                                    stream: teamsRef.doc(_team.uid).snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      } else if (snapshot.connectionState ==
-                                              ConnectionState.active ||
-                                          snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                        if (snapshot.hasError) {
-                                          return CircleAvatar(
-                                            radius: screenSize.height * 0.045,
-                                            backgroundImage: AssetImage(
-                                                'assets/images/error.png'),
-                                          );
-                                        }
-                                        if (snapshot.hasData) {
-                                          return CircleAvatar(
-                                            radius: screenSize.height * 0.045,
-                                            backgroundImage:
-                                                CachedNetworkImageProvider(
-                                                    snapshot.data[
-                                                        'teamProfilePhoto']),
-                                          );
-                                        }
-                                      }
+                          StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                              stream: teamsRef.doc(widget.gid).snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (snapshot.connectionState ==
+                                        ConnectionState.active ||
+                                    snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                  if (snapshot.hasError) {
+                                    return CircleAvatar(
+                                      radius: screenSize.height * 0.045,
+                                      backgroundImage:
+                                          AssetImage('assets/images/error.png'),
+                                    );
+                                  }
+                                  if (snapshot.hasData) {
+                                    return CircleAvatar(
+                                      radius: screenSize.height * 0.045,
+                                      backgroundImage:
+                                          CachedNetworkImageProvider(snapshot
+                                              .data['teamProfilePhoto']),
+                                    );
+                                  }
+                                }
 
-                                      return Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }),
-                                SizedBox(
-                                  width: screenSize.width * 0.08,
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }),
+                          SizedBox(
+                            width: screenSize.width * 0.08,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _pickImage('Gallery').then((selectedImage) {
+                                setState(() {
+                                  imageFile = selectedImage;
+                                });
+                                compressImage();
+                                _repository
+                                    .uploadImageToStorage(imageFile)
+                                    .then((url) {
+                                  teamsRef.doc(widget.gid).update({
+                                    'teamProfilePhoto': url
+                                  }).catchError((e) =>
+                                      print('Error changing team icon : $e'));
+                                }).catchError((e) => print(
+                                        'Error upload icon to storage : $e'));
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6.0),
+                              decoration: ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      side: BorderSide(
+                                          width: 0.3, color: Colors.grey))),
+                              child: Text(
+                                'Change Icon',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  // fontSize: textSubTitle(context)
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    _pickImage('Gallery').then((selectedImage) {
-                                      setState(() {
-                                        imageFile = selectedImage;
-                                      });
-                                      compressImage();
-                                      _repository
-                                          .uploadImageToStorage(imageFile)
-                                          .then((url) {
-                                        teamsRef.doc(_team.uid).update({
-                                          'teamProfilePhoto': url
-                                        }).catchError((e) => print(
-                                            'Error changing team icon : $e'));
-                                      }).catchError((e) => print(
-                                              'Error upload icon to storage : $e'));
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6.0),
-                                    decoration: ShapeDecoration(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            side: BorderSide(
-                                                width: 0.3,
-                                                color: Colors.grey))),
-                                    child: Text(
-                                      'Change Icon',
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.bold,
-                                        // fontSize: textSubTitle(context)
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            //   color: const Color(0xffffffff),
-                            child: TextFormField(
-                              validator: (val) {
-                                if (val.isEmpty)
-                                  return 'Please enter a team name';
-                                return null;
-                              },
-                              onFieldSubmitted: (val) {
-                                _nameController.text = val;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  fontWeight: FontWeight.bold),
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Colors.grey[100],
-                                  //  hintText: 'Name',
-                                  labelText: 'Name',
-                                  labelStyle: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.grey,
-                                      //   fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context))),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenSize.height * 0.02,
-                          ),
-                          Container(
-                            //      color: const Color(0xffffffff),
-                            child: TextFormField(
-                              onFieldSubmitted: (val) {
-                                _descriptionController.text = val;
-                              },
-                              autocorrect: true,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  fontWeight: FontWeight.bold),
-                              controller: _descriptionController,
-                              minLines: 6,
-                              maxLines: 6,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor: Colors.grey[100],
-                                  //  hintText: 'Description',
-                                  labelText: 'Description',
-                                  labelStyle: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.grey,
-                                      //   fontWeight: FontWeight.bold,
-                                      fontSize: textSubTitle(context))),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenSize.height * 0.02,
-                          ),
+                          )
                         ],
-                      )
-                    : Container(),
+                      ),
+                    ),
+                    Container(
+                      //   color: const Color(0xffffffff),
+                      child: TextFormField(
+                        validator: (val) {
+                          if (val.isEmpty) return 'Please enter a team name';
+                          return null;
+                        },
+                        onFieldSubmitted: (val) {
+                          _nameController.text = val;
+                        },
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            fontWeight: FontWeight.bold),
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            //  hintText: 'Name',
+                            labelText: 'Name',
+                            labelStyle: TextStyle(
+                                fontFamily: FontNameDefault,
+                                color: Colors.grey,
+                                //   fontWeight: FontWeight.bold,
+                                fontSize: textSubTitle(context))),
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    Container(
+                      //      color: const Color(0xffffffff),
+                      child: TextFormField(
+                        onFieldSubmitted: (val) {
+                          _descriptionController.text = val;
+                        },
+                        autocorrect: true,
+                        textCapitalization: TextCapitalization.sentences,
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            fontWeight: FontWeight.bold),
+                        controller: _descriptionController,
+                        minLines: 6,
+                        maxLines: 6,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            //  hintText: 'Description',
+                            labelText: 'Description',
+                            labelStyle: TextStyle(
+                                fontFamily: FontNameDefault,
+                                color: Colors.grey,
+                                //   fontWeight: FontWeight.bold,
+                                fontSize: textSubTitle(context))),
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                  ],
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -483,12 +476,11 @@ class _TeamSettingsState extends State<TeamSettings> {
                                   .then((doc) {
                                 if (doc.exists) {
                                   doc.reference.delete();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Home()));
                                 }
-                              }).then((value) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Home()));
                               });
                             },
                             child: Container(

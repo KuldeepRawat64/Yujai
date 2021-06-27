@@ -344,12 +344,92 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                 .snapshots(),
             builder: ((context,
                 AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                if (snapshot.data.docs.isEmpty) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.connectionState == ConnectionState.active ||
+                  snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return const Text('Error');
+                } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+                  return SizedBox(
+                    height: screenSize.height * 0.86,
+                    width: screenSize.width,
+                    child: ListView.builder(
+                      //    controller: _scrollController,
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: ((context, index) => Padding(
+                            padding: const EdgeInsets.only(
+                                left: 8.0, right: 8.0, top: 8.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DepartmentPage(
+                                              dIcon: snapshot.data.docs[index]
+                                                  ['departmentProfilePhoto'],
+                                              dColor: snapshot.data.docs[index]
+                                                  ['color'],
+                                              isMember: false,
+                                              dId: snapshot.data.docs[index]
+                                                  ['uid'],
+                                              dName: snapshot.data.docs[index]
+                                                  ['departmentName'],
+                                              gid: widget.gid,
+                                              name: widget.name,
+                                              currentUser: widget.currentUser,
+                                            )));
+                              },
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                tileColor: const Color(0xffffffff),
+                                leading: Container(
+                                  width: screenSize.width * 0.1,
+                                  height: screenSize.height * 0.06,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(
+                                        screenSize.height * 0.01),
+                                    child: Icon(
+                                      //  Icons.work_outline,
+                                      deserializeIcon(snapshot.data.docs[index]
+                                          ['departmentProfilePhoto']),
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  decoration: ShapeDecoration(
+                                    color: Color(
+                                        snapshot.data.docs[index]['color']),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  snapshot.data.docs[index]['departmentName'],
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                  ),
+                                ),
+                                trailing: widget.currentUser.uid ==
+                                        widget.team.currentUserUid
+                                    ? InkWell(
+                                        onTap: () {
+                                          _showDeptEditDialog(
+                                              snapshot.data.docs[index]);
+                                        },
+                                        child: Icon(Icons.more_horiz),
+                                      )
+                                    : Text(''),
+                              ),
+                            ),
+                          )),
+                    ),
+                  );
+                } else {
                   return _team != null &&
                           _team.currentUserUid == currentuser.uid
                       ? Padding(
@@ -368,83 +448,106 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                               'assets/images/department.png', '', ''),
                         );
                 }
-                return SizedBox(
-                  height: screenSize.height * 0.86,
-                  child: ListView.builder(
-                    //    controller: _scrollController,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data.docs.length,
-                    itemBuilder: ((context, index) => Padding(
-                          padding: const EdgeInsets.only(
-                              left: 8.0, right: 8.0, top: 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DepartmentPage(
-                                            dIcon: snapshot.data.docs[index]
-                                                ['departmentProfilePhoto'],
-                                            dColor: snapshot.data.docs[index]
-                                                ['color'],
-                                            isMember: false,
-                                            dId: snapshot.data.docs[index]
-                                                ['uid'],
-                                            dName: snapshot.data.docs[index]
-                                                ['departmentName'],
-                                            gid: widget.gid,
-                                            name: widget.name,
-                                            currentUser: widget.currentUser,
-                                          )));
-                            },
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              tileColor: const Color(0xffffffff),
-                              leading: Container(
-                                width: screenSize.width * 0.1,
-                                height: screenSize.height * 0.06,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.all(screenSize.height * 0.01),
-                                  child: Icon(
-                                    //  Icons.work_outline,
-                                    deserializeIcon(snapshot.data.docs[index]
-                                        ['departmentProfilePhoto']),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                decoration: ShapeDecoration(
-                                  color:
-                                      Color(snapshot.data.docs[index]['color']),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                              ),
-                              title: Text(
-                                snapshot.data.docs[index]['departmentName'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                ),
-                              ),
-                              trailing: InkWell(
-                                onTap: () {
-                                  _showDeptEditDialog(
-                                      snapshot.data.docs[index]);
-                                },
-                                child: Icon(Icons.more_horiz),
-                              ),
-                            ),
-                          ),
-                        )),
-                  ),
-                );
+              } else {
+                return Text('State: ${snapshot.connectionState}');
               }
-            }),
-          )
+            })
+            // builder: ((context,
+            //     AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            //   if (snapshot.connectionState == ConnectionState.waiting) {
+            //     return Center(
+            //       child: CircularProgressIndicator(),
+            //     );
+            //   } else if (!snapshot.hasData && snapshot.data.docs.isEmpty) {
+            //     return _team != null && _team.currentUserUid == currentuser.uid
+            //         ? Padding(
+            //             padding: EdgeInsets.only(top: screenSize.height * 0.25),
+            //             child: NoContent(
+            //                 'No departments',
+            //                 'assets/images/department.png',
+            //                 'Add a department',
+            //                 ' by clicking on the + icon above'),
+            //           )
+            //         : Padding(
+            //             padding: EdgeInsets.only(top: screenSize.height * 0.25),
+            //             child: NoContent(
+            //                 'No departments', 'assets/images/department.png', '', ''),
+            //           );
+            //   }
+            //   return SizedBox(
+            //     height: screenSize.height * 0.86,
+            //     child: ListView.builder(
+            //       //    controller: _scrollController,
+            //       shrinkWrap: true,
+            //       itemCount: snapshot.data.docs.length,
+            //       itemBuilder: ((context, index) => Padding(
+            //             padding:
+            //                 const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+            //             child: InkWell(
+            //               onTap: () {
+            //                 Navigator.push(
+            //                     context,
+            //                     MaterialPageRoute(
+            //                         builder: (context) => DepartmentPage(
+            //                               dIcon: snapshot.data.docs[index]
+            //                                   ['departmentProfilePhoto'],
+            //                               dColor: snapshot.data.docs[index]['color'],
+            //                               isMember: false,
+            //                               dId: snapshot.data.docs[index]['uid'],
+            //                               dName: snapshot.data.docs[index]
+            //                                   ['departmentName'],
+            //                               gid: widget.gid,
+            //                               name: widget.name,
+            //                               currentUser: widget.currentUser,
+            //                             )));
+            //               },
+            //               child: ListTile(
+            //                 shape: RoundedRectangleBorder(
+            //                   borderRadius: BorderRadius.circular(12.0),
+            //                 ),
+            //                 tileColor: const Color(0xffffffff),
+            //                 leading: Container(
+            //                   width: screenSize.width * 0.1,
+            //                   height: screenSize.height * 0.06,
+            //                   child: Padding(
+            //                     padding: EdgeInsets.all(screenSize.height * 0.01),
+            //                     child: Icon(
+            //                       //  Icons.work_outline,
+            //                       deserializeIcon(snapshot.data.docs[index]
+            //                           ['departmentProfilePhoto']),
+            //                       color: Colors.white,
+            //                     ),
+            //                   ),
+            //                   decoration: ShapeDecoration(
+            //                     color: Color(snapshot.data.docs[index]['color']),
+            //                     shape: RoundedRectangleBorder(
+            //                       borderRadius: BorderRadius.circular(8.0),
+            //                     ),
+            //                   ),
+            //                 ),
+            //                 title: Text(
+            //                   snapshot.data.docs[index]['departmentName'],
+            //                   style: TextStyle(
+            //                     fontFamily: FontNameDefault,
+            //                     fontSize: textSubTitle(context),
+            //                   ),
+            //                 ),
+            //                 trailing: widget.currentUser.uid ==
+            //                         widget.team.currentUserUid
+            //                     ? InkWell(
+            //                         onTap: () {
+            //                           _showDeptEditDialog(snapshot.data.docs[index]);
+            //                         },
+            //                         child: Icon(Icons.more_horiz),
+            //                       )
+            //                     : Container(),
+            //               ),
+            //             ),
+            //           )),
+            //     ),
+            //   );
+            // }),
+            )
         : StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('teams')
@@ -532,13 +635,16 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
                                   fontSize: textSubTitle(context),
                                 ),
                               ),
-                              trailing: InkWell(
-                                onTap: () {
-                                  _showDeptEditDialog(
-                                      snapshot.data.docs[index]);
-                                },
-                                child: Icon(Icons.more_horiz),
-                              ),
+                              trailing: widget.currentUser.uid ==
+                                      widget.team.currentUserUid
+                                  ? InkWell(
+                                      onTap: () {
+                                        _showDeptEditDialog(
+                                            snapshot.data.docs[index]);
+                                      },
+                                      child: Icon(Icons.more_horiz),
+                                    )
+                                  : Text(''),
                             ),
                           ),
                         )),

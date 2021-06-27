@@ -15,6 +15,7 @@ import 'package:Yujai/widgets/new_team_screen.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class NewsPage extends StatefulWidget {
@@ -218,7 +219,11 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
                       ),
                     ),
               body: currentUser != null && currentUser.accountType != 'Company'
-                  ? ButtonBar(context: context, tabController: _tabController)
+                  ? ButtonBar(
+                      context: context,
+                      tabController: _tabController,
+                      currentUser: currentUser,
+                    )
                   : myTeamsList(),
 //floatingActionButton:
             )
@@ -354,80 +359,99 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
   Widget myTeamsList() {
     var screenSize = MediaQuery.of(context).size;
-    return myTeamList.length > 0
-        ? ListView.builder(
-            controller: _scrollController1,
-            itemCount: myTeamList.length,
-            itemBuilder: ((context, index) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TeamPage(
-                                    currentUser: currentUser,
-                                    isMember: false,
-                                    gid: myTeamList[index].uid,
-                                    name: myTeamList[index].teamName,
-                                  )));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8.0,
-                        right: 8.0,
-                        top: 8.0,
-                      ),
-                      child: Container(
-                        decoration: ShapeDecoration(
-                          color: const Color(0xffffffff),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            //  side: BorderSide(color: Colors.grey[300]),
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('teams')
+            .orderBy('timestamp')
+            .where('members', arrayContainsAny: [currentUser.uid]).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData && snapshot.data.docs.length > 0) {
+              return ListView.builder(
+                //  controller: _scrollController1,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TeamPage(
+                                        currentUser: currentUser,
+                                        isMember: false,
+                                        gid: snapshot.data.docs[index]['uid'],
+                                        name: snapshot.data.docs[index]
+                                            ['teamName'],
+                                      )));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: 8.0,
                           ),
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            backgroundImage: NetworkImage(
-                                myTeamList[index].teamProfilePhoto),
-                          ),
-                          title: Text(
-                            // userList[index].toString(),
-                            myTeamList[index].teamName,
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: const Color(0xffffffff),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                //  side: BorderSide(color: Colors.grey[300]),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                backgroundImage: CachedNetworkImageProvider(
+                                    snapshot.data.docs[index]
+                                        ['teamProfilePhoto']),
+                              ),
+                              title: Text(
+                                // userList[index].toString(),
+                                snapshot.data.docs[index]['teamName'],
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                              trailing: Icon(Icons.work_outline),
                             ),
                           ),
-                          trailing: myTeamList[index].isPrivate == true
-                              ? Icon(Icons.lock_outline)
-                              : Icon(Icons.public),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                }),
               );
-            }),
-          )
-        : NoContent('No teams', 'assets/images/team_no-image.png',
-            'Create a team', ' by clicking on the + icon above');
+            }
+            return NoContent('No teams', 'assets/images/team_no-image.png',
+                'Create a team', ' by clicking on the + icon above');
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 }
 
 class ButtonBar extends StatelessWidget {
-  const ButtonBar({
-    Key key,
-    @required this.context,
-    @required TabController tabController,
-  })  : _tabController = tabController,
+  const ButtonBar(
+      {Key key,
+      @required this.context,
+      @required TabController tabController,
+      @required UserModel currentUser})
+      : _tabController = tabController,
+        _currentUser = currentUser,
         super(key: key);
 
   final BuildContext context;
   final TabController _tabController;
+  final UserModel _currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -438,7 +462,9 @@ class ButtonBar extends StatelessWidget {
         children: <Widget>[
           Container(
               height: MediaQuery.of(context).size.height,
-              child: NestedTabBarGroup()),
+              child: NestedTabBarGroup(
+                uid: _currentUser.uid,
+              )),
         ],
         controller: _tabController,
       ),

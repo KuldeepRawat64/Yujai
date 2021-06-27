@@ -234,11 +234,21 @@ class _ListPostForumState extends State<ListPostForum> {
     });
   }
 
+  checkPollLength(int time) {
+    if (DateTime.now().millisecondsSinceEpoch >= time) {
+      if (!mounted) return;
+      setState(() {
+        _isVoted = true;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     selectedSubject = 'Spam';
     buildPollDetail();
+    // checkPollLength(widget.documentSnapshot.data()['pollLength']);
     _displayFront = true;
     _flipXAxis = true;
     _repository

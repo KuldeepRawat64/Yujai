@@ -450,9 +450,11 @@ class _DepartmentPageState extends State<DepartmentPage>
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xffffffff),
         key: _scaffoldKey,
         body: CustomScrollView(
+          shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           controller: _scrollController,
           slivers: [
@@ -916,12 +918,11 @@ class _DepartmentPageState extends State<DepartmentPage>
   }
 
   checkUser() {
-    if (widget.currentUser.uid == _team.currentUserUid) {
+    if (widget.currentUser.uid == _team.currentUserUid ||
+        widget.currentUser.uid == _department.currentUserUid) {
       return _onButtonPressedAdmin();
-    } else if (widget.isMember == true || isMember == true) {
-      return _onButtonPressedUser();
     } else {
-      return _onButtonPressedJoin();
+      return _onButtonPressedUser();
     }
   }
 
@@ -930,127 +931,118 @@ class _DepartmentPageState extends State<DepartmentPage>
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Container(
-            height: screenSize.height * 0.34,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.add_a_photo,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Project',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialog,
-                ),
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.shopping,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Task',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    _showTaskDialog().then((val) => Navigator.pop(context));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.text_fields,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Discussion',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => GroupUploadDiscussion(
-                    //               group: _team,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //             )));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.poll,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Poll',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.white,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => GroupUploadPoll(
-                    //               group: _team,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //             )));
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }
-
-  void _onButtonPressedJoin() {
-    var screenSize = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            height: screenSize.height * 0.18,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.receipt,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Report Group',
-                    style: TextStyle(fontSize: screenSize.height * 0.022),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: screenSize.height * 0.022),
-                  ),
+          return Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                top: -18,
+                right: 6,
+                child: InkResponse(
                   onTap: () {
                     Navigator.pop(context);
                   },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[200],
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Container(
+                height: screenSize.height * 0.2,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: screenSize.height * 0.02,
+                    ),
+                    // ListTile(
+                    //   leading: Icon(
+                    //     Icons.assignment_outlined,
+                    //     size: screenSize.height * 0.04,
+                    //   ),
+                    //   title: Text(
+                    //     'Project',
+                    //     style: TextStyle(
+                    //         fontFamily: FontNameDefault,
+                    //         //  color: Colors.white,
+                    //         fontSize: textSubTitle(context)),
+                    //   ),
+                    //   onTap: () {
+                    //     _showFormDialog().then((val) => Navigator.pop(context));
+                    //   },
+                    // ),
+                    // ListTile(
+                    //   leading: Icon(
+                    //     Icons.check_circle_outline,
+                    //     size: screenSize.height * 0.04,
+                    //   ),
+                    //   title: Text(
+                    //     'Task',
+                    //     style: TextStyle(
+                    //         fontFamily: FontNameDefault,
+                    //         //   color: Colors.white,
+                    //         fontSize: textSubTitle(context)),
+                    //   ),
+                    //   onTap: () {
+                    //     _showTaskDialog().then((val) => Navigator.pop(context));
+                    //   },
+                    // ),
+                    ListTile(
+                      leading: Icon(
+                        MdiIcons.commentOutline,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Discussion',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //  color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showDiscussionDialog()
+                            .then((val) => Navigator.pop(context));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.poll_outlined,
+                        size: screenSize.height * 0.04,
+                      ),
+                      title: Text(
+                        'Poll',
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            //  color: Colors.white,
+                            fontSize: textSubTitle(context)),
+                      ),
+                      onTap: () {
+                        _showPollDialog().then((val) => Navigator.pop(context));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.cancel_outlined,
+              //     size: screenSize.height * 0.04,
+              //   ),
+              //   title: Text(
+              //     'Cancel',
+              //     style: TextStyle(
+              //         fontFamily: FontNameDefault,
+              //         //   color: Colors.white,
+              //         fontSize: textSubTitle(context)),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //   },
+              // ),
+            ],
           );
         });
   }
@@ -2060,494 +2052,506 @@ class _DepartmentPageState extends State<DepartmentPage>
         builder: ((BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
-              content: Stack(
-                overflow: Overflow.visible,
-                children: <Widget>[
-                  Positioned(
-                    right: -40.0,
-                    top: -40.0,
-                    child: InkResponse(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: CircleAvatar(
-                        child: Icon(Icons.close),
-                        backgroundColor: Colors.grey,
+              content: SingleChildScrollView(
+                child: Stack(
+                  overflow: Overflow.visible,
+                  children: <Widget>[
+                    Positioned(
+                      right: -40.0,
+                      top: -40.0,
+                      child: InkResponse(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: CircleAvatar(
+                          child: Icon(Icons.close),
+                          backgroundColor: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Wrap(
-                      children: <Widget>[
-                        Container(
-                          child: TextField(
-                            minLines: 1,
-                            maxLines: 2,
-                            keyboardType: TextInputType.multiline,
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                            ),
-                            decoration: InputDecoration(
-                              border: UnderlineInputBorder(),
-                              hintText: 'Poll title',
-                            ),
-                            onChanged: (val) {
-                              if (_pollTitleController.text.isNotEmpty) {
-                                setState(() {
-                                  valueFirst = true;
-                                });
-                              } else {
-                                setState(() {
-                                  valueFirst = false;
-                                });
-                              }
-                            },
-                            controller: _pollTitleController,
-                          ),
-                        ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 5),
-                        //       child: DropdownButton(
-                        //           hint: Text('Type'),
-                        //           underline: Container(color: Colors.white),
-                        //           style: TextStyle(
-                        //             fontFamily: FontNameDefault,
-                        //             fontSize: textBody1(context),
-                        //             color: Colors.black87,
-                        //           ),
-                        //           // iconSize: screenSize.height * 0.05,
-                        //           icon: Icon(Icons.keyboard_arrow_down,
-                        //               color: Theme.of(context).primaryColor),
-                        //           value: _selectedPollType,
-                        //           items: _dropDownMenuPollType,
-                        //           onChanged: (PollType selectedPollType) {
-                        //             setState(() {
-                        //               _selectedPollType = selectedPollType;
-                        //             });
-                        //           }),
-                        //     ),
-                        //     Padding(
-                        //       padding:
-                        //           const EdgeInsets.symmetric(horizontal: 5),
-                        //       child: DropdownButton(
-                        //           hint: Text('Category'),
-                        //           underline: Container(color: Colors.white),
-                        //           style: TextStyle(
-                        //             fontFamily: FontNameDefault,
-                        //             fontSize: textBody1(context),
-                        //             color: Colors.black87,
-                        //           ),
-                        //           //  iconSize: screenSize.height * 0.05,
-                        //           icon: Icon(Icons.keyboard_arrow_down,
-                        //               color: Theme.of(context).primaryColor),
-                        //           value: _selectedPollLength,
-                        //           items: _dropDownMenuPollLength,
-                        //           onChanged: (PollLength selectedPollLength) {
-                        //             setState(() {
-                        //               _selectedPollLength = selectedPollLength;
-                        //             });
-                        //           }),
-                        //     )
-                        //   ],
-                        // ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            //   bottom: screenSize.height * 0.01,
-                            left: screenSize.width * 0.1,
-                            top: screenSize.height * 0.01,
-                          ),
-                          child: Text(
-                            'Choose poll length',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: screenSize.height * 0.12,
-                          width: screenSize.width,
-                          // padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: screenSize.height * 0.045),
-                                child: Divider(
-                                  color: Colors.grey[300],
-                                ),
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                scrollDirection: Axis.horizontal,
-                                //   physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: sampleData.length,
-                                itemExtent: screenSize.height * 0.12,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    // height: 60.0,
-                                    width: screenSize.width * 0.22,
-                                    child: InkWell(
-                                      //highlightColor: Colors.red,
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        setState(() {
-                                          sampleData.forEach((element) =>
-                                              element.isSelected = false);
-                                          sampleData[index].isSelected = true;
-                                        });
-                                        checkSelected(sampleData[index]);
-                                      },
-                                      child: RadioItem(sampleData[index]),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.01,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              height: screenSize.height * 0.07,
-                              width: screenSize.width * 0.4,
-                              child: TextField(
-                                  onChanged: (val) {
-                                    if (_option1Controller.text.isNotEmpty) {
-                                      setState(() {
-                                        option1 = true;
-                                      });
-                                    }
-                                  },
-                                  controller: _option1Controller,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    color: Colors.black87,
-                                  ),
-                                  decoration: InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    hintText: 'Option 1',
-                                  )),
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.add_circle),
-                                    onPressed: () {
-                                      setState(() {
-                                        counter = counter + 1;
-                                        if (counter == 0) {
-                                          setState(() {
-                                            option3 = false;
-                                            option4 = false;
-                                          });
-                                        } else if (counter == 1) {
-                                          setState(() {
-                                            option3 = true;
-                                          });
-                                        } else if (counter == 2) {
-                                          setState(() {
-                                            option4 = true;
-                                          });
-                                          // } else if (counter == 3) {
-                                          //   setState(() {
-                                          //     option5 = true;
-                                          //   });
-                                          // } else if (counter >= 4) {
-                                          //   setState(() {
-                                          //     option6 = true;
-                                          //   });
-                                        }
-                                      });
-                                    }),
-                                counter >= 1
-                                    ? IconButton(
-                                        icon: Icon(Icons.remove_circle),
-                                        onPressed: () {
-                                          setState(() {
-                                            if (counter == 1) {
-                                              setState(() {
-                                                option3 = false;
-                                                counter = counter - 1;
-                                              });
-                                            } else if (counter == 2) {
-                                              setState(() {
-                                                option4 = false;
-                                                counter = counter - 1;
-                                              });
-                                            }
-                                          });
-                                        })
-                                    : Container(),
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: screenSize.height * 0.005,
-                        ),
-                        Container(
-                          height: screenSize.height * 0.07,
-                          width: screenSize.width * 0.4,
-                          child: TextField(
-                              controller: _option2Controller,
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            child: TextField(
+                              minLines: 1,
+                              maxLines: 2,
+                              keyboardType: TextInputType.multiline,
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textBody1(context),
-                                color: Colors.black87,
                               ),
                               decoration: InputDecoration(
                                 border: UnderlineInputBorder(),
-                                hintText: 'Option 2',
-                              )),
-                        ),
-                        option3 == true
-                            ? Column(
-                                children: [
-                                  SizedBox(
-                                    height: screenSize.height * 0.005,
-                                  ),
-                                  Container(
-                                    height: screenSize.height * 0.07,
-                                    width: screenSize.width * 0.4,
-                                    child: TextField(
-                                        controller: _option3Controller,
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          border: UnderlineInputBorder(),
-                                          hintText: 'Option 3',
-                                        )),
-                                  ),
-                                ],
-                              )
-                            : Container(),
-                        option4 == true
-                            ? Column(
-                                children: [
-                                  SizedBox(
-                                    height: screenSize.height * 0.005,
-                                  ),
-                                  Container(
-                                    height: screenSize.height * 0.07,
-                                    width: screenSize.width * 0.4,
-                                    child: TextField(
-                                        controller: _option4Controller,
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context),
-                                          color: Colors.black87,
-                                        ),
-                                        decoration: InputDecoration(
-                                          border: UnderlineInputBorder(),
-                                          hintText: 'Option 4',
-                                        )),
-                                  ),
-                                ],
-                              )
-                            : Container(),
-                        // Container(
-                        //   padding: EdgeInsets.all(5),
-                        //   child: StreamBuilder<QuerySnapshot>(
-                        //     stream: FirebaseFirestore.instance
-                        //         .collection('teams')
-                        //         .doc(widget.gid)
-                        //         .collection('departments')
-                        //         .doc(_department.uid)
-                        //         .collection('projects')
-                        //         .snapshots(),
-                        //     builder: (context, snapshot) {
-                        //       if (!snapshot.hasData)
-                        //         return const Center(
-                        //           child: const CircularProgressIndicator(),
-                        //         );
-
-                        //       return Container(
-                        //         padding: EdgeInsets.all(5),
-                        //         child: new DropdownButton(
-                        //           underline: Container(),
-                        //           icon: Icon(Icons.keyboard_arrow_down),
-                        //           value: _currentProject,
-                        //           isDense: true,
-                        //           items: snapshot.data.docs
-                        //               .map((DocumentSnapshot doc) {
-                        //             return new DropdownMenuItem(
-                        //                 value: doc["uid"],
-                        //                 child: Text(
-                        //                   doc["projectName"],
-                        //                   style: TextStyle(
-                        //                     fontFamily: FontNameDefault,
-                        //                     fontSize: textBody1(context),
-                        //                   ),
-                        //                 ));
-                        //           }).toList(),
-                        //           hint: Text("project",
-                        //               style: TextStyle(
-                        //                 fontFamily: FontNameDefault,
-                        //                 fontSize: textBody1(context),
-                        //               )),
-                        //           onChanged: (value) {
-                        //             setState(() {
-                        //               _currentProject = value;
-                        //             });
-                        //           },
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-                        valueFirst &&
-                                _option1Controller.text.isNotEmpty &&
-                                _option2Controller.text.isNotEmpty
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.015,
-                                  left: screenSize.width * 0.01,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Navigator.pop(context);
-                                    _repository
-                                        .getCurrentUser()
-                                        .then((currentuser) {
-                                      if (currentuser != null) {
-                                        _repository
-                                            .retreiveUserDetails(currentuser)
-                                            .then((user) {
-                                          // _currentProject == null
-                                          // ?
-                                          _repository
-                                              .addPollToDept(
-                                            _team.uid,
-                                            _department.uid,
-                                            user,
-                                            _pollTitleController.text,
-                                            _currentDate.millisecondsSinceEpoch,
-                                            'poll',
-                                            _option1Controller.text,
-                                            _option2Controller.text,
-                                            _option3Controller.text,
-                                            _option4Controller.text,
-                                          )
-                                              .then((value) {
-                                            valueFirst = false;
-                                            _pollTitleController.text = '';
-                                            _option1Controller.text = '';
-                                            _option2Controller.text = '';
-                                            _option3Controller.text = '';
-                                            _option4Controller.text = '';
-                                            print('Poll added to department');
-                                            Navigator.pop(context);
-                                          }).catchError((e) => print(
-                                                  'Error adding poll: $e'));
-
-                                          // :
-                                          //   _repository
-                                          //       .addPollToProject(
-                                          //     _team.uid,
-                                          //     _department.uid,
-                                          //     _currentProject,
-                                          //     user,
-                                          //     _pollTitleController.text,
-                                          //     _currentDate.millisecondsSinceEpoch,
-                                          //     'poll',
-                                          //     _option1Controller.text,
-                                          //     _option2Controller.text,
-                                          //     _option3Controller.text,
-                                          //     _option4Controller.text,
-                                          //   )
-                                          //       .then((value) {
-                                          //     valueFirst = false;
-                                          //     _pollTitleController.text = '';
-                                          //     _option1Controller.text = '';
-                                          //     _option2Controller.text = '';
-                                          //     _option3Controller.text = '';
-                                          //     _option4Controller.text = '';
-                                          //     print('Poll added to project');
-                                          //     Navigator.pop(context);
-                                          //   }).catchError((e) => print(
-                                          //           'Error adding poll: $e'));
-                                        });
-                                      } else {
-                                        print('Current User is null');
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    height: screenSize.height * 0.055,
-                                    width: screenSize.width * 0.4,
-                                    child: Center(
-                                      child: Text(
-                                        'Create poll',
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.white,
-                                          fontSize: textSubTitle(context),
-                                        ),
-                                      ),
-                                    ),
-                                    decoration: ShapeDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.015,
-                                  left: screenSize.width * 0.01,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    height: screenSize.height * 0.055,
-                                    width: screenSize.width * 0.4,
-                                    child: Center(
-                                      child: Text(
-                                        'Create poll',
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.grey[600],
-                                          fontSize: textSubTitle(context),
-                                        ),
-                                      ),
-                                    ),
-                                    decoration: ShapeDecoration(
-                                      color: Colors.grey[100],
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        side: BorderSide(
-                                            width: 0.2, color: Colors.grey),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                hintText: 'Poll title',
                               ),
-                      ],
+                              onChanged: (val) {
+                                if (_pollTitleController.text.isNotEmpty) {
+                                  setState(() {
+                                    valueFirst = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    valueFirst = false;
+                                  });
+                                }
+                              },
+                              controller: _pollTitleController,
+                            ),
+                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Padding(
+                          //       padding:
+                          //           const EdgeInsets.symmetric(horizontal: 5),
+                          //       child: DropdownButton(
+                          //           hint: Text('Type'),
+                          //           underline: Container(color: Colors.white),
+                          //           style: TextStyle(
+                          //             fontFamily: FontNameDefault,
+                          //             fontSize: textBody1(context),
+                          //             color: Colors.black87,
+                          //           ),
+                          //           // iconSize: screenSize.height * 0.05,
+                          //           icon: Icon(Icons.keyboard_arrow_down,
+                          //               color: Theme.of(context).primaryColor),
+                          //           value: _selectedPollType,
+                          //           items: _dropDownMenuPollType,
+                          //           onChanged: (PollType selectedPollType) {
+                          //             setState(() {
+                          //               _selectedPollType = selectedPollType;
+                          //             });
+                          //           }),
+                          //     ),
+                          //     Padding(
+                          //       padding:
+                          //           const EdgeInsets.symmetric(horizontal: 5),
+                          //       child: DropdownButton(
+                          //           hint: Text('Category'),
+                          //           underline: Container(color: Colors.white),
+                          //           style: TextStyle(
+                          //             fontFamily: FontNameDefault,
+                          //             fontSize: textBody1(context),
+                          //             color: Colors.black87,
+                          //           ),
+                          //           //  iconSize: screenSize.height * 0.05,
+                          //           icon: Icon(Icons.keyboard_arrow_down,
+                          //               color: Theme.of(context).primaryColor),
+                          //           value: _selectedPollLength,
+                          //           items: _dropDownMenuPollLength,
+                          //           onChanged: (PollLength selectedPollLength) {
+                          //             setState(() {
+                          //               _selectedPollLength = selectedPollLength;
+                          //             });
+                          //           }),
+                          //     )
+                          //   ],
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.only(
+                          //     //   bottom: screenSize.height * 0.01,
+                          //     left: screenSize.width * 0.1,
+                          //     top: screenSize.height * 0.01,
+                          //   ),
+                          //   child: Text(
+                          //     'Choose poll length',
+                          //     style: TextStyle(
+                          //       fontFamily: FontNameDefault,
+                          //       fontSize: textSubTitle(context),
+                          //       color: Colors.black,
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
+                          // Container(
+                          //   height: screenSize.height * 0.12,
+                          //   width: screenSize.width,
+                          //   // padding: const EdgeInsets.symmetric(horizontal: 10),
+                          //   child: Stack(
+                          //     children: [
+                          //       Padding(
+                          //         padding: EdgeInsets.only(
+                          //             top: screenSize.height * 0.045),
+                          //         child: Divider(
+                          //           color: Colors.grey[300],
+                          //         ),
+                          //       ),
+                          //       ListView.builder(
+                          //         padding: EdgeInsets.zero,
+                          //         scrollDirection: Axis.horizontal,
+                          //         //   physics: NeverScrollableScrollPhysics(),
+                          //         shrinkWrap: true,
+                          //         itemCount: sampleData.length,
+                          //         itemExtent: screenSize.height * 0.12,
+                          //         itemBuilder: (BuildContext context, int index) {
+                          //           return Container(
+                          //             // height: 60.0,
+                          //             width: screenSize.width * 0.22,
+                          //             child: InkWell(
+                          //               //highlightColor: Colors.red,
+                          //               splashColor: Colors.transparent,
+                          //               onTap: () {
+                          //                 setState(() {
+                          //                   sampleData.forEach((element) =>
+                          //                       element.isSelected = false);
+                          //                   sampleData[index].isSelected = true;
+                          //                 });
+                          //                 checkSelected(sampleData[index]);
+                          //               },
+                          //               child: RadioItem(sampleData[index]),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: screenSize.height * 0.01,
+                          // ),
+                          Row(
+                            children: [
+                              Container(
+                                height: screenSize.height * 0.07,
+                                width: screenSize.width * 0.4,
+                                child: TextField(
+                                    onChanged: (val) {
+                                      if (_option1Controller.text.isNotEmpty) {
+                                        setState(() {
+                                          option1 = true;
+                                        });
+                                      }
+                                    },
+                                    controller: _option1Controller,
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context),
+                                      color: Colors.black87,
+                                    ),
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      hintText: 'Option 1',
+                                    )),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                      icon: Icon(Icons.add_circle),
+                                      onPressed: () {
+                                        setState(() {
+                                          counter = counter + 1;
+                                          if (counter == 0) {
+                                            setState(() {
+                                              option3 = false;
+                                              option4 = false;
+                                            });
+                                          } else if (counter == 1) {
+                                            setState(() {
+                                              option3 = true;
+                                            });
+                                          } else if (counter == 2) {
+                                            setState(() {
+                                              option4 = true;
+                                            });
+                                            // } else if (counter == 3) {
+                                            //   setState(() {
+                                            //     option5 = true;
+                                            //   });
+                                            // } else if (counter >= 4) {
+                                            //   setState(() {
+                                            //     option6 = true;
+                                            //   });
+                                          }
+                                        });
+                                      }),
+                                  counter >= 1
+                                      ? IconButton(
+                                          icon: Icon(Icons.remove_circle),
+                                          onPressed: () {
+                                            setState(() {
+                                              if (counter == 1) {
+                                                setState(() {
+                                                  option3 = false;
+                                                  counter = counter - 1;
+                                                });
+                                              } else if (counter == 2) {
+                                                setState(() {
+                                                  option4 = false;
+                                                  counter = counter - 1;
+                                                });
+                                              }
+                                            });
+                                          })
+                                      : Container(),
+                                ],
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: screenSize.height * 0.005,
+                          ),
+                          Container(
+                            height: screenSize.height * 0.07,
+                            width: screenSize.width * 0.4,
+                            child: TextField(
+                                onChanged: (val) {
+                                  if (_option2Controller.text.isNotEmpty) {
+                                    setState(() {
+                                      option2 = true;
+                                    });
+                                  }
+                                },
+                                controller: _option2Controller,
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.black87,
+                                ),
+                                decoration: InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  hintText: 'Option 2',
+                                )),
+                          ),
+                          option3 == true
+                              ? Column(
+                                  children: [
+                                    SizedBox(
+                                      height: screenSize.height * 0.005,
+                                    ),
+                                    Container(
+                                      height: screenSize.height * 0.07,
+                                      width: screenSize.width * 0.4,
+                                      child: TextField(
+                                          controller: _option3Controller,
+                                          style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context),
+                                            color: Colors.black87,
+                                          ),
+                                          decoration: InputDecoration(
+                                            border: UnderlineInputBorder(),
+                                            hintText: 'Option 3',
+                                          )),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                          option4 == true
+                              ? Column(
+                                  children: [
+                                    SizedBox(
+                                      height: screenSize.height * 0.005,
+                                    ),
+                                    Container(
+                                      height: screenSize.height * 0.07,
+                                      width: screenSize.width * 0.4,
+                                      child: TextField(
+                                          controller: _option4Controller,
+                                          style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context),
+                                            color: Colors.black87,
+                                          ),
+                                          decoration: InputDecoration(
+                                            border: UnderlineInputBorder(),
+                                            hintText: 'Option 4',
+                                          )),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
+                          // Container(
+                          //   padding: EdgeInsets.all(5),
+                          //   child: StreamBuilder<QuerySnapshot>(
+                          //     stream: FirebaseFirestore.instance
+                          //         .collection('teams')
+                          //         .doc(widget.gid)
+                          //         .collection('departments')
+                          //         .doc(_department.uid)
+                          //         .collection('projects')
+                          //         .snapshots(),
+                          //     builder: (context, snapshot) {
+                          //       if (!snapshot.hasData)
+                          //         return const Center(
+                          //           child: const CircularProgressIndicator(),
+                          //         );
+
+                          //       return Container(
+                          //         padding: EdgeInsets.all(5),
+                          //         child: new DropdownButton(
+                          //           underline: Container(),
+                          //           icon: Icon(Icons.keyboard_arrow_down),
+                          //           value: _currentProject,
+                          //           isDense: true,
+                          //           items: snapshot.data.docs
+                          //               .map((DocumentSnapshot doc) {
+                          //             return new DropdownMenuItem(
+                          //                 value: doc["uid"],
+                          //                 child: Text(
+                          //                   doc["projectName"],
+                          //                   style: TextStyle(
+                          //                     fontFamily: FontNameDefault,
+                          //                     fontSize: textBody1(context),
+                          //                   ),
+                          //                 ));
+                          //           }).toList(),
+                          //           hint: Text("project",
+                          //               style: TextStyle(
+                          //                 fontFamily: FontNameDefault,
+                          //                 fontSize: textBody1(context),
+                          //               )),
+                          //           onChanged: (value) {
+                          //             setState(() {
+                          //               _currentProject = value;
+                          //             });
+                          //           },
+                          //         ),
+                          //       );
+                          //     },
+                          //   ),
+                          // ),
+                          valueFirst &&
+                                  _option1Controller.text.isNotEmpty &&
+                                  _option2Controller.text.isNotEmpty
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.015,
+                                    left: screenSize.width * 0.01,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // Navigator.pop(context);
+                                      _repository
+                                          .getCurrentUser()
+                                          .then((currentuser) {
+                                        if (currentuser != null) {
+                                          _repository
+                                              .retreiveUserDetails(currentuser)
+                                              .then((user) {
+                                            // _currentProject == null
+                                            // ?
+                                            _repository
+                                                .addPollToDept(
+                                              _team.uid,
+                                              _department.uid,
+                                              user,
+                                              _pollTitleController.text,
+                                              _currentDate
+                                                  .millisecondsSinceEpoch,
+                                              'poll',
+                                              _option1Controller.text,
+                                              _option2Controller.text,
+                                              _option3Controller.text,
+                                              _option4Controller.text,
+                                            )
+                                                .then((value) {
+                                              valueFirst = false;
+                                              _pollTitleController.text = '';
+                                              _option1Controller.text = '';
+                                              _option2Controller.text = '';
+                                              _option3Controller.text = '';
+                                              _option4Controller.text = '';
+                                              print('Poll added to department');
+                                              Navigator.pop(context);
+                                            }).catchError((e) => print(
+                                                    'Error adding poll: $e'));
+
+                                            // :
+                                            //   _repository
+                                            //       .addPollToProject(
+                                            //     _team.uid,
+                                            //     _department.uid,
+                                            //     _currentProject,
+                                            //     user,
+                                            //     _pollTitleController.text,
+                                            //     _currentDate.millisecondsSinceEpoch,
+                                            //     'poll',
+                                            //     _option1Controller.text,
+                                            //     _option2Controller.text,
+                                            //     _option3Controller.text,
+                                            //     _option4Controller.text,
+                                            //   )
+                                            //       .then((value) {
+                                            //     valueFirst = false;
+                                            //     _pollTitleController.text = '';
+                                            //     _option1Controller.text = '';
+                                            //     _option2Controller.text = '';
+                                            //     _option3Controller.text = '';
+                                            //     _option4Controller.text = '';
+                                            //     print('Poll added to project');
+                                            //     Navigator.pop(context);
+                                            //   }).catchError((e) => print(
+                                            //           'Error adding poll: $e'));
+                                          });
+                                        } else {
+                                          print('Current User is null');
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      height: screenSize.height * 0.055,
+                                      width: screenSize.width * 0.4,
+                                      child: Center(
+                                        child: Text(
+                                          'Create poll',
+                                          style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.white,
+                                            fontSize: textSubTitle(context),
+                                          ),
+                                        ),
+                                      ),
+                                      decoration: ShapeDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.015,
+                                    left: screenSize.width * 0.01,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      height: screenSize.height * 0.055,
+                                      width: screenSize.width * 0.4,
+                                      child: Center(
+                                        child: Text(
+                                          'Create poll',
+                                          style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.grey[600],
+                                            fontSize: textSubTitle(context),
+                                          ),
+                                        ),
+                                      ),
+                                      decoration: ShapeDecoration(
+                                        color: Colors.grey[100],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          side: BorderSide(
+                                              width: 0.2, color: Colors.grey),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           });

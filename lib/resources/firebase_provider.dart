@@ -157,7 +157,7 @@ class FirebaseProvider {
   }
 
   Future<void> signOut() async {
-    await _googleSignIn.disconnect();
+    // await _googleSignIn.disconnect();
     await _googleSignIn.signOut();
     return await _auth.signOut();
   }
@@ -229,15 +229,17 @@ class FirebaseProvider {
     String dId = Uuid().v4();
     for (var i = 0; i < department.length; i++) {
       departments = Department(
-          departmentOwnerName: '',
-          departmentOwnerEmail: '',
-          departmentOwnerPhotoUrl: '',
+          currentUserUid: currentUser.uid,
+          departmentOwnerName: currentUser.displayName,
+          departmentOwnerEmail: currentUser.email,
+          departmentOwnerPhotoUrl: currentUser.photoUrl,
           description: '',
           departmentProfilePhoto: serializeIcon(Icons.work),
           color: color,
           uid: dId,
           departmentName: department[i],
           timestamp: Timestamp.now());
+
       await _firestore
           .collection('teams')
           .doc(teamId)
@@ -245,6 +247,22 @@ class FirebaseProvider {
           .doc(dId)
           .set(departments.toMap(departments))
           .then((value) {
+        _firestore
+            .collection('teams')
+            .doc(teamId)
+            .collection('departments')
+            .doc(dId)
+            .collection('members')
+            .doc(currentUser.uid)
+            .set(member.toMap(member));
+        _firestore
+            .collection('teams')
+            .doc(teamId)
+            .collection('departments')
+            .doc(dId)
+            .update({
+          'members': FieldValue.arrayUnion([currentUser.uid])
+        });
         dId = Uuid().v4();
       });
     }

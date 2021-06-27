@@ -81,7 +81,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
         backgroundColor: const Color(0xfff6f6f6),
         body: CustomScrollView(
           physics: NeverScrollableScrollPhysics(),
-          controller: _scrollController,
+//controller: _scrollController,
           slivers: [
             SliverAppBar(
               stretch: false,
@@ -165,7 +165,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                       if (snapshot.hasError) {
                         return Text('Error');
                       }
-                      if (snapshot.hasData) {
+                      if (snapshot.hasData && snapshot.data.exists) {
                         return Row(
                           children: [
                             CircleAvatar(
@@ -189,6 +189,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                           ],
                         );
                       }
+                      return Container();
                     }
 
                     return Container();
@@ -377,6 +378,123 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
             : Container(),
       ),
     );
+  }
+
+  leaveDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Leave Team',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to leave this team?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              _repository
+                                  .removeTeamMember(
+                                      currentTeam: _team,
+                                      followerId: currentuser.uid)
+                                  .then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Home()));
+                              });
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Leave',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   deleteDialog() {
@@ -614,27 +732,27 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
       });
   }
 
-  leaveTeam() async {
-    await FirebaseFirestore.instance
-        .collection('teams')
-        .doc(_team.uid)
-        .collection('members')
-        .doc(currentuser.uid)
-        .delete()
-        .then((value) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-    });
+  // leaveTeam() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('teams')
+  //       .doc(_team.uid)
+  //       .collection('members')
+  //       .doc(currentuser.uid)
+  //       .delete()
+  //       .then((value) {
+  //     Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+  //   });
 
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentuser.uid)
-        .collection('teams')
-        .doc(_team.uid)
-        .delete()
-        .then((value) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-    });
-  }
+  //   return FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(currentuser.uid)
+  //       .collection('teams')
+  //       .doc(_team.uid)
+  //       .delete()
+  //       .then((value) {
+  //     Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+  //   });
+  // }
 
   void _onButtonPressedAdmin() {
     var screenSize = MediaQuery.of(context).size;
@@ -1165,7 +1283,7 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Team Options',
+                        'Team options',
                         style: TextStyle(
                           fontFamily: FontNameDefault,
                           fontSize: textHeader(context),
@@ -1200,12 +1318,12 @@ class _TeamPageState extends State<TeamPage> with TickerProviderStateMixin {
                       ListTile(
                         onTap: () {
                           Navigator.pop(context);
-                          //     addToDeptAdmin();
+                          leaveDialog();
                         },
                         leading: Icon(Icons.remove_circle_outline,
                             color: Colors.black),
                         title: Text(
-                          'Leave Team',
+                          'Leave team',
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             fontSize: textSubTitle(context),

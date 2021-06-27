@@ -283,8 +283,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
       onTap: () {},
       child: Row(
         children: [
-          Text('${_getPercentage()}'.substring(0, 2),
-              //  .replaceAll('.0', ' %  ')
+          Text('${_getPercentage()}'.substring(0, 3).replaceAll('.', ''),
               //   .replaceAll('NaN', ' %  ')
               //   .replaceAll('Infinity', ' %  '),
               style: TextStyle(
@@ -312,7 +311,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
       onTap: () {},
       child: Row(
         children: [
-          Text('${_getPercentage2()}'.substring(0, 2),
+          Text('${_getPercentage2()}'.substring(0, 3).replaceAll('.', ''),
               //  .replaceAll('.0', ' %  ')
               //   .replaceAll('NaN', ' %  ')
               //   .replaceAll('Infinity', ' %  '),
@@ -341,7 +340,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
       onTap: () {},
       child: Row(
         children: [
-          Text('${_getPercentage3()}'.substring(0, 2),
+          Text('${_getPercentage3()}'.substring(0, 3).replaceAll('.', ''),
               //  .replaceAll('.0', ' %  ')
               //   .replaceAll('NaN', ' %  ')
               //   .replaceAll('Infinity', ' %  '),
@@ -370,7 +369,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
       onTap: () {},
       child: Row(
         children: [
-          Text('${_getPercentage4()}'.substring(0, 2),
+          Text('${_getPercentage4()}'.substring(0, 3).replaceAll('.', ''),
               //  .replaceAll('.0', ' %  ')
               //   .replaceAll('NaN', ' %  ')
               //   .replaceAll('Infinity', ' %  '),
@@ -1628,6 +1627,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                           ),
                           child: GestureDetector(
                             onTap: () {
+                              Navigator.pop(context);
                               deletePost(snapshot);
                             },
                             child: Container(
@@ -1709,7 +1709,6 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-
                   deleteDialog(snapshot);
                   //   Navigator.pop(context);
                 },
@@ -2062,7 +2061,9 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                           ),
                           InkWell(
                             onTap: () {
-                              send().then((value) => Navigator.pop(context));
+                              send()
+                                  .then((value) => Navigator.pop(context))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: Text(
                               'Submit',
@@ -2096,7 +2097,6 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
 
         print('post deleted');
       } else {

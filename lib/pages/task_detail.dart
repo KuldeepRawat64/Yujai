@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/pages/login_page.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -525,8 +526,8 @@ class _TaskDetailState extends State<TaskDetail> {
                             .doc(widget.teamId)
                             .collection('departments')
                             .doc(widget.department.uid)
-                            .collection('projects')
-                            .doc(widget.project.uid)
+                            // .collection('projects')
+                            // .doc(widget.project.uid)
                             .collection('members')
                             .orderBy('timestamp', descending: false)
                             .snapshots(),
@@ -561,8 +562,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                               ['ownerUid'],
                                           'assignedName': snapshot
                                               .data.docs[index]['ownerName'],
-                                          'assignedEmail': snapshot
-                                              .data.docs[index]['ownerEmail'],
+                                          // 'assignedEmail': snapshot
+                                          //     .data.docs[index]['ownerEmail'],
                                           'assignedPhoto': snapshot
                                               .data.docs[index]['ownerPhotoUrl']
                                         }).then((value) {
@@ -574,36 +575,34 @@ class _TaskDetailState extends State<TaskDetail> {
                                         });
                                       },
                                       child: ListTile(
-                                          leading: CircleAvatar(
-                                            radius: screenSize.height * 0.02,
-                                            backgroundImage: snapshot.data
-                                                                .docs[index]
-                                                            ['ownerPhotoUrl'] !=
-                                                        '' &&
-                                                    snapshot.data.docs[index]
-                                                            ['ownerPhotoUrl'] !=
-                                                        null
-                                                ? NetworkImage(
-                                                    snapshot.data.docs[index]
-                                                        ['ownerPhotoUrl'])
-                                                : AssetImage(
-                                                    'assets/images/no_image.png'),
-                                          ),
-                                          title: Text(
-                                            snapshot.data.docs[index]
-                                                ['ownerName'],
-                                            style: TextStyle(
-                                                fontFamily: FontNameDefault,
-                                                fontSize:
-                                                    textSubTitle(context)),
-                                          ),
-                                          subtitle: Text(
-                                            snapshot.data.docs[index]
-                                                ['ownerEmail'],
-                                            style: TextStyle(
-                                                fontFamily: FontNameDefault,
-                                                fontSize: textBody1(context)),
-                                          )),
+                                        leading: CircleAvatar(
+                                          radius: screenSize.height * 0.02,
+                                          backgroundImage: snapshot
+                                                              .data.docs[index]
+                                                          ['ownerPhotoUrl'] !=
+                                                      '' &&
+                                                  snapshot.data.docs[index]
+                                                          ['ownerPhotoUrl'] !=
+                                                      null
+                                              ? NetworkImage(snapshot.data
+                                                  .docs[index]['ownerPhotoUrl'])
+                                              : AssetImage(
+                                                  'assets/images/no_image.png'),
+                                        ),
+                                        title: Text(
+                                          snapshot.data.docs[index]
+                                              ['ownerName'],
+                                          style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textSubTitle(context)),
+                                        ),
+                                        // subtitle: Text(
+                                        //   'Email',
+                                        //   style: TextStyle(
+                                        //       fontFamily: FontNameDefault,
+                                        //       fontSize: textBody1(context)),
+                                        // )
+                                      ),
                                     );
                                   }),
                             );
@@ -737,7 +736,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                 .set(_comment.toMap(_comment))
                                 .whenComplete(() {
                               _commentTextController.text = "";
-                              imageFile = null;
+                              imgurl = '';
                               _scrollController.animateTo(
                                   _scrollController.position.maxScrollExtent,
                                   duration: Duration(milliseconds: 500),

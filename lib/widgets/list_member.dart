@@ -132,7 +132,7 @@ class _ListItemMemberState extends State<ListItemMember> {
                     widget.documentSnapshot['ownerPhotoUrl']),
               ),
               trailing: widget.documentSnapshot != null &&
-                      widget.documentSnapshot['accountType'] != 'admin'
+                      widget.documentSnapshot['accountType'] != 'Admin'
                   ? InkWell(
                       onTap: optionTeam,
                       child: Icon(Icons.more_vert,
@@ -345,7 +345,7 @@ class _ListItemMemberState extends State<ListItemMember> {
                                                   followerName:
                                                       widget.documentSnapshot[
                                                           'ownerName'],
-                                                  followerAccountType: 'Admin',
+                                                  followerAccountType: 'admin',
                                                   followerPhotoUrl:
                                                       widget.documentSnapshot[
                                                           'ownerPhotoUrl']);
@@ -644,7 +644,7 @@ class _ListItemMemberState extends State<ListItemMember> {
                                                         widget.documentSnapshot[
                                                             'ownerName'],
                                                     followerAccountType:
-                                                        'Member',
+                                                        'member',
                                                     followerPhotoUrl:
                                                         widget.documentSnapshot[
                                                             'ownerPhotoUrl']);

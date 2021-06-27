@@ -185,6 +185,8 @@ class _DeptMembersState extends State<DeptMembers> {
           .collection('departments')
           .doc(widget.dept.uid)
           .collection('members')
+          .orderBy('accountType')
+          .orderBy('ownerName')
           .snapshots(),
       // builder: ((context, snapshot) {
       //   if (snapshot.hasData) {
@@ -222,7 +224,8 @@ class _DeptMembersState extends State<DeptMembers> {
         } else if (snapshot.connectionState == ConnectionState.active ||
             snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return const Text('Error');
+            return const NoContent('Error', 'assets/images/error.png',
+                'Something wrong happened', '');
           } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
             return ListView.builder(
                 physics: AlwaysScrollableScrollPhysics(),
