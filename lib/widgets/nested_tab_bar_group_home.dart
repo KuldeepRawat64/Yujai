@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/pages/group_members.dart';
 import 'package:Yujai/pages/group_settings.dart';
 import 'package:Yujai/widgets/no_event.dart';
 import 'package:empty_widget/empty_widget.dart';
@@ -763,7 +764,16 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         right: 8.0,
                       ),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GroupMembers(
+                                      group: _group,
+                                      currentuser: currentuser,
+                                      gid: widget.gid,
+                                      name: widget.name)));
+                        },
                         child: Container(
                           decoration: ShapeDecoration(
                             color: const Color(0xffffffff),

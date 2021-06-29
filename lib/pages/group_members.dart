@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_member.dart';
+import 'package:Yujai/widgets/list_member_group.dart';
 import 'package:Yujai/widgets/list_user.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +18,7 @@ import '../style.dart';
 class GroupMembers extends StatefulWidget {
   final String gid;
   final String name;
-  final Team group;
+  final Group group;
   final UserModel currentuser;
   const GroupMembers({this.gid, this.name, this.group, this.currentuser});
 
@@ -176,7 +178,7 @@ class _GroupMembersState extends State<GroupMembers> {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
-          .collection('teams')
+          .collection('groups')
           .doc(widget.gid)
           .collection('members')
           .snapshots(),
@@ -186,11 +188,12 @@ class _GroupMembersState extends State<GroupMembers> {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
-                //  controller: _scrollController,
+                  //  controller: _scrollController,
                   //shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => ListItemMember(
-                      team: widget.group,
+                  itemBuilder: ((context, index) => ListItemMemberGroup(
+                      //  team: widget.group,
+                      group: widget.group,
                       gid: widget.gid,
                       name: widget.name,
                       documentSnapshot: snapshot.data.docs[index],

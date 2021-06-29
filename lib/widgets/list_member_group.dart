@@ -1,13 +1,15 @@
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
-import 'package:Yujai/models/team.dart';
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/comments.dart';
+import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import '../style.dart';
 
@@ -18,7 +20,7 @@ class ListItemMemberGroup extends StatefulWidget {
   final String gid;
   final String name;
   final Group group;
-  //final Team team;
+  //final group group;
   ListItemMemberGroup({
     this.user,
     this.index,
@@ -27,7 +29,7 @@ class ListItemMemberGroup extends StatefulWidget {
     this.gid,
     this.name,
     this.group,
-//this.team
+//this.group
   });
 
   @override
@@ -114,37 +116,253 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
             ),
           ),
           child: ListTile(
-              subtitle: Text(
-                widget.documentSnapshot['accountType'],
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
-                ),
+            subtitle: Text(
+              widget.documentSnapshot['accountType'],
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                fontSize: textBody1(context),
               ),
-              title: Text(
-                widget.documentSnapshot['ownerName'],
-                style: TextStyle(
-                  fontFamily: FontNameDefault,
-                  fontSize: textSubTitle(context),
-                ),
+            ),
+            title: Text(
+              widget.documentSnapshot['ownerName'],
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                fontSize: textSubTitle(context),
               ),
-              leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                    widget.documentSnapshot['ownerPhotoUrl']),
-              ),
-              trailing: widget.documentSnapshot != null &&
-                      widget.documentSnapshot['accountType'] != 'Admin'
-                  ? InkWell(
-                      onTap: () {},
-                      child: Icon(Icons.more_vert,
-                          color: Theme.of(context).accentColor,
-                          size: screenSize.height * 0.035))
-                  : Icon(
-                      Icons.security_outlined,
-                      color: Colors.black54,
-                      size: screenSize.height * 0.03,
-                    ))),
+            ),
+            leading: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(
+                  widget.documentSnapshot['ownerPhotoUrl']),
+            ),
+            trailing: widget.currentuser.uid == widget.group.currentUserUid ||
+                    widget.currentuser.uid ==
+                        widget.documentSnapshot['ownerUid']
+                ? widget.group.currentUserUid !=
+                        widget.documentSnapshot['ownerUid']
+                    ? InkWell(
+                        onTap: () {
+                          optionGroup();
+                        },
+                        child: Icon(Icons.more_vert,
+                            color: Theme.of(context).accentColor,
+                            size: screenSize.height * 0.035),
+                      )
+                    : Text('')
+                : Text(''),
+          )),
     );
+  }
+
+  optionGroup() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((context) {
+          return StatefulBuilder(
+            builder: ((context, setState) {
+              return AlertDialog(
+                  content: Stack(
+                overflow: Overflow.visible,
+                children: [
+                  Positioned(
+                    right: -40.0,
+                    top: -40.0,
+                    child: InkResponse(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: CircleAvatar(
+                        child: Icon(Icons.close),
+                        backgroundColor: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  widget.currentuser.uid == widget.group.currentUserUid
+                      ? Column(mainAxisSize: MainAxisSize.min, children: [
+                          ListTile(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deleteDialog();
+                            },
+                            leading: Icon(Icons.remove_circle_outline),
+                            title: Text(
+                              'Remove',
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textSubTitle(context),
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            leading: Icon(Icons.cancel_outlined),
+                            title: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textSubTitle(context),
+                              ),
+                            ),
+                          )
+                        ])
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              onTap: () {
+                                Navigator.pop(context);
+                                leaveDialog();
+                              },
+                              leading: Icon(Icons.remove_circle_outline),
+                              title: Text(
+                                'Leave',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              onTap: () {
+                                Navigator.pop(context);
+                                //   Navigator.pop(context);
+                              },
+                              leading: Icon(Icons.cancel_outlined),
+                              title: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                ],
+              ));
+            }),
+          );
+        }));
+  }
+
+  leaveDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Leave group',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to leave this group?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              _repository
+                                  .removeGroupMember(
+                                      currentGroup: widget.group,
+                                      followerId:
+                                          widget.documentSnapshot['ownerUid'])
+                                  .then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Home()));
+                              });
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Remove',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   deleteDialog() {
@@ -177,7 +395,7 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
                     Container(
                         height: screenSize.height * 0.09,
                         child: Text(
-                          'Are you sure you want to remove this member from team?',
+                          'Are you sure you want to remove this member from this group?',
                           style: TextStyle(color: Colors.black54),
                         )),
                     Row(

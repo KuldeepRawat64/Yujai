@@ -360,27 +360,49 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                           ),
                         ),
                       )
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 12.0),
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(60.0),
-                          ),
-                          color: Theme.of(context).primaryColor,
-                          onPressed: () {
-                            _showFormDialog();
-                          },
-                          child: Text(
-                            'Join',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textButton(context),
-                              color: Colors.white,
+                    : isRequested
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0, horizontal: 6.0),
+                            child: FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                              ),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                //     _showFormDialog();
+                              },
+                              child: Text(
+                                'Requested',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textButton(context),
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      )
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12.0, horizontal: 12.0),
+                            child: FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(60.0),
+                              ),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                _showFormDialog();
+                              },
+                              child: Text(
+                                'Join',
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textButton(context),
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
 
                 // widget.isMember == false && isMember == false
                 //     ? isRequested == true
