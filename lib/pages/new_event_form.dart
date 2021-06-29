@@ -259,6 +259,93 @@ class _NewEventFormState extends State<NewEventForm> {
                       bottom: screenSize.height * 0.01,
                     ),
                     child: TextFormField(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return SafeArea(
+                              child: PlacePicker(
+                                apiKey: APIKeys.apiKey,
+                                initialPosition:
+                                    PlacesLocation.kInitialPosition,
+                                useCurrentLocation: true,
+                                selectInitialPosition: true,
+
+                                //usePlaceDetailSearch: true,
+                                onPlacePicked: (result) {
+                                  selectedPlace = result;
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    _locationController.text =
+                                        selectedPlace.formattedAddress;
+                                    // location =
+                                    //     selectedPlace.types.elementAt(1);
+                                  });
+                                },
+                                //forceSearchOnZoomChanged: true,
+                                //automaticallyImplyAppBarLeading: false,
+                                //autocompleteLanguage: "ko",
+                                //region: 'au',
+                                //selectInitialPosition: true,
+                                selectedPlaceWidgetBuilder: (_, selectedPlace,
+                                    state, isSearchBarFocused) {
+                                  print(
+                                      "state: $state, isSearchBarFocused: $isSearchBarFocused");
+                                  return isSearchBarFocused
+                                      ? Container()
+                                      : FloatingCard(
+                                          bottomPosition:
+                                              0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
+                                          leftPosition: 65.0,
+                                          rightPosition: 65.0,
+                                          //width: 50,
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          child: state ==
+                                                  SearchingState.Searching
+                                              ? Center(
+                                                  child:
+                                                      CircularProgressIndicator())
+                                              : RaisedButton(
+                                                  color:
+                                                      Colors.deepPurpleAccent,
+                                                  child: Text(
+                                                    "Pick Here",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  onPressed: () {
+                                                    // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
+                                                    //            this will override default 'Select here' Button.
+                                                    lat = selectedPlace
+                                                        .geometry.location.lat;
+                                                    lng = selectedPlace
+                                                        .geometry.location.lng;
+                                                    print(
+                                                        "do something with [selectedPlace] data");
+                                                    _locationController.text =
+                                                        selectedPlace
+                                                            .formattedAddress;
+                                                    location = selectedPlace
+                                                        .addressComponents[2]
+                                                        .longName;
+                                                    print(location);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                        );
+                                },
+                                // pinBuilder: (context, state) {
+                                //   if (state == PinState.Idle) {
+                                //     return Icon(Icons.favorite_border);
+                                //   } else {
+                                //     return Icon(Icons.favorite);
+                                //   }
+                                // },
+                              ),
+                            );
+                          },
+                        ));
+                      },
                       style: TextStyle(
                         fontFamily: FontNameDefault,
                         fontSize: textSubTitle(context),
@@ -276,105 +363,105 @@ class _NewEventFormState extends State<NewEventForm> {
                           ),
                           onPressed: null,
                         ),
-                        suffixIcon: InkWell(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                builder: (context) {
-                                  return SafeArea(
-                                    child: PlacePicker(
-                                      apiKey: APIKeys.apiKey,
-                                      initialPosition:
-                                          PlacesLocation.kInitialPosition,
-                                      useCurrentLocation: true,
-                                      selectInitialPosition: true,
+                        // suffixIcon: InkWell(
+                        //     onTap: () {
+                        //       Navigator.push(context, MaterialPageRoute(
+                        //         builder: (context) {
+                        //           return SafeArea(
+                        //             child: PlacePicker(
+                        //               apiKey: APIKeys.apiKey,
+                        //               initialPosition:
+                        //                   PlacesLocation.kInitialPosition,
+                        //               useCurrentLocation: true,
+                        //               selectInitialPosition: true,
 
-                                      //usePlaceDetailSearch: true,
-                                      onPlacePicked: (result) {
-                                        selectedPlace = result;
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          _locationController.text =
-                                              selectedPlace.formattedAddress;
-                                          // location =
-                                          //     selectedPlace.types.elementAt(1);
-                                        });
-                                      },
-                                      //forceSearchOnZoomChanged: true,
-                                      //automaticallyImplyAppBarLeading: false,
-                                      //autocompleteLanguage: "ko",
-                                      //region: 'au',
-                                      //selectInitialPosition: true,
-                                      selectedPlaceWidgetBuilder: (_,
-                                          selectedPlace,
-                                          state,
-                                          isSearchBarFocused) {
-                                        print(
-                                            "state: $state, isSearchBarFocused: $isSearchBarFocused");
-                                        return isSearchBarFocused
-                                            ? Container()
-                                            : FloatingCard(
-                                                bottomPosition:
-                                                    0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
-                                                leftPosition: 65.0,
-                                                rightPosition: 65.0,
-                                                //width: 50,
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                child: state ==
-                                                        SearchingState.Searching
-                                                    ? Center(
-                                                        child:
-                                                            CircularProgressIndicator())
-                                                    : RaisedButton(
-                                                        color: Colors
-                                                            .deepPurpleAccent,
-                                                        child: Text(
-                                                          "Pick Here",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        onPressed: () {
-                                                          // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
-                                                          //            this will override default 'Select here' Button.
-                                                          lat = selectedPlace
-                                                              .geometry
-                                                              .location
-                                                              .lat;
-                                                          lng = selectedPlace
-                                                              .geometry
-                                                              .location
-                                                              .lng;
-                                                          print(
-                                                              "do something with [selectedPlace] data");
-                                                          _locationController
-                                                                  .text =
-                                                              selectedPlace
-                                                                  .formattedAddress;
-                                                          location = selectedPlace
-                                                              .addressComponents[
-                                                                  2]
-                                                              .longName;
-                                                          print(location);
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                              );
-                                      },
-                                      // pinBuilder: (context, state) {
-                                      //   if (state == PinState.Idle) {
-                                      //     return Icon(Icons.favorite_border);
-                                      //   } else {
-                                      //     return Icon(Icons.favorite);
-                                      //   }
-                                      // },
-                                    ),
-                                  );
-                                },
-                              ));
-                            },
-                            child: Icon(Icons.location_pin, size: 15.0)),
+                        //               //usePlaceDetailSearch: true,
+                        //               onPlacePicked: (result) {
+                        //                 selectedPlace = result;
+                        //                 Navigator.of(context).pop();
+                        //                 setState(() {
+                        //                   _locationController.text =
+                        //                       selectedPlace.formattedAddress;
+                        //                   // location =
+                        //                   //     selectedPlace.types.elementAt(1);
+                        //                 });
+                        //               },
+                        //               //forceSearchOnZoomChanged: true,
+                        //               //automaticallyImplyAppBarLeading: false,
+                        //               //autocompleteLanguage: "ko",
+                        //               //region: 'au',
+                        //               //selectInitialPosition: true,
+                        //               selectedPlaceWidgetBuilder: (_,
+                        //                   selectedPlace,
+                        //                   state,
+                        //                   isSearchBarFocused) {
+                        //                 print(
+                        //                     "state: $state, isSearchBarFocused: $isSearchBarFocused");
+                        //                 return isSearchBarFocused
+                        //                     ? Container()
+                        //                     : FloatingCard(
+                        //                         bottomPosition:
+                        //                             0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
+                        //                         leftPosition: 65.0,
+                        //                         rightPosition: 65.0,
+                        //                         //width: 50,
+                        //                         borderRadius:
+                        //                             BorderRadius.circular(12.0),
+                        //                         child: state ==
+                        //                                 SearchingState.Searching
+                        //                             ? Center(
+                        //                                 child:
+                        //                                     CircularProgressIndicator())
+                        //                             : RaisedButton(
+                        //                                 color: Colors
+                        //                                     .deepPurpleAccent,
+                        //                                 child: Text(
+                        //                                   "Pick Here",
+                        //                                   style: TextStyle(
+                        //                                       color:
+                        //                                           Colors.white),
+                        //                                 ),
+                        //                                 onPressed: () {
+                        //                                   // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
+                        //                                   //            this will override default 'Select here' Button.
+                        //                                   lat = selectedPlace
+                        //                                       .geometry
+                        //                                       .location
+                        //                                       .lat;
+                        //                                   lng = selectedPlace
+                        //                                       .geometry
+                        //                                       .location
+                        //                                       .lng;
+                        //                                   print(
+                        //                                       "do something with [selectedPlace] data");
+                        //                                   _locationController
+                        //                                           .text =
+                        //                                       selectedPlace
+                        //                                           .formattedAddress;
+                        //                                   location = selectedPlace
+                        //                                       .addressComponents[
+                        //                                           2]
+                        //                                       .longName;
+                        //                                   print(location);
+                        //                                   Navigator.of(context)
+                        //                                       .pop();
+                        //                                 },
+                        //                               ),
+                        //                       );
+                        //               },
+                        //               // pinBuilder: (context, state) {
+                        //               //   if (state == PinState.Idle) {
+                        //               //     return Icon(Icons.favorite_border);
+                        //               //   } else {
+                        //               //     return Icon(Icons.favorite);
+                        //               //   }
+                        //               // },
+                        //             ),
+                        //           );
+                        //         },
+                        //       ));
+                        //     },
+                        //     child: Icon(Icons.location_pin, size: 15.0)),
                         labelText: "Location",
                         labelStyle: TextStyle(
                           fontFamily: FontNameDefault,

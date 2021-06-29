@@ -1061,7 +1061,9 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                           ),
                           InkWell(
                             onTap: () {
-                              send().then((value) => Navigator.pop(context));
+                              send()
+                                  .then((value) => Navigator.pop(context))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: Text(
                               'Submit',
@@ -1557,7 +1559,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                             isScrollControlled: true,
                             builder: (context) => Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
+                                    const EdgeInsets.symmetric(horizontal: 18),
                                 child: NewEventScreen(
                                     group: _group, currentUser: currentuser)));
                       },

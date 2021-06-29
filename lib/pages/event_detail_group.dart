@@ -149,7 +149,7 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: screenSize.width * 0.3,
+                              width: screenSize.width * 0.5,
                               child: Text(
                                 widget.documentSnapshot['caption'],
                                 style: TextStyle(
@@ -163,29 +163,33 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                             SizedBox(
                               height: screenSize.height * 0.01,
                             ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyWebView(
-                                        title: 'Event',
-                                        selectedUrl: widget
-                                            .documentSnapshot['website'])));
-                              },
-                              child: Container(
-                                width: screenSize.width * 0.6,
-                                child: Text(
-                                  widget.documentSnapshot['website'],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: FontNameDefault,
-                                    color: Theme.of(context).accentColor,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            )
+                            widget.documentSnapshot['website'] != null
+                                ? InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => MyWebView(
+                                                  title: 'Event',
+                                                  selectedUrl:
+                                                      widget.documentSnapshot[
+                                                          'website'])));
+                                    },
+                                    child: Container(
+                                      width: screenSize.width * 0.6,
+                                      child: Text(
+                                        widget.documentSnapshot['website'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: FontNameDefault,
+                                          color: Theme.of(context).accentColor,
+                                          fontSize: textSubTitle(context),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
+                                : Container()
                           ],
                         ),
                       ],
@@ -235,9 +239,9 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                         Container(
                           width: screenSize.width * 0.5,
                           child: Text(
-                            widget.documentSnapshot['location'] == ''
+                            widget.documentSnapshot['city'] == null
                                 ? 'Online'
-                                : widget.documentSnapshot['location'],
+                                : widget.documentSnapshot['city'],
                             style: TextStyle(
                               color: Colors.black,
                               //    fontWeight: FontWeight.bold,

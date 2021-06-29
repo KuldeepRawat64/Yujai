@@ -1921,6 +1921,26 @@ class FirebaseProvider {
       'members': FieldValue.arrayRemove([followerId])
     });
   }
+  Future<void> removeGroupMember({
+    Group currentGroup,
+    String followerId,
+  }) async {
+    await _firestore
+        .collection('groups')
+        .doc(currentGroup.uid)
+        .collection('members')
+        .doc(followerId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    await _firestore.collection('groups').doc(currentGroup.uid).update({
+      'members': FieldValue.arrayRemove([followerId])
+    });
+  }
 
   Future<void> addDeptMember(
       {Team currentTeam,

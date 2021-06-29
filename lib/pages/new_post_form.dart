@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
+import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
+//import 'package:location/location.dart';
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
@@ -29,6 +33,12 @@ class _NewPostFormState extends State<NewPostForm> {
   var _captionController;
   final _repository = Repository();
   String location = '';
+  // final Geolocator geolocator = Geolocator();
+//  final Location location = Location();
+
+// LocationData _location;
+// String _error;
+
   @override
   void initState() {
     super.initState();
@@ -154,9 +164,10 @@ class _NewPostFormState extends State<NewPostForm> {
                   //   labelText: "Discussion",
                   hintText: 'Say something',
                   hintStyle: TextStyle(
+                    color: Colors.grey[400],
                     fontFamily: FontNameDefault,
                     fontSize: textAppTitle(context),
-                    fontWeight: FontWeight.bold,
+                    //      fontWeight: FontWeight.bold,
                   ),
                   // border: OutlineInputBorder(
                   //   borderRadius: new BorderRadius.circular(10),
@@ -177,7 +188,7 @@ class _NewPostFormState extends State<NewPostForm> {
                 children: [
                   InkWell(
                     child: Icon(Icons.location_on_rounded),
-                    onTap: () {},
+                    onTap: getUserLocation,
                   ),
                   location != ''
                       ? Padding(
@@ -187,7 +198,13 @@ class _NewPostFormState extends State<NewPostForm> {
                             //  mainAxisAlignment: MainAxisAlignment.center,
                             //      crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(location),
+                              Container(
+                                  width: screenSize.width * 0.6,
+                                  child: Text(
+                                    location,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  )),
                               IconButton(
                                 icon: Icon(Icons.cancel),
                                 onPressed: () {
@@ -199,7 +216,20 @@ class _NewPostFormState extends State<NewPostForm> {
                             ],
                           ),
                         )
-                      : Container(),
+                      : InkWell(
+                          onTap: getUserLocation,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: MediaQuery.of(context).size.width * 0.05),
+                            child: Container(
+                                width: screenSize.width * 0.6,
+                                child: Text(
+                                  'Add current location',
+                                  //maxLines: 1,
+                                  // overflow: TextOverflow.ellipsis,
+                                )),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -272,20 +302,21 @@ class _NewPostFormState extends State<NewPostForm> {
     print('done');
   }
 
-  // getUserLocation() async {
-  //   Position position = await Geolocator()
-  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  //   List<Placemark> placemarks = await Geolocator()
-  //       .placemarkFromCoordinates(position.latitude, position.longitude);
-  //   Placemark placemark = placemarks[0];
-  //   String completeAddress =
-  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-  //   print(completeAddress);
-  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
-  //   setState(() {
-  //     location = formattedAddress;
-  //   });
-  // }
+  getUserLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.latitude);
+    // this is all you need
+    Placemark placeMark = placemarks[0];
+    String subLocality = placeMark.subLocality;
+    String country = placeMark.country;
+    String address = "$subLocality,  $country";
+    print(address);
+    setState(() {
+      location = address; // update _address
+    });
+  }
 
   _submitForm(BuildContext context) {
     //

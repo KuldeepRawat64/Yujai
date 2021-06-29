@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,6 +18,7 @@ class ListAd extends StatefulWidget {
   final int index;
   final String gid;
   final String name;
+  final Group group;
   ListAd({
     // this.user,
     this.index,
@@ -24,6 +26,7 @@ class ListAd extends StatefulWidget {
     this.documentSnapshot,
     this.gid,
     this.name,
+    this.group,
   });
 
   @override
@@ -221,6 +224,30 @@ class _ListAdState extends State<ListAd> {
                               ),
                             ),
                           )),
+                      Positioned(
+                          top: 8,
+                          right: 8,
+                          child: InkWell(
+                            onTap: () {
+                              widget.currentuser.uid ==
+                                          widget.documentSnapshot
+                                              .data()['ownerUid'] ||
+                                      widget.group != null &&
+                                          widget.group.currentUserUid ==
+                                              widget.currentuser.uid
+                                  ? deleteDialog(widget.documentSnapshot)
+                                  : showReport(widget.documentSnapshot);
+                            },
+                            child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.more_vert,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ))
                     ],
                   ),
                 ),
@@ -269,6 +296,115 @@ class _ListAdState extends State<ListAd> {
         ),
       ),
     );
+  }
+
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   showDelete(DocumentSnapshot snapshot) {
@@ -419,7 +555,11 @@ class _ListAdState extends State<ListAd> {
                                 fontWeight: FontWeight.bold)),
                       ),
                       InkWell(
-                        onTap: send,
+                        onTap: () {
+                          send()
+                              .then((value) => Navigator.pop(context))
+                              .then((value) => Navigator.pop(context));
+                        },
                         child: Text(
                           'Submit',
                           style: TextStyle(
@@ -438,9 +578,9 @@ class _ListAdState extends State<ListAd> {
 
   deletePost(DocumentSnapshot snapshot) {
     FirebaseFirestore.instance
-        .collection('users')
-        .doc(snapshot['ownerUid'])
-        .collection('posts')
+        .collection('groups')
+        .doc(widget.gid)
+        .collection('marketplace')
         // .document()
         // .delete();
         .doc(snapshot['postId'])
@@ -448,7 +588,7 @@ class _ListAdState extends State<ListAd> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {

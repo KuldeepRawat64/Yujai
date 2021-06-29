@@ -361,7 +361,8 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                       projectId: widget.project.uid,
                     )));
           } else {
-            return NoPost();
+            return NoContent('No discussions', 'assets/images/discussion.png',
+                'If you have something to tell', ' click the + icon above');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');

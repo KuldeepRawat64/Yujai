@@ -1,5 +1,6 @@
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/post_screen.dart';
+import 'package:Yujai/pages/post_screen_group.dart';
 import 'package:Yujai/pages/team_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +26,9 @@ class ListItemInbox extends StatelessWidget {
     if (documentSnapshot.data()['type'] == 'like' ||
         documentSnapshot.data()['type'] == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => showPost(context),
+        onTap: () => documentSnapshot.data()['gid'] == null
+            ? showPost(context)
+            : showGroupPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -35,7 +38,9 @@ class ListItemInbox extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/placeholder.png'),
+                  image: documentSnapshot.data()['imgUrl'] != null
+                      ? NetworkImage(documentSnapshot.data()['imgUrl'])
+                      : AssetImage('assets/images/placeholder.png'),
                 ),
               ),
             ),
@@ -132,6 +137,14 @@ class ListItemInbox extends StatelessWidget {
   showPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(
+            userId: documentSnapshot.data()['ownerUid'],
+            postId: documentSnapshot.data()['postId'])));
+  }
+
+  showGroupPost(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PostScreenGroup(
+            groupId: documentSnapshot.data()['gid'],
             userId: documentSnapshot.data()['ownerUid'],
             postId: documentSnapshot.data()['postId'])));
   }

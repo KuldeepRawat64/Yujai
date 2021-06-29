@@ -167,14 +167,19 @@ class _GroupChatState extends State<GroupChat> {
                 ? Container(
                     child: CircularProgressIndicator(),
                   )
-                : Column(
-                    children: <Widget>[
-                      chatMessagesListWidget(),
-                      chatInputWidget(),
-                      SizedBox(
-                        height: 5.0,
-                      )
-                    ],
+                : Container(
+                    child: Column(
+                      children: <Widget>[
+                        Flexible(child: chatMessagesListWidget()),
+                        Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor),
+                            child: chatInputWidget()),
+                        // SizedBox(
+                        //   height: 5.0,
+                        // )
+                      ],
+                    ),
                   ),
           )),
     );
@@ -183,12 +188,26 @@ class _GroupChatState extends State<GroupChat> {
   Widget chatInputWidget() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      color: Colors.transparent,
-      child: Wrap(
+      // color: Color(0xffffffff),
+      //height: screenSize.height * 0.1,
+      //color: Colors.transparent,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
         children: [
           Container(
-            color: Colors.white,
-            width: screenSize.width,
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.attachment_rounded,
+                color: Colors.black54,
+              ),
+              onPressed: () {
+                _onButtonPressedUser();
+              },
+              color: Colors.black,
+            ),
+          ),
+          Flexible(
             child: TextFormField(
               textCapitalization: TextCapitalization.sentences,
               minLines: 1,
@@ -198,44 +217,35 @@ class _GroupChatState extends State<GroupChat> {
                   fontFamily: FontNameDefault, fontSize: textBody1(context)),
               controller: _messageController,
               decoration: InputDecoration(
+                border: InputBorder.none,
                 contentPadding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
                 hintText: "Enter message...",
-                icon: IconButton(
-                  icon: Icon(
-                    Icons.attachment_rounded,
-                    color: Colors.black54,
-                  ),
-                  onPressed: () {
-                    _onButtonPressedUser();
-                  },
-                  color: Colors.black,
-                ),
-                border: InputBorder.none,
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: InkWell(
-                    child: Icon(
-                      MdiIcons.send,
-                      size: screenSize.height * 0.035,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    onTap: () {
-                      if (_messageController.text != '') {
-                        sendMessage();
-                        _scrollController.animateTo(
-                            _scrollController.position.maxScrollExtent,
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.fastOutSlowIn);
-                      }
-                    },
-                  ),
-                ),
+                labelText: "Message",
               ),
               onFieldSubmitted: (value) {
                 _messageController.text = value;
               },
             ),
           ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: InkWell(
+              child: Icon(
+                MdiIcons.send,
+                size: screenSize.height * 0.035,
+                color: Theme.of(context).primaryColor,
+              ),
+              onTap: () {
+                if (_messageController.text != '') {
+                  sendMessage();
+                  _scrollController.animateTo(
+                      _scrollController.position.minScrollExtent,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.fastOutSlowIn);
+                }
+              },
+            ),
+          )
         ],
       ),
     );
@@ -300,36 +310,33 @@ class _GroupChatState extends State<GroupChat> {
 
   Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
-    return Flexible(
-      flex: 1,
-      // fit: FlexFit.tight,
-      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: FirebaseFirestore.instance
-            .collection('groups')
-            .doc(widget.recieverGroup.uid)
-            .collection('messages')
-            .orderBy('timestamp', descending: false)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            //listItem = snapshot.data.documents;
-            return ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) =>
-                  //   ListItemChat(
-                  //   documentSnapshot: snapshot.data.documents[index],
-                  //  ),
-                  chatMessageItem(snapshot.data.docs[index]),
-              itemCount: snapshot.data.docs.length,
-            );
-          }
-        },
-      ),
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('groups')
+          .doc(widget.recieverGroup.uid)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          //listItem = snapshot.data.documents;
+          return ListView.builder(
+            reverse: true,
+            controller: _scrollController,
+            padding: EdgeInsets.all(8.0),
+            itemBuilder: (context, index) =>
+                //   ListItemChat(
+                //   documentSnapshot: snapshot.data.documents[index],
+                //  ),
+                chatMessageItem(snapshot.data.docs[index]),
+            itemCount: snapshot.data.docs.length,
+          );
+        }
+      },
     );
   }
 
@@ -369,9 +376,8 @@ class _GroupChatState extends State<GroupChat> {
                   margin: EdgeInsets.only(top: 4),
                   backGroundColor: const Color(0xff251F34),
                   child: Container(
-                      constraints: BoxConstraints(
-                        maxWidth: screenSize.width * 0.7,
-                      ),
+                      constraints:
+                          BoxConstraints(maxWidth: screenSize.width * 0.7),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
@@ -408,7 +414,7 @@ class _GroupChatState extends State<GroupChat> {
                                           color: Colors.deepPurple[300]),
                                     ),
                                   )
-                                : Container()
+                                : Text('')
                           ],
                         ),
                       )),
@@ -547,7 +553,7 @@ class _GroupChatState extends State<GroupChat> {
                                                       Colors.deepPurple[300]),
                                             ),
                                           )
-                                        : Container()
+                                        : Text('')
                                   ],
                                 ),
                               ),

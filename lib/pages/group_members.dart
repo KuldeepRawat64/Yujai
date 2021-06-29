@@ -13,18 +13,18 @@ import 'package:shimmer/shimmer.dart';
 
 import '../style.dart';
 
-class TeamMembers extends StatefulWidget {
+class GroupMembers extends StatefulWidget {
   final String gid;
   final String name;
   final Team group;
   final UserModel currentuser;
-  const TeamMembers({this.gid, this.name, this.group, this.currentuser});
+  const GroupMembers({this.gid, this.name, this.group, this.currentuser});
 
   @override
-  _TeamMembersState createState() => _TeamMembersState();
+  _GroupMembersState createState() => _GroupMembersState();
 }
 
-class _TeamMembersState extends State<TeamMembers> {
+class _GroupMembersState extends State<GroupMembers> {
   var _repository = Repository();
   UserModel _user;
   IconData icon;
@@ -186,7 +186,7 @@ class _TeamMembersState extends State<TeamMembers> {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
-          //        controller: _scrollController,
+                //  controller: _scrollController,
                   //shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemMember(

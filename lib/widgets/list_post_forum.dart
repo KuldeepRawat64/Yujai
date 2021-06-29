@@ -55,6 +55,7 @@ class _ListPostForumState extends State<ListPostForum> {
   String selectedSubject;
   final _bodyController = TextEditingController();
   bool _isVoted = false;
+  //bool _isExpired = false;
   List<DocumentSnapshot> listVotes = [];
   List<DocumentSnapshot> listVotes2 = [];
   List<DocumentSnapshot> listVotes3 = [];
@@ -232,6 +233,7 @@ class _ListPostForumState extends State<ListPostForum> {
         });
       }
     });
+    // checkPollTimeStatus(widget.documentSnapshot.data()['pollLength']);
   }
 
   checkPollLength(int time) {
@@ -247,7 +249,9 @@ class _ListPostForumState extends State<ListPostForum> {
   void initState() {
     super.initState();
     selectedSubject = 'Spam';
+    // checkPollValidity(widget.documentSnapshot.data()['pollLength']);
     buildPollDetail();
+
     // checkPollLength(widget.documentSnapshot.data()['pollLength']);
     _displayFront = true;
     _flipXAxis = true;
@@ -302,14 +306,27 @@ class _ListPostForumState extends State<ListPostForum> {
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          '${_getPercentage().toString().substring(0, 2)} %'
-              .replaceAll('Na', '0'),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage()}'.substring(0, 3).replaceAll('.', ''),
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -317,14 +334,28 @@ class _ListPostForumState extends State<ListPostForum> {
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          '${_getPercentage2().toString().substring(0, 2)} %'
-              .replaceAll('Na', '0'),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage2()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -332,14 +363,28 @@ class _ListPostForumState extends State<ListPostForum> {
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          '${_getPercentage3().toString().substring(0, 2)} %'
-              .replaceAll('Na', '0'),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage3()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -347,14 +392,28 @@ class _ListPostForumState extends State<ListPostForum> {
     var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
-      child: Text(
-          '${_getPercentage4().toString().substring(0, 2)} %'
-              .replaceAll('Na', '0'),
-          style: TextStyle(
-              fontFamily: FontNameDefault,
-              fontWeight: FontWeight.bold,
-              fontSize: textBody1(context),
-              color: Colors.black54)),
+      child: Row(
+        children: [
+          Text('${_getPercentage4()}'.substring(0, 3).replaceAll('.', ''),
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+          Text(' % ',
+              //  .replaceAll('.0', ' %  ')
+              //   .replaceAll('NaN', ' %  ')
+              //   .replaceAll('Infinity', ' %  '),
+              style: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.bold,
+                  fontSize: textBody1(context),
+                  color: Colors.black54)),
+        ],
+      ),
     );
   }
 
@@ -442,6 +501,15 @@ class _ListPostForumState extends State<ListPostForum> {
     }
   }
 
+  checkPollTimeStatus(int time) {
+    if (DateTime.now().millisecondsSinceEpoch >= time) {
+      if (!mounted) return;
+      setState(() {
+        _isVoted = true;
+      });
+    }
+  }
+
   convertDate(int timeinMilis) {
     var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
     var formattedDate = DateFormat.MMMd().add_jm().format(date);
@@ -485,7 +553,7 @@ class _ListPostForumState extends State<ListPostForum> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40.0))),
               padding: EdgeInsets.only(
-                  //    bottom: screenSize.height * 0.01,
+                  bottom: screenSize.height * 0.01,
                   top: screenSize.height * 0.01,
                   left: screenSize.width / 30),
               child: Text(
@@ -507,313 +575,287 @@ class _ListPostForumState extends State<ListPostForum> {
             ),
             child: Column(
               children: [
-                widget.documentSnapshot.data()['option1'] != ''
-                    ? Column(
-                        children: [
-                          //     SizedBox(height: screenSize.height * 0.01),
-                          InkWell(
-                            onTap: () {
-                              if (!_isVoted && !_selected1) {
-                                setState(() {
-                                  _isVoted = true;
-                                });
-                                postVote(widget.documentSnapshot.reference);
-                                addVoteToSelectedOption(
-                                    widget.documentSnapshot.reference,
-                                    widget.currentuser,
-                                    'option1');
-                                buildPollDetail();
-                              }
-                            },
-                            child: Container(
-                                height: screenSize.height * 0.05,
-                                width: screenSize.width / 1.2,
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: Colors.deepPurple[50]),
-                                  color: _selected1
-                                      ? containerColor
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                                child: !_isVoted
-                                    ? Center(
-                                        child: Text(
+                Column(
+                  children: [
+                    //     SizedBox(height: screenSize.height * 0.01),
+                    InkWell(
+                      onTap: () {
+                        if (!_isVoted && !_selected1) {
+                          setState(() {
+                            _isVoted = true;
+                          });
+                          postVote(widget.documentSnapshot.reference);
+                          addVoteToSelectedOption(
+                              widget.documentSnapshot.reference,
+                              widget.currentuser,
+                              'option1');
+                          buildPollDetail();
+                        }
+                      },
+                      child: Container(
+                          height: screenSize.height * 0.05,
+                          width: screenSize.width / 1.2,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.deepPurple[50]),
+                            color: _selected1 ? containerColor : Colors.white,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: !_isVoted
+                              ? Center(
+                                  child: Text(
+                                  widget.documentSnapshot.data()['option1'],
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context),
+                                      color: Theme.of(context).primaryColor,
+                                      fontWeight: FontWeight.bold),
+                                ))
+                              : Container(
+                                  margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                  width: double.infinity,
+                                  child: LinearPercentIndicator(
+                                    backgroundColor: Colors.deepPurple[50],
+                                    animation: true,
+                                    lineHeight: 38.0,
+                                    animationDuration: 500,
+                                    percent: _percent1(),
+                                    center: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          widget.documentSnapshot['option1'],
+                                          style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              color: Colors.black54,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: textBody1(context)),
+                                        ),
+                                        option1Widget()
+                                      ],
+                                    ),
+                                    linearStrokeCap: LinearStrokeCap.roundAll,
+                                    progressColor: _selected1
+                                        ? Colors.deepPurple[300]
+                                        : Colors.deepPurple[100],
+                                  ),
+                                )),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(height: screenSize.height * 0.01),
+                    InkWell(
+                      onTap: () {
+                        if (!_isVoted && !_selected2) {
+                          setState(() {
+                            _isVoted = true;
+                          });
+
+                          postVote(widget.documentSnapshot.reference);
+                          addVoteToSelectedOption(
+                              widget.documentSnapshot.reference,
+                              widget.currentuser,
+                              'option2');
+                          buildPollDetail();
+                        }
+                      },
+                      child: Container(
+                        height: screenSize.height * 0.05,
+                        width: screenSize.width / 1.2,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.deepPurple[50]),
+                          color: _selected2 ? containerColor : Colors.white,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: !_isVoted
+                            ? Center(
+                                child: Text(
+                                widget.documentSnapshot.data()['option2'],
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textBody1(context)),
+                              ))
+                            : Container(
+                                margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                width: double.infinity,
+                                child: LinearPercentIndicator(
+                                  backgroundColor: Colors.deepPurple[50],
+                                  animation: true,
+                                  lineHeight: 38.0,
+                                  animationDuration: 500,
+                                  percent: _percent2(),
+                                  center: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
                                         widget.documentSnapshot
-                                            .data()['option1'],
+                                            .data()['option2'],
                                         style: TextStyle(
                                             fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context),
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            fontWeight: FontWeight.bold),
-                                      ))
-                                    : Container(
-                                        margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
-                                        width: double.infinity,
-                                        child: LinearPercentIndicator(
-                                          backgroundColor:
-                                              Colors.deepPurple[50],
-                                          animation: true,
-                                          lineHeight: 38.0,
-                                          animationDuration: 500,
-                                          percent: _percent1(),
-                                          center: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                widget.documentSnapshot[
-                                                    'option1'],
-                                                style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    color: Colors.black54,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        textBody1(context)),
-                                              ),
-                                              option1Widget()
-                                            ],
-                                          ),
-                                          linearStrokeCap:
-                                              LinearStrokeCap.roundAll,
-                                          progressColor: _selected1
-                                              ? Colors.deepPurple[300]
-                                              : Colors.deepPurple[100],
-                                        ),
-                                      )),
-                          ),
-                        ],
-                      )
-                    : Container(),
-                widget.documentSnapshot.data()['option2'] != ''
-                    ? Column(
-                        children: [
-                          SizedBox(height: screenSize.height * 0.01),
-                          InkWell(
-                            onTap: () {
-                              if (!_isVoted && !_selected2) {
-                                setState(() {
-                                  _isVoted = true;
-                                });
-
-                                postVote(widget.documentSnapshot.reference);
-                                addVoteToSelectedOption(
-                                    widget.documentSnapshot.reference,
-                                    widget.currentuser,
-                                    'option2');
-                                buildPollDetail();
-                              }
-                            },
-                            child: Container(
-                              height: screenSize.height * 0.05,
-                              width: screenSize.width / 1.2,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.deepPurple[50]),
-                                color:
-                                    _selected2 ? containerColor : Colors.white,
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: !_isVoted
-                                  ? Center(
-                                      child: Text(
-                                      widget.documentSnapshot.data()['option2'],
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: textBody1(context)),
-                                    ))
-                                  : Container(
-                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
-                                      width: double.infinity,
-                                      child: LinearPercentIndicator(
-                                        backgroundColor: Colors.deepPurple[50],
-                                        animation: true,
-                                        lineHeight: 38.0,
-                                        animationDuration: 500,
-                                        percent: _percent2(),
-                                        center: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              widget.documentSnapshot
-                                                  .data()['option2'],
-                                              style: TextStyle(
-                                                  fontFamily: FontNameDefault,
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: textBody1(context)),
-                                            ),
-                                            option2Widget()
-                                          ],
-                                        ),
-                                        linearStrokeCap:
-                                            LinearStrokeCap.roundAll,
-                                        progressColor: _selected2
-                                            ? Colors.deepPurple[300]
-                                            : Colors.deepPurple[100],
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: textBody1(context)),
                                       ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
-                widget.documentSnapshot.data()['option3'] != ''
-                    ? Column(
-                        children: [
-                          SizedBox(height: screenSize.height * 0.01),
-                          InkWell(
-                            onTap: () {
-                              if (!_isVoted && !_selected3) {
-                                setState(() {
-                                  _isVoted = true;
-                                });
-
-                                postVote(widget.documentSnapshot.reference);
-                                addVoteToSelectedOption(
-                                    widget.documentSnapshot.reference,
-                                    widget.currentuser,
-                                    'option3');
-                                buildPollDetail();
-                              }
-                            },
-                            child: Container(
-                              height: screenSize.height * 0.05,
-                              width: screenSize.width / 1.2,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.deepPurple[50]),
-                                color:
-                                    _selected3 ? containerColor : Colors.white,
-                                borderRadius: BorderRadius.circular(40),
+                                      option2Widget()
+                                    ],
+                                  ),
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                  progressColor: _selected2
+                                      ? Colors.deepPurple[300]
+                                      : Colors.deepPurple[100],
+                                ),
                               ),
-                              child: !_isVoted
-                                  ? Center(
-                                      child: Text(
-                                      widget.documentSnapshot.data()['option3'],
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: textBody1(context)),
-                                    ))
-                                  : Container(
-                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
-                                      width: double.infinity,
-                                      child: LinearPercentIndicator(
-                                        backgroundColor: Colors.deepPurple[50],
-                                        animation: true,
-                                        lineHeight: 38.0,
-                                        animationDuration: 500,
-                                        percent: _percent3(),
-                                        center: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              widget.documentSnapshot
-                                                  .data()['option3'],
-                                              style: TextStyle(
-                                                  fontFamily: FontNameDefault,
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: textBody1(context)),
-                                            ),
-                                            option3Widget()
-                                          ],
-                                        ),
-                                        linearStrokeCap:
-                                            LinearStrokeCap.roundAll,
-                                        progressColor: _selected3
-                                            ? Colors.deepPurple[300]
-                                            : Colors.deepPurple[100],
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
-                widget.documentSnapshot.data()['option4'] != ''
-                    ? Column(
-                        children: [
-                          SizedBox(height: screenSize.height * 0.01),
-                          InkWell(
-                            onTap: () {
-                              if (!_isVoted && !_selected4) {
-                                setState(() {
-                                  _isVoted = true;
-                                });
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(height: screenSize.height * 0.01),
+                    InkWell(
+                      onTap: () {
+                        if (!_isVoted && !_selected3) {
+                          setState(() {
+                            _isVoted = true;
+                          });
 
-                                postVote(widget.documentSnapshot.reference);
-                                addVoteToSelectedOption(
-                                    widget.documentSnapshot.reference,
-                                    widget.currentuser,
-                                    'option4');
-                                buildPollDetail();
-                              }
-                            },
-                            child: Container(
-                              height: screenSize.height * 0.05,
-                              width: screenSize.width / 1.2,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.deepPurple[50]),
-                                color:
-                                    _selected4 ? containerColor : Colors.white,
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: !_isVoted
-                                  ? Center(
-                                      child: Text(
-                                      widget.documentSnapshot.data()['option4'],
-                                      style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textBody1(context)),
-                                    ))
-                                  : Container(
-                                      margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
-                                      width: double.infinity,
-                                      child: LinearPercentIndicator(
-                                        backgroundColor: Colors.deepPurple[50],
-                                        animation: true,
-                                        lineHeight: 38.0,
-                                        animationDuration: 500,
-                                        percent: _percent4(),
-                                        center: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              widget.documentSnapshot
-                                                  .data()['option4'],
-                                              style: TextStyle(
-                                                  fontFamily: FontNameDefault,
-                                                  color: Colors.black54,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: textBody1(context)),
-                                            ),
-                                            option4Widget()
-                                          ],
-                                        ),
-                                        linearStrokeCap:
-                                            LinearStrokeCap.roundAll,
-                                        progressColor: _selected4
-                                            ? Colors.deepPurple[300]
-                                            : Colors.deepPurple[100],
+                          postVote(widget.documentSnapshot.reference);
+                          addVoteToSelectedOption(
+                              widget.documentSnapshot.reference,
+                              widget.currentuser,
+                              'option3');
+                          buildPollDetail();
+                        }
+                      },
+                      child: Container(
+                        height: screenSize.height * 0.05,
+                        width: screenSize.width / 1.2,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.deepPurple[50]),
+                          color: _selected3 ? containerColor : Colors.white,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: !_isVoted
+                            ? Center(
+                                child: Text(
+                                widget.documentSnapshot.data()['option3'],
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textBody1(context)),
+                              ))
+                            : Container(
+                                margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                width: double.infinity,
+                                child: LinearPercentIndicator(
+                                  backgroundColor: Colors.deepPurple[50],
+                                  animation: true,
+                                  lineHeight: 38.0,
+                                  animationDuration: 500,
+                                  percent: _percent3(),
+                                  center: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        widget.documentSnapshot
+                                            .data()['option3'],
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: textBody1(context)),
                                       ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
+                                      option3Widget()
+                                    ],
+                                  ),
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                  progressColor: _selected3
+                                      ? Colors.deepPurple[300]
+                                      : Colors.deepPurple[100],
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    SizedBox(height: screenSize.height * 0.01),
+                    InkWell(
+                      onTap: () {
+                        if (!_isVoted && !_selected4) {
+                          setState(() {
+                            _isVoted = true;
+                          });
+
+                          postVote(widget.documentSnapshot.reference);
+                          addVoteToSelectedOption(
+                              widget.documentSnapshot.reference,
+                              widget.currentuser,
+                              'option4');
+                          buildPollDetail();
+                        }
+                      },
+                      child: Container(
+                        height: screenSize.height * 0.05,
+                        width: screenSize.width / 1.2,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.deepPurple[50]),
+                          color: _selected4 ? containerColor : Colors.white,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: !_isVoted
+                            ? Center(
+                                child: Text(
+                                widget.documentSnapshot.data()['option4'],
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textBody1(context)),
+                              ))
+                            : Container(
+                                margin: EdgeInsets.fromLTRB(6, 6, 6, 6),
+                                width: double.infinity,
+                                child: LinearPercentIndicator(
+                                  backgroundColor: Colors.deepPurple[50],
+                                  animation: true,
+                                  lineHeight: 38.0,
+                                  animationDuration: 500,
+                                  percent: _percent4(),
+                                  center: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        widget.documentSnapshot
+                                            .data()['option4'],
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      option4Widget()
+                                    ],
+                                  ),
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                  progressColor: _selected4
+                                      ? Colors.deepPurple[300]
+                                      : Colors.deepPurple[100],
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(
                   height: screenSize.height * 0.005,
                 ),
@@ -901,7 +943,7 @@ class _ListPostForumState extends State<ListPostForum> {
     print('build list');
     var screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Container(
         decoration: ShapeDecoration(
           color: const Color(0xffffffff),
@@ -1581,6 +1623,7 @@ class _ListPostForumState extends State<ListPostForum> {
                       color: Colors.redAccent),
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   deletePost(snapshot);
                   //  Navigator.pop(context);
                   //   Navigator.pop(context);
@@ -1646,6 +1689,7 @@ class _ListPostForumState extends State<ListPostForum> {
                           ),
                           child: GestureDetector(
                             onTap: () {
+                              Navigator.pop(context);
                               deletePost(snapshot);
                             },
                             child: Container(
@@ -1875,7 +1919,9 @@ class _ListPostForumState extends State<ListPostForum> {
                           ),
                           InkWell(
                             onTap: () {
-                              send().then((value) => Navigator.pop(context));
+                              send()
+                                  .then((value) => Navigator.pop(context))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: Text(
                               'Submit',
@@ -1909,7 +1955,7 @@ class _ListPostForumState extends State<ListPostForum> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        // Navigator.pop(context);
 
         print('post deleted');
       } else {
@@ -1918,19 +1964,21 @@ class _ListPostForumState extends State<ListPostForum> {
     });
   }
 
-  void addLikeToActivityFeed(DocumentSnapshot snapshot, UserModel currentUser) {
+  void addLikeToActivityFeed(
+      DocumentSnapshot<Map<String, dynamic>> snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (widget.currentuser.uid == snapshot['ownerUid']) {
+    if (widget.currentuser.uid == snapshot.data()['ownerUid']) {
       return print('Owner liked');
     } else {
       var _feed = Feed(
-        postOwnerUid: snapshot['ownerUid'],
+        gid: widget.gid,
+        postOwnerUid: snapshot.data()['ownerUid'],
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
         type: 'like',
         ownerPhotoUrl: currentUser.photoUrl,
-        imgUrl: snapshot['imgUrl'],
-        postId: snapshot['postId'],
+        imgUrl: snapshot.data()['imgUrl'],
+        postId: snapshot.data()['postId'],
         timestamp: FieldValue.serverTimestamp(),
         commentData: '',
       );
@@ -1940,7 +1988,7 @@ class _ListPostForumState extends State<ListPostForum> {
           .collection('inbox')
           // .document(currentUser.uid)
           // .collection('likes')
-          .doc(snapshot['postId'])
+          .doc(snapshot.data()['postId'])
           .set(_feed.toMap(_feed))
           .then((value) {
         print('Group Feed added');
@@ -1959,9 +2007,9 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   void removeLikeFromActivityFeed(
-      DocumentSnapshot snapshot, UserModel currentUser) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot, UserModel currentUser) {
     //  bool ownerId = widget.user.uid == widget.currentuser.uid;
-    if (currentUser.uid == snapshot['ownerUid']) {
+    if (currentUser.uid == snapshot.data()['ownerUid']) {
       return print('Owner feed');
     } else {
       FirebaseFirestore.instance
@@ -1971,7 +2019,7 @@ class _ListPostForumState extends State<ListPostForum> {
           //.where('postId',isEqualTo:snapshot['postId'])
           // .document(currentuser.uid)
           // .collection('likes')
-          .doc(snapshot['postId'])
+          .doc(snapshot.data()['postId'])
           .get()
           .then((doc) {
         if (doc.exists) {

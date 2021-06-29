@@ -554,7 +554,8 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                       deptId: widget.department.uid,
                     )));
           } else {
-            return NoPost();
+            return NoContent('No discussions', 'assets/images/discussion.png',
+                'If you have something to tell', ' click the + icon above');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');
@@ -630,8 +631,11 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                       CircleAvatar(
                         backgroundColor: Colors.grey[300],
                         radius: screenSize.height * 0.02,
-                        backgroundImage:
-                            AssetImage('assets/images/three-dots-icon.png'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child:
+                              Image.asset('assets/images/three-dots-icon.png'),
+                        ),
                       ),
                       SizedBox(
                         width: screenSize.width * 0.02,

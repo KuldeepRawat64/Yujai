@@ -659,6 +659,15 @@ class Repository {
         followerId: followerId,
       );
 
+  Future<void> removeGroupMember({
+    Group currentGroup,
+    String followerId,
+  }) =>
+      _firebaseProvider.removeGroupMember(
+        currentGroup: currentGroup,
+        followerId: followerId,
+      );
+
   Future<void> addDeptMember(
           {Team currentTeam,
           String currentDeptId,

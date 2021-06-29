@@ -414,32 +414,6 @@ class _CreateGroupState extends State<CreateGroup> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          InkWell(
-                            onTap: _showReportDialog,
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Select Rules',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textSubTitle(context),
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Chip(
-                                  label: Text(
-                                    'Rules',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.white),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -559,42 +533,67 @@ class _CreateGroupState extends State<CreateGroup> {
                           ),
                         ]),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenSize.height * 0.001),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  InkWell(
+                    onTap: _showReportDialog,
+                    child: Column(
                       children: [
-                        Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: Colors.deepPurpleAccent,
-                          value: this.valueFirst,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _openAgreeDialog(context);
-                              this.valueFirst = value;
-                            });
-                          },
+                        Text(
+                          'Select Rules',
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            //_openAgreeDialog(context);
-                          },
-                          child: Text(
-                            'Accept Terms & Conditions',
+                        Chip(
+                          label: Text(
+                            'Rules',
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context)),
+                                fontSize: textBody1(context),
+                                color: Colors.white),
                           ),
+                          backgroundColor: Theme.of(context).primaryColor,
                         ),
                       ],
                     ),
                   ),
-                  valueFirst &&
-                          (displayNameController.text.isNotEmpty &&
-                                  aboutController.text.isNotEmpty &&
-                                  agendaController.text.isNotEmpty ||
-                              locationController.text.isNotEmpty)
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(
+                  //       vertical: screenSize.height * 0.001),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Checkbox(
+                  //         checkColor: Colors.white,
+                  //         activeColor: Colors.deepPurpleAccent,
+                  //         value: this.valueFirst,
+                  //         onChanged: (bool value) {
+                  //           setState(() {
+                  //             _openAgreeDialog(context);
+                  //             this.valueFirst = value;
+                  //           });
+                  //         },
+                  //       ),
+                  //       GestureDetector(
+                  //         onTap: () {
+                  //           //_openAgreeDialog(context);
+                  //         },
+                  //         child: Text(
+                  //           'Accept Terms & Conditions',
+                  //           style: TextStyle(
+                  //               fontFamily: FontNameDefault,
+                  //               fontSize: textBody1(context)),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // valueFirst &&
+                  (displayNameController.text.isNotEmpty &&
+                              aboutController.text.isNotEmpty &&
+                              agendaController.text.isNotEmpty ||
+                          locationController.text.isNotEmpty)
                       ? GestureDetector(
                           onTap: submit,
                           child: Container(

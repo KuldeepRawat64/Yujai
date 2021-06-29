@@ -246,171 +246,126 @@ class _NewGroupFormState extends State<NewGroupForm> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          autocorrect: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
-                          ),
-                          controller: _captionController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[100],
+                    child: TextFormField(
+                      autocorrect: true,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context),
+                      ),
+                      controller: _captionController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
 
-                            labelText: 'Group name',
-                            hintStyle: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textAppTitle(context),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            // border: OutlineInputBorder(
-                            //   borderRadius: new BorderRadius.circular(10),
-                            // ),
-                            border: InputBorder.none,
-                            isDense: true,
-                          ),
-                          validator: (value) {
-                            if (value.isEmpty) return 'Enter a group name';
-                            return null;
-                          },
+                        labelText: 'Group name',
+                        hintStyle: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textAppTitle(context),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                        // border: OutlineInputBorder(
+                        //   borderRadius: new BorderRadius.circular(10),
+                        // ),
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) return 'Enter a group name';
+                        return null;
+                      },
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          maxLines: 3,
-                          minLines: 3,
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
-                          ),
-                          keyboardType: TextInputType.multiline,
-                          controller: _detailController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[100],
+                    child: TextFormField(
+                      maxLines: 3,
+                      minLines: 3,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context),
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      controller: _detailController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
 
-                            labelText: 'Description',
-                            hintStyle: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textAppTitle(context),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            // border: OutlineInputBorder(
-                            //   borderRadius: new BorderRadius.circular(10),
-                            // ),
-                            border: InputBorder.none,
-                            isDense: true,
-                          ),
-                          validator: (value) {
-                            if (value.isEmpty) return 'Enter a description';
-                            return null;
-                          },
+                        labelText: 'Description',
+                        hintStyle: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textAppTitle(context),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                        // border: OutlineInputBorder(
+                        //   borderRadius: new BorderRadius.circular(10),
+                        // ),
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) return 'Enter a description';
+                        return null;
+                      },
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          autocorrect: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
-                          ),
-                          controller: _agendaController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            labelText: 'Agenda',
-                            hintStyle: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textAppTitle(context),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            border: InputBorder.none,
-                            isDense: true,
-                          ),
+                    child: TextFormField(
+                      autocorrect: true,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context),
+                      ),
+                      controller: _agendaController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        labelText: 'Agenda',
+                        hintStyle: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textAppTitle(context),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.02),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          autocorrect: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
-                          ),
-                          controller: _locationController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            labelText: 'Location',
-                            hintStyle: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textAppTitle(context),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            border: InputBorder.none,
-                            isDense: true,
-                          ),
+                    child: TextFormField(
+                      autocorrect: true,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context),
+                      ),
+                      controller: _locationController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        labelText: 'Location',
+                        hintStyle: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textAppTitle(context),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
                     ),
                   ),
+
                   Padding(
-                    padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                    padding: EdgeInsets.only(top: screenSize.height * 0.01),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          InkWell(
-                            onTap: _showReportDialog,
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Select Rules',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textSubTitle(context),
-                                      color: Colors.black54,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Chip(
-                                  label: Text(
-                                    'Rules',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context),
-                                        color: Colors.white),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenSize.height * 0.05,
-                          ),
+                          // SizedBox(
+                          //   height: screenSize.height * 0.05,
+                          // ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -531,42 +486,74 @@ class _NewGroupFormState extends State<NewGroupForm> {
                         ]),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenSize.height * 0.001),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: Colors.deepPurpleAccent,
-                          value: this.valueFirst,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _openAgreeDialog(context);
-                              this.valueFirst = value;
-                            });
-                          },
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            //_openAgreeDialog(context);
-                          },
-                          child: Text(
-                            'Accept Terms & Conditions',
+                    padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                    child: InkWell(
+                      onTap: _showReportDialog,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Select Rules',
                             style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context)),
+                                fontSize: textSubTitle(context),
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Chip(
+                            label: Text(
+                              'Rules',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textBody1(context),
+                                  color: Colors.white),
+                            ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(
+                  //       vertical: screenSize.height * 0.001),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Checkbox(
+                  //         checkColor: Colors.white,
+                  //         activeColor: Colors.deepPurpleAccent,
+                  //         value: this.valueFirst,
+                  //         onChanged: (bool value) {
+                  //           setState(() {
+                  //             _openAgreeDialog(context);
+                  //             this.valueFirst = value;
+                  //           });
+                  //         },
+                  //       ),
+                  //       GestureDetector(
+                  //         onTap: () {
+                  //           //_openAgreeDialog(context);
+                  //         },
+                  //         child: Text(
+                  //           'Accept Terms & Conditions',
+                  //           style: TextStyle(
+                  //               fontFamily: FontNameDefault,
+                  //               fontSize: textBody1(context)),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
             Padding(
               padding: EdgeInsets.only(
-                  top: screenSize.height * 0.02,
+                  top: screenSize.height * 0.01,
                   left: screenSize.width * 0.01,
                   right: screenSize.width * 0.01),
               child: InkWell(

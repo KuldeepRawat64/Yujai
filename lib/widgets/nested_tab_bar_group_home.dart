@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/pages/group_settings.dart';
+import 'package:Yujai/widgets/no_event.dart';
 import 'package:empty_widget/empty_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -166,14 +167,12 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   Widget getTextWidgets(List<dynamic> strings) {
     var screenSize = MediaQuery.of(context).size;
     return Column(
-      children: strings != null && strings.isNotEmpty
-          ? strings
-              .map((items) => Padding(
-                    padding: EdgeInsets.all(screenSize.height * 0.01),
-                    child: chip(items, Colors.white),
-                  ))
-              .toList()
-          : null,
+      children: strings
+          .map((items) => Padding(
+                padding: EdgeInsets.all(screenSize.height * 0.01),
+                child: chip(items, Colors.white),
+              ))
+          .toList(),
     );
   }
 
@@ -370,7 +369,11 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         gid: widget.gid,
                         name: widget.name)));
           } else {
-            return const Text('Empty data');
+            return NoContent(
+                'No posts',
+                'assets/images/picture.png',
+                'If you have something to post',
+                ' click the + icon to add an ad');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');
@@ -412,7 +415,8 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         gid: widget.gid,
                         name: widget.name)));
           } else {
-            return const Text('Empty data');
+            return NoContent('No events', 'assets/images/calendar.png',
+                'For adding upcoming event', ' click the + icon above');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');
@@ -487,7 +491,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
           } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  childAspectRatio: screenSize.height * 0.0012,
+                  childAspectRatio: 9 / 11,
                   maxCrossAxisExtent: 300,
                   mainAxisSpacing: 5.0,
                   crossAxisSpacing: 5.0),
@@ -495,6 +499,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               //shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) => ListAd(
+                  group: _group,
                   documentSnapshot: snapshot.data.docs[index],
                   index: index,
                   currentuser: currentuser,
@@ -502,7 +507,11 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                   name: widget.name)),
             );
           } else {
-            return const Text('Empty data');
+            return NoContent(
+                'No ads',
+                'assets/images/marketplace.png',
+                'If you have something to sell',
+                ' click the + icon to add an ad');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');
@@ -598,7 +607,8 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
             height: screenSize.height * 0.9,
             child: Column(
               children: [
-                widget.currentUser.uid == _group.currentUserUid
+                widget.currentUser.uid == _group.currentUserUid &&
+                        _group.isPrivate
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -683,25 +693,77 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                             ],
                           )
                         : Container(),
-                ListView.builder(
-                  //  controller: _scrollController4,
-                  shrinkWrap: true,
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => InkWell(
-                      onTap: () {
-                        if (currentuser.uid !=
-                            snapshot.data.docs[index].data()['ownerUid']) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FriendProfileScreen(
-                                      uid: snapshot.data.docs[index]
-                                          .data()['ownerUid'],
-                                      name: snapshot.data.docs[index]
-                                          .data()['ownerName'])));
-                        }
-                      },
-                      child: Padding(
+                Column(
+                  children: [
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      //  controller: _scrollController4,
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.docs.length > 3
+                          ? 4
+                          : snapshot.data.docs.length,
+                      itemBuilder: ((context, index) => InkWell(
+                          onTap: () {
+                            if (currentuser.uid !=
+                                snapshot.data.docs[index].data()['ownerUid']) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FriendProfileScreen(
+                                          uid: snapshot.data.docs[index]
+                                              .data()['ownerUid'],
+                                          name: snapshot.data.docs[index]
+                                              .data()['ownerName'])));
+                            }
+                          },
+                          child: Padding(
+                            child: Container(
+                              decoration: ShapeDecoration(
+                                color: const Color(0xffffffff),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  // side: BorderSide(color: Colors.grey[300]),
+                                ),
+                              ),
+                              child: ListTile(
+                                trailing: Text(
+                                  snapshot.data.docs[index]
+                                      .data()['accountType'],
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textBody1(context),
+                                  ),
+                                ),
+                                leading: CircleAvatar(
+                                    backgroundImage: CachedNetworkImageProvider(
+                                        snapshot.data.docs[index]
+                                            .data()['ownerPhotoUrl'])),
+                                title: Text(
+                                    snapshot.data.docs[index]
+                                        .data()['ownerName'],
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textSubTitle(context),
+                                    )),
+                              ),
+                            ),
+                            padding: const EdgeInsets.only(
+                              //  top: 8.0,
+                              //  bottom: 8.0,
+                              left: 8.0,
+                              right: 8.0,
+                            ),
+                          ))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        //  bottom: 8.0,
+                        left: 8.0,
+                        right: 8.0,
+                      ),
+                      child: InkWell(
+                        onTap: () {},
                         child: Container(
                           decoration: ShapeDecoration(
                             color: const Color(0xffffffff),
@@ -711,31 +773,27 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                             ),
                           ),
                           child: ListTile(
-                            trailing: Text(
-                              snapshot.data.docs[index].data()['accountType'],
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.grey[100],
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Image.asset(
+                                  'assets/images/three-dots-icon.png',
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              'See all members',
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
                                 fontSize: textBody1(context),
                               ),
                             ),
-                            leading: CircleAvatar(
-                                backgroundImage: CachedNetworkImageProvider(
-                                    snapshot.data.docs[index]
-                                        .data()['ownerPhotoUrl'])),
-                            title: Text(
-                                snapshot.data.docs[index].data()['ownerName'],
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textSubTitle(context),
-                                )),
                           ),
                         ),
-                        padding: const EdgeInsets.only(
-                          bottom: 8.0,
-                          left: 8.0,
-                          right: 8.0,
-                        ),
-                      ))),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -933,11 +991,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                     ),
                   )
                 : Column(
-                    children: [
-                      _group != null
-                          ? getTextWidgets(_group.rules)
-                          : Container(),
-                    ],
+                    children: [getTextWidgets(_group.rules)],
                   ),
             Padding(
               padding: EdgeInsets.only(

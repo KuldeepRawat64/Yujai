@@ -215,6 +215,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                         onTap: () {
                           //    showDelete(widget.documentSnapshot);
                           //      deleteDialog(widget.documentSnapshot);
+                          deleteDialog(widget.documentSnapshot);
                         },
                         child: Container(
                             decoration: ShapeDecoration(
@@ -233,7 +234,8 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                       )
                     : InkWell(
                         onTap: () {
-                          //   showReport(widget.documentSnapshot);
+                          //   showReport(widget.documentSnapshot);                        showReport(widget.documentSnapshot);
+                          showReport(widget.documentSnapshot);
                         },
                         child: Container(
                             decoration: ShapeDecoration(
@@ -482,6 +484,151 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
     );
   }
 
+  showReport(DocumentSnapshot snapshot) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: Text(
+                  'Report this post',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                      color: Colors.redAccent),
+                ),
+                onPressed: () {
+                  _showFormDialog(context);
+                  //   Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textBody1(context),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
   showDelete(DocumentSnapshot snapshot) {
     return showDialog(
         context: context,
@@ -498,40 +645,6 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                 ),
                 onPressed: () {
                   deletePost(snapshot);
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        });
-  }
-
-  showReport(DocumentSnapshot snapshot, BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            children: [
-              SimpleDialogOption(
-                child: Text(
-                  'Report this post',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.redAccent),
-                ),
-                onPressed: () {
-                  _showFormDialog(context);
                 },
               ),
               SimpleDialogOption(
@@ -674,7 +787,9 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                           ),
                           InkWell(
                             onTap: () {
-                              send().then((value) => Navigator.pop(context));
+                              send()
+                                  .then((value) => Navigator.pop(context))
+                                  .then((value) => Navigator.pop(context));
                             },
                             child: Text(
                               'Submit',
@@ -698,9 +813,9 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
 
   deletePost(DocumentSnapshot snapshot) {
     FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.user.uid)
-        .collection('posts')
+        .collection('groups')
+        .doc(widget.gid)
+        .collection('events')
         // .document()
         // .delete();
         .doc(snapshot['postId'])
@@ -708,7 +823,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {
