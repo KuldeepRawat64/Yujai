@@ -42,9 +42,16 @@ class ListItemActivityFeed extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot['type'] == 'commentEvent') {
+    } else if (documentSnapshot['type'] == 'articleLike' ||
+        documentSnapshot['type'] == 'articleComment' ||
+        documentSnapshot['type'] == 'eventComment') {
       mediaPreview = GestureDetector(
-        onTap: () => showEvent(context),
+        onTap: () => documentSnapshot['type'] == 'articleLike' ||
+                documentSnapshot['type'] == 'articleComment'
+            ? showNews(context)
+            : documentSnapshot['type'] == 'eventComment'
+                ? showEvent(context)
+                : showPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -54,30 +61,9 @@ class ListItemActivityFeed extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(
-                    documentSnapshot['imgUrl'],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    } else if (documentSnapshot['type'] == 'commentArticle') {
-      mediaPreview = GestureDetector(
-        onTap: () => showArticle(context),
-        child: Container(
-          height: 50.0,
-          width: 50.0,
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(
-                    documentSnapshot['imgUrl'],
-                  ),
+                  image: documentSnapshot['imgUrl'] != null
+                      ? NetworkImage(documentSnapshot['imgUrl'])
+                      : AssetImage('assets/images/placeholder.png'),
                 ),
               ),
             ),
@@ -89,13 +75,15 @@ class ListItemActivityFeed extends StatelessWidget {
     }
     if (documentSnapshot['type'] == 'like') {
       activityItemText = 'liked your post';
+    } else if (documentSnapshot['type'] == 'articleLike') {
+      activityItemText = 'liked your article';
     } else if (documentSnapshot['type'] == 'follow') {
       activityItemText = 'is following you';
     } else if (documentSnapshot['type'] == 'comment') {
       activityItemText = 'commented on your post';
-    } else if (documentSnapshot['type'] == 'commentEvent') {
+    } else if (documentSnapshot['type'] == 'eventComment') {
       activityItemText = 'commented on your event';
-    } else if (documentSnapshot['type'] == 'commentArticle') {
+    } else if (documentSnapshot['type'] == 'articleComment') {
       activityItemText = 'commented on your article';
     } else {
       activityItemText = 'Error:Unknown type ${documentSnapshot['type']}';
@@ -129,6 +117,13 @@ class ListItemActivityFeed extends StatelessWidget {
               name: documentSnapshot['ownerName'],
               uid: documentSnapshot['ownerUid'],
             )));
+  }
+
+  showNews(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ArticleScreen(
+            userId: documentSnapshot['ownerUid'],
+            postId: documentSnapshot['postId'])));
   }
 
   @override

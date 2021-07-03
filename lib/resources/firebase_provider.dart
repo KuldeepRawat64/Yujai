@@ -1303,6 +1303,17 @@ class FirebaseProvider {
     return querySnapshot.docs;
   }
 
+  Future<List<DocumentSnapshot>> retrieveGroupsEvents(String groupId) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('events')
+        // .doc(postId)
+        .orderBy('time', descending: true)
+        .get();
+    return querySnapshot.docs;
+  }
+
   Future<List<DocumentSnapshot>> retrieveDeptPosts(
       String teamId, String deptId) async {
     QuerySnapshot querySnapshot = await _firestore

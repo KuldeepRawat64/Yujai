@@ -1,3 +1,6 @@
+import 'package:Yujai/pages/article_screen.dart';
+import 'package:Yujai/pages/event_screen.dart';
+import 'package:Yujai/pages/event_screen_group.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/post_screen.dart';
 import 'package:Yujai/pages/post_screen_group.dart';
@@ -24,11 +27,21 @@ class ListItemInbox extends StatelessWidget {
   configureMediaPreview(context) {
     var screenSize = MediaQuery.of(context).size;
     if (documentSnapshot.data()['type'] == 'like' ||
-        documentSnapshot.data()['type'] == 'comment') {
+        documentSnapshot.data()['type'] == 'comment' ||
+        documentSnapshot.data()['type'] == 'articleLike' ||
+        documentSnapshot.data()['type'] == 'articleComment' ||
+        documentSnapshot.data()['type'] == 'eventComment') {
       mediaPreview = GestureDetector(
         onTap: () => documentSnapshot.data()['gid'] == null
-            ? showPost(context)
-            : showGroupPost(context),
+            ? documentSnapshot.data()['type'] == 'articleLike' ||
+                    documentSnapshot.data()['type'] == 'articleComment'
+                ? showNews(context)
+                : documentSnapshot.data()['type'] == 'eventComment'
+                    ? showEvent(context)
+                    : showPost(context)
+            : documentSnapshot.data()['type'] == 'eventComment'
+                ? showGroupEvent(context)
+                : showGroupPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -47,7 +60,41 @@ class ListItemInbox extends StatelessWidget {
           ),
         ),
       );
-    } else if (documentSnapshot.data()['type'] == 'projectAdded' ||
+    }
+    //  else if (documentSnapshot.data()['type'] == 'articleLike' ||
+    //     documentSnapshot.data()['type'] == 'articleComment' ||
+    //     documentSnapshot.data()['type'] == 'eventComment') {
+    //   mediaPreview = GestureDetector(
+    //     onTap: () => documentSnapshot.data()['gid'] == null
+    //         ? documentSnapshot.data()['type'] == 'articleLike' ||
+    //                 documentSnapshot.data()['type'] == 'articleComment'
+    //             ? showNews(context)
+    //             : documentSnapshot.data()['type'] == 'eventComment'
+    //                 ? showEvent(context)
+    //                 : showPost(context)
+    //         : documentSnapshot.data()['type'] == 'eventComment'
+    //             ? showGroupEvent(context)
+    //             : showGroupPost(context),
+    //     child: Container(
+    //       height: 50.0,
+    //       width: 50.0,
+    //       child: AspectRatio(
+    //         aspectRatio: 16 / 9,
+    //         child: Container(
+    //           decoration: BoxDecoration(
+    //             image: DecorationImage(
+    //               fit: BoxFit.cover,
+    //               image: documentSnapshot.data()['imgUrl'] != null
+    //                   ? NetworkImage(documentSnapshot.data()['imgUrl'])
+    //                   : AssetImage('assets/images/placeholder.png'),
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
+    else if (documentSnapshot.data()['type'] == 'projectAdded' ||
         documentSnapshot.data()['type'] == 'projectDeleted') {
       mediaPreview = GestureDetector(
         //   onTap: () => showPost(context),
@@ -114,12 +161,19 @@ class ListItemInbox extends StatelessWidget {
     } else {
       mediaPreview = Text('');
     }
+
     if (documentSnapshot.data()['type'] == 'like') {
       activityItemText = 'liked your post';
+    } else if (documentSnapshot.data()['type'] == 'articleLike') {
+      activityItemText = 'liked your article';
     } else if (documentSnapshot.data()['type'] == 'follow') {
       activityItemText = 'is following you';
     } else if (documentSnapshot.data()['type'] == 'comment') {
       activityItemText = 'commented on your post';
+    } else if (documentSnapshot.data()['type'] == 'eventComment') {
+      activityItemText = 'commented on your event';
+    } else if (documentSnapshot.data()['type'] == 'articleComment') {
+      activityItemText = 'commented on your article';
     } else if (documentSnapshot.data()['type'] == 'projectAdded') {
       activityItemText = 'added this project';
     } else if (documentSnapshot.data()['type'] == 'projectDeleted') {
@@ -141,9 +195,31 @@ class ListItemInbox extends StatelessWidget {
             postId: documentSnapshot.data()['postId'])));
   }
 
+  showEvent(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => EventScreen(
+            userId: documentSnapshot.data()['ownerUid'],
+            postId: documentSnapshot.data()['postId'])));
+  }
+
+  showNews(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ArticleScreen(
+            userId: documentSnapshot.data()['ownerUid'],
+            postId: documentSnapshot.data()['postId'])));
+  }
+
   showGroupPost(context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreenGroup(
+            groupId: documentSnapshot.data()['gid'],
+            userId: documentSnapshot.data()['ownerUid'],
+            postId: documentSnapshot.data()['postId'])));
+  }
+
+  showGroupEvent(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => EventScreenGroup(
             groupId: documentSnapshot.data()['gid'],
             userId: documentSnapshot.data()['ownerUid'],
             postId: documentSnapshot.data()['postId'])));

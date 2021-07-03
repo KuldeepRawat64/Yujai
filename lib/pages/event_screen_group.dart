@@ -2,6 +2,7 @@ import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/list_event_forum.dart';
 import 'package:Yujai/widgets/list_post.dart';
 import 'package:Yujai/widgets/list_post_forum.dart';
 import 'package:Yujai/widgets/no_content.dart';
@@ -11,18 +12,18 @@ import 'package:flutter/material.dart';
 
 final groupsRef = FirebaseFirestore.instance.collection('groups');
 
-class PostScreenGroup extends StatefulWidget {
+class EventScreenGroup extends StatefulWidget {
   final String userId;
   final String postId;
   final String groupId;
 
-  PostScreenGroup({this.userId, this.postId, this.groupId});
+  EventScreenGroup({this.userId, this.postId, this.groupId});
 
   @override
-  _PostScreenGroupState createState() => _PostScreenGroupState();
+  _EventScreenGroupState createState() => _EventScreenGroupState();
 }
 
-class _PostScreenGroupState extends State<PostScreenGroup> {
+class _EventScreenGroupState extends State<EventScreenGroup> {
   var _repository = Repository();
   String currentUserId, followingUserId;
   static UserModel _user;
@@ -53,7 +54,7 @@ class _PostScreenGroupState extends State<PostScreenGroup> {
     setState(() {
       _group = group;
     });
-    _future = _repository.retreiveGroupsPosts(_group.uid);
+    _future = _repository.retreiveGroupsEvents(_group.uid);
   }
 
   Widget postImagesWidget() {
@@ -74,7 +75,7 @@ class _PostScreenGroupState extends State<PostScreenGroup> {
                     itemCount: snapshot.data.length,
                     itemBuilder: ((context, index) =>
                         snapshot.data[index]['postId'] == widget.postId
-                            ? ListPostForum(
+                            ? ListItemEventForum(
                                 documentSnapshot: snapshot.data[index],
                                 index: index,
                                 // user: followingUser,

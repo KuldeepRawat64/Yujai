@@ -86,7 +86,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                   context,
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
-                            commentType: 'commentArticle',
+                            commentType: 'articleComment',
                             snapshot: widget.documentSnapshot,
                             followingUser: widget.user,
                             documentReference: reference,
@@ -468,6 +468,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                                       builder: ((context) => CommentsScreen(
                                             //  group: widget.group,
                                             // isGroupFeed: true,
+                                            commentType: 'articleComment',
                                             snapshot: widget.documentSnapshot,
                                             followingUser: widget.currentuser,
                                             documentReference: widget
@@ -521,7 +522,7 @@ class _ListItemNewsState extends State<ListItemNews> {
       var _feed = Feed(
         ownerName: currentUser.displayName,
         ownerUid: currentUser.uid,
-        type: 'like',
+        type: 'articleLike',
         ownerPhotoUrl: currentUser.photoUrl,
         imgUrl: snapshot['imgUrl'],
         postId: snapshot['postId'],

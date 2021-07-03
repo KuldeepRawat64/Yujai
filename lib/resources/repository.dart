@@ -538,6 +538,9 @@ class Repository {
   Future<List<DocumentSnapshot>> retreiveGroupsPosts(String userId) =>
       _firebaseProvider.retrieveGroupsPosts(userId);
 
+  Future<List<DocumentSnapshot>> retreiveGroupsEvents(String userId) =>
+      _firebaseProvider.retrieveGroupsEvents(userId);
+
   Future<List<DocumentSnapshot>> retreiveDeptPosts(
           String teamId, String deptId) =>
       _firebaseProvider.retrieveDeptPosts(teamId, deptId);
