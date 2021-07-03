@@ -71,7 +71,7 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+        padding: const EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
         child: Container(
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
@@ -260,7 +260,116 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
     );
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -268,16 +377,25 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
-                  style: TextStyle(color: Colors.redAccent),
+                  'Delete',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
                 child: Text(
                   'Cancel',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);

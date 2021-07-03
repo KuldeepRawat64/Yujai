@@ -17,7 +17,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:transparent_image/transparent_image.dart';
 
 class ListItemNews extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final int index;
 
@@ -129,7 +129,7 @@ class _ListItemNewsState extends State<ListItemNews> {
         },
         child: Padding(
             padding: const EdgeInsets.only(
-              top: 8.0,
+              bottom: 8.0,
               left: 8.0,
               right: 8.0,
             ),
@@ -144,332 +144,360 @@ class _ListItemNewsState extends State<ListItemNews> {
                   ),
                 ),
                 width: MediaQuery.of(context).size.width * 0.9,
-                child: Wrap(children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FriendProfileScreen(
-                                  uid: widget.documentSnapshot['ownerUid'],
-                                  name: widget
-                                      .documentSnapshot['newsOwnerName'])));
-                    },
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: screenSize.height * 0.025,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: CachedNetworkImageProvider(
-                            widget.documentSnapshot['newsOwnerPhotoUrl']),
-                      ),
-                      title: new Text(
-                        widget.documentSnapshot['newsOwnerName'],
-                        style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textSubTitle(context),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                          widget.documentSnapshot['time'] != null
-                              ? timeago.format(
-                                  widget.documentSnapshot['time'].toDate())
-                              : '',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              //   fontSize: textbody2(context),
-                              color: Colors.grey)),
-                      trailing: widget.currentuser.uid ==
-                              widget.documentSnapshot['ownerUid']
-                          ? InkWell(
-                              onTap: () {
-                                showDelete(widget.documentSnapshot);
-                              },
-                              child: Container(
-                                  decoration: ShapeDecoration(
-                                    shape: CircleBorder(
-                                        // borderRadius: BorderRadius.circular(60.0),
-                                        side: BorderSide(
-                                            width: 0.1, color: Colors.black54)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: screenSize.height * 0.005,
-                                        horizontal: screenSize.width * 0.02,
-                                      ),
-                                      child: Icon(Icons.more_horiz_outlined))),
-                            )
-                          : InkWell(
-                              onTap: () {
-                                showReport(widget.documentSnapshot, context);
-                              },
-                              child: Container(
-                                  decoration: ShapeDecoration(
-                                    shape: CircleBorder(
-                                        //          borderRadius: BorderRadius.circular(12.0),
-                                        side: BorderSide(
-                                            width: 0.1, color: Colors.black54)),
-                                    //color: Theme.of(context).accentColor,
-                                  ),
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: screenSize.height * 0.005,
-                                        horizontal: screenSize.width * 0.02,
-                                      ),
-                                      child: Icon(Icons.more_horiz_outlined))),
-                            ),
-                    ),
-                  ),
-                  FadeInImage.assetNetwork(
-                    height: screenSize.height * 0.22,
-                    width: screenSize.width,
-                    fadeInDuration: const Duration(milliseconds: 300),
-                    placeholder: 'assets/images/placeholder.png',
-                    image: widget.documentSnapshot['imgUrl'],
-                    fit: BoxFit.cover,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenSize.width * 0.03,
-                      top: screenSize.height * 0.01,
-                      bottom: screenSize.height * 0.01,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.documentSnapshot['caption'],
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontWeight: FontWeight.bold,
-                              fontSize: textSubTitle(context)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: screenSize.height * 0.005,
-                            //  bottom: screenSize.height * 0.005,
-                          ),
-                          child: Text(
-                            'Read more...',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.grey,
-                              fontSize: textBody1(context),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    leading: GestureDetector(
-                        child: _isLiked
-                            ? Container(
-                                decoration: ShapeDecoration(
-                                  shape: CircleBorder(
-                                      //  borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 0.1, color: Colors.black54)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Icon(Icons.thumb_up_alt)))
-                            : Container(
-                                decoration: ShapeDecoration(
-                                  shape: CircleBorder(
-                                      //    borderRadius: BorderRadius.circular(60.0),
-                                      side: BorderSide(
-                                          width: 0.1, color: Colors.black54)),
-                                  //color: Theme.of(context).accentColor,
-                                ),
-                                child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                      right: 8.0,
-                                      top: 6.0,
-                                      bottom: 6.0,
-                                    ),
-                                    child: Icon(Icons.thumb_up_alt_outlined))),
-                        onTap: () {
-                          if (!_isLiked) {
-                            setState(() {
-                              _isLiked = true;
-                            });
-
-                            postLike(widget.documentSnapshot.reference);
-                            addLikeToActivityFeed(
-                                widget.documentSnapshot, widget.currentuser);
-                          } else {
-                            setState(() {
-                              _isLiked = false;
-                            });
-
-                            postUnlike(widget.documentSnapshot.reference);
-                            removeLikeFromActivityFeed(
-                                widget.documentSnapshot, widget.currentuser);
-                          }
-                        }),
-                    title: FutureBuilder(
-                      future: _repository
-                          .fetchPostLikes(widget.documentSnapshot.reference),
-                      builder: ((context,
-                          AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-                        if (likesSnapshot.hasData) {
-                          return GestureDetector(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          InkWell(
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: ((context) => LikesScreen(
-                                            user: widget.currentuser,
+                                      builder: (context) => FriendProfileScreen(
+                                          uid: widget
+                                              .documentSnapshot['ownerUid'],
+                                          name: widget.documentSnapshot[
+                                              'newsOwnerName'])));
+                            },
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                radius: screenSize.height * 0.025,
+                                backgroundColor: Colors.grey,
+                                backgroundImage: CachedNetworkImageProvider(
+                                    widget
+                                        .documentSnapshot['newsOwnerPhotoUrl']),
+                              ),
+                              title: new Text(
+                                widget.documentSnapshot['newsOwnerName'],
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Text(
+                                  widget.documentSnapshot['time'] != null
+                                      ? timeago.format(widget
+                                          .documentSnapshot['time']
+                                          .toDate())
+                                      : '',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      //   fontSize: textbody2(context),
+                                      color: Colors.grey)),
+                              trailing: widget.currentuser.uid ==
+                                      widget.documentSnapshot['ownerUid']
+                                  ? InkWell(
+                                      onTap: () {
+                                        showDelete(widget.documentSnapshot);
+                                      },
+                                      child: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: CircleBorder(
+                                                // borderRadius: BorderRadius.circular(60.0),
+                                                side: BorderSide(
+                                                    width: 0.1,
+                                                    color: Colors.black54)),
+                                            //color: Theme.of(context).accentColor,
+                                          ),
+                                          child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical:
+                                                    screenSize.height * 0.005,
+                                                horizontal:
+                                                    screenSize.width * 0.02,
+                                              ),
+                                              child: Icon(
+                                                  Icons.more_horiz_outlined))),
+                                    )
+                                  : InkWell(
+                                      onTap: () {
+                                        showReport(
+                                            widget.documentSnapshot, context);
+                                      },
+                                      child: Container(
+                                          decoration: ShapeDecoration(
+                                            shape: CircleBorder(
+                                                //          borderRadius: BorderRadius.circular(12.0),
+                                                side: BorderSide(
+                                                    width: 0.1,
+                                                    color: Colors.black54)),
+                                            //color: Theme.of(context).accentColor,
+                                          ),
+                                          child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical:
+                                                    screenSize.height * 0.005,
+                                                horizontal:
+                                                    screenSize.width * 0.02,
+                                              ),
+                                              child: Icon(
+                                                  Icons.more_horiz_outlined))),
+                                    ),
+                            ),
+                          ),
+                          FadeInImage.assetNetwork(
+                            height: screenSize.height * 0.22,
+                            width: screenSize.width,
+                            fadeInDuration: const Duration(milliseconds: 300),
+                            placeholder: 'assets/images/placeholder.png',
+                            image: widget.documentSnapshot['imgUrl'],
+                            fit: BoxFit.cover,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: screenSize.width * 0.03,
+                              top: screenSize.height * 0.01,
+                              bottom: screenSize.height * 0.01,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.documentSnapshot['caption'],
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.005,
+                                    //  bottom: screenSize.height * 0.005,
+                                  ),
+                                  child: Text(
+                                    'Read more...',
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.grey,
+                                      fontSize: textBody1(context),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ListTile(
+                        leading: GestureDetector(
+                            child: _isLiked
+                                ? Container(
+                                    decoration: ShapeDecoration(
+                                      shape: CircleBorder(
+                                          //  borderRadius: BorderRadius.circular(60.0),
+                                          side: BorderSide(
+                                              width: 0.1,
+                                              color: Colors.black54)),
+                                      //color: Theme.of(context).accentColor,
+                                    ),
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8.0,
+                                          right: 8.0,
+                                          top: 6.0,
+                                          bottom: 6.0,
+                                        ),
+                                        child: Icon(Icons.thumb_up_alt)))
+                                : Container(
+                                    decoration: ShapeDecoration(
+                                      shape: CircleBorder(
+                                          //    borderRadius: BorderRadius.circular(60.0),
+                                          side: BorderSide(
+                                              width: 0.1,
+                                              color: Colors.black54)),
+                                      //color: Theme.of(context).accentColor,
+                                    ),
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8.0,
+                                          right: 8.0,
+                                          top: 6.0,
+                                          bottom: 6.0,
+                                        ),
+                                        child:
+                                            Icon(Icons.thumb_up_alt_outlined))),
+                            onTap: () {
+                              if (!_isLiked) {
+                                setState(() {
+                                  _isLiked = true;
+                                });
+
+                                postLike(widget.documentSnapshot.reference);
+                                addLikeToActivityFeed(widget.documentSnapshot,
+                                    widget.currentuser);
+                              } else {
+                                setState(() {
+                                  _isLiked = false;
+                                });
+
+                                postUnlike(widget.documentSnapshot.reference);
+                                removeLikeFromActivityFeed(
+                                    widget.documentSnapshot,
+                                    widget.currentuser);
+                              }
+                            }),
+                        title: FutureBuilder(
+                          future: _repository.fetchPostLikes(
+                              widget.documentSnapshot.reference),
+                          builder: ((context,
+                              AsyncSnapshot<List<DocumentSnapshot>>
+                                  likesSnapshot) {
+                            if (likesSnapshot.hasData) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) => LikesScreen(
+                                                user: widget.currentuser,
+                                                documentReference: widget
+                                                    .documentSnapshot.reference,
+                                              ))));
+                                },
+                                child: Container(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 6.0),
+                                    child: likesSnapshot.data.length > 0
+                                        ? SizedBox(
+                                            height: screenSize.height * 0.06,
+                                            width: screenSize.width * 0.2,
+                                            child: Stack(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 15.0,
+                                                  backgroundColor: Colors.black,
+                                                  backgroundImage:
+                                                      CachedNetworkImageProvider(
+                                                          likesSnapshot.data[0][
+                                                              'ownerPhotoUrl']),
+                                                ),
+                                                likesSnapshot.data.length > 1
+                                                    ? Positioned(
+                                                        left: 15.0,
+                                                        child: CircleAvatar(
+                                                          radius: 15.0,
+                                                          backgroundImage:
+                                                              CachedNetworkImageProvider(
+                                                                  likesSnapshot
+                                                                          .data[1]
+                                                                      [
+                                                                      'ownerPhotoUrl']),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                                likesSnapshot.data.length > 2
+                                                    ? Positioned(
+                                                        left: 30.0,
+                                                        child: CircleAvatar(
+                                                          radius: 15.0,
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          backgroundImage:
+                                                              CachedNetworkImageProvider(
+                                                                  likesSnapshot
+                                                                          .data[2]
+                                                                      [
+                                                                      'ownerPhotoUrl']),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                                likesSnapshot.data.length > 3
+                                                    ? Positioned(
+                                                        left: 30.0,
+                                                        child: CircleAvatar(
+                                                          radius: 15.0,
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          backgroundImage:
+                                                              CachedNetworkImageProvider(
+                                                                  likesSnapshot
+                                                                          .data[3]
+                                                                      [
+                                                                      'ownerPhotoUrl']),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                                likesSnapshot.data.length > 4
+                                                    ? Positioned(
+                                                        left: 30.0,
+                                                        child: CircleAvatar(
+                                                          radius: 15.0,
+                                                          backgroundColor:
+                                                              Colors.grey,
+                                                          child: Text(
+                                                              '${likesSnapshot.data.length}'),
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          )
+
+                                        //  Text(
+                                        //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                                        //     style: TextStyle(
+                                        //         fontFamily: FontNameDefault,
+                                        //         fontSize: textBody1(context),
+                                        //         fontWeight: FontWeight.bold),
+                                        //   )
+                                        : Text(
+                                            "0 ",
+                                            style: TextStyle(
+                                                fontFamily: FontNameDefault,
+                                                fontSize: textBody1(context)),
+                                          ),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Center(child: Container());
+                            }
+                          }),
+                        ),
+                        trailing: SizedBox(
+                          height: 40,
+                          width: 100,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => CommentsScreen(
+                                            //  group: widget.group,
+                                            // isGroupFeed: true,
+                                            snapshot: widget.documentSnapshot,
+                                            followingUser: widget.currentuser,
                                             documentReference: widget
                                                 .documentSnapshot.reference,
+                                            user: widget.currentuser,
                                           ))));
                             },
                             child: Container(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 6.0),
-                                child: likesSnapshot.data.length > 0
-                                    ? SizedBox(
-                                        height: screenSize.height * 0.06,
-                                        width: screenSize.width * 0.2,
-                                        child: Stack(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 15.0,
-                                              backgroundColor: Colors.black,
-                                              backgroundImage:
-                                                  CachedNetworkImageProvider(
-                                                      likesSnapshot.data[0]
-                                                          ['ownerPhotoUrl']),
-                                            ),
-                                            likesSnapshot.data.length > 1
-                                                ? Positioned(
-                                                    left: 15.0,
-                                                    child: CircleAvatar(
-                                                      radius: 15.0,
-                                                      backgroundImage:
-                                                          CachedNetworkImageProvider(
-                                                              likesSnapshot
-                                                                      .data[1][
-                                                                  'ownerPhotoUrl']),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            likesSnapshot.data.length > 2
-                                                ? Positioned(
-                                                    left: 30.0,
-                                                    child: CircleAvatar(
-                                                      radius: 15.0,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                      backgroundImage:
-                                                          CachedNetworkImageProvider(
-                                                              likesSnapshot
-                                                                      .data[2][
-                                                                  'ownerPhotoUrl']),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            likesSnapshot.data.length > 3
-                                                ? Positioned(
-                                                    left: 30.0,
-                                                    child: CircleAvatar(
-                                                      radius: 15.0,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                      backgroundImage:
-                                                          CachedNetworkImageProvider(
-                                                              likesSnapshot
-                                                                      .data[3][
-                                                                  'ownerPhotoUrl']),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            likesSnapshot.data.length > 4
-                                                ? Positioned(
-                                                    left: 30.0,
-                                                    child: CircleAvatar(
-                                                      radius: 15.0,
-                                                      backgroundColor:
-                                                          Colors.grey,
-                                                      child: Text(
-                                                          '${likesSnapshot.data.length}'),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          ],
-                                        ),
-                                      )
-
-                                    //  Text(
-                                    //     "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                                    //     style: TextStyle(
-                                    //         fontFamily: FontNameDefault,
-                                    //         fontSize: textBody1(context),
-                                    //         fontWeight: FontWeight.bold),
-                                    //   )
-                                    : Text(
-                                        "0 ",
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
+                              // decoration: ShapeDecoration(
+                              //   shape: RoundedRectangleBorder(
+                              //       borderRadius: BorderRadius.circular(60.0),
+                              //       side: BorderSide(width: 0.1, color: Colors.black54)),
+                              //   //color: Theme.of(context).accentColor,
+                              // ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  commentWidget(
+                                      widget.documentSnapshot.reference),
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
+                                  Icon(Icons.messenger_outline_sharp),
+                                ],
                               ),
                             ),
-                          );
-                        } else {
-                          return Center(child: Container());
-                        }
-                      }),
-                    ),
-                    trailing: SizedBox(
-                      height: 40,
-                      width: 50,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
-                                        //  group: widget.group,
-                                        // isGroupFeed: true,
-                                        snapshot: widget.documentSnapshot,
-                                        followingUser: widget.currentuser,
-                                        documentReference:
-                                            widget.documentSnapshot.reference,
-                                        user: widget.currentuser,
-                                      ))));
-                        },
-                        child: Container(
-                          // decoration: ShapeDecoration(
-                          //   shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(60.0),
-                          //       side: BorderSide(width: 0.1, color: Colors.black54)),
-                          //   //color: Theme.of(context).accentColor,
-                          // ),
-                          child: Row(
-                            children: [
-                              commentWidget(widget.documentSnapshot.reference),
-                              SizedBox(
-                                width: 8.0,
-                              ),
-                              Icon(Icons.messenger_outline_sharp),
-                            ],
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ]))));
+                    ]))));
   }
 
   void postLike(DocumentReference reference) {
@@ -526,6 +554,115 @@ class _ListItemNewsState extends State<ListItemNews> {
     });
   }
 
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
   void removeLikeFromActivityFeed(
       DocumentSnapshot snapshot, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;
@@ -549,7 +686,7 @@ class _ListItemNewsState extends State<ListItemNews> {
     }
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -557,16 +694,25 @@ class _ListItemNewsState extends State<ListItemNews> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
-                  style: TextStyle(color: Colors.redAccent),
+                  'Delete',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
                 child: Text(
                   'Cancel',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);

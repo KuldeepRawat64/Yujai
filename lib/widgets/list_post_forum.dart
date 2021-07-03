@@ -5,6 +5,7 @@ import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/vote.dart';
+import 'package:Yujai/pages/comment_group.dart';
 import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/image_detail.dart';
@@ -85,7 +86,8 @@ class _ListPostForumState extends State<ListPostForum> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => CommentsScreen(
+                      builder: ((context) => CommentsScreenGroup(
+                            group: widget.group,
                             snapshot: widget.documentSnapshot,
                             followingUser: widget.currentuser,
                             documentReference: reference,
@@ -1043,7 +1045,7 @@ class _ListPostForumState extends State<ListPostForum> {
                   ? InkWell(
                       onTap: () {
                         //    showDelete(widget.documentSnapshot);
-                        deleteDialog(widget.documentSnapshot);
+                        showDelete(widget.documentSnapshot);
                       },
                       child: Container(
                           decoration: ShapeDecoration(
@@ -1282,15 +1284,14 @@ class _ListPostForumState extends State<ListPostForum> {
               ),
               trailing: SizedBox(
                 height: 40,
-                width: 50,
+                width: 100,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => CommentsScreen(
+                            builder: ((context) => CommentsScreenGroup(
                                   group: widget.group,
-                                  isGroupFeed: true,
                                   snapshot: widget.documentSnapshot,
                                   followingUser: widget.currentuser,
                                   documentReference:
@@ -1306,6 +1307,7 @@ class _ListPostForumState extends State<ListPostForum> {
                     //   //color: Theme.of(context).accentColor,
                     // ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         commentWidget(widget.documentSnapshot.reference),
                         SizedBox(
@@ -1608,7 +1610,7 @@ class _ListPostForumState extends State<ListPostForum> {
     });
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1616,16 +1618,15 @@ class _ListPostForumState extends State<ListPostForum> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
+                  'Delete',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.redAccent),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-                  deletePost(snapshot);
-                  //  Navigator.pop(context);
+                  deleteDialog(snapshot);
                   //   Navigator.pop(context);
                 },
               ),
@@ -1634,8 +1635,8 @@ class _ListPostForumState extends State<ListPostForum> {
                   'Cancel',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.redAccent),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);

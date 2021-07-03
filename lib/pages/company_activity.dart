@@ -56,9 +56,9 @@ class CompanyActivity extends StatelessWidget {
                 ),
               ),
             ),
-            Divider(
-              height: 0,
-            ),
+            // Divider(
+            //   height: 0,
+            // ),
             InkWell(
               onTap: () {
                 Navigator.of(context).push(
@@ -79,9 +79,9 @@ class CompanyActivity extends StatelessWidget {
                 ),
               ),
             ),
-            Divider(
-              height: 0,
-            ),
+            // Divider(
+            //   height: 0,
+            // ),
             InkWell(
               onTap: () {
                 Navigator.of(context)
@@ -102,9 +102,9 @@ class CompanyActivity extends StatelessWidget {
                 ),
               ),
             ),
-            Divider(
-              height: 0,
-            ),
+            // Divider(
+            //   height: 0,
+            // ),
             InkWell(
               onTap: () {
                 Navigator.of(context).push(

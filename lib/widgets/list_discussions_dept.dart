@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/like.dart';
@@ -28,7 +29,7 @@ class ListItemDiscussions extends StatefulWidget {
   final String gid;
   final String name;
   final Team team;
-  final String deptId;
+  final Department dept;
   ListItemDiscussions(
       {this.index,
       this.currentuser,
@@ -36,7 +37,7 @@ class ListItemDiscussions extends StatefulWidget {
       this.gid,
       this.name,
       this.team,
-      this.deptId});
+      this.dept});
 
   @override
   _ListItemDiscussionsState createState() => _ListItemDiscussionsState();
@@ -1498,13 +1499,16 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
               ),
               trailing: SizedBox(
                 height: 40,
-                width: 50,
+                width: 100,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => CommentsScreen(
+                            builder: ((context) => DiscussionComments(
+                                  team: widget.team,
+                                  dept: widget.dept,
+                                  gid: widget.gid,
                                   snapshot: widget.documentSnapshot,
                                   followingUser: widget.currentuser,
                                   documentReference:
@@ -1520,6 +1524,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                     //   //color: Theme.of(context).accentColor,
                     // ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         commentWidget(widget.documentSnapshot.reference),
                         SizedBox(
@@ -2090,7 +2095,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
         .collection('teams')
         .doc(widget.gid)
         .collection('departments')
-        .doc(widget.deptId)
+        .doc(widget.dept.uid)
         .collection('discussions')
         .doc(snapshot.data()['postId'])
         .get()

@@ -13,21 +13,15 @@ import '../style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEvent extends StatefulWidget {
-  final DocumentSnapshot documentSnapshot;
+  final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
   final UserModel user, currentuser;
   final int index;
-  final String gid;
-  final String name;
-  final Group group;
 
   ListItemEvent({
     this.user,
     this.index,
     this.currentuser,
     this.documentSnapshot,
-    this.gid,
-    this.name,
-    this.group,
   });
 
   @override
@@ -90,11 +84,11 @@ class _ListItemEventState extends State<ListItemEvent> {
         padding: const EdgeInsets.only(
           left: 8.0,
           right: 8.0,
-          top: 8.0,
+          bottom: 8.0,
         ),
         child: Container(
 //width: screenSize.width * 0.8,
-          height: screenSize.height * 0.35,
+          height: screenSize.height * 0.42,
           decoration: ShapeDecoration(
             color: const Color(0xffffffff),
             shape: RoundedRectangleBorder(
@@ -111,32 +105,34 @@ class _ListItemEventState extends State<ListItemEvent> {
                 child: ListTile(
                   leading: CircleAvatar(
                       radius: screenSize.height * 0.03,
-                      backgroundImage: CachedNetworkImageProvider(
-                          widget.documentSnapshot['eventOwnerPhotoUrl'])),
+                      backgroundImage: CachedNetworkImageProvider(widget
+                          .documentSnapshot
+                          .data()['eventOwnerPhotoUrl'])),
                   title: InkWell(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => FriendProfileScreen(
-                                  uid: widget.documentSnapshot['ownerUid'],
-                                  name: widget
-                                      .documentSnapshot['eventOwnerName'])));
+                                  uid: widget.documentSnapshot
+                                      .data()['ownerUid'],
+                                  name: widget.documentSnapshot
+                                      .data()['eventOwnerName'])));
                     },
-                    child: new Text(
-                      widget.documentSnapshot['eventOwnerName'],
+                    child: Text(
+                      widget.documentSnapshot.data()['eventOwnerName'],
                       style: TextStyle(
                           fontFamily: FontNameDefault,
                           fontSize: textSubTitle(context),
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  subtitle: widget.documentSnapshot['city'] != '' &&
-                          widget.documentSnapshot['city'] != null
+                  subtitle: widget.documentSnapshot.data()['city'] != '' &&
+                          widget.documentSnapshot.data()['city'] != null
                       ? Row(
                           children: [
-                            new Text(
-                              widget.documentSnapshot['city'],
+                            Text(
+                              widget.documentSnapshot.data()['city'],
                               style: TextStyle(
                                   fontFamily: FontNameDefault,
                                   //    fontSize: textBody1(context),
@@ -159,9 +155,9 @@ class _ListItemEventState extends State<ListItemEvent> {
                                 top: screenSize.height * 0.002,
                               ),
                               child: Text(
-                                  widget.documentSnapshot['time'] != null
-                                      ? timeago.format(widget
-                                          .documentSnapshot['time']
+                                  widget.documentSnapshot.data()['time'] != null
+                                      ? timeago.format(widget.documentSnapshot
+                                          .data()['time']
                                           .toDate())
                                       : '',
                                   style: TextStyle(
@@ -197,9 +193,9 @@ class _ListItemEventState extends State<ListItemEvent> {
                                 top: screenSize.height * 0.002,
                               ),
                               child: Text(
-                                  widget.documentSnapshot['time'] != null
-                                      ? timeago.format(widget
-                                          .documentSnapshot['time']
+                                  widget.documentSnapshot.data()['time'] != null
+                                      ? timeago.format(widget.documentSnapshot
+                                          .data()['time']
                                           .toDate())
                                       : '',
                                   style: TextStyle(
@@ -210,14 +206,11 @@ class _ListItemEventState extends State<ListItemEvent> {
                           ],
                         ),
                   trailing: widget.currentuser.uid ==
-                              widget.documentSnapshot['ownerUid'] ||
-                          widget.group != null &&
-                              widget.group.currentUserUid ==
-                                  widget.currentuser.uid
+                          widget.documentSnapshot.data()['ownerUid']
                       ? InkWell(
                           onTap: () {
                             //    showDelete(widget.documentSnapshot);
-                            //      deleteDialog(widget.documentSnapshot);
+                            showDelete(widget.documentSnapshot);
                           },
                           child: Container(
                               decoration: ShapeDecoration(
@@ -236,7 +229,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                         )
                       : InkWell(
                           onTap: () {
-                            //   showReport(widget.documentSnapshot);
+                            showReport(widget.documentSnapshot, context);
                           },
                           child: Container(
                               decoration: ShapeDecoration(
@@ -273,7 +266,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                           decoration: ShapeDecoration(
                               image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                    widget.documentSnapshot['imgUrl'],
+                                    widget.documentSnapshot.data()['imgUrl'],
                                   ),
                                   fit: BoxFit.cover),
                               color: Colors.grey[100],
@@ -294,8 +287,8 @@ class _ListItemEventState extends State<ListItemEvent> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => EventDetailGroup(
-                                              group: widget.group,
+                                        builder: (context) => EventDetailScreen(
+                                              //    group: widget.group,
                                               user: widget.currentuser,
                                               currentuser: widget.currentuser,
                                               documentSnapshot:
@@ -306,7 +299,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                                 width: screenSize.width * 0.25,
                                 // height: screenSize.height * 0.045,
                                 child: Text(
-                                  widget.documentSnapshot['caption'],
+                                  widget.documentSnapshot.data()['caption'],
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textH1(context),
@@ -337,7 +330,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${convertDate(widget.documentSnapshot['startDate'])}',
+                                                '${convertDate(widget.documentSnapshot.data()['startDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -348,7 +341,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                                               ),
 
                                               Text(
-                                                'To \n${convertDate(widget.documentSnapshot['endDate'])}',
+                                                'To \n${convertDate(widget.documentSnapshot.data()['endDate'])}',
                                                 style: TextStyle(
                                                   fontFamily: FontNameDefault,
                                                   color: Colors.black87,
@@ -439,7 +432,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                 child: Container(
                   //   height: screenSize.height * 0.055,
                   child: Text(
-                    widget.documentSnapshot['description'],
+                    widget.documentSnapshot.data()['description'],
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
@@ -486,7 +479,7 @@ class _ListItemEventState extends State<ListItemEvent> {
     );
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -494,14 +487,16 @@ class _ListItemEventState extends State<ListItemEvent> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
+                  'Delete',
                   style: TextStyle(
-                      fontSize: textSubTitle(context),
                       fontFamily: FontNameDefault,
-                      color: Colors.redAccent),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
@@ -509,7 +504,8 @@ class _ListItemEventState extends State<ListItemEvent> {
                   'Cancel',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -518,6 +514,115 @@ class _ListItemEventState extends State<ListItemEvent> {
             ],
           );
         });
+  }
+
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   showReport(DocumentSnapshot snapshot, BuildContext context) {
@@ -535,6 +640,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                       color: Colors.redAccent),
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   _showFormDialog(context);
                 },
               ),

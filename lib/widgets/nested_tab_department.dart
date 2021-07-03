@@ -551,7 +551,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                       team: widget.team,
                       gid: widget.gid,
                       name: widget.name,
-                      deptId: widget.department.uid,
+                      dept: widget.department,
                     )));
           } else {
             return NoContent('No discussions', 'assets/images/discussion.png',

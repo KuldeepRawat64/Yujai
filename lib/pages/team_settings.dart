@@ -182,10 +182,10 @@ class _TeamSettingsState extends State<TeamSettings> {
                                   }
                                   if (snapshot.hasData) {
                                     return CircleAvatar(
+                                      backgroundColor: Colors.white,
                                       radius: screenSize.height * 0.045,
-                                      backgroundImage:
-                                          CachedNetworkImageProvider(snapshot
-                                              .data['teamProfilePhoto']),
+                                      backgroundImage: NetworkImage(
+                                          snapshot.data['teamProfilePhoto']),
                                     );
                                   }
                                 }
@@ -271,7 +271,7 @@ class _TeamSettingsState extends State<TeamSettings> {
                     Container(
                       //      color: const Color(0xffffffff),
                       child: TextFormField(
-                        onFieldSubmitted: (val) {
+                        onChanged: (val) {
                           _descriptionController.text = val;
                         },
                         autocorrect: true,

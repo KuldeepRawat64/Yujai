@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/article_screen.dart';
 import 'package:Yujai/pages/article_upload.dart';
 import 'package:Yujai/pages/chat_screen.dart';
 import 'package:Yujai/pages/comments.dart';
@@ -1149,7 +1150,7 @@ class _FeedScreenState extends State<FeedScreen> {
           } else {
             if (snapshot.data.length > 0) {
               return SizedBox(
-                  height: screenSize.height * 0.5,
+                  height: screenSize.height * 0.55,
                   width: screenSize.width,
                   child: Row(
                     children: [
@@ -1193,7 +1194,7 @@ class _FeedScreenState extends State<FeedScreen> {
             if (snapshot.data.length > 0) {
               return SizedBox(
                   width: screenSize.width,
-                  height: screenSize.height * 0.39,
+                  height: screenSize.height * 0.45,
                   child: Row(
                     children: [
                       SizedBox(

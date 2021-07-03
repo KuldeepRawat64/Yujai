@@ -474,14 +474,30 @@ class Repository {
       _firebaseProvider.addNewsToDb(currentUser, imgUrl, caption, source);
 
   Future<void> addJobToDb(
-          UserModel currentUser,
-          String caption,
-          String location,
-          String industry,
-          String description,
-          String website) =>
+    UserModel currentUser,
+    String caption,
+    String location,
+    String jobType,
+    String minSalary,
+    String maxSalary,
+    String workDays,
+    String timing,
+    String industry,
+    String description,
+    String website,
+  ) =>
       _firebaseProvider.addJobPostToDb(
-          currentUser, caption, location, industry, description, website);
+          currentUser,
+          caption,
+          location,
+          jobType,
+          minSalary,
+          maxSalary,
+          workDays,
+          timing,
+          industry,
+          description,
+          website);
 
   Future<void> addPromotionToDb(
     UserModel currentUser,
@@ -521,6 +537,14 @@ class Repository {
 
   Future<List<DocumentSnapshot>> retreiveGroupsPosts(String userId) =>
       _firebaseProvider.retrieveGroupsPosts(userId);
+
+  Future<List<DocumentSnapshot>> retreiveDeptPosts(
+          String teamId, String deptId) =>
+      _firebaseProvider.retrieveDeptPosts(teamId, deptId);
+
+  Future<List<DocumentSnapshot>> retreiveProjectPosts(
+          String teamId, String deptId, String projectId) =>
+      _firebaseProvider.retrieveProjectPosts(teamId, deptId, projectId);
 
   Future<List<DocumentSnapshot>> retreiveUserJobs(String userId) =>
       _firebaseProvider.retrieveUserJobs(userId);

@@ -486,11 +486,23 @@ class _DepartmentPageState extends State<DepartmentPage>
                             _department != null &&
                             widget.currentUser.uid == _department.currentUserUid
                     ? InkWell(
-                        onTap: () => _scaffoldKey.currentState.openEndDrawer(),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DeptSettings(
+                                        gid: widget.gid,
+                                        dId: widget.dId,
+                                        name: widget.dName,
+                                        team: _team,
+                                        dept: _department,
+                                        currentuser: currentuser,
+                                      )));
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
-                            Icons.menu,
+                            Icons.settings_outlined,
                             color: Colors.black54,
                           ),
                         ),
@@ -505,9 +517,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return Container();
                     } else if (snapshot.connectionState ==
                             ConnectionState.active ||
                         snapshot.connectionState == ConnectionState.done) {
@@ -559,9 +569,7 @@ class _DepartmentPageState extends State<DepartmentPage>
                       }
                     }
 
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return Container();
                   }),
               leading: IconButton(
                   icon: Icon(Icons.keyboard_arrow_left,
@@ -585,334 +593,334 @@ class _DepartmentPageState extends State<DepartmentPage>
         //   onPressed:
         //       widget.currentUser != null && _team != null ? checkUser : null,
         // ),
-        endDrawer: widget.currentUser != null &&
-                _team != null &&
-                widget.currentUser.uid == _team.currentUserUid
-            ? Drawer(
-                child: Container(
-                  color: const Color(0xff251F34),
-                  child: Column(
-                    children: [
-                      UserAccountsDrawerHeader(
-                        arrowColor: Colors.white,
-                        decoration: BoxDecoration(
-                          color: const Color(0xff251F34),
-                        ),
-                        currentAccountPicture: Padding(
-                          padding:
-                              EdgeInsets.only(top: screenSize.height * 0.02),
-                          child: CircleAvatar(
-                            radius: screenSize.height * 0.04,
-                            backgroundColor: Colors.white,
-                            backgroundImage: widget.currentUser != null
-                                ? CachedNetworkImageProvider(
-                                    widget.currentUser.photoUrl)
-                                : AssetImage('assets/images/no_image.png'),
-                          ),
-                        ),
-                        accountName: Text(
-                          widget.currentUser != null
-                              ? widget.currentUser.displayName
-                              : '',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.white,
-                              fontSize: textSubTitle(context)),
-                        ),
-                        accountEmail: Text(
-                          widget.currentUser != null
-                              ? widget.currentUser.email
-                              : '',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.white,
-                              fontSize: textBody1(context)),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DeptMembers(
-                                              group: _team,
-                                              dept: _department,
-                                              currentuser: currentuser,
-                                              gid: widget.gid,
-                                              name: widget.name,
-                                            )));
-                              },
-                              leading: Icon(
-                                Icons.people_alt_outlined,
-                                color: Colors.white,
-                              ),
-                              title: Text(
-                                'Members',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.white,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                            ListTile(
-                              onTap: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DeptInbox(
-                                            dept: _department,
-                                            team: _team,
-                                            currentuser: currentuser,
-                                            gid: widget.gid,
-                                            name: widget.name)));
-                              },
-                              leading: Icon(
-                                Icons.notifications_none_outlined,
-                                color: Colors.white,
-                              ),
-                              title: Text(
-                                'Inbox',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.white,
-                                    fontSize: textSubTitle(context)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                          child: Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Column(
-                                children: <Widget>[
-                                  Divider(),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DeptSettings(
-                                                    gid: widget.gid,
-                                                    dId: widget.dId,
-                                                    name: widget.dName,
-                                                    team: _team,
-                                                    dept: _department,
-                                                    currentuser: currentuser,
-                                                  )));
-                                    },
-                                    child: ListTile(
-                                        leading: Icon(
-                                          Icons.settings_outlined,
-                                          color: Colors.white,
-                                        ),
-                                        title: Text(
-                                          'Settings',
-                                          style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              color: Colors.white,
-                                              fontSize: textSubTitle(context)),
-                                        )),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => DeptInvite(
-                                                  dept: _department,
-                                                  group: _team,
-                                                  currentuser: currentuser,
-                                                  gid: widget.gid,
-                                                  name: widget.name)));
-                                    },
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.account_circle_outlined,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Add member',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.white,
-                                            fontSize: textSubTitle(context)),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  )
-                                ],
-                              ))),
-                    ],
-                  ),
-                ),
-              )
-            : widget.currentUser != null &&
-                    _department != null &&
-                    widget.currentUser.uid == _department.currentUserUid
-                ? Drawer(
-                    child: Container(
-                      color: const Color(0xff251F34),
-                      child: Column(
-                        children: [
-                          UserAccountsDrawerHeader(
-                            arrowColor: Colors.white,
-                            decoration: BoxDecoration(
-                              color: const Color(0xff251F34),
-                            ),
-                            currentAccountPicture: Padding(
-                              padding: EdgeInsets.only(
-                                  top: screenSize.height * 0.02),
-                              child: CircleAvatar(
-                                radius: screenSize.height * 0.04,
-                                backgroundColor: Colors.white,
-                                backgroundImage: widget.currentUser != null
-                                    ? CachedNetworkImageProvider(
-                                        widget.currentUser.photoUrl)
-                                    : AssetImage('assets/images/no_image.png'),
-                              ),
-                            ),
-                            accountName: Text(
-                              widget.currentUser != null
-                                  ? widget.currentUser.displayName
-                                  : '',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  color: Colors.white,
-                                  fontSize: textSubTitle(context)),
-                            ),
-                            accountEmail: Text(
-                              widget.currentUser != null
-                                  ? widget.currentUser.email
-                                  : '',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  color: Colors.white,
-                                  fontSize: textBody1(context)),
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DeptMembers(
-                                                  group: _team,
-                                                  dept: _department,
-                                                  currentuser: currentuser,
-                                                  gid: widget.gid,
-                                                  name: widget.name,
-                                                )));
-                                  },
-                                  leading: Icon(
-                                    Icons.people_alt_outlined,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    'Members',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.white,
-                                        fontSize: textSubTitle(context)),
-                                  ),
-                                ),
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => DeptInbox(
-                                                dept: _department,
-                                                team: _team,
-                                                currentuser: currentuser,
-                                                gid: widget.gid,
-                                                name: widget.name)));
-                                  },
-                                  leading: Icon(
-                                    Icons.notifications,
-                                    color: Colors.white,
-                                  ),
-                                  title: Text(
-                                    'Inbox',
-                                    style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        color: Colors.white,
-                                        fontSize: textSubTitle(context)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                              child: Align(
-                                  alignment: FractionalOffset.bottomCenter,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Divider(),
-                                      ListTile(
-                                          leading: Icon(
-                                            Icons.close_outlined,
-                                            color: Colors.white,
-                                          ),
-                                          title: Text(
-                                            'Close',
-                                            style: TextStyle(
-                                                fontFamily: FontNameDefault,
-                                                color: Colors.white,
-                                                fontSize:
-                                                    textSubTitle(context)),
-                                          )),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TeamInvite(
-                                                          group: _team,
-                                                          currentuser:
-                                                              currentuser,
-                                                          gid: widget.gid,
-                                                          name: widget.name)));
-                                        },
-                                        child: ListTile(
-                                          leading: Icon(
-                                            Icons.account_circle_outlined,
-                                            color: Colors.white,
-                                          ),
-                                          title: Text(
-                                            'Add member',
-                                            style: TextStyle(
-                                                fontFamily: FontNameDefault,
-                                                color: Colors.white,
-                                                fontSize:
-                                                    textSubTitle(context)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ))),
-                        ],
-                      ),
-                    ),
-                  )
-                : Container(),
+        // endDrawer: widget.currentUser != null &&
+        //         _team != null &&
+        //         widget.currentUser.uid == _team.currentUserUid
+        //     ? Drawer(
+        //         child: Container(
+        //           color: const Color(0xff251F34),
+        //           child: Column(
+        //             children: [
+        //               UserAccountsDrawerHeader(
+        //                 arrowColor: Colors.white,
+        //                 decoration: BoxDecoration(
+        //                   color: const Color(0xff251F34),
+        //                 ),
+        //                 currentAccountPicture: Padding(
+        //                   padding:
+        //                       EdgeInsets.only(top: screenSize.height * 0.02),
+        //                   child: CircleAvatar(
+        //                     radius: screenSize.height * 0.04,
+        //                     backgroundColor: Colors.white,
+        //                     backgroundImage: widget.currentUser != null
+        //                         ? CachedNetworkImageProvider(
+        //                             widget.currentUser.photoUrl)
+        //                         : AssetImage('assets/images/no_image.png'),
+        //                   ),
+        //                 ),
+        //                 accountName: Text(
+        //                   widget.currentUser != null
+        //                       ? widget.currentUser.displayName
+        //                       : '',
+        //                   style: TextStyle(
+        //                       fontFamily: FontNameDefault,
+        //                       color: Colors.white,
+        //                       fontSize: textSubTitle(context)),
+        //                 ),
+        //                 accountEmail: Text(
+        //                   widget.currentUser != null
+        //                       ? widget.currentUser.email
+        //                       : '',
+        //                   style: TextStyle(
+        //                       fontFamily: FontNameDefault,
+        //                       color: Colors.white,
+        //                       fontSize: textBody1(context)),
+        //                 ),
+        //               ),
+        //               Expanded(
+        //                 child: Column(
+        //                   crossAxisAlignment: CrossAxisAlignment.start,
+        //                   children: [
+        //                     ListTile(
+        //                       onTap: () {
+        //                         Navigator.push(
+        //                             context,
+        //                             MaterialPageRoute(
+        //                                 builder: (context) => DeptMembers(
+        //                                       group: _team,
+        //                                       dept: _department,
+        //                                       currentuser: currentuser,
+        //                                       gid: widget.gid,
+        //                                       name: widget.name,
+        //                                     )));
+        //                       },
+        //                       leading: Icon(
+        //                         Icons.people_alt_outlined,
+        //                         color: Colors.white,
+        //                       ),
+        //                       title: Text(
+        //                         'Members',
+        //                         style: TextStyle(
+        //                             fontFamily: FontNameDefault,
+        //                             color: Colors.white,
+        //                             fontSize: textSubTitle(context)),
+        //                       ),
+        //                     ),
+        //                     ListTile(
+        //                       onTap: () {
+        //                         Navigator.pop(context);
+        //                         Navigator.push(
+        //                             context,
+        //                             MaterialPageRoute(
+        //                                 builder: (context) => DeptInbox(
+        //                                     dept: _department,
+        //                                     team: _team,
+        //                                     currentuser: currentuser,
+        //                                     gid: widget.gid,
+        //                                     name: widget.name)));
+        //                       },
+        //                       leading: Icon(
+        //                         Icons.notifications_none_outlined,
+        //                         color: Colors.white,
+        //                       ),
+        //                       title: Text(
+        //                         'Inbox',
+        //                         style: TextStyle(
+        //                             fontFamily: FontNameDefault,
+        //                             color: Colors.white,
+        //                             fontSize: textSubTitle(context)),
+        //                       ),
+        //                     ),
+        //                   ],
+        //                 ),
+        //               ),
+        //               Container(
+        //                   child: Align(
+        //                       alignment: FractionalOffset.bottomCenter,
+        //                       child: Column(
+        //                         children: <Widget>[
+        //                           Divider(),
+        //                           InkWell(
+        //                             onTap: () {
+        //                               Navigator.pop(context);
+        //                               Navigator.push(
+        //                                   context,
+        //                                   MaterialPageRoute(
+        //                                       builder: (context) =>
+        //                                           DeptSettings(
+        //                                             gid: widget.gid,
+        //                                             dId: widget.dId,
+        //                                             name: widget.dName,
+        //                                             team: _team,
+        //                                             dept: _department,
+        //                                             currentuser: currentuser,
+        //                                           )));
+        //                             },
+        //                             child: ListTile(
+        //                                 leading: Icon(
+        //                                   Icons.settings_outlined,
+        //                                   color: Colors.white,
+        //                                 ),
+        //                                 title: Text(
+        //                                   'Settings',
+        //                                   style: TextStyle(
+        //                                       fontFamily: FontNameDefault,
+        //                                       color: Colors.white,
+        //                                       fontSize: textSubTitle(context)),
+        //                                 )),
+        //                           ),
+        //                           // InkWell(
+        //                           //   onTap: () {
+        //                           //     Navigator.pop(context);
+        //                           //     Navigator.push(
+        //                           //         context,
+        //                           //         MaterialPageRoute(
+        //                           //             builder: (context) => DeptInvite(
+        //                           //                 dept: _department,
+        //                           //                 group: _team,
+        //                           //                 currentuser: currentuser,
+        //                           //                 gid: widget.gid,
+        //                           //                 name: widget.name)));
+        //                           //   },
+        //                           //   child: ListTile(
+        //                           //     leading: Icon(
+        //                           //       Icons.account_circle_outlined,
+        //                           //       color: Colors.white,
+        //                           //     ),
+        //                           //     title: Text(
+        //                           //       'Add member',
+        //                           //       style: TextStyle(
+        //                           //           fontFamily: FontNameDefault,
+        //                           //           color: Colors.white,
+        //                           //           fontSize: textSubTitle(context)),
+        //                           //     ),
+        //                           //   ),
+        //                           // ),
+        //                           SizedBox(
+        //                             height: 20,
+        //                           )
+        //                         ],
+        //                       ))),
+        //             ],
+        //           ),
+        //         ),
+        //       )
+        //     : widget.currentUser != null &&
+        //             _department != null &&
+        //             widget.currentUser.uid == _department.currentUserUid
+        //         ? Drawer(
+        //             child: Container(
+        //               color: const Color(0xff251F34),
+        //               child: Column(
+        //                 children: [
+        //                   UserAccountsDrawerHeader(
+        //                     arrowColor: Colors.white,
+        //                     decoration: BoxDecoration(
+        //                       color: const Color(0xff251F34),
+        //                     ),
+        //                     currentAccountPicture: Padding(
+        //                       padding: EdgeInsets.only(
+        //                           top: screenSize.height * 0.02),
+        //                       child: CircleAvatar(
+        //                         radius: screenSize.height * 0.04,
+        //                         backgroundColor: Colors.white,
+        //                         backgroundImage: widget.currentUser != null
+        //                             ? CachedNetworkImageProvider(
+        //                                 widget.currentUser.photoUrl)
+        //                             : AssetImage('assets/images/no_image.png'),
+        //                       ),
+        //                     ),
+        //                     accountName: Text(
+        //                       widget.currentUser != null
+        //                           ? widget.currentUser.displayName
+        //                           : '',
+        //                       style: TextStyle(
+        //                           fontFamily: FontNameDefault,
+        //                           color: Colors.white,
+        //                           fontSize: textSubTitle(context)),
+        //                     ),
+        //                     accountEmail: Text(
+        //                       widget.currentUser != null
+        //                           ? widget.currentUser.email
+        //                           : '',
+        //                       style: TextStyle(
+        //                           fontFamily: FontNameDefault,
+        //                           color: Colors.white,
+        //                           fontSize: textBody1(context)),
+        //                     ),
+        //                   ),
+        //                   Expanded(
+        //                     child: Column(
+        //                       crossAxisAlignment: CrossAxisAlignment.start,
+        //                       children: [
+        //                         ListTile(
+        //                           onTap: () {
+        //                             Navigator.push(
+        //                                 context,
+        //                                 MaterialPageRoute(
+        //                                     builder: (context) => DeptMembers(
+        //                                           group: _team,
+        //                                           dept: _department,
+        //                                           currentuser: currentuser,
+        //                                           gid: widget.gid,
+        //                                           name: widget.name,
+        //                                         )));
+        //                           },
+        //                           leading: Icon(
+        //                             Icons.people_alt_outlined,
+        //                             color: Colors.white,
+        //                           ),
+        //                           title: Text(
+        //                             'Members',
+        //                             style: TextStyle(
+        //                                 fontFamily: FontNameDefault,
+        //                                 color: Colors.white,
+        //                                 fontSize: textSubTitle(context)),
+        //                           ),
+        //                         ),
+        //                         ListTile(
+        //                           onTap: () {
+        //                             Navigator.pop(context);
+        //                             Navigator.push(
+        //                                 context,
+        //                                 MaterialPageRoute(
+        //                                     builder: (context) => DeptInbox(
+        //                                         dept: _department,
+        //                                         team: _team,
+        //                                         currentuser: currentuser,
+        //                                         gid: widget.gid,
+        //                                         name: widget.name)));
+        //                           },
+        //                           leading: Icon(
+        //                             Icons.notifications,
+        //                             color: Colors.white,
+        //                           ),
+        //                           title: Text(
+        //                             'Inbox',
+        //                             style: TextStyle(
+        //                                 fontFamily: FontNameDefault,
+        //                                 color: Colors.white,
+        //                                 fontSize: textSubTitle(context)),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   ),
+        //                   Container(
+        //                       child: Align(
+        //                           alignment: FractionalOffset.bottomCenter,
+        //                           child: Column(
+        //                             children: <Widget>[
+        //                               Divider(),
+        //                               ListTile(
+        //                                   leading: Icon(
+        //                                     Icons.close_outlined,
+        //                                     color: Colors.white,
+        //                                   ),
+        //                                   title: Text(
+        //                                     'Close',
+        //                                     style: TextStyle(
+        //                                         fontFamily: FontNameDefault,
+        //                                         color: Colors.white,
+        //                                         fontSize:
+        //                                             textSubTitle(context)),
+        //                                   )),
+        //                               InkWell(
+        //                                 onTap: () {
+        //                                   Navigator.pop(context);
+        //                                   Navigator.push(
+        //                                       context,
+        //                                       MaterialPageRoute(
+        //                                           builder: (context) =>
+        //                                               TeamInvite(
+        //                                                   group: _team,
+        //                                                   currentuser:
+        //                                                       currentuser,
+        //                                                   gid: widget.gid,
+        //                                                   name: widget.name)));
+        //                                 },
+        //                                 child: ListTile(
+        //                                   leading: Icon(
+        //                                     Icons.account_circle_outlined,
+        //                                     color: Colors.white,
+        //                                   ),
+        //                                   title: Text(
+        //                                     'Add member',
+        //                                     style: TextStyle(
+        //                                         fontFamily: FontNameDefault,
+        //                                         color: Colors.white,
+        //                                         fontSize:
+        //                                             textSubTitle(context)),
+        //                                   ),
+        //                                 ),
+        //                               ),
+        //                             ],
+        //                           ))),
+        //                 ],
+        //               ),
+        //             ),
+        //           )
+        //         : Container(),
       ),
     );
   }

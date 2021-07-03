@@ -4,6 +4,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
+import 'package:Yujai/widgets/list_inbox_team.dart';
 import 'package:Yujai/widgets/list_user.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -189,10 +190,10 @@ class _TeamInboxState extends State<TeamInbox> {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
-                  controller: _scrollController,
+                  //    controller: _scrollController,
                   //shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => ListItemInbox(
+                  itemBuilder: ((context, index) => ListItemInboxTeam(
                         documentSnapshot: snapshot.data.docs[index],
                         index: index,
                       ))));

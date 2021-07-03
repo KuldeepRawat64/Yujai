@@ -242,7 +242,7 @@ class _NetstedTabbarWorkApplicationState
             return SizedBox(
                 height: MediaQuery.of(context).size.height * 0.9,
                 child: ListView.builder(
-                    controller: _scrollController3,
+                    //        controller: _scrollController3,
                     //shrinkWrap: true,
                     itemCount: listPromotion.length,
                     itemBuilder: ((context, index) => ListItemPromotion(

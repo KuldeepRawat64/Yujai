@@ -455,7 +455,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                   child: Column(
                     children: [
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.025,
+                        height: 8,
                       ),
                       Flexible(
                         child: ListView.builder(
@@ -494,7 +494,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                 child: Column(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.025,
+                      height: 8,
                     ),
                     Flexible(
                       child: ListView.builder(
@@ -556,7 +556,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                   child: Column(
                     children: [
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.025,
+                        height: 8,
                       ),
                       Flexible(
                         child: ListView.builder(

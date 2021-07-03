@@ -9,7 +9,10 @@ class Job {
   String jobOwnerName;
   String jobOwnerPhotoUrl;
   String industry;
-  String salary;
+  String jobType;
+  String workDays;
+  String minSalary;
+  String maxSalary;
   String timing;
   String description;
   String website;
@@ -23,7 +26,10 @@ class Job {
     this.jobOwnerName,
     this.jobOwnerPhotoUrl,
     this.industry,
-    this.salary,
+    this.workDays,
+    this.minSalary,
+    this.maxSalary,
+    this.jobType,
     this.timing,
     this.description,
     this.website,
@@ -39,7 +45,10 @@ class Job {
     data['jobOwnerName'] = job.jobOwnerName;
     data['jobOwnerPhotoUrl'] = job.jobOwnerPhotoUrl;
     data['industry'] = job.industry;
-    data['salary'] = job.salary;
+    data['minSalary'] = job.minSalary;
+    data['maxSalary'] = job.maxSalary;
+    data['jobType'] = job.jobType;
+    data['workDays'] = job.workDays;
     data['timing'] = job.timing;
     data['description'] = job.description;
     data['website'] = job.website;
@@ -55,7 +64,10 @@ class Job {
     this.jobOwnerName = mapData['jobOwnerName'];
     this.jobOwnerPhotoUrl = mapData['jobOwnerPhotoUrl'];
     this.industry = mapData['industry'];
-    this.salary = mapData['salary'];
+    this.minSalary = mapData['minSalary'];
+    this.maxSalary = mapData['maxSalary'];
+    this.jobType = mapData['jobType'];
+    this.workDays = mapData['workDays'];
     this.timing = mapData['timing'];
     this.description = mapData['description'];
     this.website = mapData['website'];

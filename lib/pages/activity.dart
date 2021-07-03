@@ -3,6 +3,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_post.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +231,8 @@ class _ActivityState extends State<Activity> {
                       currentuser: _user,
                     )));
           } else {
-            return const Text('Empty data');
+            return NoContent('No posts', 'assets/images/placeholder.png',
+                'You have not posted anything yet', '');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');

@@ -131,6 +131,7 @@ class _ListAdState extends State<ListAd> {
               context,
               MaterialPageRoute(
                   builder: (context) => AdDetailScreen(
+                        group: widget.group,
                         user: widget.currentuser,
                         currentuser: widget.currentuser,
                         documentSnapshot: widget.documentSnapshot,
@@ -235,7 +236,7 @@ class _ListAdState extends State<ListAd> {
                                       widget.group != null &&
                                           widget.group.currentUserUid ==
                                               widget.currentuser.uid
-                                  ? deleteDialog(widget.documentSnapshot)
+                                  ? showDelete(widget.documentSnapshot)
                                   : showReport(widget.documentSnapshot);
                             },
                             child: CircleAvatar(
@@ -407,7 +408,7 @@ class _ListAdState extends State<ListAd> {
         }));
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -415,14 +416,16 @@ class _ListAdState extends State<ListAd> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
+                  'Delete',
                   style: TextStyle(
-                      fontSize: textSubTitle(context),
                       fontFamily: FontNameDefault,
-                      color: Colors.redAccent),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
@@ -430,7 +433,8 @@ class _ListAdState extends State<ListAd> {
                   'Cancel',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -453,6 +457,7 @@ class _ListAdState extends State<ListAd> {
                   style: TextStyle(color: Colors.redAccent),
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   _showFormDialog();
                   //   Navigator.pop(context);
                 },
@@ -556,9 +561,8 @@ class _ListAdState extends State<ListAd> {
                       ),
                       InkWell(
                         onTap: () {
-                          send()
-                              .then((value) => Navigator.pop(context))
-                              .then((value) => Navigator.pop(context));
+                          send().then((value) => Navigator.pop(context));
+                          // .then((value) => Navigator.pop(context));
                         },
                         child: Text(
                           'Submit',

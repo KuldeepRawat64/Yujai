@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/like.dart';
+import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
@@ -28,6 +30,8 @@ class ListItemDiscussionsProject extends StatefulWidget {
   final String gid;
   final String name;
   final Team team;
+  final Department dept;
+  final Project project;
   final String deptId;
   final String projectId;
   ListItemDiscussionsProject(
@@ -38,7 +42,9 @@ class ListItemDiscussionsProject extends StatefulWidget {
       this.name,
       this.team,
       this.deptId,
-      this.projectId});
+      this.projectId,
+      this.dept,
+      this.project});
 
   @override
   _ListItemDiscussionsProjectState createState() =>
@@ -68,6 +74,7 @@ class _ListItemDiscussionsProjectState
   List<DocumentSnapshot> listVotes6 = [];
   List<DocumentSnapshot> totalVotes = [];
   String actId = Uuid().v4();
+  bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
     var screenSize = MediaQuery.of(context).size;
@@ -89,6 +96,9 @@ class _ListItemDiscussionsProjectState
                   context,
                   MaterialPageRoute(
                       builder: ((context) => DiscussionComments(
+                            team: widget.team,
+                            dept: widget.dept,
+                            project: widget.project,
                             gid: widget.gid,
                             snapshot: widget.documentSnapshot,
                             followingUser: widget.currentuser,
@@ -1276,7 +1286,7 @@ class _ListItemDiscussionsProjectState
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(
-                              top: screenSize.height * 0.01,
+                              top: screenSize.height * 0.005,
                             ),
                             child: Container(
                               decoration: ShapeDecoration(
@@ -1286,13 +1296,53 @@ class _ListItemDiscussionsProjectState
                                           BorderRadius.circular(40.0))),
                               padding: EdgeInsets.only(
                                   bottom: screenSize.height * 0.01,
-                                  top: screenSize.height * 0.01,
+                                  top: screenSize.height * 0.005,
                                   left: screenSize.width / 30),
-                              child: Text(
-                                widget.documentSnapshot.data()['caption'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  seeMore
+                                      ? Text(
+                                          widget.documentSnapshot
+                                              .data()['caption'],
+                                          style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textSubTitle(context)),
+                                        )
+                                      : Text(
+                                          widget.documentSnapshot
+                                              .data()['caption'],
+                                          maxLines: 6,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textSubTitle(context)),
+                                        ),
+                                  widget.documentSnapshot
+                                              .data()['caption']
+                                              .toString()
+                                              .length >
+                                          250
+                                      ? InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              seeMore = !seeMore;
+                                            });
+                                          },
+                                          child: Text(
+                                            !seeMore
+                                                ? 'Read more...'
+                                                : 'See less',
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              fontSize: textSubTitle(context),
+                                            ),
+                                          ))
+                                      : Container()
+                                ],
                               ),
                             ),
                           ),
@@ -1463,13 +1513,17 @@ class _ListItemDiscussionsProjectState
               ),
               trailing: SizedBox(
                 height: 40,
-                width: 50,
+                width: 100,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => CommentsScreen(
+                            builder: ((context) => DiscussionComments(
+                                  team: widget.team,
+                                  dept: widget.dept,
+                                  project: widget.project,
+                                  gid: widget.gid,
                                   snapshot: widget.documentSnapshot,
                                   followingUser: widget.currentuser,
                                   documentReference:
@@ -1485,10 +1539,11 @@ class _ListItemDiscussionsProjectState
                     //   //color: Theme.of(context).accentColor,
                     // ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         commentWidget(widget.documentSnapshot.reference),
                         SizedBox(
-                          width: 8.0,
+                          width: 4.0,
                         ),
                         Icon(Icons.messenger_outline_sharp),
                       ],

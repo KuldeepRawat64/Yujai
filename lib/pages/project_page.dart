@@ -411,27 +411,27 @@ class _ProjectPageState extends State<ProjectPage>
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProjectInbox(
-                                dept: _department,
-                                team: _team,
-                                project: _project,
-                                currentuser: currentuser,
-                                gid: widget.gid,
-                                name: widget.name)));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.notifications_none_outlined,
-                      color: Colors.black54,
-                    ),
-                  ),
-                )
+                // InkWell(
+                //   onTap: () {
+                //     Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) => ProjectInbox(
+                //                 dept: _department,
+                //                 team: _team,
+                //                 project: _project,
+                //                 currentuser: currentuser,
+                //                 gid: widget.gid,
+                //                 name: widget.name)));
+                //   },
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: Icon(
+                //       Icons.notifications_none_outlined,
+                //       color: Colors.black54,
+                //     ),
+                //   ),
+                // )
               ],
               title: Row(
                 children: [

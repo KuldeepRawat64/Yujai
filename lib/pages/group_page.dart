@@ -5,6 +5,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/group_activity.dart';
 import 'package:Yujai/pages/group_chat.dart';
 import 'package:Yujai/pages/group_inbox.dart';
+import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/pages/group_settings.dart';
 import 'package:Yujai/pages/group_upload_ad.dart';
 import 'package:Yujai/pages/group_upload_discussion.dart';
@@ -647,6 +648,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                             ),
                             InkWell(
                               onTap: () {
+                                Navigator.pop(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -684,6 +686,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                   ),
                                   InkWell(
                                       onTap: () {
+                                        Navigator.pop(context);
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -712,7 +715,17 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                                                     textSubTitle(context)),
                                           ))),
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => GroupInvite(
+                                                  group: _group,
+                                                  currentuser: currentuser,
+                                                  gid: widget.gid,
+                                                  name: widget.name)));
+                                    },
                                     child: ListTile(
                                         leading: Icon(
                                           Icons.account_circle_outlined,

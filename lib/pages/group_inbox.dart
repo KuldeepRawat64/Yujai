@@ -189,7 +189,7 @@ class _GroupInboxState extends State<GroupInbox> {
           return SizedBox(
               height: screenSize.height,
               child: ListView.builder(
-                  controller: _scrollController,
+                  //   controller: _scrollController,
                   //shrinkWrap: true,
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: ((context, index) => ListItemInbox(

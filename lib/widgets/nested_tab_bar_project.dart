@@ -355,6 +355,8 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
                       index: index,
                       currentuser: widget.currentUser,
                       team: widget.team,
+                      dept: widget.department,
+                      project: widget.project,
                       gid: widget.gid,
                       name: widget.name,
                       deptId: widget.department.uid,

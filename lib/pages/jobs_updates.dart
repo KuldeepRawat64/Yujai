@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_job.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -78,12 +79,10 @@ class _JobUpdatesState extends State<JobUpdates> {
           ),
         ),
         body: _user != null
-            ? ListView(children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
-                  child: postImagesWidget(),
-                ),
-              ])
+            ? Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: postImagesWidget(),
+              )
             : Center(child: CircularProgressIndicator()),
       ),
     );
@@ -91,31 +90,61 @@ class _JobUpdatesState extends State<JobUpdates> {
 
   Widget postImagesWidget() {
     var screenSize = MediaQuery.of(context).size;
-    return FutureBuilder(
-      future: _future,
-      builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SizedBox(
-                height: screenSize.height,
-                child: ListView.builder(
-                    controller: _scrollController,
-                    //shrinkWrap: true,
-                    itemCount: snapshot.data.length,
-                    itemBuilder: ((context, index) => ListItemJob(
-                        currentuser: _user,
-                        documentSnapshot: snapshot.data[index],
-                        index: index,
-                        user: _user))));
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.uid)
+          .collection('jobs')
+          .snapshots(),
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        // if (snapshot.hasData) {
+        //   //     if (snapshot.connectionState == ConnectionState.done) {
+        //   return SizedBox(
+        //       height: screenSize.height,
+        //       child: ListView.builder(
+        //           controller: _scrollController,
+        //           //shrinkWrap: true,
+        //           itemCount: snapshot.data.docs.length,
+        //           itemBuilder: ((context, index) => ListItemPost(
+        //                 documentSnapshot: snapshot.data.docs[index],
+        //                 index: index,
+        //                 user: _user,
+        //                 currentuser: _user,
+        //               ))));
+        //   //   } else {
+        //   //     return Center(
+        //   //       child: shimmer(),
+        //   //      );
+        //   //      }
+        // } else {
+        //   return Center(
+        //     child: shimmer(),
+        //   );
+        // }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                //   controller: _scrollController,
+                //shrinkWrap: true,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) => ListItemJob(
+                      documentSnapshot: snapshot.data.docs[index],
+                      index: index,
+                      user: _user,
+                      currentuser: _user,
+                    )));
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return NoContent('No jobs', 'assets/images/suitcase.png',
+                'You have not posted any jobs yet', '');
           }
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );

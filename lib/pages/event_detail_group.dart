@@ -1,5 +1,6 @@
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/comment_group.dart';
 import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/resources/repository.dart';
@@ -8,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/image_detail.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -29,11 +31,46 @@ class EventDetailGroup extends StatefulWidget {
 class _EventDetailGroupState extends State<EventDetailGroup> {
   var _repository = Repository();
   bool seeMore = false;
+  String selectedSubject;
+  TextEditingController _bodyController = TextEditingController(text: '');
+
+  @override
+  void initState() {
+    super.initState();
+    selectedSubject = 'Spam';
+  }
 
   convertDate(int timeinMilis) {
     var date = DateTime.fromMillisecondsSinceEpoch(timeinMilis);
     var formattedDate = DateFormat.yMMMd().format(date);
     return formattedDate;
+  }
+
+  Future<void> send() async {
+    final Email email = Email(
+      body: _bodyController.text +
+          '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
+          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\n Sent from Yujai',
+      subject: selectedSubject,
+      recipients: ['animusitmanagement@gmail.com'],
+      //attachmentPaths: [widget.documentSnapshot.data['imgUrl']],
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      platformResponse = error.toString();
+    }
+
+    if (!mounted) return;
+    print('$platformResponse');
+    // _scaffoldKey.currentState.showSnackBar(SnackBar(
+    //   content: Text(platformResponse),
+    // ));
   }
 
   convertTime(int timeinMilis) {
@@ -102,14 +139,342 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
           Positioned(
             top: 20.0,
             right: 20.0,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.more_vert_outlined),
+            child: InkWell(
+              onTap: () {
+                widget.currentuser.uid == widget.documentSnapshot['ownerUid'] ||
+                        widget.group != null &&
+                            widget.group.currentUserUid ==
+                                widget.currentuser.uid
+                    ? deleteDialog(widget.documentSnapshot)
+                    : showReport(widget.documentSnapshot);
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.more_vert_outlined),
+              ),
             ),
           )
         ],
       ),
     );
+  }
+
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
+  showReport(DocumentSnapshot snapshot) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: Text(
+                  'Report this post',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                      color: Colors.redAccent),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showFormDialog(context);
+                  //   Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    fontSize: textBody1(context),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  _showFormDialog(BuildContext context) async {
+    var screenSize = MediaQuery.of(context).size;
+    return await showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return StatefulBuilder(builder: ((BuildContext context, setState) {
+            return AlertDialog(
+              content: Form(
+                child: Wrap(
+                  //    mainAxisSize: MainAxisSize.min,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Report',
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textHeader(context),
+                          fontWeight: FontWeight.bold),
+                    ),
+                    RadioListTile(
+                        title: Text(
+                          'Spam',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
+                        groupValue: selectedSubject,
+                        value: 'Spam',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text(
+                          'Pornographic',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
+                        groupValue: selectedSubject,
+                        value: 'Pornographic',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text(
+                          'Misleading',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
+                        groupValue: selectedSubject,
+                        value: 'Misleading',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text(
+                          'Hacked',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
+                        groupValue: selectedSubject,
+                        value: 'Hacked',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text(
+                          'Offensive',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
+                        groupValue: selectedSubject,
+                        value: 'Offensive',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: screenSize.height * 0.01,
+                    //       horizontal: screenSize.width / 30),
+                    //   child: Text('Comment'),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: screenSize.height * 0.01,
+                    //       horizontal: screenSize.width / 30),
+                    //   child: TextFormField(
+                    //     controller: _bodyController,
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenSize.height * 0.01,
+                          horizontal: screenSize.width / 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              send().then((value) => Navigator.pop(context));
+                              // .then((value) => Navigator.pop(context));
+                            },
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                  color: Colors.deepPurpleAccent,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }));
+        }));
+  }
+
+  deletePost(DocumentSnapshot snapshot) {
+    FirebaseFirestore.instance
+        .collection('groups')
+        .doc(widget.group.uid)
+        .collection('posts')
+        // .document()
+        // .delete();
+        .doc(snapshot['postId'])
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+        // Navigator.pop(context);
+
+        print('post deleted');
+      } else {
+        return print('not owner');
+      }
+    });
   }
 
   Widget eventBody() {
@@ -557,9 +922,9 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => CommentsScreen(
+                                  builder: ((context) => CommentsScreenGroup(
+                                        commentType: 'eventComment',
                                         group: widget.group,
-                                        isGroupFeed: true,
                                         documentReference:
                                             widget.documentSnapshot.reference,
                                         user: widget.currentuser,
@@ -615,9 +980,9 @@ class _EventDetailGroupState extends State<EventDetailGroup> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => CommentsScreen(
+                      builder: ((context) => CommentsScreenGroup(
+                            commentType: 'eventComment',
                             group: widget.group,
-                            isGroupFeed: true,
                             documentReference: reference,
                             user: widget.currentuser,
                             snapshot: widget.documentSnapshot,

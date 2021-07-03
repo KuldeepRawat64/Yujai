@@ -98,6 +98,15 @@ class _ListItemJobState extends State<ListItemJob> {
                   backgroundImage: CachedNetworkImageProvider(
                       widget.documentSnapshot['jobOwnerPhotoUrl']),
                 ),
+                trailing: Text(
+                  '\u{20B9}${widget.documentSnapshot['maxSalary']}',
+                  style: TextStyle(
+                    //  color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: FontNameDefault,
+                    fontSize: textHeader(context),
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: screenSize.width * 0.04),
@@ -150,6 +159,7 @@ class _ListItemJobState extends State<ListItemJob> {
                             widget.documentSnapshot['location']
                         ? widget.documentSnapshot['location']
                         : '',
+                    maxLines: 1,
                     style: TextStyle(
                       fontFamily: FontNameDefault,
                       color: Colors.grey,

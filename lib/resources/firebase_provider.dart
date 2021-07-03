@@ -1185,6 +1185,11 @@ class FirebaseProvider {
     UserModel currentUser,
     String caption,
     String location,
+    String jobType,
+    String minSalary,
+    String maxSalary,
+    String workDays,
+    String timing,
     String industry,
     String description,
     String website,
@@ -1196,6 +1201,11 @@ class FirebaseProvider {
       postId: postId,
       currentUserUid: currentUser.uid,
       caption: caption,
+      jobType: jobType,
+      minSalary: minSalary,
+      maxSalary: maxSalary,
+      workDays: workDays,
+      timing: timing,
       location: location,
       jobOwnerName: currentUser.displayName,
       jobOwnerPhotoUrl: currentUser.photoUrl,
@@ -1287,6 +1297,35 @@ class FirebaseProvider {
         .collection('groups')
         .doc(groupId)
         .collection('posts')
+        // .doc(postId)
+        .orderBy('time', descending: true)
+        .get();
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> retrieveDeptPosts(
+      String teamId, String deptId) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('departments')
+        .doc(deptId)
+        .collection('discussions')
+        .orderBy('time', descending: true)
+        .get();
+    return querySnapshot.docs;
+  }
+
+  Future<List<DocumentSnapshot>> retrieveProjectPosts(
+      String teamId, String deptId, String projectId) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('teams')
+        .doc(teamId)
+        .collection('departments')
+        .doc(deptId)
+        .collection('projects')
+        .doc(projectId)
+        .collection('discussions')
         .orderBy('time', descending: true)
         .get();
     return querySnapshot.docs;
@@ -1921,6 +1960,7 @@ class FirebaseProvider {
       'members': FieldValue.arrayRemove([followerId])
     });
   }
+
   Future<void> removeGroupMember({
     Group currentGroup,
     String followerId,

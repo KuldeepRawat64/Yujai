@@ -215,7 +215,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                         onTap: () {
                           //    showDelete(widget.documentSnapshot);
                           //      deleteDialog(widget.documentSnapshot);
-                          deleteDialog(widget.documentSnapshot);
+                          showDelete(widget.documentSnapshot);
                         },
                         child: Container(
                             decoration: ShapeDecoration(
@@ -629,7 +629,7 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
         }));
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -637,14 +637,16 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
+                  'Delete',
                   style: TextStyle(
-                      fontSize: textSubTitle(context),
                       fontFamily: FontNameDefault,
-                      color: Colors.redAccent),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
@@ -652,7 +654,8 @@ class _ListItemEventForumState extends State<ListItemEventForum> {
                   'Cancel',
                   style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);

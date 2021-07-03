@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/image_detail.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -17,16 +19,28 @@ import 'friend_profile.dart';
 class AdDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final UserModel user, currentuser;
+  final Group group;
 
-  AdDetailScreen({this.documentSnapshot, this.user, this.currentuser});
+  AdDetailScreen(
+      {this.documentSnapshot, this.user, this.currentuser, this.group});
 
   @override
   _AdDetailScreenState createState() => _AdDetailScreenState();
 }
 
 class _AdDetailScreenState extends State<AdDetailScreen> {
-  String selectedSubject;
+  // String selectedSubject;
   final List<String> images = [];
+  TextEditingController _bodyController = TextEditingController(text: '');
+  final CarouselController _controller = CarouselController();
+  String reason = '';
+  int _current = 0;
+  Completer<GoogleMapController> _gpsController = Completer();
+  // inititalize _center
+  Position _center;
+  final Set<Marker> _markers = {};
+  GeoPoint geopint;
+  String selectedSubject;
 
   @override
   void initState() {
@@ -37,6 +51,56 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
         precacheImage(NetworkImage(urls), context);
       });
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xffffffff),
+        body: CustomScrollView(
+          slivers: [
+            // SliverAppBar(
+            //   leading: IconButton(
+            //       icon: Icon(Icons.keyboard_arrow_left,
+            //           color: Colors.white, size: screenSize.height * 0.045),
+            //       onPressed: () {
+            //         Navigator.pop(context);
+            //       }),
+            //   actions: [
+            //     IconButton(
+            //         icon: Icon(Icons.more_horiz, color: Colors.white),
+            //         onPressed: () {
+            //           widget.currentuser.uid ==
+            //                   widget.documentSnapshot.data['ownerUid']
+            //               ? showDelete(widget.documentSnapshot)
+            //               : showReport(widget.documentSnapshot);
+            //         })
+            //   ],
+            //   backgroundColor: Color(0xFFEDF2F8),
+            //   expandedHeight: screenSize.height * 0.4,
+            //   flexibleSpace: FlexibleSpaceBar(
+            //     background: InkWell(
+            //       onTap: () {
+            //         Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //                 builder: (context) => ImageDetail(
+            //                       image: widget.documentSnapshot.data['imgUrl'],
+            //                     )));
+            //       },
+            //       child: CachedNetworkImage(
+            //           fit: BoxFit.cover,
+            //           imageUrl: widget.documentSnapshot.data['imgUrl']),
+            //     ),
+            //   ),
+            // ),
+            SliverList(delegate: SliverChildListDelegate([adStack()]))
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> send() async {
@@ -95,6 +159,115 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
         });
   }
 
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
+  }
+
   showReport(DocumentSnapshot snapshot) {
     return showDialog(
         context: context,
@@ -110,7 +283,8 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                       color: Colors.redAccent),
                 ),
                 onPressed: () {
-                  _showFormDialog();
+                  Navigator.pop(context);
+                  _showFormDialog(context);
                   //   Navigator.pop(context);
                 },
               ),
@@ -130,29 +304,32 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
         });
   }
 
-  _showFormDialog() {
+  _showFormDialog(BuildContext context) async {
     var screenSize = MediaQuery.of(context).size;
-    return showDialog(
+    return await showDialog(
         context: context,
         builder: ((BuildContext context) {
-          return SimpleDialog(
-              title: Text(
-                'Report',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: FontNameDefault,
-                    fontSize: textHeader(context)),
-              ),
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          return StatefulBuilder(builder: ((BuildContext context, setState) {
+            return AlertDialog(
+              content: Form(
+                child: Wrap(
+                  //    mainAxisSize: MainAxisSize.min,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      'Report',
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textHeader(context),
+                          fontWeight: FontWeight.bold),
+                    ),
                     RadioListTile(
                         title: Text(
                           'Spam',
                           style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context)),
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
                         ),
                         groupValue: selectedSubject,
                         value: 'Spam',
@@ -165,8 +342,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                         title: Text(
                           'Pornographic',
                           style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context)),
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
                         ),
                         groupValue: selectedSubject,
                         value: 'Pornographic',
@@ -179,8 +357,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                         title: Text(
                           'Misleading',
                           style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context)),
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
                         ),
                         groupValue: selectedSubject,
                         value: 'Misleading',
@@ -193,8 +372,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                         title: Text(
                           'Hacked',
                           style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context)),
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
                         ),
                         groupValue: selectedSubject,
                         value: 'Hacked',
@@ -207,8 +387,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                         title: Text(
                           'Offensive',
                           style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context)),
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
                         ),
                         groupValue: selectedSubject,
                         value: 'Offensive',
@@ -250,12 +431,15 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                                     fontWeight: FontWeight.bold)),
                           ),
                           InkWell(
-                            onTap: send,
+                            onTap: () {
+                              send().then((value) => Navigator.pop(context));
+                              // .then((value) => Navigator.pop(context));
+                            },
                             child: Text(
                               'Submit',
                               style: TextStyle(
-                                  fontSize: textSubTitle(context),
                                   fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
                                   color: Colors.deepPurpleAccent,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -265,7 +449,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                     )
                   ],
                 ),
-              ]);
+              ),
+            );
+          }));
         }));
   }
 
@@ -281,94 +467,13 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {
         return print('not owner');
       }
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
-        body: CustomScrollView(
-          slivers: [
-            // SliverAppBar(
-            //   leading: IconButton(
-            //       icon: Icon(Icons.keyboard_arrow_left,
-            //           color: Colors.white, size: screenSize.height * 0.045),
-            //       onPressed: () {
-            //         Navigator.pop(context);
-            //       }),
-            //   actions: [
-            //     IconButton(
-            //         icon: Icon(Icons.more_horiz, color: Colors.white),
-            //         onPressed: () {
-            //           widget.currentuser.uid ==
-            //                   widget.documentSnapshot.data['ownerUid']
-            //               ? showDelete(widget.documentSnapshot)
-            //               : showReport(widget.documentSnapshot);
-            //         })
-            //   ],
-            //   backgroundColor: Color(0xFFEDF2F8),
-            //   expandedHeight: screenSize.height * 0.4,
-            //   flexibleSpace: FlexibleSpaceBar(
-            //     background: InkWell(
-            //       onTap: () {
-            //         Navigator.push(
-            //             context,
-            //             MaterialPageRoute(
-            //                 builder: (context) => ImageDetail(
-            //                       image: widget.documentSnapshot.data['imgUrl'],
-            //                     )));
-            //       },
-            //       child: CachedNetworkImage(
-            //           fit: BoxFit.cover,
-            //           imageUrl: widget.documentSnapshot.data['imgUrl']),
-            //     ),
-            //   ),
-            // ),
-            SliverList(
-                delegate: SliverChildListDelegate(
-                    [AdStack(documentSnapshot: widget.documentSnapshot)]))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AdStack extends StatefulWidget {
-  const AdStack({
-    Key key,
-    @required this.documentSnapshot,
-  }) : super(key: key);
-
-  final DocumentSnapshot documentSnapshot;
-
-  @override
-  _AdStackState createState() => _AdStackState();
-}
-
-class _AdStackState extends State<AdStack> {
-  final CarouselController _controller = CarouselController();
-  String reason = '';
-  int _current = 0;
-  Completer<GoogleMapController> _gpsController = Completer();
-  // inititalize _center
-  Position _center;
-  final Set<Marker> _markers = {};
-  GeoPoint geopint;
-
-  @override
-  void initState() {
-    super.initState();
-    // Then define _center in initstate
   }
 
   // CameraPosition _currentPosition = CameraPosition(
@@ -382,8 +487,7 @@ class _AdStackState extends State<AdStack> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget adStack() {
     return Stack(
         fit: StackFit.loose,
         alignment: Alignment.topCenter,
@@ -483,9 +587,19 @@ class _AdStackState extends State<AdStack> {
           Positioned(
             top: 20.0,
             right: 20.0,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.more_vert_outlined),
+            child: InkWell(
+              onTap: () {
+                widget.currentuser.uid == widget.documentSnapshot['ownerUid'] ||
+                        widget.group != null &&
+                            widget.group.currentUserUid ==
+                                widget.currentuser.uid
+                    ? deleteDialog(widget.documentSnapshot)
+                    : showReport(widget.documentSnapshot);
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.more_vert_outlined),
+              ),
             ),
           )
         ],

@@ -1,39 +1,38 @@
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/group.dart';
+import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:uuid/uuid.dart';
 
-class CommentsScreen extends StatefulWidget {
+class CommentsScreenTeam extends StatefulWidget {
   final DocumentReference documentReference;
   final DocumentSnapshot snapshot;
+  final Team team;
   final UserModel user;
   final UserModel followingUser;
-  final String commentType;
-  CommentsScreen({
+  CommentsScreenTeam({
     this.documentReference,
     this.user,
     this.followingUser,
     this.snapshot,
-    this.commentType,
+    this.team,
   });
 
   @override
-  _CommentsScreenState createState() => _CommentsScreenState();
+  _CommentsScreenTeamState createState() => _CommentsScreenTeamState();
 }
 
-class _CommentsScreenState extends State<CommentsScreen> {
+class _CommentsScreenTeamState extends State<CommentsScreenTeam> {
   TextEditingController _commentController = TextEditingController();
   var _formKey = GlobalKey<FormState>();
   ScrollController _scrollController = ScrollController();
   String commentId = Uuid().v4();
-  String actId = Uuid().v4();
 
   @override
   void dispose() {
@@ -118,26 +117,24 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
           GestureDetector(
-              child: Container(
-                margin: const EdgeInsets.only(right: 8.0),
-                child: Icon(
-                  Icons.send,
-                  color: Theme.of(context).primaryColor,
-                ),
+            child: Container(
+              margin: const EdgeInsets.only(right: 8.0),
+              child: Icon(
+                Icons.send,
+                color: Theme.of(context).primaryColor,
               ),
-              onTap: () {
-                if (_commentController.text != '') {
-                  postComment();
-                  addCommentToActivityFeed(widget.snapshot, widget.user);
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  });
-                }
-              })
+            ),
+            onTap: () {
+              if (_commentController.text != '') {
+                postComment();
+                addCommentToActivityFeed(widget.snapshot, widget.user);
+                _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.fastOutSlowIn);
+              }
+            },
+          )
         ],
       ),
     );
@@ -165,9 +162,35 @@ class _CommentsScreenState extends State<CommentsScreen> {
     widget.documentReference
         .collection('comments')
         .doc(snapshot['postId'])
-        .delete();
+        .delete()
+        .then((value) => Navigator.pop(context));
   }
 
+  void addCommentToActivityFeed(
+      DocumentSnapshot snapshot, UserModel currentUser) {
+    var _feed = Feed(
+      postOwnerUid: snapshot['ownerUid'],
+      ownerName: currentUser.displayName,
+      ownerUid: currentUser.uid,
+      type: 'comment',
+      ownerPhotoUrl: currentUser.photoUrl,
+      imgUrl: snapshot['imgUrl'],
+      postId: snapshot['postId'],
+      timestamp: FieldValue.serverTimestamp(),
+      commentData: _commentController.text,
+    );
+    FirebaseFirestore.instance
+        .collection('teams')
+        .doc(widget.team.uid)
+        .collection('inbox')
+        // .document(currentUser.uid)
+        // .collection('comment')
+        .doc(snapshot['postId'])
+        .set(_feed.toMap(_feed))
+        .then((value) {
+      print('Comment Feed added');
+    });
+  }
   // void addCommentToActivityFeed(
   //     DocumentSnapshot snapshot, UserModel currentUser) {
   //   var _feed = Feed(
@@ -182,9 +205,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
   //     commentData: _commentController.text,
   //   );
   //   FirebaseFirestore.instance
-  //       .collection(widget.isGroupFeed ? 'groups' : 'users')
-  //       .doc(widget.isGroupFeed ? widget.group.uid : snapshot['ownerUid'])
-  //       .collection(widget.isGroupFeed ? 'inbox' : 'items')
+  //       .collection('users')
+  //       .doc(snapshot['ownerUid'])
+  //       .collection('items')
   //       // .document(currentUser.uid)
   //       // .collection('comment')
   //       .doc(snapshot['postId'])
@@ -193,35 +216,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
   //     print('Comment Feed added');
   //   });
   // }
-  void addCommentToActivityFeed(
-      DocumentSnapshot snapshot, UserModel currentUser) {
-    if (widget.user.uid != widget.snapshot['ownerUid']) {
-      var _feed = Feed(
-        actId: actId,
-        postOwnerUid: snapshot['ownerUid'],
-        ownerName: currentUser.displayName,
-        ownerUid: currentUser.uid,
-        type: widget.commentType != null ? widget.commentType : 'comment',
-        ownerPhotoUrl: currentUser.photoUrl,
-        imgUrl: snapshot['imgUrl'],
-        postId: snapshot['postId'],
-        timestamp: FieldValue.serverTimestamp(),
-        commentData: _commentController.text,
-      );
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(snapshot['ownerUid'])
-          .collection('items')
-          // .document(currentUser.uid)
-          // .collection('comment')
-          .doc(actId)
-          .set(_feed.toMap(_feed))
-          .then((value) {
-        actId = Uuid().v4();
-        print('Comment Feed added');
-      });
-    }
-  }
 
   Widget commentsListWidget() {
     print("Document Ref : ${widget.documentReference.path}");
@@ -229,15 +223,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
       child: StreamBuilder(
         stream: widget.documentReference
             .collection("comments")
-            .orderBy('timestamp', descending: false)
+            .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
-              // shrinkWrap: true,
-              //     reverse: true,
+              //  reverse: true,
               controller: _scrollController,
               itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) =>
@@ -271,28 +264,24 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             subtitle: Padding(
-              padding: const EdgeInsets.only(left: 0.0),
+              padding: const EdgeInsets.only(left: 8.0),
               child: Text(snapshot['comment'],
                   style: TextStyle(
                     fontSize: textBody1(context),
                     fontFamily: FontNameDefault,
                   )),
             ),
-            trailing: widget.user.uid == snapshot['ownerUid'] ||
-                    widget.user.uid == widget.snapshot['ownerUid']
-                ? IconButton(
-                    onPressed: () {
-                      deleteDialog(snapshot);
-                    },
-                    icon: Icon(Icons.delete_outline))
-                : Text(''),
+            trailing: IconButton(
+                onPressed: () {
+                  deleteDialog(snapshot);
+                },
+                icon: Icon(Icons.delete_outline)),
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: snapshot['timestamp'] != null
                 ? Text(timeago.format(snapshot['timestamp'].toDate()),
                     style: TextStyle(
-                      color: Colors.grey,
                       //  fontSize: textbody2(context),
                       fontFamily: FontNameDefault,
                     ))
@@ -347,7 +336,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           child: GestureDetector(
                             onTap: () {
                               deleteComment(snapshot);
-                              Navigator.pop(context);
                             },
                             child: Container(
                               height: screenSize.height * 0.055,

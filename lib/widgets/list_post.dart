@@ -129,7 +129,7 @@ class _ListItemPostState extends State<ListItemPost> {
     var screenSize = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(
-        bottom: screenSize.height * 0.025,
+        bottom: 8.0,
         left: screenSize.width * 0.02,
         right: screenSize.width * 0.02,
       ),
@@ -232,7 +232,7 @@ class _ListItemPostState extends State<ListItemPost> {
                   ? InkWell(
                       onTap: () {
                         //    showDelete(widget.documentSnapshot);
-                        //    deleteDialog(widget.documentSnapshot);
+                        showDelete(widget.documentSnapshot);
                       },
                       child: Container(
                           decoration: ShapeDecoration(
@@ -463,7 +463,7 @@ class _ListItemPostState extends State<ListItemPost> {
               ),
               trailing: SizedBox(
                 height: 40,
-                width: 60,
+                width: 100,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -487,6 +487,7 @@ class _ListItemPostState extends State<ListItemPost> {
                     //   //color: Theme.of(context).accentColor,
                     // ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         commentWidget(widget.documentSnapshot.reference),
                         SizedBox(
@@ -709,7 +710,7 @@ class _ListItemPostState extends State<ListItemPost> {
     });
   }
 
-  showDelete(DocumentSnapshot snapshot) {
+  showDelete(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -717,16 +718,25 @@ class _ListItemPostState extends State<ListItemPost> {
             children: [
               SimpleDialogOption(
                 child: Text(
-                  'Confirm delete',
-                  style: TextStyle(color: Colors.redAccent),
+                  'Delete',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  deletePost(snapshot);
+                  Navigator.pop(context);
+                  deleteDialog(snapshot);
+                  //   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
                 child: Text(
                   'Cancel',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.normal),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -749,6 +759,7 @@ class _ListItemPostState extends State<ListItemPost> {
                   style: TextStyle(color: Colors.redAccent),
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   _showFormDialog(context);
                 },
               ),
@@ -891,7 +902,7 @@ class _ListItemPostState extends State<ListItemPost> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {
@@ -937,6 +948,115 @@ class _ListItemPostState extends State<ListItemPost> {
         .then((value) {
       print("Post Unliked");
     });
+  }
+
+  deleteDialog(DocumentSnapshot snapshot) {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              //    overflow: Overflow.visible,
+              children: [
+                Wrap(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Delete Post',
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textHeader(context),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: screenSize.height * 0.09,
+                        child: Text(
+                          'Are you sure you want to delete this post?',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              deletePost(snapshot);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.white,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.015,
+                            horizontal: screenSize.width * 0.01,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: screenSize.height * 0.055,
+                              width: screenSize.width * 0.3,
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black,
+                                      fontSize: textSubTitle(context)),
+                                ),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[100],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                      width: 0.2, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }));
   }
 
   void removeLikeFromActivityFeed(

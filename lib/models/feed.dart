@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Feed {
+  String actId;
   String ownerName;
   String ownerUid;
   String type;
@@ -15,7 +16,8 @@ class Feed {
   String postOwnerUid;
 
   Feed(
-      {this.ownerName,
+      {this.actId,
+      this.ownerName,
       this.ownerUid,
       this.type,
       this.imgUrl,
@@ -30,6 +32,7 @@ class Feed {
 
   Map toMap(Feed feed) {
     var data = Map<String, dynamic>();
+    data['actId'] = feed.actId;
     data['ownerName'] = feed.ownerName;
     data['ownerUid'] = feed.ownerUid;
     data['type'] = feed.type;
@@ -46,6 +49,7 @@ class Feed {
   }
 
   Feed.fromMap(Map<String, dynamic> mapData) {
+    this.actId = mapData['actId'];
     this.ownerName = mapData['ownerName'];
     this.ownerUid = mapData['ownerUid'];
     this.type = mapData['type'];

@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'package:Yujai/blocs/location_bloc.dart';
+import 'package:Yujai/models/designation.dart';
+import 'package:Yujai/models/place_search.dart';
 import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/pages/places_location.dart';
+import 'package:Yujai/services/places_services.dart';
 import 'package:Yujai/widgets/custom_drop_down.dart';
 import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:Yujai/widgets/education_widget.dart';
 import 'package:Yujai/widgets/flow_widget.dart';
 import 'package:Yujai/widgets/skill_widgets.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +22,13 @@ import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 import '../style.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -48,6 +56,13 @@ class _NewJobFormState extends State<NewJobForm> {
   TextEditingController aboutController = TextEditingController();
   TextEditingController websiteController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
+  TextEditingController _minSalaryController = TextEditingController();
+  TextEditingController _maxSalaryController = TextEditingController();
+  GlobalKey<AutoCompleteTextFieldState<Designation>> deskey = new GlobalKey();
+  static List<Designation> designations = [];
+  AutoCompleteTextField designationTextField;
+  TextEditingController workingDaysController;
+  TextEditingController workTimingsController;
   final _repository = Repository();
   String location = '';
   final format = DateFormat('yyyy-MM-dd');
@@ -66,7 +81,24 @@ class _NewJobFormState extends State<NewJobForm> {
   List<dynamic> selectedSkills = [];
   String valueEmpType;
   String valueIndustry;
-
+  String valueJobType;
+  static const _locale = 'en';
+  bool loading = true;
+  String latitude;
+  String longitude;
+  var locationMessage = "";
+  Position _currentPosition;
+  List<PlaceSearch> searchResults = [];
+  final placesService = PlacesService();
+  AutoCompleteTextField placesTextField;
+  GlobalKey<AutoCompleteTextFieldState<PlaceSearch>> placeSearchkey =
+      new GlobalKey();
+  static List<PlaceSearch> places = new List<PlaceSearch>();
+  bool isEnabled = false;
+  String _formatNumber(String s) =>
+      NumberFormat.decimalPattern(_locale).format(int.parse(s));
+  String get _currency =>
+      NumberFormat.simpleCurrency(name: '\u{20B9}').currencySymbol;
   List<String> categoryList = [
     'Conference',
     'Seminar',
@@ -114,12 +146,67 @@ class _NewJobFormState extends State<NewJobForm> {
     'Tourism and food service',
     'Transport and logistics',
   ];
+  List jobTypes = [
+    'Full-time',
+    'Part-time',
+    'Contract',
+  ];
 
   @override
   void initState() {
     super.initState();
-    super.initState();
     retrieveUserDetails();
+    getDesignation();
+    workingDaysController = TextEditingController(text: 'Monday to Saturday');
+    workTimingsController = TextEditingController(text: '9 AM to 5 PM');
+  }
+
+  void getDesignation() async {
+    try {
+      final response = await http.get(
+          Uri.parse("https://kuldeeprawat64.github.io/data/profession.json"));
+      if (response.statusCode == 200) {
+        designations = loadDesignation(response.body);
+        // print('Profession: ${designations.length}');
+        setState(() {
+          loading = false;
+        });
+      } else {
+        //  print("Error getting Profession.");
+      }
+    } catch (e) {
+      // print("Error getting profession.");
+    }
+  }
+
+  static List<Designation> loadDesignation(String jsonString) {
+    final parsed = json.decode(jsonString).cast<Map<String, dynamic>>();
+    return parsed
+        .map<Designation>((json) => Designation.fromJson(json))
+        .toList();
+  }
+
+  Widget drow(Designation designation) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            designation.name,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: FontNameDefault,
+              //  fontSize: textBody1(context)
+            ),
+          ),
+        ),
+
+        // Text(
+        //   user.email,
+        // ),
+      ],
+    );
   }
 
   getPercent(double level) {
@@ -137,6 +224,27 @@ class _NewJobFormState extends State<NewJobForm> {
     setState(() {
       _user = user;
     });
+  }
+
+  Widget placeRow(PlaceSearch place) {
+    var screenSize = MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Divider(),
+        Text(
+          place.description,
+          style: TextStyle(fontSize: screenSize.height * 0.025),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.012,
+        ),
+        // Text(
+        //   user.email,
+        // ),
+      ],
+    );
   }
 
   Widget getSkillsListView(List<dynamic> skills) {
@@ -214,6 +322,7 @@ class _NewJobFormState extends State<NewJobForm> {
 
   @override
   Widget build(BuildContext context) {
+    final locationBloc = Provider.of<LocationBloc>(context);
     var screenSize = MediaQuery.of(context).size;
     return Form(
       key: _formKey,
@@ -221,41 +330,108 @@ class _NewJobFormState extends State<NewJobForm> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            SizedBox(
-              height: screenSize.height * 0.02,
-            ),
-            TextFormField(
-              autocorrect: true,
-              textCapitalization: TextCapitalization.sentences,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context)),
-              decoration: InputDecoration(
-                // icon: Icon(
-                //   Icons.work_outline,
-                //   size: screenSize.height * 0.035,
-                //   color: Colors.black54,
-                // ),
-                filled: true,
-                fillColor: Colors.grey[100],
-                //   hintText: 'Designation',
-                labelText: 'Job title',
-                labelStyle: TextStyle(
-                  fontFamily: FontNameDefault,
-                  color: Colors.grey,
-                  fontSize: textSubTitle(context),
-                  fontWeight: FontWeight.normal,
-                ),
-                border: InputBorder.none,
-                isDense: true,
-              ),
-              controller: jobTitleController,
-              validator: (value) {
-                if (value.isEmpty) return "Please enter a job title for post";
-                return null;
-              },
-            ),
+            // SizedBox(
+            //   height: screenSize.height * 0.02,
+            // ),
+            // TextFormField(
+            //   autocorrect: true,
+            //   textCapitalization: TextCapitalization.sentences,
+            //   style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontFamily: FontNameDefault,
+            //       fontSize: textBody1(context)),
+            //   decoration: InputDecoration(
+            //     // icon: Icon(
+            //     //   Icons.work_outline,
+            //     //   size: screenSize.height * 0.035,
+            //     //   color: Colors.black54,
+            //     // ),
+            //     filled: true,
+            //     fillColor: Colors.grey[100],
+            //     //   hintText: 'Designation',
+            //     labelText: 'Job title',
+            //     labelStyle: TextStyle(
+            //       fontFamily: FontNameDefault,
+            //       color: Colors.grey,
+            //       fontSize: textSubTitle(context),
+            //       fontWeight: FontWeight.normal,
+            //     ),
+            //     border: InputBorder.none,
+            //     isDense: true,
+            //   ),
+            //   controller: jobTitleController,
+            //   validator: (value) {
+            //     if (value.isEmpty) return "Please enter a job title for post";
+            //     return null;
+            //   },
+            // ),
+            loading
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(top: screenSize.height * 0.02),
+                    child: Container(
+                      //  height: screenSize.height * 0.09,
+                      child: designationTextField =
+                          AutoCompleteTextField<Designation>(
+                        textCapitalization: TextCapitalization.sentences,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context)),
+                        controller: jobTitleController,
+                        key: deskey,
+                        clearOnSubmit: false,
+                        suggestions: designations,
+                        decoration: InputDecoration(
+                          // icon: Icon(
+                          //   Icons.work_outline,
+                          //   size: screenSize.height * 0.035,
+                          //   color: Colors.black54,
+                          // ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          //   hintText: 'Designation',
+                          labelText: 'Job role',
+                          labelStyle: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.grey,
+                            fontSize: textSubTitle(context),
+                            fontWeight: FontWeight.normal,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        textSubmitted: (val) {
+                          if (val.isEmpty) {
+                            return;
+                          }
+                        },
+                        itemFilter: (item, query) {
+                          return item.name
+                              .toLowerCase()
+                              .startsWith(query.toLowerCase());
+                        },
+                        itemSorter: (a, b) {
+                          return a.name.compareTo(b.name);
+                        },
+                        itemSubmitted: (item) {
+                          if (item != null) {
+                            setState(() {
+                              designationTextField.textField.controller.text =
+                                  item.name;
+                            });
+                          }
+                        },
+                        itemBuilder: (context, item) {
+                          // ui for the autocompelete row
+                          return drow(item);
+                        },
+                      ),
+                    ),
+                  ),
             SizedBox(
               height: screenSize.height * 0.02,
             ),
@@ -304,6 +480,147 @@ class _NewJobFormState extends State<NewJobForm> {
             SizedBox(
               height: screenSize.height * 0.02,
             ),
+            DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
+                    fillColor: Colors.grey[100],
+                    filled: true,
+                    border: InputBorder.none),
+                hint: Text(
+                  'Job type',
+                  style: TextStyle(
+                    fontFamily: FontNameDefault,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.normal,
+                    fontSize: textSubTitle(context),
+                    //fontWeight: FontWeight.bold,
+                  ),
+                ),
+                //  underline: Container(),
+                icon: Icon(Icons.keyboard_arrow_down_outlined),
+                iconSize: 30,
+                isExpanded: true,
+                value: valueJobType,
+                items: jobTypes.map((valueItem) {
+                  return DropdownMenuItem(
+                      value: valueItem,
+                      child: Text(valueItem,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontWeight: FontWeight.bold,
+                            fontSize: textSubTitle(context),
+                          )));
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    valueJobType = newValue;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) return 'Please select an job type';
+                  return null;
+                },
+              ),
+            ),
+            SizedBox(
+              height: screenSize.height * 0.02,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: screenSize.width * 0.43,
+                  // padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (string) {
+                      if (string.length > 0) {
+                        string = '${_formatNumber(string.replaceAll(',', ''))}';
+                        _minSalaryController.value = TextEditingValue(
+                            text: string,
+                            selection:
+                                TextSelection.collapsed(offset: string.length));
+                      }
+                    },
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context)),
+                    decoration: InputDecoration(
+                      // icon: Icon(
+                      //   Icons.work_outline,
+                      //   size: screenSize.height * 0.035,
+                      //   color: Colors.black54,
+                      // ),
+                      prefixText: _currency,
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      //   hintText: 'Designation',
+                      labelText: 'Min. salary/month',
+                      labelStyle: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.grey,
+                        fontSize: textSubTitle(context),
+                        fontWeight: FontWeight.normal,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
+                    controller: _minSalaryController,
+                  ),
+                ),
+                Container(
+                  width: screenSize.width * 0.43,
+                  //  padding: const EdgeInsets.all(8.0),
+
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (string) {
+                      if (string.length > 0) {
+                        string = '${_formatNumber(string.replaceAll(',', ''))}';
+                        _maxSalaryController.value = TextEditingValue(
+                            text: string,
+                            selection:
+                                TextSelection.collapsed(offset: string.length));
+                      }
+                    },
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: FontNameDefault,
+                        fontSize: textBody1(context)),
+                    decoration: InputDecoration(
+                      prefixText: _currency,
+                      // icon: Icon(
+                      //   Icons.work_outline,
+                      //   size: screenSize.height * 0.035,
+                      //   color: Colors.black54,
+                      // ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      //   hintText: 'Designation',
+                      labelText: 'Max. salary/month',
+                      labelStyle: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.grey,
+                        fontSize: textSubTitle(context),
+                        fontWeight: FontWeight.normal,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
+                    controller: _maxSalaryController,
+                    // validator: (val) {
+                    //   if (int.parse(_minSalaryController.text) < int.parse(val))
+                    //     return 'Not valid';
+                    //   return null;
+                    // },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: screenSize.height * 0.02,
+            ),
             TextFormField(
               autocorrect: true,
               textCapitalization: TextCapitalization.sentences,
@@ -319,8 +636,8 @@ class _NewJobFormState extends State<NewJobForm> {
                 // ),
                 filled: true,
                 fillColor: Colors.grey[100],
-                //   hintText: 'Designation',
-                labelText: 'Location',
+                hintText: 'Eg. Monday to Saturday',
+                labelText: 'Working days',
                 labelStyle: TextStyle(
                   fontFamily: FontNameDefault,
                   color: Colors.grey,
@@ -330,11 +647,252 @@ class _NewJobFormState extends State<NewJobForm> {
                 border: InputBorder.none,
                 isDense: true,
               ),
-              controller: _locationController,
-              validator: (value) {
-                if (value.isEmpty) return "Please enter a city for this job";
-                return null;
+              controller: workingDaysController,
+              // validator: (value) {
+              //   if (value.isEmpty) return "Please enter a city for this job";
+              //   return null;
+              // },
+            ),
+            SizedBox(
+              height: screenSize.height * 0.02,
+            ),
+            TextFormField(
+              autocorrect: true,
+              textCapitalization: TextCapitalization.sentences,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: FontNameDefault,
+                  fontSize: textBody1(context)),
+              decoration: InputDecoration(
+                // icon: Icon(
+                //   Icons.work_outline,
+                //   size: screenSize.height * 0.035,
+                //   color: Colors.black54,
+                // ),
+                filled: true,
+                fillColor: Colors.grey[100],
+                hintText: 'Eg. 9 AM to 5 PM',
+                labelText: 'Work timings',
+                labelStyle: TextStyle(
+                  fontFamily: FontNameDefault,
+                  color: Colors.grey,
+                  fontSize: textSubTitle(context),
+                  fontWeight: FontWeight.normal,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              controller: workTimingsController,
+              // validator: (value) {
+              //   if (value.isEmpty) return "Please enter a city for this job";
+              //   return null;
+              // },
+            ),
+            // Padding(
+            //   padding: EdgeInsets.only(top: screenSize.height * 0.02),
+            //   child: Container(
+            //     //  height: screenSize.height * 0.09,
+            //     child: placesTextField = AutoCompleteTextField<PlaceSearch>(
+            //       textCapitalization: TextCapitalization.sentences,
+            //       style: TextStyle(
+            //           fontWeight: FontWeight.bold,
+            //           fontFamily: FontNameDefault,
+            //           fontSize: textBody1(context)),
+            //       controller: _locationController,
+            //       key: placeSearchkey,
+            //       clearOnSubmit: false,
+            //       suggestions: places,
+            //       decoration: InputDecoration(
+            //         // icon: Icon(
+            //         //   Icons.work_outline,
+            //         //   size: screenSize.height * 0.035,
+            //         //   color: Colors.black54,
+            //         // ),
+            //         filled: true,
+            //         fillColor: Colors.grey[100],
+            //         //   hintText: 'Designation',
+            //         labelText: 'Location',
+            //         labelStyle: TextStyle(
+            //           fontFamily: FontNameDefault,
+            //           color: Colors.grey,
+            //           fontSize: textSubTitle(context),
+            //           fontWeight: FontWeight.normal,
+            //         ),
+            //         border: InputBorder.none,
+            //         isDense: true,
+            //       ),
+            //       textSubmitted: (val) {
+            //         if (val.isEmpty) {
+            //           return;
+            //         }
+            //       },
+            //       itemFilter: (item, query) {
+            //         locationBloc.searchPlaces(query);
+            //         setState(() {
+            //           places = locationBloc.searchResults;
+            //         });
+            //         return item.description
+            //             .toLowerCase()
+            //             .startsWith(query.toLowerCase());
+            //       },
+            //       itemSorter: (a, b) {
+            //         return a.description.compareTo(b.description);
+            //       },
+            //       itemSubmitted: (item) {
+            //         if (item != null) {
+            //           setState(() {
+            //             placesTextField.textField.controller.text =
+            //                 item.description;
+            //           });
+            //         }
+            //       },
+            //       itemBuilder: (context, item) {
+            //         // ui for the autocompelete row
+            //         return placeRow(item);
+            //       },
+            //     ),
+            //   ),
+            // ),
+            // TextFormField(
+            //   autocorrect: true,
+            //   textCapitalization: TextCapitalization.sentences,
+            //   style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontFamily: FontNameDefault,
+            //       fontSize: textBody1(context)),
+            //   decoration: InputDecoration(
+            //     // icon: Icon(
+            //     //   Icons.work_outline,
+            //     //   size: screenSize.height * 0.035,
+            //     //   color: Colors.black54,
+            //     // ),
+            //     filled: true,
+            //     fillColor: Colors.grey[100],
+            //     //   hintText: 'Designation',
+            //     labelText: 'Location',
+            //     labelStyle: TextStyle(
+            //       fontFamily: FontNameDefault,
+            //       color: Colors.grey,
+            //       fontSize: textSubTitle(context),
+            //       fontWeight: FontWeight.normal,
+            //     ),
+            //     border: InputBorder.none,
+            //     isDense: true,
+            //   ),
+            //   controller: _locationController,
+            //   validator: (value) {
+            //     if (value.isEmpty) return "Please enter a city for this job";
+            //     return null;
+            //   },
+            // ),
+            SizedBox(
+              height: screenSize.height * 0.02,
+            ),
+            TextFormField(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SafeArea(
+                        child: PlacePicker(
+                          apiKey: APIKeys.apiKey,
+                          initialPosition: PlacesLocation.kInitialPosition,
+                          useCurrentLocation: true,
+                          selectInitialPosition: true,
+
+                          //usePlaceDetailSearch: true,
+                          onPlacePicked: (result) {
+                            selectedPlace = result;
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _locationController.text =
+                                  selectedPlace.formattedAddress;
+                            });
+                          },
+                          //forceSearchOnZoomChanged: true,
+                          //automaticallyImplyAppBarLeading: false,
+                          //autocompleteLanguage: "ko",
+                          //region: 'au',
+                          //selectInitialPosition: true,
+                          selectedPlaceWidgetBuilder:
+                              (_, selectedPlace, state, isSearchBarFocused) {
+                            print(
+                                "state: $state, isSearchBarFocused: $isSearchBarFocused");
+                            return isSearchBarFocused
+                                ? Container()
+                                : FloatingCard(
+                                    bottomPosition:
+                                        0.0, // MediaQuery.of(context) will cause rebuild. See MediaQuery document for the information.
+                                    leftPosition: 65.0,
+                                    rightPosition: 65.0,
+                                    //width: 50,
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: state == SearchingState.Searching
+                                        ? Center(
+                                            child: CircularProgressIndicator())
+                                        : RaisedButton(
+                                            color: Colors.deepPurpleAccent,
+                                            child: Text(
+                                              "Pick Here",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            onPressed: () {
+                                              // IMPORTANT: You MUST manage selectedPlace data yourself as using this build will not invoke onPlacePicker as
+                                              //            this will override default 'Select here' Button.
+                                              print(
+                                                  "do something with [selectedPlace] data");
+                                              _locationController.text =
+                                                  selectedPlace
+                                                      .formattedAddress;
+
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                  );
+                          },
+                          // pinBuilder: (context, state) {
+                          //   if (state == PinState.Idle) {
+                          //     return Icon(Icons.favorite_border);
+                          //   } else {
+                          //     return Icon(Icons.favorite);
+                          //   }
+                          // },
+                        ),
+                      );
+                    },
+                  ),
+                );
               },
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                fontSize: textSubTitle(context),
+                fontWeight: FontWeight.bold,
+              ),
+              controller: _locationController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[100],
+                // icon: IconButton(
+                //   icon: Icon(
+                //     Icons.location_on_outlined,
+                //     color: Colors.black54,
+                //   ),
+                //   onPressed: null,
+                // ),
+                // hintText: 'https://www',
+                labelText: 'Location',
+                labelStyle: TextStyle(
+                  fontFamily: FontNameDefault,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.grey,
+                  fontSize: textSubTitle(context),
+                  //fontWeight: FontWeight.bold,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+              ),
             ),
             SizedBox(
               height: screenSize.height * 0.02,
@@ -403,17 +961,14 @@ class _NewJobFormState extends State<NewJobForm> {
                 isDense: true,
               ),
               controller: websiteController,
-              validator: (value) {
-                if (value.isEmpty) return "Please enter a your company website";
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 20.0,
+              // validator: (value) {
+              //   if (value.isEmpty) return "Please enter a your company website";
+              //   return null;
+              // },
             ),
             Padding(
               padding: EdgeInsets.only(
-                top: screenSize.height * 0.01,
+                top: screenSize.height * 0.02,
                 //           left: screenSize.width * 0.01,
                 //            right: screenSize.width * 0.01
               ),
@@ -501,6 +1056,11 @@ class _NewJobFormState extends State<NewJobForm> {
                     user,
                     jobTitleController.text,
                     _locationController.text,
+                    valueJobType,
+                    _minSalaryController.text,
+                    _maxSalaryController.text,
+                    workingDaysController.text,
+                    workTimingsController.text,
                     valueIndustry,
                     aboutController.text,
                     websiteController.text)
