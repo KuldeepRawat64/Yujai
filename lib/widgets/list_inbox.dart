@@ -25,23 +25,14 @@ class ListItemInbox extends StatelessWidget {
    project: task creations , deletions , task assignments, completions for member
 */
   configureMediaPreview(context) {
-    var screenSize = MediaQuery.of(context).size;
+    // var screenSize = MediaQuery.of(context).size;
     if (documentSnapshot.data()['type'] == 'like' ||
         documentSnapshot.data()['type'] == 'comment' ||
-        documentSnapshot.data()['type'] == 'articleLike' ||
-        documentSnapshot.data()['type'] == 'articleComment' ||
         documentSnapshot.data()['type'] == 'eventComment') {
       mediaPreview = GestureDetector(
-        onTap: () => documentSnapshot.data()['gid'] == null
-            ? documentSnapshot.data()['type'] == 'articleLike' ||
-                    documentSnapshot.data()['type'] == 'articleComment'
-                ? showNews(context)
-                : documentSnapshot.data()['type'] == 'eventComment'
-                    ? showEvent(context)
-                    : showPost(context)
-            : documentSnapshot.data()['type'] == 'eventComment'
-                ? showGroupEvent(context)
-                : showGroupPost(context),
+        onTap: () => documentSnapshot.data()['type'] == 'eventComment'
+            ? showGroupEvent(context)
+            : showGroupPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,
@@ -60,153 +51,20 @@ class ListItemInbox extends StatelessWidget {
           ),
         ),
       );
-    }
-    //  else if (documentSnapshot.data()['type'] == 'articleLike' ||
-    //     documentSnapshot.data()['type'] == 'articleComment' ||
-    //     documentSnapshot.data()['type'] == 'eventComment') {
-    //   mediaPreview = GestureDetector(
-    //     onTap: () => documentSnapshot.data()['gid'] == null
-    //         ? documentSnapshot.data()['type'] == 'articleLike' ||
-    //                 documentSnapshot.data()['type'] == 'articleComment'
-    //             ? showNews(context)
-    //             : documentSnapshot.data()['type'] == 'eventComment'
-    //                 ? showEvent(context)
-    //                 : showPost(context)
-    //         : documentSnapshot.data()['type'] == 'eventComment'
-    //             ? showGroupEvent(context)
-    //             : showGroupPost(context),
-    //     child: Container(
-    //       height: 50.0,
-    //       width: 50.0,
-    //       child: AspectRatio(
-    //         aspectRatio: 16 / 9,
-    //         child: Container(
-    //           decoration: BoxDecoration(
-    //             image: DecorationImage(
-    //               fit: BoxFit.cover,
-    //               image: documentSnapshot.data()['imgUrl'] != null
-    //                   ? NetworkImage(documentSnapshot.data()['imgUrl'])
-    //                   : AssetImage('assets/images/placeholder.png'),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-    // }
-    else if (documentSnapshot.data()['type'] == 'projectAdded' ||
-        documentSnapshot.data()['type'] == 'projectDeleted') {
-      mediaPreview = GestureDetector(
-        //   onTap: () => showPost(context),
-        child: Row(
-          children: [
-            Container(
-              width: screenSize.width * 0.1,
-              height: screenSize.height * 0.06,
-              child: Padding(
-                padding: EdgeInsets.all(screenSize.height * 0.01),
-                child: Icon(
-                  Icons.assignment_outlined,
-                  //  IconData(widget.dIcon, fontFamily: 'MaterialIcons'),
-                  color: Colors.white,
-                ),
-              ),
-              decoration: ShapeDecoration(
-                color: Color(documentSnapshot.data()['color']),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(screenSize.height * 0.01),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 8.0,
-            ),
-            Text(
-              documentSnapshot.data()['gName'],
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textAppTitle(context),
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (documentSnapshot.data()['type'] == 'taskAdded' ||
-        documentSnapshot.data()['type'] == 'taskCompleted') {
-      mediaPreview = GestureDetector(
-        //   onTap: () => showPost(context),
-        child: Row(
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              color: documentSnapshot.data()['type'] == 'taskCompleted'
-                  ? Colors.greenAccent
-                  : Colors.black54,
-            ),
-            SizedBox(
-              width: 8.0,
-            ),
-            Text(
-              documentSnapshot.data()['taskName'],
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontSize: textAppTitle(context),
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      );
     } else {
       mediaPreview = Text('');
     }
 
     if (documentSnapshot.data()['type'] == 'like') {
       activityItemText = 'liked your post';
-    } else if (documentSnapshot.data()['type'] == 'articleLike') {
-      activityItemText = 'liked your article';
-    } else if (documentSnapshot.data()['type'] == 'follow') {
-      activityItemText = 'is following you';
     } else if (documentSnapshot.data()['type'] == 'comment') {
       activityItemText = 'commented on your post';
     } else if (documentSnapshot.data()['type'] == 'eventComment') {
       activityItemText = 'commented on your event';
-    } else if (documentSnapshot.data()['type'] == 'articleComment') {
-      activityItemText = 'commented on your article';
-    } else if (documentSnapshot.data()['type'] == 'projectAdded') {
-      activityItemText = 'added this project';
-    } else if (documentSnapshot.data()['type'] == 'projectDeleted') {
-      activityItemText = 'deleted this project';
-    } else if (documentSnapshot.data()['type'] == 'taskAdded') {
-      activityItemText = 'added this task';
-    } else if (documentSnapshot.data()['type'] == 'taskCompleted') {
-      activityItemText = 'marked this task completed';
     } else {
       activityItemText =
           'Error:Unknown type ${documentSnapshot.data()['type']}';
     }
-  }
-
-  showPost(context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PostScreen(
-            userId: documentSnapshot.data()['ownerUid'],
-            postId: documentSnapshot.data()['postId'])));
-  }
-
-  showEvent(context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => EventScreen(
-            userId: documentSnapshot.data()['ownerUid'],
-            postId: documentSnapshot.data()['postId'])));
-  }
-
-  showNews(context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ArticleScreen(
-            userId: documentSnapshot.data()['ownerUid'],
-            postId: documentSnapshot.data()['postId'])));
   }
 
   showGroupPost(context) {
