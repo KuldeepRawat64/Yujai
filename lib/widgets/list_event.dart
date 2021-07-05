@@ -810,7 +810,7 @@ class _ListItemEventState extends State<ListItemEvent> {
     FirebaseFirestore.instance
         .collection('users')
         .doc(widget.user.uid)
-        .collection('posts')
+        .collection('events')
         // .document()
         // .delete();
         .doc(snapshot['postId'])
@@ -818,7 +818,7 @@ class _ListItemEventState extends State<ListItemEvent> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {

@@ -548,19 +548,19 @@ class _ListItemPromotionState extends State<ListItemPromotion> {
         }));
   }
 
-  deletePost(DocumentSnapshot snapshot) {
+  deletePost(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     FirebaseFirestore.instance
         .collection('users')
         .doc(widget.user.uid)
-        .collection('posts')
+        .collection('promotion')
         // .document()
         // .delete();
-        .doc(snapshot['postId'])
+        .doc(snapshot.data()['postId'])
         .get()
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {

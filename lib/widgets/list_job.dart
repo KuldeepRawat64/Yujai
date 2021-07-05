@@ -412,7 +412,7 @@ class _ListItemJobState extends State<ListItemJob> {
     FirebaseFirestore.instance
         .collection('users')
         .doc(widget.user.uid)
-        .collection('posts')
+        .collection('jobs')
         // .document()
         // .delete();
         .doc(snapshot['postId'])
@@ -420,7 +420,7 @@ class _ListItemJobState extends State<ListItemJob> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        //  Navigator.pop(context);
 
         print('post deleted');
       } else {
