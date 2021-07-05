@@ -759,7 +759,7 @@ class _ListItemPostState extends State<ListItemPost> {
                   style: TextStyle(color: Colors.redAccent),
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  //    Navigator.pop(context);
                   _showFormDialog(context);
                 },
               ),

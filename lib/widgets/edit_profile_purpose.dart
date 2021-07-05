@@ -45,6 +45,7 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
   Widget getPurposeListView(List<dynamic> purpose) {
     var screenSize = MediaQuery.of(context).size;
     return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: purpose.length,
         itemBuilder: (context, index) {
@@ -166,8 +167,9 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
                       ],
                     ),
                     !isClicked
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ? ListView(
+                            shrinkWrap: true,
+                            //  mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Padding(
                                   padding: EdgeInsets.only(
@@ -187,58 +189,56 @@ class _EditProfilePurposeState extends State<EditProfilePurpose> {
                                       //_buildList(context)
                                       // getinterests(widget.currentUser.interests),
                                       getPurposeListView(_user.purpose)),
-                              _user.purpose.length < 5
-                                  ? Padding(
-                                      padding: EdgeInsets.only(
-                                          top: screenSize.height * 0.05,
-                                          left: screenSize.width * 0.05,
-                                          right: screenSize.width * 0.05),
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            isClicked = true;
-                                            _widgetId = 2;
-                                          });
-                                        },
-                                        child: Container(
-                                            //    width: screenSize.width * 0.8,
-                                            decoration: ShapeDecoration(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0))),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(
-                                                  screenSize.height * 0.015),
-                                              child: Center(
-                                                child: Text(
-                                                  'Add purpose',
-                                                  style: TextStyle(
-                                                    fontFamily: FontNameDefault,
-                                                    fontSize:
-                                                        textAppTitle(context),
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            )),
-                                      ),
-                                    )
-                                  : Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        'You can only add upto 5 purpose for now',
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          //     fontSize: textAppTitle(context),
-                                          //    color: Colors.white,
-                                          //   fontWeight: FontWeight.bold,
+                              // _user.purpose.length < 5
+                              //     ?
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: screenSize.height * 0.05,
+                                    left: screenSize.width * 0.05,
+                                    right: screenSize.width * 0.05),
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      isClicked = true;
+                                      _widgetId = 2;
+                                    });
+                                  },
+                                  child: Container(
+                                      //    width: screenSize.width * 0.8,
+                                      decoration: ShapeDecoration(
+                                          color: Theme.of(context).primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0))),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                            screenSize.height * 0.015),
+                                        child: Center(
+                                          child: Text(
+                                            'Add purpose',
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textAppTitle(context),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                      )),
+                                ),
+                              )
+                              // : Padding(
+                              //     padding: const EdgeInsets.all(20.0),
+                              //     child: Text(
+                              //       'You can only add upto 5 purpose for now',
+                              //       style: TextStyle(
+                              //         fontFamily: FontNameDefault,
+                              //         //     fontSize: textAppTitle(context),
+                              //         //    color: Colors.white,
+                              //         //   fontWeight: FontWeight.bold,
+                              //       ),
+                              //     ),
+                              //   ),
                             ],
                           )
                         : _renderWidget(),

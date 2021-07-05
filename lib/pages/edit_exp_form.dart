@@ -99,7 +99,7 @@ class _EditProfileScreenState extends State<EditExperienceForm> {
           .collection('users')
           .doc(currentUser.uid)
           .update({
-        'experience': FieldValue.arrayUnion([
+        'experience': FieldValue.arrayUnion(<Map<String, dynamic>>[
           {
             'company': _companyController.text,
             'designation': _designationController.text,
@@ -534,40 +534,40 @@ class _EditProfileScreenState extends State<EditExperienceForm> {
                             Text('Present')
                           ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: screenSize.height * 0.02,
-                            bottom: screenSize.height * 0.01,
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              submit(context);
-                            },
-                            child: Container(
-                                height: screenSize.height * 0.07,
-                                //  width: screenSize.width * 0.8,
-                                decoration: ShapeDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0))),
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.all(screenSize.height * 0.015),
-                                  child: Center(
-                                    child: Text(
-                                      'Add experience',
-                                      style: TextStyle(
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textAppTitle(context),
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.only(
+                        //     top: screenSize.height * 0.02,
+                        //     bottom: screenSize.height * 0.01,
+                        //   ),
+                        //   child: InkWell(
+                        //     onTap: () {
+                        //       submit(context);
+                        //     },
+                        //     child: Container(
+                        //         height: screenSize.height * 0.07,
+                        //         //  width: screenSize.width * 0.8,
+                        //         decoration: ShapeDecoration(
+                        //             color: Theme.of(context).primaryColor,
+                        //             shape: RoundedRectangleBorder(
+                        //                 borderRadius:
+                        //                     BorderRadius.circular(8.0))),
+                        //         child: Padding(
+                        //           padding:
+                        //               EdgeInsets.all(screenSize.height * 0.015),
+                        //           child: Center(
+                        //             child: Text(
+                        //               'Add experience',
+                        //               style: TextStyle(
+                        //                 fontFamily: FontNameDefault,
+                        //                 fontSize: textAppTitle(context),
+                        //                 color: Colors.white,
+                        //                 fontWeight: FontWeight.bold,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         )),
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.only(
                             top: screenSize.height * 0.02,

@@ -31,6 +31,7 @@ class _EditProfileScreenState extends State<EditEducationForm> {
   bool isChecked = false;
   int startDate = 0;
   int endDate = 0;
+  int id = 0;
 
   @override
   void initState() {
@@ -60,7 +61,7 @@ class _EditProfileScreenState extends State<EditEducationForm> {
           .collection('users')
           .doc(currentUser.uid)
           .update({
-        'education': FieldValue.arrayUnion([
+        'education': FieldValue.arrayUnion(<Map<String, dynamic>>[
           {
             'university': _universityController.text,
             'field': _fieldController.text,
@@ -442,38 +443,38 @@ class _EditProfileScreenState extends State<EditEducationForm> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: screenSize.height * 0.02,
-                    bottom: screenSize.height * 0.01,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      submit(context);
-                    },
-                    child: Container(
-                        height: screenSize.height * 0.07,
-                        //  width: screenSize.width * 0.8,
-                        decoration: ShapeDecoration(
-                            color: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        child: Padding(
-                          padding: EdgeInsets.all(screenSize.height * 0.015),
-                          child: Center(
-                            child: Text(
-                              'Update',
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textAppTitle(context),
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        )),
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.only(
+                //     top: screenSize.height * 0.02,
+                //     bottom: screenSize.height * 0.01,
+                //   ),
+                //   child: InkWell(
+                //     onTap: () {
+                //       submit(context);
+                //     },
+                //     child: Container(
+                //         height: screenSize.height * 0.07,
+                //         //  width: screenSize.width * 0.8,
+                //         decoration: ShapeDecoration(
+                //             color: Theme.of(context).primaryColor,
+                //             shape: RoundedRectangleBorder(
+                //                 borderRadius: BorderRadius.circular(8.0))),
+                //         child: Padding(
+                //           padding: EdgeInsets.all(screenSize.height * 0.015),
+                //           child: Center(
+                //             child: Text(
+                //               'Update',
+                //               style: TextStyle(
+                //                 fontFamily: FontNameDefault,
+                //                 fontSize: textAppTitle(context),
+                //                 color: Colors.white,
+                //                 fontWeight: FontWeight.bold,
+                //               ),
+                //             ),
+                //           ),
+                //         )),
+                //   ),
+                // ),
                 Padding(
                   padding: EdgeInsets.only(
                     top: screenSize.height * 0.02,

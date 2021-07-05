@@ -640,7 +640,7 @@ class _ListItemEventState extends State<ListItemEvent> {
                       color: Colors.redAccent),
                 ),
                 onPressed: () {
-                  Navigator.pop(context);
+                  //  Navigator.pop(context);
                   _showFormDialog(context);
                 },
               ),
