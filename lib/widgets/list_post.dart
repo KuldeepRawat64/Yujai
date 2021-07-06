@@ -39,6 +39,7 @@ class _ListItemPostState extends State<ListItemPost> {
   int counter = 0;
   String selectedSubject;
   final _bodyController = TextEditingController();
+  bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
     var screenSize = MediaQuery.of(context).size;
@@ -269,8 +270,7 @@ class _ListItemPostState extends State<ListItemPost> {
                               child: Icon(Icons.more_horiz_outlined))),
                     ),
             ),
-            widget.documentSnapshot.data()['imgUrl'] != null &&
-                    widget.documentSnapshot.data()['imgUrl'] != ''
+            widget.documentSnapshot.data()['imgUrl'] != null
                 ? Center(
                     child: FadeInImage.assetNetwork(
                       fadeInDuration: const Duration(milliseconds: 300),
@@ -289,12 +289,48 @@ class _ListItemPostState extends State<ListItemPost> {
                         padding: EdgeInsets.only(
                             top: screenSize.height * 0.01,
                             left: screenSize.width / 30),
-                        child: Text(
-                          widget.documentSnapshot.data()['caption'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              fontWeight: FontWeight.bold),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            seeMore
+                                ? Text(
+                                    widget.documentSnapshot.data()['caption'],
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textSubTitle(context),
+                                      // fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                : Text(
+                                    widget.documentSnapshot.data()['caption'],
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textSubTitle(context)),
+                                  ),
+                            widget.documentSnapshot
+                                        .data()['caption']
+                                        .toString()
+                                        .length >
+                                    250
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        seeMore = !seeMore;
+                                      });
+                                    },
+                                    child: Text(
+                                      !seeMore ? 'Read more...' : 'See less',
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        //  fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColor,
+                                        fontSize: textSubTitle(context),
+                                      ),
+                                    ))
+                                : Container()
+                          ],
                         ),
                       ),
                       // commentWidget(widget.documentSnapshot.reference)

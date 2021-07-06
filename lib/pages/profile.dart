@@ -2,6 +2,7 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/about.dart';
 import 'package:Yujai/pages/activity.dart';
 import 'package:Yujai/pages/activity_applications.dart';
+import 'package:Yujai/pages/choose_force.dart';
 import 'package:Yujai/pages/company_activity.dart';
 import 'package:Yujai/pages/edit_company_contact.dart';
 import 'package:Yujai/pages/edit_company_about.dart';
@@ -543,6 +544,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           color = color == Colors.black ? Colors.black : Colors.black;
         });
       });
+    } else {
+      await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ChooseForce()))
+          .then((value) {
+        retrieveUserDetails();
+        if (!mounted) return;
+        setState(() {
+          color = color == Colors.black ? Colors.black : Colors.black;
+        });
+      });
     }
   }
 
@@ -651,49 +662,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // ),
                 ],
               ),
-              _user.military.isNotEmpty && _user.military != null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _user.military,
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                              fontSize: textSubTitle(context)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            //  right: screenSize.width / 30,
-                            bottom: screenSize.height * 0.012,
-                          ),
-                          child: GestureDetector(
-                            onTap: checkMilitaryEdit,
-                            child: Container(
-                              height: screenSize.height * 0.045,
-                              width: screenSize.width / 6,
-                              child: Center(
-                                  child: Text(
-                                'Edit',
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  color: Colors.white,
-                                  fontSize: textButton(context),
-                                ),
-                              )),
-                              decoration: ShapeDecoration(
-                                color: Colors.grey,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
-                                ),
-                              ),
-                            ),
+              // _user.military.isNotEmpty && _user.military != null
+              //     ?
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _user.military,
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        fontSize: textSubTitle(context)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      //  right: screenSize.width / 30,
+                      bottom: screenSize.height * 0.012,
+                    ),
+                    child: GestureDetector(
+                      onTap: checkMilitaryEdit,
+                      child: Container(
+                        height: screenSize.height * 0.045,
+                        width: screenSize.width / 6,
+                        child: Center(
+                            child: Icon(
+                          Icons.edit_outlined,
+                          color: Colors.black54,
+                        )),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(width: 0.1, color: Colors.black54),
+                            borderRadius: BorderRadius.circular(60.0),
                           ),
                         ),
-                      ],
-                    )
-                  : Container(),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              // : Container(),
             ],
           ),
         ),
@@ -1608,18 +1617,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         //     height: 0.0,
         //   ),
         // ),
-        _user.bio.isNotEmpty
+        _user.accountType == 'Military'
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _user.accountType == 'Military' && _user.rank.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _user.rank.isNotEmpty &&
+                              _user.rank != null &&
+                              _user.rank != 'Select a Rank'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Rank              :   ',
+                                  'Rank : ',
                                   style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context)),
@@ -1632,129 +1644,144 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       fontSize: textBody1(context)),
                                 ),
                               ],
-                            ),
-                            _user.medal != null &&
-                                    _user.accountType == 'MIlitary' &&
-                                    _user.medal.isNotEmpty
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        'Medal              :  ',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                      Text(
-                                        _user.medal,
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.black54,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                    ],
-                                  )
-                                : Container(),
-                            _user.accountType == 'Military' &&
-                                    _user.regiment.isNotEmpty
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        'Regiment      :  ',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                      Text(
-                                        _user.regiment,
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.black54,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                    ],
-                                  )
-                                : Container(),
-                            _user.accountType == 'Military' &&
-                                    _user.command.isNotEmpty
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        'Command    :  ',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                      Text(
-                                        _user.command,
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.black54,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                    ],
-                                  )
-                                : Container(),
-                            _user.accountType == 'Military' &&
-                                    _user.department.isNotEmpty
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        'Department  :  ',
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                      Text(
-                                        _user.department,
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.black54,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                    ],
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: screenSize.height * 0.01,
-                            ),
-                            Divider(),
-                          ],
-                        )
-                      : Container(),
-                  Text(
-                    'About',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context)),
-                  ),
-                  SizedBox(
-                    height: screenSize.height * 0.01,
-                  ),
-                  Text(
-                    _user.bio,
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontSize: textBody1(context)),
+                            )
+                          : Container(),
+                      _user.medal != null &&
+                              _user.medal.isNotEmpty &&
+                              _user.medal != 'Select a Medal'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Medal : ',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                                Text(
+                                  _user.medal,
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black54,
+                                      fontSize: textBody1(context)),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      _user.regiment != null &&
+                              _user.regiment.isNotEmpty &&
+                              _user.regiment != 'Select a Regiment'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Regiment : ',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                                Text(
+                                  _user.regiment,
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black54,
+                                      fontSize: textBody1(context)),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      _user.command != null &&
+                              _user.command != 'Select a Command' &&
+                              _user.command.isNotEmpty
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Command : ',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                                Text(
+                                  _user.command,
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black54,
+                                      fontSize: textBody1(context)),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      _user.department != null &&
+                              _user.department.isNotEmpty &&
+                              _user.department != 'Select a Department'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Department : ',
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context)),
+                                ),
+                                Text(
+                                  _user.department,
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.black54,
+                                      fontSize: textBody1(context)),
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      SizedBox(
+                        height: screenSize.height * 0.01,
+                      ),
+                      //  Divider(),
+                    ],
                   ),
                 ],
               )
-            : Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width * 0.25,
-                  vertical: screenSize.height * 0.01,
-                ),
-                child: Text(
-                  'Add your basic info and bio',
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontFamily: FontNameDefault,
-                      color: Colors.grey,
-                      fontSize: textBody1(context)),
-                ),
-              ),
+            : _user.bio.isNotEmpty
+                ? Column(
+                    children: [
+                      Text(
+                        'About',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: FontNameDefault,
+                          color: Colors.black87,
+                          fontSize: textHeader(context),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.01,
+                      ),
+                      Text(
+                        _user.bio,
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.black54,
+                            fontSize: textBody1(context)),
+                      ),
+                    ],
+                  )
+                : Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenSize.width * 0.25,
+                      vertical: screenSize.height * 0.01,
+                    ),
+                    child: Text(
+                      'Add your basic info and bio',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontFamily: FontNameDefault,
+                          color: Colors.grey,
+                          fontSize: textBody1(context)),
+                    ),
+                  ),
         SizedBox(
-          height: screenSize.height * 0.04,
+          height: screenSize.height * 0.02,
         ),
         // Padding(
         //   padding: EdgeInsets.only(

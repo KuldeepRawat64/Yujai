@@ -165,6 +165,7 @@ class _EventUpdatesState extends State<EventUpdates> {
           .collection('users')
           .doc(_user.uid)
           .collection('events')
+          .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context,
           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {

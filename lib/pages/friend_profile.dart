@@ -9,6 +9,7 @@ import 'package:Yujai/pages/send_mail.dart';
 import 'package:Yujai/pages/webview.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/education_widget.dart';
 import 'package:Yujai/widgets/flow_widget.dart';
 import 'package:Yujai/widgets/nested_tab_bar_profile.dart';
 import 'package:Yujai/widgets/skill_widgets.dart';
@@ -1327,7 +1328,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
 
   Widget skillProfile() {
     var screenSize = MediaQuery.of(context).size;
-    return Column(
+    return ListView(
       children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
@@ -1389,7 +1390,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
 
   Widget expProfile() {
     var screenSize = MediaQuery.of(context).size;
-    return Column(
+    return ListView(
       children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
@@ -2135,6 +2136,46 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                 ),
                 SizedBox(
                   height: screenSize.height * 0.02,
+                ),
+              ],
+            )
+          : Container(),
+      _user.education.isNotEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Education & Qualifications',
+                  style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textHeader(context),
+                      fontWeight: FontWeight.bold),
+                ),
+                Card(
+                  elevation: 0,
+                  // margin: EdgeInsets.symmetric(
+                  //     horizontal: screenSize.width * 0.035,
+                  //     vertical: screenSize.height * 0.02),
+                  child: ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (BuildContext context, int index) {
+                        return FlowEducationRow(FlowEducation(
+                            isPresent: _user.education[index]['isPresent'],
+                            university: _user.education[index]['university'],
+                            degree: _user.education[index]['degree'],
+                            field: _user.education[index]['field'],
+                            startDate: _user.education[index]
+                                ['startUniversity'],
+                            endDate: _user.education[index]['endUniversity']));
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SizedBox(
+                          height: 2,
+                        );
+                      },
+                      itemCount: _user.education.length),
                 ),
               ],
             )

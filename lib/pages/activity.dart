@@ -186,6 +186,7 @@ class _ActivityState extends State<Activity> {
           .collection('users')
           .doc(_user.uid)
           .collection('posts')
+          .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context,
           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {

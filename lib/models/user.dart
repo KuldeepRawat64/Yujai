@@ -32,6 +32,9 @@ class UserModel {
   String command;
   String regiment;
   String department;
+  String serviceStatus;
+  String startService;
+  String endService;
   String companySlogan;
   String companySize;
   String postType;
@@ -76,6 +79,9 @@ class UserModel {
     this.command,
     this.regiment,
     this.department,
+    this.serviceStatus,
+    this.startService,
+    this.endService,
     this.companySlogan,
     this.companySize,
     this.postType,
@@ -120,6 +126,9 @@ class UserModel {
     data['command'] = user.command;
     data['regiment'] = user.regiment;
     data['department'] = user.department;
+    data['serviceStatus'] = user.serviceStatus;
+    data['startService'] = user.startService;
+    data['endService'] = user.endService;
     data['companySlogan'] = user.companySlogan;
     data['companySize'] = user.companySize;
     data['postType'] = user.postType;
@@ -168,6 +177,9 @@ class UserModel {
     this.command = mapData['command'];
     this.regiment = mapData['regiment'];
     this.department = mapData['department'];
+    this.serviceStatus = mapData['serviceStatus'];
+    this.startService = mapData['startService'];
+    this.endService = mapData['endService'];
     this.companySlogan = mapData['companySlogan'];
     this.companySize = mapData['companySize'];
     this.postType = mapData['postType'];

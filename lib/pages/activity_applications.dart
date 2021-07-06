@@ -168,6 +168,7 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
           .collection('users')
           .doc(_user.uid)
           .collection('promotion')
+          .orderBy('time', descending: true)
           .snapshots(),
       builder: ((context,
           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {

@@ -13,73 +13,9 @@ class ArmyAddInfo extends StatefulWidget {
   _ArmyAddInfoState createState() => _ArmyAddInfoState();
 }
 
-class ServiceStatus {
-  int id;
-  String name;
-  ServiceStatus(this.id, this.name);
-  static List<ServiceStatus> getServiceStatus() {
-    return <ServiceStatus>[
-      ServiceStatus(1, 'Select a Service Status'),
-      ServiceStatus(2, 'Currently Serving'),
-      ServiceStatus(3, 'Retired'),
-    ];
-  }
-}
-
-class Medal {
-  int id;
-  String name;
-  Medal(this.id, this.name);
-  static List<Medal> getMedal() {
-    return <Medal>[
-      Medal(1, 'Select a Medal'),
-      Medal(2, 'Sena Medal'),
-      Medal(3, 'Nausena Medal'),
-      Medal(4, 'Vayusena Medal'),
-      Medal(5, 'Sarvottam Yudh Seva Medal'),
-      Medal(6, 'Uttam Yudh Seva Medal'),
-      Medal(7, 'Ati Vishisht Seva Medal'),
-      Medal(8, 'Vishisht Seva Medal'),
-      Medal(9, 'Param Vir Chakra'),
-      Medal(10, 'Maha Vir Chakra'),
-      Medal(11, 'Vir Chakra'),
-      Medal(12, 'Ashok Chakra'),
-      Medal(13, 'Kirti Chakra'),
-      Medal(14, 'Shaurya Chakra'),
-      Medal(15, 'Wound Medal'),
-      Medal(16, 'General Service Medal 1947'),
-      Medal(17, 'Samanya Seva Medal'),
-      Medal(18, 'Special Service Medal'),
-      Medal(19, 'Samar Seva Star'),
-      Medal(20, 'Poorvi Star'),
-      Medal(21, 'Paschimi Star'),
-      Medal(22, 'Operation Vijay Star'),
-      Medal(23, 'Sainya Seva Medal'),
-      Medal(24, 'High Altitude Service Medal'),
-      Medal(25, 'Antrik Suraksha Padak'),
-      Medal(26, 'Videsh Seva Medal'),
-      Medal(27, 'Meritorius Service Medal'),
-      Medal(28, 'Long Service and Good Conduct Medal'),
-      Medal(29, '30 Years Long Service Medal'),
-      Medal(30, '20 Years Long Service Medal'),
-      Medal(31, '9 Years Long Service Medal'),
-      Medal(32, 'Territorial Army Decoration'),
-      Medal(33, 'Territorial Army Medal'),
-      Medal(34, 'Indian Independence Medal'),
-      Medal(35, '50th Independence Anniversary Medal'),
-      Medal(36, '25th Independence Anniversary Medal'),
-      Medal(37, 'Commonwealth Awards'),
-    ];
-  }
-}
-
 class _ArmyAddInfoState extends State<ArmyAddInfo> {
-  List<ServiceStatus> _serviceStatus = ServiceStatus.getServiceStatus();
-  List<DropdownMenuItem<ServiceStatus>> _dropDownMenuServiceStatus;
-  ServiceStatus _selectedServiceStatus;
-  List<Medal> _medal = Medal.getMedal();
-  List<DropdownMenuItem<Medal>> _dropDownMenuMedal;
-  Medal _selectedMedal;
+  final _formKey = GlobalKey<FormState>();
+
   DateTime startService = DateTime.now();
   DateTime endService = DateTime.now();
   TextEditingController _startServiceController = new TextEditingController();
@@ -92,67 +28,65 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
   bool startYear;
   bool endYear;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isChecked = false;
+  String selectedMedal;
+  List medals = [
+    'Sena Medal',
+    'Nausena Medal',
+    'Vayusena Medal',
+    'Sarvottam Yudh Seva Medal',
+    'Uttam Yudh Seva Medal',
+    'Ati Vishisht Seva Medal',
+    'Vishisht Seva Medal',
+    'Param Vir Chakra',
+    'Maha Vir Chakra',
+    'Vir Chakra',
+    'Ashok Chakra',
+    'Kirti Chakra',
+    'Shaurya Chakra',
+    'Wound Medal',
+    'General Service Medal 1947',
+    'Samanya Seva Medal',
+    'Special Service Medal',
+    'Samar Seva Star',
+    'Poorvi Star',
+    'Paschimi Star',
+    'Operation Vijay Star',
+    'Sainya Seva Medal',
+    'High Altitude Service Medal',
+    'Antrik Suraksha Padak',
+    'Videsh Seva Medal',
+    'Meritorius Service Medal',
+    'Long Service and Good Conduct Medal',
+    '30 Years Long Service Medal',
+    '20 Years Long Service Medal',
+    '9 Years Long Service Medal',
+    'Territorial Army Decoration',
+    'Territorial Army Medal',
+    'Indian Independence Medal',
+    '50th Independence Anniversary Medal',
+    '25th Independence Anniversary Medal',
+    'Commonwealth Awards',
+  ];
 
   @override
   void initState() {
     super.initState();
-    startYear = false;
-    endYear = false;
-    _dropDownMenuServiceStatus = buildDropDownMenuServiceStatus(_serviceStatus);
-    _selectedServiceStatus = _dropDownMenuServiceStatus[0].value;
-    _dropDownMenuMedal = buildDropDownMenuMedal(_medal);
-    _selectedMedal = _dropDownMenuMedal[0].value;
-  }
-
-  List<DropdownMenuItem<ServiceStatus>> buildDropDownMenuServiceStatus(
-      List serviceStats) {
-    List<DropdownMenuItem<ServiceStatus>> items = List();
-    for (ServiceStatus serviceStatus in serviceStats) {
-      items.add(
-        DropdownMenuItem(
-          value: serviceStatus,
-          child: Text(serviceStatus.name),
-        ),
-      );
-    }
-    return items;
-  }
-
-  onChangeDropDownServiceStatus(ServiceStatus selectedServiceStatus) {
-    setState(() {
-      _selectedServiceStatus = selectedServiceStatus;
-    });
-  }
-
-  List<DropdownMenuItem<Medal>> buildDropDownMenuMedal(List medals) {
-    List<DropdownMenuItem<Medal>> items = List();
-    for (Medal medal in medals) {
-      items.add(
-        DropdownMenuItem(
-          value: medal,
-          child: Text(medal.name),
-        ),
-      );
-    }
-    return items;
-  }
-
-  onChangeDropDownMedal(Medal selectedMedal) {
-    setState(() {
-      _selectedMedal = selectedMedal;
-    });
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
-    usersRef.doc(currentUser.uid).update({
-      "startService": _startServiceController.text,
-      "endService": _endServiceController.text,
-      "bio": _bioController.text,
-      "serviceStatus": _selectedServiceStatus.name,
-      "medal": _selectedMedal.name,
-    });
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    if (_formKey.currentState.validate()) {
+      User currentUser = await _auth.currentUser;
+      usersRef.doc(currentUser.uid).update({
+        "startService": _startServiceController.text,
+        "endService": _endServiceController.text,
+        "bio": _bioController.text,
+        "serviceStatus": isChecked ? 'Currently serving' : 'Retired',
+        "medal": selectedMedal ?? '',
+      });
+      _formKey.currentState.save();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    }
   }
 
   @override
@@ -160,7 +94,7 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
           elevation: 0.5,
           actions: [
@@ -212,235 +146,219 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
             ),
           ),
         ),
-        body: ListView(
-            padding: EdgeInsets.fromLTRB(
-              screenSize.width / 11,
-              screenSize.height * 0.02,
-              screenSize.width / 11,
-              0,
-            ),
-            children: <Widget>[
-              Container(
-                child: Column(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: screenSize.height * 0.015,
-                          ),
-                          child: Text(
-                            'Service',
-                            style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textSubTitle(context),
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              height: screenSize.height * 0.075,
-                              width: screenSize.width / 2.55,
-                              child: DateTimeField(
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                ),
-                                controller: _startServiceController,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: const Color(0xffffffff),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  hintText: 'Start Year',
-                                ),
-                                format: format,
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                      initialDatePickerMode:
-                                          DatePickerMode.year,
-                                      context: context,
-                                      firstDate: DateTime(1900),
-                                      initialDate:
-                                          currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2100));
-                                },
-                              ),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                screenSize.width / 13,
+                screenSize.height * 0.02,
+                screenSize.width / 13,
+                0,
+              ),
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: screenSize.height * 0.015,
                             ),
-                            Container(
-                              height: screenSize.height * 0.075,
-                              width: screenSize.width / 2.55,
-                              child: DateTimeField(
-                                style: TextStyle(
-                                  fontSize: screenSize.height * 0.018,
-                                ),
-                                controller: _endServiceController,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: const Color(0xffffffff),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  hintText: 'End Year',
-                                  hintStyle: TextStyle(
+                            child: Text(
+                              'Service',
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenSize.height * 0.01,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                //     height: screenSize.height * 0.075,
+                                width: screenSize.width / 2.55,
+                                child: DateTimeField(
+                                  style: TextStyle(
                                     fontFamily: FontNameDefault,
                                     fontSize: textBody1(context),
                                   ),
+                                  controller: _startServiceController,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.grey[100],
+                                    //   hintText: 'University',
+                                    labelText: 'Start year',
+                                    labelStyle: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      color: Colors.grey,
+                                      fontSize: textSubTitle(context),
+                                      //fontWeight: FontWeight.bold,
+                                    ),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                  ),
+                                  format: format,
+                                  onShowPicker: (context, currentValue) {
+                                    return showDatePicker(
+                                        initialDatePickerMode:
+                                            DatePickerMode.year,
+                                        context: context,
+                                        firstDate: DateTime(1900),
+                                        initialDate:
+                                            currentValue ?? DateTime.now(),
+                                        lastDate: DateTime(2100));
+                                  },
                                 ),
-                                format: format,
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                      initialDatePickerMode:
-                                          DatePickerMode.year,
-                                      context: context,
-                                      firstDate: DateTime(1900),
-                                      initialDate:
-                                          currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2100));
-                                },
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: screenSize.height * 0.015,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Service Status',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Card(
-                            margin: EdgeInsets.symmetric(horizontal: 4),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: DropdownButton(
-                                underline: Container(color: Colors.white),
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.black87,
-                                ),
-                                elevation: 1,
-                                icon: Icon(Icons.keyboard_arrow_down,
-                                    color: Theme.of(context).primaryColor),
-                                iconSize: 30,
-                                isExpanded: true,
-                                value: _selectedServiceStatus,
-                                items: _dropDownMenuServiceStatus,
-                                onChanged: onChangeDropDownServiceStatus,
-                              ),
-                            ),
+                              !isChecked
+                                  ? Container(
+                                      //      height: screenSize.height * 0.075,
+                                      width: screenSize.width / 2.55,
+                                      child: DateTimeField(
+                                        style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textBody1(context),
+                                        ),
+                                        controller: _endServiceController,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: Colors.grey[100],
+                                          //   hintText: 'University',
+                                          labelText: 'End year',
+                                          labelStyle: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.grey,
+                                            fontSize: textSubTitle(context),
+                                            //fontWeight: FontWeight.bold,
+                                          ),
+                                          border: InputBorder.none,
+                                          isDense: true,
+                                        ),
+                                        format: format,
+                                        onShowPicker: (context, currentValue) {
+                                          return showDatePicker(
+                                              initialDatePickerMode:
+                                                  DatePickerMode.year,
+                                              context: context,
+                                              firstDate: DateTime(1900),
+                                              initialDate: currentValue ??
+                                                  DateTime.now(),
+                                              lastDate: DateTime(2100));
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: screenSize.height * 0.015,
+                      SizedBox(
+                        height: screenSize.height * 0.01,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Text(
+                          Checkbox(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0)),
+                              activeColor: Theme.of(context).accentColor,
+                              value: isChecked,
+                              onChanged: (val) {
+                                setState(() {
+                                  isChecked = val;
+                                });
+                              }),
+                          Text('Currently serving')
+                        ],
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.02,
+                      ),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                              fillColor: Colors.grey[100],
+                              filled: true,
+                              border: InputBorder.none),
+                          hint: Text(
                             'Medal',
                             style: TextStyle(
                               fontFamily: FontNameDefault,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
                               fontSize: textSubTitle(context),
+                              //fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          //  underline: Container(),
+                          icon: Icon(Icons.keyboard_arrow_down_outlined),
+                          iconSize: 30,
+                          isExpanded: true,
+                          value: selectedMedal,
+                          items: medals.map((valueItem) {
+                            return DropdownMenuItem(
+                                value: valueItem,
+                                child: Text(valueItem,
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: textSubTitle(context),
+                                    )));
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              selectedMedal = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.02,
+                      ),
+                      TextFormField(
+                        autocorrect: true,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 8,
+                        maxLines: 8,
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        controller: _bioController,
+                        decoration: InputDecoration(
+                          icon: IconButton(
+                            icon: Icon(
+                              Icons.edit_outlined,
                               color: Colors.black54,
-                              fontWeight: FontWeight.bold,
                             ),
+                            onPressed: null,
                           ),
-                          Card(
-                            margin: EdgeInsets.symmetric(horizontal: 4),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: DropdownButton(
-                                underline: Container(color: Colors.white),
-                                style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.black87,
-                                ),
-                                elevation: 1,
-                                icon: Icon(Icons.keyboard_arrow_down,
-                                    color: Theme.of(context).primaryColor),
-                                iconSize: 30,
-                                isExpanded: true,
-                                value: _selectedMedal,
-                                items: _dropDownMenuMedal,
-                                onChanged: onChangeDropDownMedal,
-                              ),
-                            ),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          //   hintText: 'Bio',
+                          labelText: 'Bio',
+                          labelStyle: TextStyle(
+                            fontFamily: FontNameDefault,
+                            color: Colors.grey,
+                            fontSize: textSubTitle(context),
+                            //fontWeight: FontWeight.bold,
                           ),
-                        ],
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: screenSize.height * 0.035,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Bio',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context)),
-                              autofocus: false,
-                              controller: _bioController,
-                              keyboardType: TextInputType.multiline,
-                              minLines: 5,
-                              maxLines: 5,
-                              maxLengthEnforced: true,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffffffff),
-                                hintText: 'Tell us about yourself.',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ]),
+              ]),
+        ),
       ),
     );
   }

@@ -51,6 +51,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   String _searchTerm = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _filter = TextEditingController();
+  bool autofocus = true;
 
   @override
   void initState() {
@@ -223,9 +224,10 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                   });
                 },
                 onFieldSubmitted: (val) {
-                  setState(() {
-                    _searchTerm = val;
-                  });
+                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus) {
+                    currentFocus.unfocus();
+                  }
                 },
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.only(top: 12.0),
@@ -322,10 +324,11 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
+              // physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.docs.length,
               itemBuilder: ((context, index) {
                 return StreamBuilder<QuerySnapshot>(
@@ -351,15 +354,14 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         resultList = tempList;
                       }
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resultList.length,
-                        itemBuilder: ((context, index) => resultList.length > 0
-                            ? ListItemPost(
-                                documentSnapshot: resultList[index],
-                                index: index,
-                                currentuser: _user,
-                              )
-                            : Container()),
+                        itemBuilder: ((context, index) => ListItemPost(
+                              documentSnapshot: resultList[index],
+                              index: index,
+                              currentuser: _user,
+                            )),
                       );
                     }
                   }),
@@ -374,8 +376,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return NoEvent();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
@@ -386,7 +388,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       .snapshots(),
                   builder: ((context, snapshotEvents) {
                     if (snapshot.data != null && !snapshotEvents.hasData) {
-                      return NoEvent();
+                      return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
                         List<DocumentSnapshot> tempList =
@@ -403,15 +405,14 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         resultList = tempList;
                       }
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resultList.length,
-                        itemBuilder: ((context, index) => resultList.length > 0
-                            ? ListItemEvent(
-                                documentSnapshot: resultList[index],
-                                index: index,
-                                user: _user,
-                              )
-                            : Text('No data')),
+                        itemBuilder: ((context, index) => ListItemEvent(
+                              documentSnapshot: resultList[index],
+                              index: index,
+                              user: _user,
+                            )),
                       );
                     }
                   }),
@@ -427,7 +428,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
@@ -457,6 +458,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       }
 
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resultList.length,
                         itemBuilder: ((context, index) =>
@@ -483,8 +485,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
@@ -512,15 +514,14 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         resultList = tempList;
                       }
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resultList.length,
-                        itemBuilder: ((context, index) => resultList.length > 0
-                            ? ListItemNews(
-                                documentSnapshot: resultList[index],
-                                index: index,
-                                currentuser: _user,
-                              )
-                            : Container()),
+                        itemBuilder: ((context, index) => ListItemNews(
+                              documentSnapshot: resultList[index],
+                              index: index,
+                              currentuser: _user,
+                            )),
                       );
                     }
                   }),
@@ -539,8 +540,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             .where('accountType', isEqualTo: 'Company')
             .snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
@@ -556,71 +557,68 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return ListView.builder(
               shrinkWrap: true,
               itemCount: resultList.length,
-              itemBuilder: ((context, index) => resultList.length > 0
-                  ? Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8.0,
-                        left: 8.0,
-                        right: 8.0,
+              itemBuilder: ((context, index) => Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 8.0,
+                      left: 8.0,
+                      right: 8.0,
+                    ),
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            side: BorderSide(color: Colors.grey[300])),
                       ),
-                      child: Container(
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              side: BorderSide(color: Colors.grey[300])),
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            //   showResults(context);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: ((context) => FriendProfileScreen(
-                                        uid: resultList[index]['uid'],
-                                        name: resultList[index]
-                                            ['displayName']))));
-                          },
-                          leading: Container(
-                            decoration: ShapeDecoration(
-                              color: Colors.grey[100],
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      screenSize.height * 0.01)),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.all(screenSize.height * 0.012),
-                              child: CircleAvatar(
-                                backgroundImage: CachedNetworkImageProvider(
-                                    resultList[index]['photoUrl']),
-                              ),
-                            ),
+                      child: ListTile(
+                        onTap: () {
+                          //   showResults(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => FriendProfileScreen(
+                                      uid: resultList[index]['uid'],
+                                      name: resultList[index]
+                                          ['displayName']))));
+                        },
+                        leading: Container(
+                          decoration: ShapeDecoration(
+                            color: Colors.grey[100],
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    screenSize.height * 0.01)),
                           ),
-                          title: Text(
-                            resultList[index]['displayName'],
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
-                            ),
-                          ),
-                          subtitle: Text(
-                            resultList[index]['location'].isNotEmpty
-                                ? resultList[index]['location'].length > 10
-                                    ? resultList[index]['location']
-                                            .contains('Mumbai')
-                                        ? 'Mumbai'
-                                        : 'India'
-                                    : resultList[index]['location']
-                                : '',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
+                          child: Padding(
+                            padding: EdgeInsets.all(screenSize.height * 0.012),
+                            child: CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                  resultList[index]['photoUrl']),
                             ),
                           ),
                         ),
+                        title: Text(
+                          resultList[index]['displayName'],
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textSubTitle(context),
+                          ),
+                        ),
+                        subtitle: Text(
+                          resultList[index]['location'].isNotEmpty
+                              ? resultList[index]['location'].length > 10
+                                  ? resultList[index]['location']
+                                          .contains('Mumbai')
+                                      ? 'Mumbai'
+                                      : 'India'
+                                  : resultList[index]['location']
+                              : '',
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                          ),
+                        ),
                       ),
-                    )
-                  : Container()),
+                    ),
+                  )),
             );
           }
         }));
@@ -634,8 +632,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             //   .where('isHidden', isEqualTo: 'false')
             .snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
@@ -652,60 +650,58 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return ListView.builder(
               shrinkWrap: true,
               itemCount: resultList.length,
-              itemBuilder: ((context, index) => resultList.length > 0
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => GroupPage(
-                                          currentUser: _user,
-                                          isMember: false,
-                                          gid: resultList[index]['uid'],
-                                          name: resultList[index]['groupName'],
-                                        )));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 8.0,
-                              right: 8.0,
-                              top: 8.0,
+              itemBuilder: ((context, index) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GroupPage(
+                                        currentUser: _user,
+                                        isMember: false,
+                                        gid: resultList[index]['uid'],
+                                        name: resultList[index]['groupName'],
+                                      )));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: 8.0,
+                          ),
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: const Color(0xffffffff),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                //  side: BorderSide(color: Colors.grey[300]),
+                              ),
                             ),
-                            child: Container(
-                              decoration: ShapeDecoration(
-                                color: const Color(0xffffffff),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  //  side: BorderSide(color: Colors.grey[300]),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                backgroundImage: NetworkImage(
+                                    resultList[index]['groupProfilePhoto']),
+                              ),
+                              title: Text(
+                                // userList[index].toString(),
+                                resultList[index]['groupName'],
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
                                 ),
                               ),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(
-                                      resultList[index]['groupProfilePhoto']),
-                                ),
-                                title: Text(
-                                  // userList[index].toString(),
-                                  resultList[index]['groupName'],
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textSubTitle(context),
-                                  ),
-                                ),
-                                trailing: resultList[index]['isPrivate'] == true
-                                    ? Icon(Icons.lock_outline)
-                                    : Icon(Icons.public),
-                              ),
+                              trailing: resultList[index]['isPrivate'] == true
+                                  ? Icon(Icons.lock_outline)
+                                  : Icon(Icons.public),
                             ),
                           ),
                         ),
-                      ],
-                    )
-                  : Container()),
+                      ),
+                    ],
+                  )),
             );
           }
         }));
@@ -843,8 +839,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             'accountType',
             whereIn: ['Professional', 'Military', 'Student']).snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
               List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
@@ -860,80 +856,75 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return ListView.builder(
               shrinkWrap: true,
               itemCount: resultList.length,
-              itemBuilder: ((context, index) => resultList.length > 0
-                  ? InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FriendProfileScreen(
-                                    uid: resultList[index]['uid'],
-                                    name: resultList[index]['displayName'])));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8.0,
-                          right: 8.0,
-                        ),
-                        child: Container(
-                          decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(color: Colors.grey[300]))),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(children: [
-                                  Container(
-                                    decoration: ShapeDecoration(
-                                      color: Colors.grey[100],
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: CircleAvatar(
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                                  resultList[index]
-                                                      ['photoUrl'])),
+              itemBuilder: ((context, index) => InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FriendProfileScreen(
+                                  uid: resultList[index]['uid'],
+                                  name: resultList[index]['displayName'])));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        left: 8.0,
+                        right: 8.0,
+                      ),
+                      child: Container(
+                        decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(color: Colors.grey[300]))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(children: [
+                                Container(
+                                  decoration: ShapeDecoration(
+                                    color: Colors.grey[100],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 10.0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: CircleAvatar(
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                resultList[index]['photoUrl'])),
                                   ),
-                                  Text(resultList[index]['displayName'],
-                                      style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          fontSize: textSubTitle(context))),
-                                ]),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  checkLabel(resultList[index]['accountType']),
-                                  checkPrivacy(resultList[index]['isPrivate']),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(resultList[index]['location'],
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Text(resultList[index]['displayName'],
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
-                                        fontSize: textBody1(context))),
-                              ),
-                            ],
-                          ),
+                                        fontSize: textSubTitle(context))),
+                              ]),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                checkLabel(resultList[index]['accountType']),
+                                checkPrivacy(resultList[index]['isPrivate']),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(resultList[index]['location'],
+                                  style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context))),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  : Container()),
+                    ),
+                  )),
             );
           }
         }));
@@ -943,8 +934,8 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
               itemCount: snapshot.data.docs.length,
@@ -972,15 +963,14 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                         resultList = tempList;
                       }
                       return ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: resultList.length,
-                        itemBuilder: ((context, index) => resultList.length > 0
-                            ? ListItemJob(
-                                documentSnapshot: resultList[index],
-                                index: index,
-                                currentuser: _user,
-                              )
-                            : Container()),
+                        itemBuilder: ((context, index) => ListItemJob(
+                              documentSnapshot: resultList[index],
+                              index: index,
+                              currentuser: _user,
+                            )),
                       );
                     }
                   }),
