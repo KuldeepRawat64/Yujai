@@ -247,6 +247,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                         ],
                       ),
                       onPressed: () {
+                        Navigator.pop(context);
                         deletePost(snapshot);
                       },
                     ),
@@ -392,7 +393,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+
         print('project deleted');
       } else {
         return print('not owner');
@@ -488,7 +489,7 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
                           ],
                         ),
                         Container(
-                          height: screenSize.height * 0.05,
+                          width: screenSize.width * 0.28,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(

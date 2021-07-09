@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Group {
   String uid;
   String groupName;
@@ -14,24 +16,25 @@ class Group {
   List<dynamic> rules;
   String customRules;
   List<dynamic> members;
+  Timestamp timestamp;
 
-  Group({
-    this.uid,
-    this.groupName,
-    this.currentUserUid,
-    this.description,
-    this.groupProfilePhoto,
-    this.location,
-    this.groupOwnerName,
-    this.groupOwnerPhotoUrl,
-    this.agenda,
-    this.isPrivate,
-    this.isHidden,
-    this.groupOwnerEmail,
-    this.rules,
-    this.customRules,
-    this.members,
-  });
+  Group(
+      {this.uid,
+      this.groupName,
+      this.currentUserUid,
+      this.description,
+      this.groupProfilePhoto,
+      this.location,
+      this.groupOwnerName,
+      this.groupOwnerPhotoUrl,
+      this.agenda,
+      this.isPrivate,
+      this.isHidden,
+      this.groupOwnerEmail,
+      this.rules,
+      this.customRules,
+      this.members,
+      this.timestamp});
 
   Map toMap(Group group) {
     var data = Map<String, dynamic>();
@@ -50,6 +53,7 @@ class Group {
     data['rules'] = group.rules;
     data['customRules'] = group.customRules;
     data['members'] = group.members;
+    data['timestamp'] = group.timestamp;
     return data;
   }
 
@@ -69,5 +73,6 @@ class Group {
     this.rules = mapData['rules'];
     this.customRules = mapData['customRules'];
     this.members = mapData['members'];
+    this.timestamp = mapData['timestamp'];
   }
 }

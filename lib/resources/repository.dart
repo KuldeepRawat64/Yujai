@@ -656,14 +656,16 @@ class Repository {
 
   Future<void> followUser(
           {String currentUserId,
-          String followingUserId,
-          UserModel followingUser,
-          UserModel currentUser}) =>
+          String currentUserName,
+          String currentUserPhotoUrl,
+          String currentUserAccountType,
+          UserModel followingUser}) =>
       _firebaseProvider.followUser(
-          currentUserId: currentUserId,
-          followingUserId: followingUserId,
           followingUser: followingUser,
-          currentUser: currentUser);
+          currentUserId: currentUserId,
+          currentUserName: currentUserName,
+          currentUserPhotoUrl: currentUserPhotoUrl,
+          currentUserAccountType: currentUserAccountType);
 
   Future<void> addTeamMember(
           {Team currentTeam,

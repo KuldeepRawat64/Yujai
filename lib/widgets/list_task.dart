@@ -5,10 +5,12 @@ import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/event_detail_page.dart';
 import 'package:Yujai/pages/task_detail.dart';
+import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../style.dart';
@@ -47,6 +49,10 @@ class ListItemTask extends StatefulWidget {
 
 class _ListItemTaskState extends State<ListItemTask> {
   bool showFab = true;
+  var _currentList;
+  var _repository = Repository();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -403,7 +409,29 @@ class _ListItemTaskState extends State<ListItemTask> {
                   ],
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   deletePost(widget.documentSnapshot);
+                },
+              ),
+              SimpleDialogOption(
+                child: Row(
+                  children: [
+                    Icon(Icons.drive_file_move_outlined),
+                    Padding(
+                      padding: EdgeInsets.only(left: screenSize.width * 0.01),
+                      child: Text(
+                        'Move task',
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textBody1(context),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _moveTaskDialog();
                 },
               ),
               SimpleDialogOption(
@@ -431,6 +459,243 @@ class _ListItemTaskState extends State<ListItemTask> {
         }));
   }
 
+  _moveTaskDialog() {
+    var screenSize = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content: Stack(
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Positioned(
+                    right: -40.0,
+                    top: -40.0,
+                    child: InkResponse(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: CircleAvatar(
+                        child: Icon(Icons.close),
+                        backgroundColor: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //   mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Select List',
+                                style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: textHeader(context)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('teams')
+                                .doc(widget.team.uid)
+                                .collection('departments')
+                                .doc(widget.department.uid)
+                                .collection('projects')
+                                .doc(widget.project.uid)
+                                .collection('list')
+                                .where('listId',
+                                    isNotEqualTo:
+                                        widget.documentSnapshotList['listId'])
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData)
+                                return const Center(
+                                  child: const CircularProgressIndicator(),
+                                );
+
+                              return Container(
+                                padding: EdgeInsets.all(5),
+                                child: new DropdownButton(
+                                  icon: Icon(Icons.keyboard_arrow_down),
+                                  value: _currentList,
+                                  isDense: true,
+                                  items: snapshot.data.docs
+                                      .map((DocumentSnapshot doc) {
+                                    return new DropdownMenuItem(
+                                        value: doc["listId"],
+                                        child: Text(doc["listName"],
+                                            style: TextStyle(
+                                              fontFamily: FontNameDefault,
+                                              fontSize: textSubTitle(context),
+                                            )));
+                                  }).toList(),
+                                  hint: Text("list",
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                      )),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _currentList = value;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        _currentList != null
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.015,
+                                  horizontal: screenSize.width * 0.01,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Navigator.pop(context);
+                                    _repository
+                                        .getCurrentUser()
+                                        .then((currentuser) {
+                                      if (currentuser != null) {
+                                        _repository
+                                            .retreiveUserDetails(currentuser)
+                                            .then((user) {
+                                          _repository
+                                              .addTaskToList(
+                                                  widget.documentSnapshot[
+                                                      'taskId'],
+                                                  user,
+                                                  widget.documentSnapshot[
+                                                      'taskName'],
+                                                  widget.documentSnapshot[
+                                                      'description'],
+                                                  widget.team.uid,
+                                                  widget.department.uid,
+                                                  widget.project.uid,
+                                                  _currentList)
+                                              .then((value) async {
+                                            List<DocumentSnapshot> uidList =
+                                                List<DocumentSnapshot>();
+                                            QuerySnapshot<Map<String, dynamic>>
+                                                commentSnapshot = await widget
+                                                    .documentSnapshot.reference
+                                                    .collection('comments')
+                                                    .get();
+                                            for (var i = 0;
+                                                i < commentSnapshot.docs.length;
+                                                i++) {
+                                              uidList
+                                                  .add(commentSnapshot.docs[i]);
+                                            }
+                                            print(
+                                                'Comments LIST : ${uidList.length}');
+
+                                            if (uidList.isNotEmpty) {
+                                              FirebaseFirestore.instance
+                                                  .collection('teams')
+                                                  .doc(widget.team.uid)
+                                                  .collection('departments')
+                                                  .doc(widget.department.uid)
+                                                  .collection('projects')
+                                                  .doc(widget.project.uid)
+                                                  .collection('list')
+                                                  .doc(_currentList)
+                                                  .collection('tasks')
+                                                  .doc(widget.documentSnapshot[
+                                                      'taskId'])
+                                                  .collection('comments')
+                                                  .add(uidList.first.data());
+                                            }
+                                            deletePost(widget.documentSnapshot);
+                                            //  commentSnapshot.docs;
+
+                                            print('Task moved to another list');
+                                            Navigator.pop(context);
+                                          }).catchError((e) => print(
+                                                  'Error adding task: $e'));
+                                        });
+                                      } else {
+                                        print('Current User is null');
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    height: screenSize.height * 0.055,
+                                    width: screenSize.width * 0.4,
+                                    child: Center(
+                                      child: Text(
+                                        'Move task',
+                                        style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.white,
+                                          fontSize: textSubTitle(context),
+                                        ),
+                                      ),
+                                    ),
+                                    decoration: ShapeDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenSize.height * 0.015,
+                                  horizontal: screenSize.width * 0.01,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    height: screenSize.height * 0.055,
+                                    width: screenSize.width * 0.4,
+                                    child: Center(
+                                      child: Text(
+                                        'Move task',
+                                        style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.grey[600],
+                                          fontSize: textSubTitle(context),
+                                        ),
+                                      ),
+                                    ),
+                                    decoration: ShapeDecoration(
+                                      color: Colors.grey[100],
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        side: BorderSide(
+                                            width: 0.2, color: Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
+        }));
+  }
+
   deletePost(DocumentSnapshot snapshot) {
     FirebaseFirestore.instance
         .collection('teams')
@@ -447,11 +712,44 @@ class _ListItemTaskState extends State<ListItemTask> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+        doc.reference.collection('comments').get().then((docs) {
+          docs.docs.forEach((element) {
+            doc.reference
+                .collection('comments')
+                .doc(element.id)
+                .delete()
+                .then((value) => print('comments deleted'));
+          });
+        });
+        //  Navigator.pop(context);
         print('post deleted');
       } else {
         return print('not owner');
       }
     });
   }
+
+  // movePost(DocumentSnapshot snapshot) {
+  //   FirebaseFirestore.instance
+  //       .collection('teams')
+  //       .doc(widget.team.uid)
+  //       .collection('departments')
+  //       .doc(widget.department.uid)
+  //       .collection('projects')
+  //       .doc(widget.project.uid)
+  //       .collection('list')
+  //       .doc(widget.documentSnapshotList['listId'])
+  //       .collection('tasks')
+  //       .doc(snapshot['taskId'])
+  //       .get()
+  //       .then((doc) {
+  //     if (doc.exists) {
+  //       doc.reference.delete();
+  //       //  Navigator.pop(context);
+  //       print('post deleted');
+  //     } else {
+  //       return print('not owner');
+  //     }
+  //   });
+  // }
 }

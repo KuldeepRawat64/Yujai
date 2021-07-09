@@ -279,22 +279,22 @@ class FirebaseProvider {
     List<String> rules,
   ) async {
     group = Group(
-      uid: groupId,
-      groupName: groupName,
-      groupProfilePhoto:
-          'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0',
-      currentUserUid: currentUser.uid,
-      groupOwnerEmail: currentUser.email,
-      groupOwnerName: currentUser.displayName,
-      groupOwnerPhotoUrl: currentUser.photoUrl,
-      isPrivate: isPrivate,
-      isHidden: isHidden,
-      description: description,
-      location: location,
-      agenda: agenda,
-      rules: rules,
-      customRules: '',
-    );
+        uid: groupId,
+        groupName: groupName,
+        groupProfilePhoto:
+            'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0',
+        currentUserUid: currentUser.uid,
+        groupOwnerEmail: currentUser.email,
+        groupOwnerName: currentUser.displayName,
+        groupOwnerPhotoUrl: currentUser.photoUrl,
+        isPrivate: isPrivate,
+        isHidden: isHidden,
+        description: description,
+        location: location,
+        agenda: agenda,
+        rules: rules,
+        customRules: '',
+        timestamp: Timestamp.now());
 
     await _firestore.collection('groups').doc(groupId).set(group.toMap(group));
 
@@ -1824,35 +1824,36 @@ class FirebaseProvider {
 
   Future<void> followUser(
       {String currentUserId,
-      String followingUserId,
-      UserModel followingUser,
-      UserModel currentUser}) async {
+      String currentUserName,
+      String currentUserPhotoUrl,
+      String currentUserAccountType,
+      UserModel followingUser}) async {
     following = Following(
+        ownerUid: currentUserId,
+        ownerName: currentUserName,
+        ownerPhotoUrl: currentUserPhotoUrl,
+        accountType: currentUserAccountType,
+        timestamp: FieldValue.serverTimestamp());
+
+    await _firestore
+        .collection('users')
+        .doc(followingUser.uid)
+        .collection('followers')
+        .doc(currentUserId)
+        .set(following.toMap(following));
+
+    follower = Follower(
         ownerUid: followingUser.uid,
         ownerName: followingUser.displayName,
         ownerPhotoUrl: followingUser.photoUrl,
         accountType: followingUser.accountType,
         timestamp: FieldValue.serverTimestamp());
 
-    await _firestore
-        .collection('users')
-        .doc(currentUserId)
-        .collection('followers')
-        .doc(followingUser.uid)
-        .set(following.toMap(following));
-
-    follower = Follower(
-        ownerUid: currentUserId,
-        ownerName: currentUser.displayName,
-        ownerPhotoUrl: currentUser.photoUrl,
-        accountType: currentUser.accountType,
-        timestamp: FieldValue.serverTimestamp());
-
     return _firestore
         .collection('users')
-        .doc(followingUser.uid)
-        .collection('following')
         .doc(currentUserId)
+        .collection('following')
+        .doc(followingUser.uid)
         .set(follower.toMap(follower));
   }
 

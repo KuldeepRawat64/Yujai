@@ -184,67 +184,144 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
 
   Widget myGroupsList() {
     var screenSize = MediaQuery.of(context).size;
-    return myGroupList.length > 0
-        ? ListView.builder(
-            //      controller: _scrollController3,
-            itemCount: myGroupList.length,
-            itemBuilder: ((context, index) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GroupPage(
-                                    currentUser: _user,
-                                    isMember: false,
-                                    gid: myGroupList[index].uid,
-                                    name: myGroupList[index].groupName,
-                                  )));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8.0,
-                        right: 8.0,
-                        top: 8.0,
-                      ),
-                      child: Container(
-                        decoration: ShapeDecoration(
-                          color: const Color(0xffffffff),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            //  side: BorderSide(color: Colors.grey[300]),
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('groups')
+            //  .orderBy('timestamp')
+            .where('members', arrayContainsAny: [widget.uid]).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData && snapshot.data.docs.length > 0) {
+              return ListView.builder(
+                //      controller: _scrollController3,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GroupPage(
+                                        currentUser: _user,
+                                        isMember: false,
+                                        gid: snapshot.data.docs[index]['uid'],
+                                        name: snapshot.data.docs[index]
+                                            ['groupName'],
+                                      )));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 8.0,
+                            right: 8.0,
+                            top: 8.0,
                           ),
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            backgroundImage: NetworkImage(
-                                myGroupList[index].groupProfilePhoto),
-                          ),
-                          title: Text(
-                            // userList[index].toString(),
-                            myGroupList[index].groupName,
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textSubTitle(context),
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: const Color(0xffffffff),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                //  side: BorderSide(color: Colors.grey[300]),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                backgroundImage: NetworkImage(snapshot
+                                    .data.docs[index]['groupProfilePhoto']),
+                              ),
+                              title: Text(
+                                // userList[index].toString(),
+                                snapshot.data.docs[index]['groupName'],
+                                style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                ),
+                              ),
+                              trailing:
+                                  snapshot.data.docs[index]['isPrivate'] == true
+                                      ? Icon(Icons.lock_outline)
+                                      : Icon(Icons.public),
                             ),
                           ),
-                          trailing: myGroupList[index].isPrivate == true
-                              ? Icon(Icons.lock_outline)
-                              : Icon(Icons.public),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                }),
               );
-            }),
-          )
-        : NoContent('No groups', 'assets/images/group_no-image.png',
-            'Create a group', ' by clicking on the + icon above');
+            }
+            return NoContent('No groups', 'assets/images/group_no-image.png',
+                'Create a group', ' by clicking on the + icon above');
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    // return ListView.builder(
+    //         //      controller: _scrollController3,
+    //         itemCount: myGroupList.length,
+    //         itemBuilder: ((context, index) {
+    //           return Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               InkWell(
+    //                 onTap: () {
+    //                   Navigator.push(
+    //                       context,
+    //                       MaterialPageRoute(
+    //                           builder: (context) => GroupPage(
+    //                                 currentUser: _user,
+    //                                 isMember: false,
+    //                                 gid: myGroupList[index].uid,
+    //                                 name: myGroupList[index].groupName,
+    //                               )));
+    //                 },
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.only(
+    //                     left: 8.0,
+    //                     right: 8.0,
+    //                     top: 8.0,
+    //                   ),
+    //                   child: Container(
+    //                     decoration: ShapeDecoration(
+    //                       color: const Color(0xffffffff),
+    //                       shape: RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.circular(12.0),
+    //                         //  side: BorderSide(color: Colors.grey[300]),
+    //                       ),
+    //                     ),
+    //                     child: ListTile(
+    //                       leading: CircleAvatar(
+    //                         backgroundColor: Colors.white,
+    //                         backgroundImage: NetworkImage(
+    //                             myGroupList[index].groupProfilePhoto),
+    //                       ),
+    //                       title: Text(
+    //                         // userList[index].toString(),
+    //                         myGroupList[index].groupName,
+    //                         style: TextStyle(
+    //                           fontFamily: FontNameDefault,
+    //                           fontSize: textSubTitle(context),
+    //                         ),
+    //                       ),
+    //                       trailing: myGroupList[index].isPrivate == true
+    //                           ? Icon(Icons.lock_outline)
+    //                           : Icon(Icons.public),
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ],
+    //           );
+    //         }),
+    //       );
+    // : NoContent('No groups', 'assets/images/group_no-image.png',
+    //     'Create a group', ' by clicking on the + icon above');
   }
 
   Widget myTeamsList() {

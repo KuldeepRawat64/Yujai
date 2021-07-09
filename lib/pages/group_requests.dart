@@ -50,34 +50,7 @@ class _GroupRequestState extends State<GroupRequest> {
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
-          actions: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: screenSize.height * 0.015,
-                horizontal: screenSize.width / 50,
-              ),
-              child: FlatButton(
-                  //disabledColor: Theme.of(context).accentColor,
-                  color: Theme.of(context).accentColor,
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupInvite(
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                  group: widget.group,
-                                )));
-                  },
-                  child: Text(
-                    'Invite',
-                    style: TextStyle(
-                        fontSize: textBody1(context),
-                        fontFamily: FontNameDefault,
-                        color: Colors.white),
-                  )),
-            ),
-          ],
+          actions: [],
           leading: IconButton(
               icon: Icon(
                 Icons.keyboard_arrow_left,

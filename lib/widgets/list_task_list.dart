@@ -161,7 +161,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
         .then((doc) {
       if (doc.exists) {
         doc.reference.delete();
-        Navigator.pop(context);
+
         print('post deleted');
       } else {
         return print('not owner');
@@ -268,6 +268,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
                   ],
                 ),
                 onPressed: () {
+                  Navigator.pop(context);
                   deletePost(widget.documentSnapshot);
                 },
               ),

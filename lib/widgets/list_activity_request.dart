@@ -13,9 +13,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/feed.dart';
 
-Widget mediaPreview;
-String activityItemText;
-
 class ListItemActivityRequest extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final UserModel user, currentuser;
@@ -46,6 +43,9 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
   int postCount = 0;
   int followerCount = 0;
   int followingCount = 0;
+  Widget mediaPreview;
+  String activityItemText;
+  bool isChecked = false;
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -97,7 +97,9 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
       mediaPreview = Wrap(
         children: [
           FlatButton(
-            onPressed: followUser,
+            onPressed: () {
+              followUser();
+            },
             child: Text(
               'Confirm',
               style: TextStyle(
@@ -111,7 +113,9 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
             width: 2.0,
           ),
           FlatButton(
-            onPressed: removeRequestFromActivityFeed,
+            onPressed: () {
+              removeRequestFromActivityFeed();
+            },
             child: Text(
               'Delete',
               style: TextStyle(
@@ -230,15 +234,19 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
             )));
   }
 
-  followUser() {
+  followUser() async {
     print('following user');
-    _repository.followUser(
-        currentUserId: currentUserId,
-        followingUserId: followingUserId,
-        followingUser: _user,
-        currentUser: currentuser);
-    addFollowToActivityFeed();
-    removeRequestFromActivityFeed();
+    await _repository.followUser(
+        currentUserId: widget.documentSnapshot['ownerUid'],
+        currentUserName: widget.documentSnapshot['ownerName'],
+        currentUserPhotoUrl: widget.documentSnapshot['ownerPhotoUrl'],
+        currentUserAccountType: '',
+        followingUser: currentuser);
+    await addFollowToActivityFeed();
+    await removeRequestFromActivityFeed();
+    setState(() {
+      isChecked = true;
+    });
   }
 
   joinTeam() async {
@@ -305,7 +313,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
     showGroup(context);
   }
 
-  void addFollowToActivityFeed() {
+  addFollowToActivityFeed() {
     var _feed = Feed(
       ownerName: _user.displayName,
       ownerUid: _user.uid,
@@ -325,12 +333,12 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
     });
   }
 
-  void removeRequestFromActivityFeed() {
+  removeRequestFromActivityFeed() {
     FirebaseFirestore.instance
         .collection('users')
         .doc(currentuser.uid)
         .collection('requests')
-        .doc(_user.uid)
+        .doc(widget.documentSnapshot['ownerUid'])
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -400,19 +408,22 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                                 ]),
                           ),
                         ),
-                        Chip(
-                            backgroundColor: Colors.white,
-                            avatar: CircleAvatar(
-                              radius: screenSize.height * 0.02,
-                              backgroundColor: Colors.white,
-                              backgroundImage: CachedNetworkImageProvider(
-                                  widget.documentSnapshot['groupProfilePhoto']),
-                            ),
-                            label: Text(widget.documentSnapshot['gname'],
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                    fontWeight: FontWeight.bold))),
+                        widget.documentSnapshot['gid'] != null
+                            ? Chip(
+                                backgroundColor: Colors.white,
+                                avatar: CircleAvatar(
+                                  radius: screenSize.height * 0.02,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      widget.documentSnapshot[
+                                          'groupProfilePhoto']),
+                                ),
+                                label: Text(widget.documentSnapshot['gname'],
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                        fontWeight: FontWeight.bold)))
+                            : Container(),
                       ],
                     ),
                   ],

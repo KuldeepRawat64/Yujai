@@ -200,10 +200,11 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   followUser() {
     print('following user');
     _repository.followUser(
-        currentUserId: currentUserId,
-        followingUserId: followingUserId,
         followingUser: currentuser,
-        currentUser: _user);
+        currentUserId: _user.uid,
+        currentUserName: _user.displayName,
+        currentUserPhotoUrl: _user.photoUrl,
+        currentUserAccountType: _user.accountType);
     addFollowToActivityFeed();
     if (!mounted) return;
     setState(() {

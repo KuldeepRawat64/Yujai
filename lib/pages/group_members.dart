@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
+import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_member.dart';
 import 'package:Yujai/widgets/list_member_group.dart';
@@ -72,6 +73,34 @@ class _GroupMembersState extends State<GroupMembers> {
         key: _scaffoldKey,
         appBar: AppBar(
           elevation: 0.5,
+          actions: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: screenSize.height * 0.015,
+                horizontal: screenSize.width / 50,
+              ),
+              child: FlatButton(
+                  //disabledColor: Theme.of(context).accentColor,
+                  color: Theme.of(context).accentColor,
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GroupInvite(
+                                  gid: widget.gid,
+                                  name: widget.name,
+                                  group: widget.group,
+                                )));
+                  },
+                  child: Text(
+                    'Invite',
+                    style: TextStyle(
+                        fontSize: textBody1(context),
+                        fontFamily: FontNameDefault,
+                        color: Colors.white),
+                  )),
+            ),
+          ],
           leading: IconButton(
               icon: Icon(
                 Icons.keyboard_arrow_left,
