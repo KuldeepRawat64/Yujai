@@ -154,16 +154,20 @@ class _ListItemJobState extends State<ListItemJob> {
                 ),
               ),
               ListTile(
-                  leading: new Text(
-                    widget.documentSnapshot['location'] != null ||
-                            widget.documentSnapshot['location']
-                        ? widget.documentSnapshot['location']
-                        : '',
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.grey,
-                      //     fontSize: textBody1(context),
+                  leading: Container(
+                    width: screenSize.width * 0.4,
+                    child: new Text(
+                      widget.documentSnapshot['location'] != null ||
+                              widget.documentSnapshot['location']
+                          ? widget.documentSnapshot['location']
+                          : '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.grey,
+                        //     fontSize: textBody1(context),
+                      ),
                     ),
                   ),
                   trailing: widget.documentSnapshot['time'] != null
