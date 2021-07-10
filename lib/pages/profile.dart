@@ -448,7 +448,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget backgroundImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.3,
+      height: screenSize.height * 0.22,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
@@ -465,7 +465,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget armyImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.3,
+      height: screenSize.height * 0.22,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
@@ -482,7 +482,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget airforceImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.3,
+      height: screenSize.height * 0.22,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
