@@ -308,9 +308,11 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         return Text('Error');
                       }
                       if (snapshot.hasData && snapshot.data.exists) {
-                        return Row(
+                        return Wrap(
+                          //  mainAxisSize: MainAxisSize.min,
                           children: [
                             CircleAvatar(
+                              backgroundColor: Colors.white,
                               //  radius: screenSize.height * 0.045,
                               backgroundImage: CachedNetworkImageProvider(
                                   snapshot.data['groupProfilePhoto']),
@@ -319,12 +321,16 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                               width: 8.0,
                             ),
                             Container(
+                              //    color: Colors.grey,
                               width: screenSize.width * 0.45,
-                              child: Text(
-                                snapshot.data['groupName'],
-                                style: TextStyle(
-                                  fontSize: screenSize.height * 0.022,
-                                  color: Colors.black87,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  snapshot.data['groupName'],
+                                  style: TextStyle(
+                                    fontSize: screenSize.height * 0.022,
+                                    color: Colors.black87,
+                                  ),
                                 ),
                               ),
                             ),
