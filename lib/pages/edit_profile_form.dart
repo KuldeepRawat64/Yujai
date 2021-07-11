@@ -379,8 +379,9 @@ class _EditProfileScreenState extends State<EditProfileForm> {
                                         .searchResults[index].description),
                                   );
                                 },
-                                itemCount:
-                                    locationBloc.searchResults.length ?? 0,
+                                itemCount: locationBloc.searchResults != null
+                                    ? locationBloc.searchResults.length
+                                    : 0,
                               ),
                             ),
                           )
@@ -444,39 +445,6 @@ class _EditProfileScreenState extends State<EditProfileForm> {
       //   SnackBar(content: Text("${p.description} - $lat/$lng")),
       // );
     }
-  }
-
-  Future<void> _getCurrentPosition() async {
-    // verify permissions
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      await Geolocator.openAppSettings();
-      await Geolocator.openLocationSettings();
-    }
-    // get current position
-    _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    // get address
-    String _currentAddress = await _getGeolocationAddress(_currentPosition);
-    _locationController.text = _currentAddress;
-  }
-
-  // Method to get Address from position:
-
-  Future<String> _getGeolocationAddress(Position position) async {
-    // geocoding
-    var places = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (places != null && places.isNotEmpty) {
-      final Placemark place = places.first;
-      return "${place.thoroughfare}, ${place.locality}";
-    }
-
-    return "No address available";
   }
 
   void compressImage() async {

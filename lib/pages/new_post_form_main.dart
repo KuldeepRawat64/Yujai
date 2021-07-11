@@ -1,14 +1,20 @@
+import 'package:Yujai/blocs/location_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';
+import 'package:provider/provider.dart';
 
 import '../style.dart';
 
@@ -25,11 +31,16 @@ class NewPostFormMain extends StatefulWidget {
 class _NewPostFormMainState extends State<NewPostFormMain> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
+  LatLng latlong = null;
   File imageFile;
   var _locationController;
   var _captionController;
   final _repository = Repository();
+  CameraPosition _cameraPosition;
+  GoogleMapController _controller;
+  Set<Marker> _markers = {};
   String location = '';
+  Position _currentPosition;
   @override
   void initState() {
     super.initState();
@@ -182,7 +193,10 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
                 children: [
                   InkWell(
                     child: Icon(Icons.location_on_rounded),
-                    onTap: () {},
+                    onTap: () {
+                      //  getCurrentAddress();
+                      _getCurrentPosition();
+                    },
                   ),
                   location != ''
                       ? Padding(
@@ -204,15 +218,18 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
                             ],
                           ),
                         )
-                      : Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            'Add the location',
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              //  fontSize: textAppTitle(context),
-                              // color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                      : InkWell(
+                          onTap: _getCurrentPosition,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              'Add the location',
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //  fontSize: textAppTitle(context),
+                                // color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -288,20 +305,81 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
     print('done');
   }
 
-  // getUserLocation() async {
-  //   Position position = await Geolocator()
-  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  //   List<Placemark> placemarks = await Geolocator()
-  //       .placemarkFromCoordinates(position.latitude, position.longitude);
-  //   Placemark placemark = placemarks[0];
-  //   String completeAddress =
-  //       '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-  //   print(completeAddress);
-  //   String formattedAddress = "${placemark.locality}, ${placemark.country}";
-  //   setState(() {
-  //     location = formattedAddress;
-  //   });
-  // }
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
+    setState(() {
+      location = _currentAddress;
+    });
+    print('Location: $location');
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
+  }
+
+//   Future getCurrentLocation() async {
+//     LocationPermission permission = await Geolocator.checkPermission();
+//     if (permission != PermissionStatus.granted) {
+//       LocationPermission permission = await Geolocator.requestPermission();
+//       if (permission != PermissionStatus.granted) getLocation();
+//       return;
+//     }
+//     getLocation();
+//   }
+
+//   List<Address> results = [];
+//   getLocation() async {
+//     Position position = await Geolocator.getCurrentPosition(
+//         desiredAccuracy: LocationAccuracy.high);
+//     print('Latitude ${position.latitude}');
+
+//     setState(() {
+//       latlong = new LatLng(position.latitude, position.longitude);
+//     });
+
+//     getCurrentAddress();
+//   }
+
+//   getCurrentAddress() async {
+//     final coordinates = new Coordinates(latlong.latitude, latlong.longitude);
+//     results = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+//     var first = results.first;
+//     if (first != null) {
+//       var address;
+//       address = first.featureName;
+//       //   address =   " $address, ${first.subLocality}" ;
+//       address = " $address, ${first.subLocality}";
+// //    address =  " $address, ${first.locality}" ;
+//       address = " $address, ${first.countryName}";
+// //    address = " $address, ${first.postalCode}" ;
+
+//       location = address;
+//     }
+//   }
 
   _submitForm(BuildContext context) {
     //
