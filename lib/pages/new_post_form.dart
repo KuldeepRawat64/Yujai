@@ -33,6 +33,7 @@ class _NewPostFormState extends State<NewPostForm> {
   var _captionController;
   final _repository = Repository();
   String location = '';
+  Position _currentPosition;
   // final Geolocator geolocator = Geolocator();
 //  final Location location = Location();
 
@@ -188,7 +189,7 @@ class _NewPostFormState extends State<NewPostForm> {
                 children: [
                   InkWell(
                     child: Icon(Icons.location_on_rounded),
-                    onTap: getUserLocation,
+                    onTap: _getCurrentPosition,
                   ),
                   location != ''
                       ? Padding(
@@ -217,7 +218,7 @@ class _NewPostFormState extends State<NewPostForm> {
                           ),
                         )
                       : InkWell(
-                          onTap: getUserLocation,
+                          onTap: _getCurrentPosition,
                           child: Padding(
                             padding: EdgeInsets.only(
                                 left: MediaQuery.of(context).size.width * 0.05),
@@ -302,20 +303,40 @@ class _NewPostFormState extends State<NewPostForm> {
     print('done');
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
+  Future<void> _getCurrentPosition() async {
+    // verify permissions
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      await Geolocator.openLocationSettings();
+    }
+    // get current position
+    _currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.latitude);
-    // this is all you need
-    Placemark placeMark = placemarks[0];
-    String subLocality = placeMark.subLocality;
-    String country = placeMark.country;
-    String address = "$subLocality,  $country";
-    print(address);
+
+    // get address
+    String _currentAddress = await _getGeolocationAddress(_currentPosition);
     setState(() {
-      location = address; // update _address
+      location = _currentAddress;
     });
+    print('Location: $location');
+  }
+
+  // Method to get Address from position:
+
+  Future<String> _getGeolocationAddress(Position position) async {
+    // geocoding
+    var places = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    if (places != null && places.isNotEmpty) {
+      final Placemark place = places.first;
+      return "${place.thoroughfare}, ${place.locality}";
+    }
+
+    return "No address available";
   }
 
   _submitForm(BuildContext context) {

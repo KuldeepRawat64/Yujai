@@ -308,8 +308,9 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         return Text('Error');
                       }
                       if (snapshot.hasData && snapshot.data.exists) {
-                        return Wrap(
-                          //  mainAxisSize: MainAxisSize.min,
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
@@ -322,15 +323,14 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                             ),
                             Container(
                               //    color: Colors.grey,
-                              width: screenSize.width * 0.45,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  snapshot.data['groupName'],
-                                  style: TextStyle(
-                                    fontSize: screenSize.height * 0.022,
-                                    color: Colors.black87,
-                                  ),
+                              width: screenSize.width * 0.42,
+                              child: Text(
+                                snapshot.data['groupName'],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: screenSize.height * 0.022,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -401,7 +401,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                           )
                         : Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12.0, horizontal: 12.0),
+                                vertical: 12.0, horizontal: 6.0),
                             child: FlatButton(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(60.0),
