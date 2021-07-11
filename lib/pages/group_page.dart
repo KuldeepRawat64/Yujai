@@ -296,36 +296,46 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
           slivers: [
             SliverAppBar(
               elevation: 0.5,
-              title: Row(
-                children: <Widget>[
-                  _group != null
-                      ? CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: screenSize.height * 0.025,
-                          backgroundImage: NetworkImage(_group
-                                          .groupProfilePhoto !=
-                                      null &&
-                                  _group.groupProfilePhoto != ''
-                              ? _group.groupProfilePhoto
-                              : 'https://firebasestorage.googleapis.com/v0/b/socialnetwork-cbb55.appspot.com/o/group_no-image.png?alt=media&token=7c646dd5-5ec4-467d-9639-09f97c6dc5f0'),
-                        )
-                      : Container(),
-                  _group != null
-                      ? Container(
-                          width: screenSize.width * 0.4,
-                          padding: EdgeInsets.only(left: screenSize.width / 30),
-                          child: Text(
-                            _group.groupName,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: textAppTitle(context),
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      : Container(),
-                ],
-              ),
+              title: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  stream: groupsRef.doc(widget.gid).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container();
+                    } else if (snapshot.connectionState ==
+                            ConnectionState.active ||
+                        snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return Text('Error');
+                      }
+                      if (snapshot.hasData && snapshot.data.exists) {
+                        return Row(
+                          children: [
+                            CircleAvatar(
+                              //  radius: screenSize.height * 0.045,
+                              backgroundImage: CachedNetworkImageProvider(
+                                  snapshot.data['groupProfilePhoto']),
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                            Container(
+                              width: screenSize.width * 0.45,
+                              child: Text(
+                                snapshot.data['groupName'],
+                                style: TextStyle(
+                                  fontSize: screenSize.height * 0.022,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return Container();
+                    }
+
+                    return Container();
+                  }),
               leading: IconButton(
                   icon: Icon(Icons.keyboard_arrow_left,
                       color: Colors.black54, size: screenSize.height * 0.045),

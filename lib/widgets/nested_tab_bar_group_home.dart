@@ -985,7 +985,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                 ),
               ),
             ),
-            _group.rules != null && _group.rules.isEmpty
+            _group.rules == null
                 ? Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: screenSize.width / 4,

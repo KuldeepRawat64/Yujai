@@ -423,7 +423,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                           SizedBox(
                             height: screenSize.height * 0.02,
                           ),
-                          _group.rules.isEmpty
+                          _group.rules == null
                               ? Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
