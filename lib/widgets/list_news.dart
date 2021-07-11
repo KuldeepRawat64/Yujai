@@ -248,7 +248,7 @@ class _ListItemNewsState extends State<ListItemNews> {
                             padding: EdgeInsets.only(
                               left: screenSize.width * 0.03,
                               top: screenSize.height * 0.01,
-                              bottom: screenSize.height * 0.01,
+                              //   bottom: screenSize.height * 0.01,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
