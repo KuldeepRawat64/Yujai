@@ -76,6 +76,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   String currentUserId, followingUserId;
   StreamSubscription<DocumentSnapshot> subscription;
   bool isPrivate = false;
+  bool seeMore = false;
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -957,13 +958,63 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: screenSize.width / 30, top: screenSize.height * 0.012),
-              child: Text(
-                _group.description != null ? _group.description : '',
-                style: TextStyle(fontSize: screenSize.height * 0.022),
-              ),
-            ),
+                padding: EdgeInsets.only(
+                    left: screenSize.width / 30,
+                    top: screenSize.height * 0.012),
+                child: Column(
+                  children: [
+                    seeMore
+                        ? Text(
+                            _group.description,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textSubTitle(context),
+                              // fontWeight: FontWeight.bold
+                            ),
+                          )
+                        : Text(
+                            _group.description,
+                            maxLines: 6,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textSubTitle(context)),
+                          ),
+                    _group.description.length > 250
+                        ? FlatButton(
+                            onPressed: () {
+                              setState(() {
+                                seeMore = !seeMore;
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  !seeMore ? 'Read more' : 'See less',
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    //  fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: textSubTitle(context),
+                                  ),
+                                ),
+                                Icon(!seeMore
+                                    ? Icons.keyboard_arrow_down_outlined
+                                    : Icons.keyboard_arrow_up_outlined)
+                              ],
+                            ),
+                          )
+                        : Container()
+                  ],
+                )
+
+                // Text(
+                //   _group.description != null ? _group.description : '',
+
+                //   style: TextStyle(fontSize: screenSize.height * 0.022),
+                // ),
+                ),
             Padding(
               padding: EdgeInsets.only(
                 top: screenSize.height * 0.01,
