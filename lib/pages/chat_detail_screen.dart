@@ -54,6 +54,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _needsScroll = true;
   Timer _timer;
   bool isExpanded = false;
+  bool seeMore = false;
 
   @override
   void initState() {
@@ -472,25 +473,45 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   margin: EdgeInsets.only(top: 4),
                   backGroundColor: const Color(0xff251F34),
                   child: Container(
-                      constraints: BoxConstraints(
-                        maxWidth: screenSize.width * 0.7,
-                      ),
+                      constraints:
+                          BoxConstraints(maxWidth: screenSize.width * 0.7),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            Text(
-                              snapshot['message'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.white),
-                            )
-                            // ExpandableText(
-                            //   snapshot['message'],
-                            //   maxLines: 6,
-                            //   expandText: 'Read more',
-                            //   collapseText: 'Less',
+                            seeMore
+                                ? Text(
+                                    snapshot['message'],
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                        color: Colors.white),
+                                  )
+                                : Text(
+                                    snapshot['message'],
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        fontSize: textBody1(context),
+                                        color: Colors.white),
+                                  ),
+                            snapshot['message'].length > 200
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        seeMore = !seeMore;
+                                      });
+                                    },
+                                    child: Text(
+                                      seeMore ? 'See less' : 'See more',
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textBody1(context),
+                                          color: Colors.deepPurple[300]),
+                                    ),
+                                  )
+                                : Text('')
                           ],
                         ),
                       )),
@@ -583,29 +604,47 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     margin: EdgeInsets.only(top: 4),
                     child: Container(
                       constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.7,
+                        maxWidth: MediaQuery.of(context).size.width * 0.65,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Wrap(
                           children: [
-                            Text(
-                              snapshot['message'],
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  fontSize: textBody1(context),
-                                  color: Colors.black),
-                            )
-                            // ExpandableText(
-                            //   snapshot['message'],
-                            //   maxLines: 6,
-                            //   expandText: 'Read more',
-                            //   collapseText: 'Less',
-                            //   style: TextStyle(
-                            //       fontFamily: FontNameDefault,
-                            //       fontSize: textBody1(context),
-                            //       color: Colors.black),
-                            // ),
+                            seeMore
+                                ? Text(
+                                    snapshot['message'],
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context),
+                                      // color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    snapshot['message'],
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      fontSize: textBody1(context),
+                                      //   color: Colors.white,
+                                    ),
+                                  ),
+                            snapshot['message'].length > 200
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        seeMore = !seeMore;
+                                      });
+                                    },
+                                    child: Text(
+                                      seeMore ? 'See less' : 'See more',
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textBody1(context),
+                                          color: Colors.deepPurple[300]),
+                                    ),
+                                  )
+                                : Text('')
                           ],
                         ),
                       ),

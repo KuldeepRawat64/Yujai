@@ -98,14 +98,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget chatRoom() {
     var screenSize = MediaQuery.of(context).size;
-    return StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('messages')
           .doc(_user.uid)
           .collection('chatRoom')
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (!snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(),
@@ -115,14 +116,16 @@ class _ChatScreenState extends State<ChatScreen> {
             shrinkWrap: true,
             itemCount: snapshot.data.docs.length,
             itemBuilder: ((context, index) {
-              return StreamBuilder<QuerySnapshot>(
+              return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: snapshot.data.docs[index].reference != null
                     ? snapshot.data.docs[index].reference
                         .collection('messages')
                         .orderBy('timestamp', descending: true)
                         .snapshots()
                     : null,
-                builder: ((context, snapshotM) {
+                builder: ((context,
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshotM) {
                   if (!snapshotM.hasData) {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -167,14 +170,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       ChatDetailScreen(
                                                         photoUrl: snapshot.data
                                                                 .docs[index]
-                                                            ['ownerPhotoUrl'],
+                                                                .data()[
+                                                            'ownerPhotoUrl'],
                                                         name: snapshot.data
                                                                 .docs[index]
-                                                            ['ownerName'],
+                                                                .data()[
+                                                            'ownerName'],
                                                         receiverUid: snapshot
-                                                                .data
-                                                                .docs[index]
-                                                            ['ownerUid'],
+                                                            .data.docs[index]
+                                                            .data()['ownerUid'],
                                                       )));
                                         },
                                         child: Row(
@@ -188,7 +192,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                         NetworkImage(snapshot
                                                                 .data
                                                                 .docs[index]
-                                                            ['ownerPhotoUrl'])),
+                                                                .data()[
+                                                            'ownerPhotoUrl'])),
                                                 Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -202,7 +207,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                   children: [
                                                     Text(
                                                       snapshot.data.docs[index]
-                                                          ['ownerName'],
+                                                          .data()['ownerName'],
                                                       style: TextStyle(
                                                         fontFamily:
                                                             FontNameDefault,
@@ -217,7 +222,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       height: 4.0,
                                                     ),
                                                     snapshotM.data.docs[0]
-                                                                ['message'] !=
+                                                                    .data()[
+                                                                'message'] !=
                                                             null
                                                         ? Container(
                                                             width: screenSize
@@ -226,7 +232,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                             child: Text(
                                                               snapshotM.data
                                                                       .docs[0]
-                                                                  ['message'],
+                                                                      .data()[
+                                                                  'message'],
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -274,8 +281,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                             ),
                                             Row(
                                               children: [
-                                                snapshotM.data.docs[0]
-                                                            ['timestamp'] !=
+                                                snapshotM.data.docs[0].data()[
+                                                            'timestamp'] !=
                                                         null
                                                     ? Text(
                                                         DateFormatter(AppLocalizations.of(
@@ -283,7 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                                     .getVerboseDateTimeRepresentation(snapshotM
                                                                         .data
                                                                         .docs[0]
-                                                                            [
+                                                                        .data()[
                                                                             'timestamp']
                                                                         .toDate()) !=
                                                                 null
@@ -294,7 +301,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                                     snapshotM
                                                                         .data
                                                                         .docs[0]
-                                                                            [
+                                                                        .data()[
                                                                             'timestamp']
                                                                         .toDate())
                                                             : '',
