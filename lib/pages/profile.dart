@@ -701,7 +701,185 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
+              _user.accountType == 'Military'
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _user.rank.isNotEmpty &&
+                                    _user.rank != null &&
+                                    _user.rank != 'Select a rank'
+                                ? Row(
+                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Rank : ',
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      Text(
+                                        _user.rank,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            _user.medal != null &&
+                                    _user.medal.isNotEmpty &&
+                                    _user.medal != 'Select a medal'
+                                ? Row(
+                                    //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Medal : ',
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      Text(
+                                        _user.medal,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            _user.regiment != null &&
+                                    _user.regiment.isNotEmpty &&
+                                    _user.regiment != 'Select a regiment'
+                                ? Row(
+                                    //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Regiment : ',
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      Text(
+                                        _user.regiment,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            _user.command != null &&
+                                    _user.command != 'Select a command' &&
+                                    _user.command.isNotEmpty
+                                ? Row(
+                                    //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Command : ',
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      Text(
+                                        _user.command,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            _user.department != null &&
+                                    _user.department.isNotEmpty &&
+                                    _user.department != 'Select a department'
+                                ? Row(
+                                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Department : ',
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                      Text(
+                                        _user.department,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: screenSize.height * 0.01,
+                            ),
+                            _user.bio.isNotEmpty
+                                ? Column(
+                                    children: [
+                                      Text(
+                                        'About',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.black87,
+                                          fontSize: textHeader(context),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: screenSize.height * 0.01,
+                                      ),
+                                      Text(
+                                        _user.bio,
+                                        style: TextStyle(
+                                            fontFamily: FontNameDefault,
+                                            color: Colors.black54,
+                                            fontSize: textBody1(context)),
+                                      ),
+                                    ],
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: screenSize.width * 0.25,
+                                      vertical: screenSize.height * 0.01,
+                                    ),
+                                    child: Text(
+                                      'Add your military info',
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontFamily: FontNameDefault,
+                                          color: Colors.grey,
+                                          fontSize: textBody1(context)),
+                                    ),
+                                  ),
+
+                            //  Divider(),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenSize.width * 0.25,
+                        vertical: screenSize.height * 0.01,
+                      ),
+                      child: Text(
+                        'Add your basic info and bio',
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontFamily: FontNameDefault,
+                            color: Colors.grey,
+                            fontSize: textBody1(context)),
+                      ),
+                    ),
               // : Container(),
             ],
           ),
@@ -1617,169 +1795,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
         //     height: 0.0,
         //   ),
         // ),
-        _user.accountType == 'Military'
+        _user.bio.isNotEmpty
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _user.rank.isNotEmpty &&
-                              _user.rank != null &&
-                              _user.rank != 'Select a Rank'
-                          ? Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Rank : ',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context)),
-                                ),
-                                Text(
-                                  _user.rank,
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black54,
-                                      fontSize: textBody1(context)),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.medal != null &&
-                              _user.medal.isNotEmpty &&
-                              _user.medal != 'Select a Medal'
-                          ? Row(
-                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Medal : ',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context)),
-                                ),
-                                Text(
-                                  _user.medal,
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black54,
-                                      fontSize: textBody1(context)),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.regiment != null &&
-                              _user.regiment.isNotEmpty &&
-                              _user.regiment != 'Select a Regiment'
-                          ? Row(
-                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Regiment : ',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context)),
-                                ),
-                                Text(
-                                  _user.regiment,
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black54,
-                                      fontSize: textBody1(context)),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.command != null &&
-                              _user.command != 'Select a Command' &&
-                              _user.command.isNotEmpty
-                          ? Row(
-                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Command : ',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context)),
-                                ),
-                                Text(
-                                  _user.command,
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black54,
-                                      fontSize: textBody1(context)),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      _user.department != null &&
-                              _user.department.isNotEmpty &&
-                              _user.department != 'Select a Department'
-                          ? Row(
-                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Department : ',
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      fontSize: textBody1(context)),
-                                ),
-                                Text(
-                                  _user.department,
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black54,
-                                      fontSize: textBody1(context)),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      SizedBox(
-                        height: screenSize.height * 0.01,
-                      ),
-                      //  Divider(),
-                    ],
+                  Text(
+                    'About',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: FontNameDefault,
+                      color: Colors.black87,
+                      fontSize: textHeader(context),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenSize.height * 0.01,
+                  ),
+                  Text(
+                    _user.bio,
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        color: Colors.black54,
+                        fontSize: textBody1(context)),
                   ),
                 ],
               )
-            : _user.bio.isNotEmpty
-                ? Column(
-                    children: [
-                      Text(
-                        'About',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: FontNameDefault,
-                          color: Colors.black87,
-                          fontSize: textHeader(context),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenSize.height * 0.01,
-                      ),
-                      Text(
-                        _user.bio,
-                        style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            color: Colors.black54,
-                            fontSize: textBody1(context)),
-                      ),
-                    ],
-                  )
-                : Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenSize.width * 0.25,
-                      vertical: screenSize.height * 0.01,
-                    ),
-                    child: Text(
-                      'Add your basic info and bio',
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontFamily: FontNameDefault,
-                          color: Colors.grey,
-                          fontSize: textBody1(context)),
-                    ),
-                  ),
+            : Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenSize.width * 0.25,
+                  vertical: screenSize.height * 0.01,
+                ),
+                child: Text(
+                  'Add your basic info and bio',
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontFamily: FontNameDefault,
+                      color: Colors.grey,
+                      fontSize: textBody1(context)),
+                ),
+              ),
         SizedBox(
           height: screenSize.height * 0.02,
         ),

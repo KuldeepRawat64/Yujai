@@ -52,7 +52,7 @@ class _EditProfileScreenState extends State<EditCompanyContactForm> {
       _firestore.collection('users').doc(currentUser.uid).update({
         "email": _emailController.text,
         "phone": _phoneController.text,
-        "portfolio": _websiteController.text,
+        "website": _websiteController.text,
       });
       _formKey.currentState.save();
       Navigator.pop(context);

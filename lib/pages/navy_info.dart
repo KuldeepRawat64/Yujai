@@ -277,7 +277,8 @@ class _NavyInfoState extends State<NavyInfo> {
                           });
                         },
                         validator: (value) {
-                          if (value == null) return 'Please select a rank';
+                          if (value == null || value == 'Select a rank')
+                            return 'Please select a rank';
                           return null;
                         },
                       ),
@@ -322,7 +323,8 @@ class _NavyInfoState extends State<NavyInfo> {
                           });
                         },
                         validator: (value) {
-                          if (value == null) return 'Please select a command';
+                          if (value == null || value == 'Select a command')
+                            return 'Please select a command';
                           return null;
                         },
                       ),
@@ -367,7 +369,8 @@ class _NavyInfoState extends State<NavyInfo> {
                           });
                         },
                         validator: (value) {
-                          if (value == null) return 'Please select a regiment';
+                          if (value == null || value == 'Select a regiment')
+                            return 'Please select a regiment';
                           return null;
                         },
                       ),
@@ -412,7 +415,7 @@ class _NavyInfoState extends State<NavyInfo> {
                           });
                         },
                         validator: (value) {
-                          if (value == null)
+                          if (value == null || value == 'Select a department')
                             return 'Please select a department';
                           return null;
                         },

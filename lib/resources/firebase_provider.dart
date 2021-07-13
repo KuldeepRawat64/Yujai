@@ -1838,7 +1838,7 @@ class FirebaseProvider {
     await _firestore
         .collection('users')
         .doc(followingUser.uid)
-        .collection('followers')
+        .collection('following')
         .doc(currentUserId)
         .set(following.toMap(following));
 
@@ -1852,7 +1852,7 @@ class FirebaseProvider {
     return _firestore
         .collection('users')
         .doc(currentUserId)
-        .collection('following')
+        .collection('followers')
         .doc(followingUser.uid)
         .set(follower.toMap(follower));
   }

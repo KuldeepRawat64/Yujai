@@ -1498,6 +1498,16 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
     var screenSize = MediaQuery.of(context).size;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
+        padding: EdgeInsets.only(
+          top: screenSize.height * 0.02,
+          bottom: screenSize.height * 0.02,
+        ),
+        child: Container(
+          height: screenSize.height * 0.01,
+          color: Colors.grey[200],
+        ),
+      ),
+      Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
         child: Text(
           'About us',
@@ -1524,8 +1534,15 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
           ],
         ),
       ),
-      SizedBox(
-        height: screenSize.height * 0.02,
+      Padding(
+        padding: EdgeInsets.only(
+          top: screenSize.height * 0.02,
+          bottom: screenSize.height * 0.02,
+        ),
+        child: Container(
+          height: screenSize.height * 0.01,
+          color: Colors.grey[200],
+        ),
       ),
       Padding(
         padding: EdgeInsets.only(left: screenSize.width / 30),
@@ -1820,6 +1837,16 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                   )
                 : Container()
           ],
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.only(
+          top: screenSize.height * 0.02,
+          bottom: screenSize.height * 0.02,
+        ),
+        child: Container(
+          height: screenSize.height * 0.01,
+          color: Colors.grey[200],
         ),
       ),
       InkWell(
