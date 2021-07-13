@@ -465,7 +465,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget armyImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.22,
+      height: screenSize.height * 0.26,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
@@ -482,7 +482,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget airforceImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.22,
+      height: screenSize.height * 0.28,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
@@ -499,7 +499,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget navyImage() {
     var screenSize = MediaQuery.of(context).size;
     return Container(
-      height: screenSize.height * 0.3,
+      height: screenSize.height * 0.28,
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: DecoratedBox(
@@ -570,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: EdgeInsets.only(
                 left: screenSize.width / 30,
-                top: screenSize.height * 0.155,
+                top: screenSize.height * 0.2,
               ),
               child: InkWell(
                 onTap: () {
