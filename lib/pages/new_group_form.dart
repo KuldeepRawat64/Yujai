@@ -279,6 +279,7 @@ class _NewGroupFormState extends State<NewGroupForm> {
                   Padding(
                     padding: EdgeInsets.only(top: screenSize.height * 0.02),
                     child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       maxLines: 3,
                       minLines: 3,
                       style: TextStyle(

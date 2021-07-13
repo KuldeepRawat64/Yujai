@@ -132,6 +132,7 @@ class _NewPostFormState extends State<NewPostForm> {
                   right: screenSize.width * 0.01,
                   top: screenSize.height * 0.01),
               child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 autofocus: true,
                 maxLength: 350,
                 minLines: 1,

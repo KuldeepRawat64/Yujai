@@ -162,6 +162,7 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
                 //   height: screenSize.height * 0.02,
                 // ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   style: TextStyle(
                     fontFamily: FontNameDefault,
                     fontSize: textSubTitle(context),
@@ -378,7 +379,7 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
                   height: screenSize.height * 0.02,
                 ),
                 TextFormField(
-                  textCapitalization: TextCapitalization.words,
+                  textCapitalization: TextCapitalization.characters,
                   onFieldSubmitted: (value) {},
                   validator: (value) {
                     if (value.isEmpty ||

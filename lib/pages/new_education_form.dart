@@ -156,6 +156,7 @@ class _EditProfileScreenState extends State<NewEducationForm> {
                       height: screenSize.height * 0.02,
                     ),
                     TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       autocorrect: true,
                       style: TextStyle(
                         fontFamily: FontNameDefault,
@@ -195,6 +196,7 @@ class _EditProfileScreenState extends State<NewEducationForm> {
                       height: screenSize.height * 0.02,
                     ),
                     TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       autocorrect: true,
                       style: TextStyle(
                         fontFamily: FontNameDefault,

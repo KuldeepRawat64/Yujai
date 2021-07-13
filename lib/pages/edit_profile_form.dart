@@ -169,6 +169,7 @@ class _EditProfileScreenState extends State<EditProfileForm> {
                   height: screenSize.height * 0.02,
                 ),
                 TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   autocorrect: true,
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
@@ -236,7 +237,7 @@ class _EditProfileScreenState extends State<EditProfileForm> {
                     ),
                     filled: true,
                     fillColor: Colors.grey[100],
-                    hintText: 'Email address',
+                    //   hintText: 'Email address',
                     labelText: 'Email address',
                     labelStyle: TextStyle(
                       fontFamily: FontNameDefault,

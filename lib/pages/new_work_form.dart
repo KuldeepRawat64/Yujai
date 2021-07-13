@@ -260,6 +260,7 @@ class _NewWorkFormState extends State<NewWorkForm> {
                 bottom: screenSize.height * 0.01,
               ),
               child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textSubTitle(context),

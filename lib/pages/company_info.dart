@@ -231,7 +231,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
                               EdgeInsets.only(bottom: screenSize.height * 0.02),
                           child: TextFormField(
                             //   onFieldSubmitted: (value) {},
-                            textCapitalization: TextCapitalization.words,
+                            textCapitalization: TextCapitalization.characters,
                             validator: (value) {
                               if (value.isEmpty ||
                                   !RegExp(r"^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$")

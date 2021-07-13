@@ -97,6 +97,7 @@ class _NewPollFormState extends State<NewPollForm> {
                     bottom: screenSize.height * 0.02,
                   ),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     autofocus: true,
                     maxLength: 350,
                     minLines: 1,
@@ -148,6 +149,7 @@ class _NewPollFormState extends State<NewPollForm> {
                     bottom: screenSize.height * 0.01,
                   ),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     maxLength: 25,
                     style: TextStyle(
                       fontFamily: FontNameDefault,
@@ -201,6 +203,7 @@ class _NewPollFormState extends State<NewPollForm> {
                     bottom: screenSize.height * 0.01,
                   ),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     maxLength: 25,
                     style: TextStyle(
                       fontFamily: FontNameDefault,
@@ -254,6 +257,7 @@ class _NewPollFormState extends State<NewPollForm> {
                     bottom: screenSize.height * 0.01,
                   ),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     maxLength: 25,
                     style: TextStyle(
                       fontFamily: FontNameDefault,
@@ -302,6 +306,7 @@ class _NewPollFormState extends State<NewPollForm> {
                     bottom: screenSize.height * 0.01,
                   ),
                   child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     maxLength: 25,
                     style: TextStyle(
                       fontFamily: FontNameDefault,

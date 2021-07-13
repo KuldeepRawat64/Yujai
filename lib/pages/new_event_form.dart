@@ -182,6 +182,7 @@ class _NewEventFormState extends State<NewEventForm> {
                 bottom: screenSize.height * 0.01,
               ),
               child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textSubTitle(context),
@@ -677,6 +678,7 @@ class _NewEventFormState extends State<NewEventForm> {
                 bottom: screenSize.height * 0.01,
               ),
               child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
                 keyboardType: TextInputType.multiline,
                 minLines: 1,
                 maxLines: 3,
@@ -720,6 +722,7 @@ class _NewEventFormState extends State<NewEventForm> {
                 bottom: screenSize.height * 0.01,
               ),
               child: TextFormField(
+                textCapitalization: TextCapitalization.words,
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textSubTitle(context),
