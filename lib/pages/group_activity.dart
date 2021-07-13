@@ -264,7 +264,8 @@ class _GroupActivityState extends State<GroupActivity> {
                         gid: widget.gid,
                         name: widget.name)));
           } else {
-            return const Text('Empty data');
+            return NoContent('No posts', 'assets/images/imageplaceholder.png',
+                'You have not uploaded any posts yet', '');
           }
         } else {
           return Text('State: ${snapshot.connectionState}');

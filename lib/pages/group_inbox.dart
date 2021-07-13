@@ -6,6 +6,7 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
 import 'package:Yujai/widgets/list_user.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -183,28 +184,30 @@ class _GroupInboxState extends State<GroupInbox> {
           .where('postOwnerUid', isEqualTo: widget.currentuser.uid)
           .orderBy('timestamp', descending: true)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          //     if (snapshot.connectionState == ConnectionState.done) {
-          return SizedBox(
-              height: screenSize.height,
-              child: ListView.builder(
-                  //   controller: _scrollController,
-                  //shrinkWrap: true,
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => ListItemInbox(
-                        documentSnapshot: snapshot.data.docs[index],
-                        index: index,
-                      ))));
-          //   } else {
-          //     return Center(
-          //       child: shimmer(),
-          //      );
-          //      }
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                //   controller: _scrollController,
+                //shrinkWrap: true,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) => ListItemInbox(
+                      documentSnapshot: snapshot.data.docs[index],
+                      index: index,
+                    )));
+          } else {
+            return NoContent(
+                'Empty inbox', 'assets/images/notification.png', '', '');
+          }
         } else {
-          return Center(
-            child: shimmer(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
