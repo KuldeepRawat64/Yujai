@@ -34,6 +34,7 @@ class _ArmyInfoState extends State<ArmyInfo> {
   bool isChecked = false;
   String selectedMedal;
   List medals = [
+    'Select a medal',
     'Sena Medal',
     'Nausena Medal',
     'Vayusena Medal',
@@ -72,6 +73,7 @@ class _ArmyInfoState extends State<ArmyInfo> {
     'Commonwealth Awards',
   ];
   List ranks = [
+    'Select a rank',
     'Field Marshal',
     'General',
     'Lieutenant general',
@@ -84,7 +86,8 @@ class _ArmyInfoState extends State<ArmyInfo> {
     'Lieutenant',
   ];
   List commands = [
-    'Army Training Command',
+    'Select a command',
+    'Navy Training Command',
     'Central Command',
     'Eastern Command',
     'Northern Command',
@@ -93,13 +96,15 @@ class _ArmyInfoState extends State<ArmyInfo> {
     'Western Command'
   ];
   List regiments = [
+    'Select a regiment',
     'Armoured Regiments',
     'Infantry Regiments',
     'Regiments of Artillery',
-    'Corps of Army Air Defence',
+    'Corps of Navy Air Defence',
     'Corps of Engineers'
   ];
   List departments = [
+    'Select a department',
     'Departments of Defence',
     'Department of Military Affairs',
     'Department of Defence Production',

@@ -1628,7 +1628,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _user.rank != null &&
                               _user.rank != 'Select a Rank'
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Rank : ',
@@ -1650,7 +1650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _user.medal.isNotEmpty &&
                               _user.medal != 'Select a Medal'
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Medal : ',
@@ -1672,7 +1672,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _user.regiment.isNotEmpty &&
                               _user.regiment != 'Select a Regiment'
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Regiment : ',
@@ -1694,7 +1694,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _user.command != 'Select a Command' &&
                               _user.command.isNotEmpty
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Command : ',
@@ -1716,7 +1716,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _user.department.isNotEmpty &&
                               _user.department != 'Select a Department'
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Department : ',

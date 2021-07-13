@@ -31,6 +31,7 @@ class _NavyInfoState extends State<NavyInfo> {
   bool isChecked = false;
   String selectedMedal;
   List medals = [
+    'Select a medal',
     'Sena Medal',
     'Nausena Medal',
     'Vayusena Medal',
@@ -69,6 +70,7 @@ class _NavyInfoState extends State<NavyInfo> {
     'Commonwealth Awards',
   ];
   List ranks = [
+    'Select a rank',
     'Field Marshal',
     'General',
     'Lieutenant general',
@@ -81,6 +83,7 @@ class _NavyInfoState extends State<NavyInfo> {
     'Lieutenant',
   ];
   List commands = [
+    'Select a command',
     'Navy Training Command',
     'Central Command',
     'Eastern Command',
@@ -90,6 +93,7 @@ class _NavyInfoState extends State<NavyInfo> {
     'Western Command'
   ];
   List regiments = [
+    'Select a regiment',
     'Armoured Regiments',
     'Infantry Regiments',
     'Regiments of Artillery',
@@ -97,6 +101,7 @@ class _NavyInfoState extends State<NavyInfo> {
     'Corps of Engineers'
   ];
   List departments = [
+    'Select a department',
     'Departments of Defence',
     'Department of Military Affairs',
     'Department of Defence Production',
@@ -145,7 +150,7 @@ class _NavyInfoState extends State<NavyInfo> {
         "startService": _startServiceController.text,
         "endService": _endServiceController.text,
         "serviceStatus": isChecked ? 'Currently serving' : 'Retired',
-        "medal": selectedMedal ?? '',
+        "medal": selectedMedal,
       });
       _formKey.currentState.save();
       Navigator.pop(context);
@@ -157,7 +162,7 @@ class _NavyInfoState extends State<NavyInfo> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
           actions: [
             Padding(

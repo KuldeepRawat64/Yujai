@@ -33,6 +33,7 @@ class _AirforceInfoState extends State<AirforceInfo> {
   bool isChecked = false;
   String selectedMedal;
   List medals = [
+    'Select a medal',
     'Sena Medal',
     'Nausena Medal',
     'Vayusena Medal',
@@ -71,6 +72,7 @@ class _AirforceInfoState extends State<AirforceInfo> {
     'Commonwealth Awards',
   ];
   List ranks = [
+    'Select a rank',
     'Field Marshal',
     'General',
     'Lieutenant general',
@@ -83,7 +85,8 @@ class _AirforceInfoState extends State<AirforceInfo> {
     'Lieutenant',
   ];
   List commands = [
-    'Air force Training Command',
+    'Select a command',
+    'Navy Training Command',
     'Central Command',
     'Eastern Command',
     'Northern Command',
@@ -92,11 +95,20 @@ class _AirforceInfoState extends State<AirforceInfo> {
     'Western Command'
   ];
   List regiments = [
+    'Select a regiment',
     'Armoured Regiments',
     'Infantry Regiments',
     'Regiments of Artillery',
-    'Corps of Army Air Defence',
+    'Corps of Navy Air Defence',
     'Corps of Engineers'
+  ];
+  List departments = [
+    'Select a department',
+    'Departments of Defence',
+    'Department of Military Affairs',
+    'Department of Defence Production',
+    'Department of Defence Research and Development',
+    'Department of Ex-Servicemen Welfare'
   ];
   var _repository = Repository();
 
