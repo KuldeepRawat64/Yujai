@@ -41,6 +41,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
   final Set<Marker> _markers = {};
   GeoPoint geopint;
   String selectedSubject;
+  bool seeMore = false;
 
   @override
   void initState() {
@@ -698,13 +699,71 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
               SizedBox(
                 height: 10.0,
               ),
-              Text(
-                widget.documentSnapshot['description'],
-                style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    color: Colors.black54,
-                    fontSize: textBody1(context)),
-              ),
+              widget.documentSnapshot['description'].toString().length < 350
+                  ? Text(
+                      widget.documentSnapshot['description'],
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontSize: textSubTitle(context)),
+                    )
+                  : seeMore
+                      ? Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot['description'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: textSubTitle(context)),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  seeMore = false;
+                                });
+                              },
+                              child: Text(
+                                'See less',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            )
+                          ],
+                        )
+                      : Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot['description'],
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textBody1(context),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  seeMore = true;
+                                });
+                              },
+                              child: Text(
+                                'See more',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).accentColor),
+                              ),
+                            )
+                          ],
+                        ),
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: screenSize.width * 0.2,

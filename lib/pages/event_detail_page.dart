@@ -243,46 +243,51 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         )
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: screenSize.height * 0.01,
-                          left: screenSize.width * 0.01,
-                          right: screenSize.width * 0.01),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyWebView(
-                                        title: ' Registration',
-                                        selectedUrl: widget
-                                            .documentSnapshot['ticketWebsite'],
-                                      )));
-                        },
-                        child: Container(
-                            height: screenSize.height * 0.07,
-                            width: screenSize.width * 0.8,
-                            decoration: ShapeDecoration(
-                                color: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0))),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.all(screenSize.height * 0.015),
-                              child: Center(
-                                child: Text(
-                                  'Register',
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textAppTitle(context),
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            )),
-                      ),
-                    )
+                    widget.documentSnapshot['ticketWebsite'] != '' &&
+                            widget.documentSnapshot['ticketWebsite'] != null
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: screenSize.height * 0.01,
+                                left: screenSize.width * 0.01,
+                                right: screenSize.width * 0.01),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyWebView(
+                                              title: ' Registration',
+                                              selectedUrl:
+                                                  widget.documentSnapshot[
+                                                      'ticketWebsite'],
+                                            )));
+                              },
+                              child: Container(
+                                  height: screenSize.height * 0.07,
+                                  width: screenSize.width * 0.8,
+                                  decoration: ShapeDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(60.0))),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(
+                                        screenSize.height * 0.015),
+                                    child: Center(
+                                      child: Text(
+                                        'Register',
+                                        style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textAppTitle(context),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                          )
+                        : Container()
                   ],
                 ),
               ),
@@ -367,10 +372,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           : Wrap(
                               children: [
                                 Text(
-                                  widget.documentSnapshot['description']
-                                      .toString()
-                                      .substring(350),
-                                  //  maxLines: 5,
+                                  widget.documentSnapshot['description'],
+                                  maxLines: 5,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontFamily: FontNameDefault,
