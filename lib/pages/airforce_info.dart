@@ -160,7 +160,7 @@ class _AirforceInfoState extends State<AirforceInfo> {
     var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xfff6f6f6),
+        backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
           elevation: 0.5,
           actions: [
@@ -412,16 +412,16 @@ class _AirforceInfoState extends State<AirforceInfo> {
                         },
                       ),
                     ),
-                    SizedBox(
-                      height: screenSize.height * 0.05,
-                    ),
-                    IconButton(
-                        onPressed: submit,
-                        icon: Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          color: Colors.black54,
-                          size: 35.0,
-                        )),
+                    // SizedBox(
+                    //   height: screenSize.height * 0.05,
+                    // ),
+                    // IconButton(
+                    //     onPressed: submit,
+                    //     icon: Icon(
+                    //       Icons.keyboard_arrow_right_outlined,
+                    //       color: Colors.black54,
+                    //       size: 35.0,
+                    //     )),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

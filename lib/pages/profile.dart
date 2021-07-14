@@ -818,34 +818,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ],
                                   )
-                                : Container(),
-                            SizedBox(
-                              height: screenSize.height * 0.01,
-                            ),
-                            _user.bio.isNotEmpty
-                                ? Column(
-                                    children: [
-                                      Text(
-                                        'About',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.black87,
-                                          fontSize: textHeader(context),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: screenSize.height * 0.01,
-                                      ),
-                                      Text(
-                                        _user.bio,
-                                        style: TextStyle(
-                                            fontFamily: FontNameDefault,
-                                            color: Colors.black54,
-                                            fontSize: textBody1(context)),
-                                      ),
-                                    ],
-                                  )
                                 : Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: screenSize.width * 0.25,
@@ -1798,18 +1770,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _user.bio.isNotEmpty
             ? Column(
                 children: [
-                  Text(
-                    'About',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: FontNameDefault,
-                      color: Colors.black87,
-                      fontSize: textHeader(context),
-                    ),
-                  ),
-                  SizedBox(
-                    height: screenSize.height * 0.01,
-                  ),
+                  // Text(
+                  //   'About',
+                  //   style: TextStyle(
+                  //     fontWeight: FontWeight.bold,
+                  //     fontFamily: FontNameDefault,
+                  //     color: Colors.black87,
+                  //     fontSize: textHeader(context),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: screenSize.height * 0.01,
+                  // ),
                   Text(
                     _user.bio,
                     style: TextStyle(

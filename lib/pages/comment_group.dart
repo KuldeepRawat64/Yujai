@@ -169,8 +169,7 @@ class _CommentsScreenGroupState extends State<CommentsScreenGroup> {
     widget.documentReference
         .collection('comments')
         .doc(snapshot['postId'])
-        .delete()
-        .then((value) => Navigator.pop(context));
+        .delete();
   }
 
   void addCommentToActivityFeed(
@@ -354,6 +353,7 @@ class _CommentsScreenGroupState extends State<CommentsScreenGroup> {
                           child: GestureDetector(
                             onTap: () {
                               deleteComment(snapshot);
+                              Navigator.pop(context);
                             },
                             child: Container(
                               height: screenSize.height * 0.055,

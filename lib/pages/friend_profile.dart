@@ -2036,7 +2036,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                     SizedBox(
                       height: screenSize.height * 0.02,
                     ),
-                    _user.rank.isNotEmpty && _user.rank != 'Select a Rank'
+                    _user.rank.isNotEmpty && _user.rank != 'Select a rank'
                         ? Wrap(
                             children: [
                               Text(
@@ -2061,7 +2061,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                         : Container(),
                     _user.medal != null &&
                             _user.medal.isNotEmpty &&
-                            _user.medal != 'Select a Medal'
+                            _user.medal != 'Select a medal'
                         ? Wrap(
                             children: [
                               Text(
@@ -2085,7 +2085,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                           )
                         : Container(),
                     _user.regiment.isNotEmpty &&
-                            _user.regiment != 'Select a Regiment'
+                            _user.regiment != 'Select a regiment'
                         ? Wrap(
                             children: [
                               Text(
@@ -2109,7 +2109,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                           )
                         : Container(),
                     _user.command.isNotEmpty &&
-                            _user.command != 'Select a Command'
+                            _user.command != 'Select a command'
                         ? Wrap(
                             children: [
                               Text(
@@ -2133,7 +2133,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                           )
                         : Container(),
                     _user.department.isNotEmpty &&
-                            _user.department != 'Select a Department'
+                            _user.department != 'Select a department'
                         ? Wrap(
                             children: [
                               Text(
