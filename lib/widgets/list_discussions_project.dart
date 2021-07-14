@@ -118,7 +118,7 @@ class _ListItemDiscussionsProjectState
     final Email email = Email(
       body: _bodyController.text +
           '\n Owner ID : ${widget.documentSnapshot.data()['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot.data()['postId']}' +
+          '\ Post ID : ${widget.documentSnapshot.data()['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],

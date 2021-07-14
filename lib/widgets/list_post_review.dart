@@ -53,7 +53,7 @@ class _ListPostReviewState extends State<ListPostReview> {
     final Email email = Email(
       body: _bodyController.text +
           '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\ Post ID : ${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],

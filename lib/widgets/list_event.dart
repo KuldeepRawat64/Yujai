@@ -46,7 +46,7 @@ class _ListItemEventState extends State<ListItemEvent> {
   Future<void> send() async {
     final Email email = Email(
       body: '\n Owner ID : ${widget.documentSnapshot['ownerUid']}' +
-          '\ Post ID : n${widget.documentSnapshot['postId']}' +
+          '\ Post ID : ${widget.documentSnapshot['postId']}' +
           '\n Sent from Yujai',
       subject: selectedSubject,
       recipients: ['animusitmanagement@gmail.com'],
