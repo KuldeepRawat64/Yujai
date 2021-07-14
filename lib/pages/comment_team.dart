@@ -300,11 +300,18 @@ class _CommentsScreenTeamState extends State<CommentsScreenTeam> {
                     fontFamily: FontNameDefault,
                   )),
             ),
-            trailing: IconButton(
-                onPressed: () {
-                  deleteDialog(snapshot);
-                },
-                icon: Icon(Icons.delete_outline)),
+            trailing: widget.user.uid == widget.snapshot['ownerUid'] ||
+                    widget.team.currentUserUid == widget.user.uid
+                ? IconButton(
+                    onPressed: () {
+                      deleteDialog(snapshot);
+                    },
+                    icon: Icon(Icons.delete_outline))
+                : IconButton(
+                    onPressed: () {
+                      showReport(snapshot);
+                    },
+                    icon: Icon(Icons.report_outlined)),
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),

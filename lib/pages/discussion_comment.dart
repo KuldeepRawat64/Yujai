@@ -10,6 +10,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:uuid/uuid.dart';
 
@@ -42,12 +43,40 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
   ScrollController _scrollController = ScrollController();
   String actId = Uuid().v4();
   String commentId = Uuid().v4();
+  String selectedSubject;
 
   @override
   void dispose() {
     super.dispose();
     _commentController?.dispose();
     _scrollController?.dispose();
+  }
+
+  Future<void> send() async {
+    final Email email = Email(
+      body: '\n Owner ID : ${widget.snapshot['ownerUid']}' +
+          '\ Post ID : ${widget.snapshot['postId']}' +
+          '\n Sent from Yujai',
+      subject: selectedSubject,
+      recipients: ['animusitmanagement@gmail.com'],
+      //attachmentPaths: [widget.documentSnapshot.data['imgUrl']],
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      platformResponse = error.toString();
+    }
+
+    if (!mounted) return;
+    print('$platformResponse');
+    // _scaffoldKey.currentState.showSnackBar(SnackBar(
+    //   content: Text(platformResponse),
+    // ));
+    Navigator.pop(context);
   }
 
   @override
@@ -234,6 +263,149 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
     );
   }
 
+  showReport(DocumentSnapshot snapshot) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: [
+              SimpleDialogOption(
+                child: Text(
+                  'Report this comment',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                onPressed: () {
+                  //    Navigator.pop(context);
+                  _showFormDialog(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Text(
+                  'Cancel',
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  _showFormDialog(BuildContext context) async {
+    var screenSize = MediaQuery.of(context).size;
+    return await showDialog(
+        context: context,
+        builder: ((BuildContext context) {
+          return StatefulBuilder(builder: ((BuildContext context, setState) {
+            return AlertDialog(
+              content: SizedBox(
+                height: screenSize.height * 0.5,
+                child: Wrap(
+                  //  mainAxisSize: MainAxisSize.min,
+                  //  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Report',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    RadioListTile(
+                        title: Text('Spam'),
+                        groupValue: selectedSubject,
+                        value: 'Spam',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text('Pornographic'),
+                        groupValue: selectedSubject,
+                        value: 'Pornographic',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text('Misleading'),
+                        groupValue: selectedSubject,
+                        value: 'Misleading',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text('Hacked'),
+                        groupValue: selectedSubject,
+                        value: 'Hacked',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    RadioListTile(
+                        title: Text('Offensive'),
+                        groupValue: selectedSubject,
+                        value: 'Offensive',
+                        onChanged: (val) {
+                          setState(() {
+                            selectedSubject = val;
+                          });
+                        }),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: screenSize.height * 0.01,
+                    //       horizontal: screenSize.width / 30),
+                    //   child: Text('Comment'),
+                    // ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //       vertical: screenSize.height * 0.01,
+                    //       horizontal: screenSize.width / 30),
+                    //   child: TextFormField(
+                    //     controller: _bodyController,
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenSize.height * 0.01,
+                          horizontal: screenSize.width / 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel',
+                                style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              send().then((value) => Navigator.pop(context));
+                            },
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                  color: Colors.deepPurpleAccent,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }));
+        }));
+  }
+
   deleteDialog(DocumentSnapshot snapshot) {
     var screenSize = MediaQuery.of(context).size;
     return showDialog(
@@ -381,7 +553,11 @@ class _DiscussionCommentsState extends State<DiscussionComments> {
                       deleteDialog(snapshot);
                     },
                     icon: Icon(Icons.delete_outline))
-                : Text(''),
+                : IconButton(
+                    onPressed: () {
+                      showReport(snapshot);
+                    },
+                    icon: Icon(Icons.report_outlined)),
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
