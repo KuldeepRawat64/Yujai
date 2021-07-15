@@ -278,7 +278,7 @@ class _CreateTeamState extends State<CreateTeam> {
                     height: screenSize.height * 0.2,
                   ),
                   Image.asset(
-                    'assets/images/4380.jpg',
+                    'assets/images/4380.png',
                     height: screenSize.height * 0.27,
                     width: screenSize.width * 0.9,
                     cacheHeight: 200,

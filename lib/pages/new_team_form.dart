@@ -153,11 +153,10 @@ class _NewTeamFormState extends State<NewTeamForm> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Image.asset(
-                    'assets/images/4380.jpg',
-                    height: screenSize.height * 0.27,
-                    width: screenSize.width * 0.9,
-                    cacheHeight: 200,
-                    cacheWidth: 300,
+                    'assets/images/4380.png',
+                    height: screenSize.height * 0.3,
+                    //   width: screenSize.width * 0.7,
+                    fit: BoxFit.contain,
                   ),
                   SizedBox(
                     height: screenSize.height * 0.02,
