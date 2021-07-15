@@ -428,7 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return companyBody();
     } else if (_user.accountType == 'Military') {
       return userBody();
-    } else if (_user.accountType == '') {
+    } else if (_user.accountType == 'Professional') {
       return userBody();
     } else {
       return userBody();
