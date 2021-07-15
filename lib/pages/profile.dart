@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //Offset state <-------------------------------------
   double offset = 0.0;
   FlowEvent experience;
-
+  bool seeMore = false;
   @override
   void initState() {
     super.initState();
@@ -951,16 +951,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   top: screenSize.height * 0.01,
                   bottom: screenSize.height * 0.01,
                 ),
-                child: Wrap(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _user.bio,
-                      style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textBody1(context),
-                        color: Colors.black54,
-                      ),
-                    ),
+                    seeMore
+                        ? Linkify(
+                            onOpen: (link) async {
+                              if (await canLaunch(link.url)) {
+                                await launch(link.url);
+                              } else {
+                                throw 'Could not launch $link';
+                              }
+                            },
+                            text: _user.bio,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textBody1(context),
+                              color: Colors.black54,
+                            ),
+                          )
+                        : Linkify(
+                            onOpen: (link) async {
+                              if (await canLaunch(link.url)) {
+                                await launch(link.url);
+                              } else {
+                                throw 'Could not launch $link';
+                              }
+                            },
+                            text: _user.bio,
+                            maxLines: 6,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              fontSize: textBody1(context),
+                              color: Colors.black54,
+                            ),
+                          ),
+                    _user.bio.length > 250
+                        ? InkWell(
+                            onTap: () {
+                              setState(() {
+                                seeMore = !seeMore;
+                              });
+                            },
+                            child: Text(
+                              !seeMore ? 'Read more...' : 'See less',
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                //  fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                                fontSize: textSubTitle(context),
+                              ),
+                            ))
+                        : Container()
                   ],
                 ),
               )
@@ -1779,26 +1822,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // ),
         _user.bio.isNotEmpty
             ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Text(
-                  //   'About',
-                  //   style: TextStyle(
-                  //     fontWeight: FontWeight.bold,
-                  //     fontFamily: FontNameDefault,
-                  //     color: Colors.black87,
-                  //     fontSize: textHeader(context),
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: screenSize.height * 0.01,
-                  // ),
-                  Text(
-                    _user.bio,
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontSize: textBody1(context)),
-                  ),
+                  seeMore
+                      ? Linkify(
+                          onOpen: (link) async {
+                            if (await canLaunch(link.url)) {
+                              await launch(link.url);
+                            } else {
+                              throw 'Could not launch $link';
+                            }
+                          },
+                          text: _user.bio,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            color: Colors.black54,
+                          ),
+                        )
+                      : Linkify(
+                          onOpen: (link) async {
+                            if (await canLaunch(link.url)) {
+                              await launch(link.url);
+                            } else {
+                              throw 'Could not launch $link';
+                            }
+                          },
+                          text: _user.bio,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            color: Colors.black54,
+                          ),
+                        ),
+                  _user.bio.length > 250
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              seeMore = !seeMore;
+                            });
+                          },
+                          child: Text(
+                            !seeMore ? 'Read more...' : 'See less',
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //  fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                              fontSize: textSubTitle(context),
+                            ),
+                          ))
+                      : Container()
                 ],
               )
             : Padding(

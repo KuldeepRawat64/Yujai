@@ -65,6 +65,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
   Position _center;
   final Set<Marker> _markers = {};
   //GeoPoint geopint;
+  bool seeMore = false;
 
   Future<void> send() async {
     final Email email = Email(
@@ -1145,12 +1146,61 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
               SizedBox(
                 height: 12.0,
               ),
-              Text(_user.bio,
-                  style: TextStyle(
-                    fontFamily: FontNameDefault,
-                    //        fontSize: textHeader(context),
-                    //      fontWeight: FontWeight.bold),
-                  ))
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  seeMore
+                      ? Linkify(
+                          onOpen: (link) async {
+                            if (await canLaunch(link.url)) {
+                              await launch(link.url);
+                            } else {
+                              throw 'Could not launch $link';
+                            }
+                          },
+                          text: _user.bio,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            color: Colors.black54,
+                          ),
+                        )
+                      : Linkify(
+                          onOpen: (link) async {
+                            if (await canLaunch(link.url)) {
+                              await launch(link.url);
+                            } else {
+                              throw 'Could not launch $link';
+                            }
+                          },
+                          text: _user.bio,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            color: Colors.black54,
+                          ),
+                        ),
+                  _user.bio.length > 250
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              seeMore = !seeMore;
+                            });
+                          },
+                          child: Text(
+                            !seeMore ? 'Read more...' : 'See less',
+                            style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //  fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                              fontSize: textSubTitle(context),
+                            ),
+                          ))
+                      : Container()
+                ],
+              ),
             ],
           ),
         ),
@@ -1523,16 +1573,59 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
       Padding(
         padding: EdgeInsets.only(
             left: screenSize.width / 30, top: screenSize.height * 0.012),
-        child: Wrap(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _user.bio,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
-                  color: Colors.black54),
-            ),
+            seeMore
+                ? Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text: _user.bio,
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                      color: Colors.black54,
+                    ),
+                  )
+                : Linkify(
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        throw 'Could not launch $link';
+                      }
+                    },
+                    text: _user.bio,
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textBody1(context),
+                      color: Colors.black54,
+                    ),
+                  ),
+            _user.bio.length > 250
+                ? InkWell(
+                    onTap: () {
+                      setState(() {
+                        seeMore = !seeMore;
+                      });
+                    },
+                    child: Text(
+                      !seeMore ? 'Read more...' : 'See less',
+                      style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        //  fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                        fontSize: textSubTitle(context),
+                      ),
+                    ))
+                : Container()
           ],
         ),
       ),
@@ -1639,36 +1732,38 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
           ],
         ),
       ),
-      Padding(
-        padding: EdgeInsets.only(
-          left: screenSize.width / 30,
-          top: screenSize.height * 0.012,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Products and services',
-              style: TextStyle(
-                fontFamily: FontNameDefault,
-                fontWeight: FontWeight.bold,
-                fontSize: textSubTitle(context),
+      _user.products.isNotEmpty
+          ? Padding(
+              padding: EdgeInsets.only(
+                left: screenSize.width / 30,
+                top: screenSize.height * 0.012,
               ),
-            ),
-            Wrap(
-              children: [
-                Text(
-                  _user.products,
-                  style: TextStyle(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Products and services',
+                    style: TextStyle(
                       fontFamily: FontNameDefault,
-                      fontSize: textBody1(context),
-                      color: Theme.of(context).primaryColor),
-                ),
-              ],
+                      fontWeight: FontWeight.bold,
+                      fontSize: textSubTitle(context),
+                    ),
+                  ),
+                  Wrap(
+                    children: [
+                      Text(
+                        _user.products,
+                        style: TextStyle(
+                            fontFamily: FontNameDefault,
+                            fontSize: textBody1(context),
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             )
-          ],
-        ),
-      ),
+          : Container(),
       SizedBox(
         height: screenSize.height * 0.02,
       ),
