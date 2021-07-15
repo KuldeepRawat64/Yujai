@@ -693,58 +693,49 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
               height: screenSize.height * 0.3,
               child: deptMembersWidget(),
             ),
-            // Text(
-            //   'Description',
-            //   style: TextStyle(
-            //     fontFamily: FontNameDefault,
-            //     //  color: Colors.black54,
-            //     fontWeight: FontWeight.bold,
-            //     fontSize: textHeader(context),
-            //   ),
-            // ),
-            // Divider(),
-            // StreamBuilder<DocumentSnapshot>(
-            //   stream: FirebaseFirestore.instance
-            //       .collection('teams')
-            //       .doc(widget.gid)
-            //       .collection('departments')
-            //       .doc(widget.department.uid)
-            //       .snapshots(),
-            //   builder: ((context, snapshot) {
-            //     if (snapshot.hasData &&
-            //         snapshot.data['description'] != null &&
-            //         snapshot.data['description'] != '') {
-            //       return Text(
-            //         snapshot.data['description'],
-            //         style: TextStyle(
-            //           fontFamily: FontNameDefault,
-            //           color: Colors.black54,
-            //           fontWeight: FontWeight.bold,
-            //           fontSize: textAppTitle(context),
-            //         ),
-            //       );
-            //     } else {
-            //       return TextFormField(
-            //         controller: _controller,
-            //         keyboardType: TextInputType.multiline,
-            //         minLines: 5,
-            //         maxLines: 8,
-            //         decoration: InputDecoration(
-            //           filled: true,
-            //           fillColor: Colors.white,
-            //           labelStyle: TextStyle(
-            //             fontFamily: FontNameDefault,
-            //             color: Colors.grey,
-            //             fontSize: textSubTitle(context),
-            //             //fontWeight: FontWeight.bold,
-            //           ),
-            //           border: InputBorder.none,
-            //           isDense: true,
-            //         ),
-            //       );
-            //     }
-            //   }),
-            // ),
+            Text(
+              'Description',
+              style: TextStyle(
+                fontFamily: FontNameDefault,
+                //  color: Colors.black54,
+                fontWeight: FontWeight.bold,
+                fontSize: textHeader(context),
+              ),
+            ),
+            Divider(),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('teams')
+                  .doc(widget.gid)
+                  .collection('departments')
+                  .doc(widget.department.uid)
+                  .snapshots(),
+              builder: ((context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.data['description'] != null &&
+                    snapshot.data['description'] != '') {
+                  return Text(
+                    snapshot.data['description'],
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                      fontSize: textAppTitle(context),
+                    ),
+                  );
+                } else {
+                  return Text(
+                    'No description',
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      color: Colors.black54,
+                      fontStyle: FontStyle.italic,
+                      fontSize: textAppTitle(context),
+                    ),
+                  );
+                }
+              }),
+            ),
           ],
         ),
       ],
