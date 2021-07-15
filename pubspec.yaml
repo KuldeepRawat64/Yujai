@@ -26,6 +26,7 @@ dependencies:
   provider: ^5.0.0
   cloud_firestore: 
   firebase_analytics: ^5.0.11
+  flutter_linkify: ^5.0.2
   image_picker: ^0.8.0+3
   firebase_storage: 
   firebase_auth: ^1.4.1
@@ -77,7 +78,7 @@ dependencies:
   tuple: ^2.0.0
   quiver: ^3.0.0
   #permission_handler: ^5.0.1+1
-  url_launcher: ^6.0.2
+  url_launcher: ^6.0.9
   webview_flutter: ^0.3.14+1
   # add_thumbnail: ^0.0.2
   shimmer: ^1.1.2

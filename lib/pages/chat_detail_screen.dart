@@ -20,6 +20,7 @@ import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_6.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_7.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_8.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_9.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:image/image.dart' as Im;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:expandable_text/expandable_text.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -480,17 +482,30 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         child: Wrap(
                           children: [
                             seeMore
-                                ? Text(
-                                    snapshot['message'],
+                                ? Linkify(
+                                    onOpen: (link) async {
+                                      if (await canLaunch(link.url)) {
+                                        await launch(link.url);
+                                      } else {
+                                        throw 'Could not launch $link';
+                                      }
+                                    },
+                                    text: snapshot['message'],
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
                                         fontSize: textBody1(context),
                                         color: Colors.white),
                                   )
-                                : Text(
-                                    snapshot['message'],
+                                : Linkify(
+                                    onOpen: (link) async {
+                                      if (await canLaunch(link.url)) {
+                                        await launch(link.url);
+                                      } else {
+                                        throw 'Could not launch $link';
+                                      }
+                                    },
+                                    text: snapshot['message'],
                                     maxLines: 6,
-                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontFamily: FontNameDefault,
                                         fontSize: textBody1(context),
@@ -611,22 +626,35 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         child: Wrap(
                           children: [
                             seeMore
-                                ? Text(
-                                    snapshot['message'],
+                                ? Linkify(
+                                    onOpen: (link) async {
+                                      if (await canLaunch(link.url)) {
+                                        await launch(link.url);
+                                      } else {
+                                        throw 'Could not launch $link';
+                                      }
+                                    },
+                                    text: snapshot['message'],
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
-                                      // color: Colors.white,
+                                      //  color: Colors.white
                                     ),
                                   )
-                                : Text(
-                                    snapshot['message'],
+                                : Linkify(
+                                    onOpen: (link) async {
+                                      if (await canLaunch(link.url)) {
+                                        await launch(link.url);
+                                      } else {
+                                        throw 'Could not launch $link';
+                                      }
+                                    },
+                                    text: snapshot['message'],
                                     maxLines: 6,
-                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontFamily: FontNameDefault,
                                       fontSize: textBody1(context),
-                                      //   color: Colors.white,
+                                      // color: Colors.white
                                     ),
                                   ),
                             snapshot['message'].length > 200

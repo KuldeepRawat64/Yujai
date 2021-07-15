@@ -835,9 +835,12 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   Widget usersSearch() {
     var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').where(
-            'accountType',
-            whereIn: ['Professional', 'Military', 'Student']).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .where('accountType',
+                whereIn: ['Professional', 'Military', 'Student'])
+            .where('isHidden', isEqualTo: false)
+            .snapshots(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());

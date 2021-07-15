@@ -323,7 +323,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                             ),
                             Container(
                               //    color: Colors.grey,
-                              width: screenSize.width * 0.42,
+                              width: screenSize.width * 0.35,
                               child: Text(
                                 snapshot.data['groupName'],
                                 maxLines: 1,
@@ -351,9 +351,9 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
               actions: [
                 widget.currentUser.uid != null && _group != null && isMember
                     ? Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(4.0),
                         child: CircleAvatar(
-                          radius: screenSize.height * 0.023,
+                          radius: screenSize.height * 0.022,
                           child: InkWell(
                             onTap:
                                 widget.currentUser.uid == _group.currentUserUid

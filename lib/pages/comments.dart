@@ -8,7 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentsScreen extends StatefulWidget {
@@ -301,11 +303,20 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 )),
             subtitle: Padding(
               padding: const EdgeInsets.only(left: 0.0),
-              child: Text(snapshot['comment'],
-                  style: TextStyle(
-                    fontSize: textBody1(context),
-                    fontFamily: FontNameDefault,
-                  )),
+              child: Linkify(
+                onOpen: (link) async {
+                  if (await canLaunch(link.url)) {
+                    await launch(link.url);
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
+                text: snapshot['comment'],
+                style: TextStyle(
+                  fontSize: textBody1(context),
+                  fontFamily: FontNameDefault,
+                ),
+              ),
             ),
             trailing: widget.user.uid == snapshot['ownerUid'] ||
                     widget.user.uid == widget.snapshot['ownerUid']

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:Yujai/pages/new_group_form.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
@@ -12,8 +13,6 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'create_group.dart';
 
 class GroupSettings extends StatefulWidget {
   final String gid;
@@ -80,7 +79,6 @@ class _GroupSettingsState extends State<GroupSettings> {
                 setState(() {
                   selectedReportList = selectedList;
                 });
-                submit(context);
               },
             ),
             actions: <Widget>[
@@ -109,8 +107,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                       color: Colors.white),
                 ),
                 onPressed: () {
-                  print('$selectedReportList');
-                  Navigator.of(context).pop();
+                  submit(context);
                 },
               )
             ],
@@ -199,15 +196,23 @@ class _GroupSettingsState extends State<GroupSettings> {
   // }
   Widget getTextWidgets(List<dynamic> strings) {
     var screenSize = MediaQuery.of(context).size;
-    return Column(
-      children: strings.isNotEmpty
-          ? strings
-              .map((items) => Padding(
-                    padding: EdgeInsets.only(top: screenSize.height * 0.01),
-                    child: chip(items, Colors.white),
-                  ))
-              .toList()
-          : Container(),
+    return Padding(
+      padding: const EdgeInsets.only(top: 5.0),
+      child: Container(
+        color: Colors.grey[100],
+        width: screenSize.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: strings.isNotEmpty
+              ? strings
+                  .map((items) => Padding(
+                        padding: EdgeInsets.only(top: screenSize.height * 0.01),
+                        child: chip(items, Colors.white),
+                      ))
+                  .toList()
+              : Container(),
+        ),
+      ),
     );
   }
 

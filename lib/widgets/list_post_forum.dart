@@ -16,11 +16,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:transparent_image/transparent_image.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ListPostForum extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;
@@ -66,6 +68,7 @@ class _ListPostForumState extends State<ListPostForum> {
   List<DocumentSnapshot> totalVotes = [];
   bool _displayFront;
   bool _flipXAxis;
+  bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
     var screenSize = MediaQuery.of(context).size;
@@ -982,62 +985,21 @@ class _ListPostForumState extends State<ListPostForum> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              subtitle: widget.documentSnapshot.data()['location'] != '' &&
-                      widget.documentSnapshot.data()['location'] != null
-                  ? Row(
-                      children: [
-                        new Text(
-                          widget.documentSnapshot.data()['location'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              //    fontSize: textBody1(context),
-                              color: Colors.grey),
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Icon(
-                          Icons.circle,
-                          size: 6.0,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            //   left: screenSize.width / 30,
-                            top: screenSize.height * 0.002,
-                          ),
-                          child: Text(
-                              widget.documentSnapshot.data()['time'] != null
-                                  ? timeago.format(widget.documentSnapshot
-                                      .data()['time']
-                                      .toDate())
-                                  : '',
-                              style: TextStyle(
-                                  fontFamily: FontNameDefault,
-                                  //   fontSize: textbody2(context),
-                                  color: Colors.grey)),
-                        ),
-                      ],
-                    )
-                  : Padding(
-                      padding: EdgeInsets.only(
-                        //   left: screenSize.width / 30,
-                        top: screenSize.height * 0.002,
-                      ),
-                      child: Text(
-                          widget.documentSnapshot.data()['time'] != null
-                              ? timeago.format(widget.documentSnapshot
-                                  .data()['time']
-                                  .toDate())
-                              : '',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              //   fontSize: textbody2(context),
-                              color: Colors.grey)),
-                    ),
+              subtitle: Padding(
+                padding: EdgeInsets.only(
+                  //   left: screenSize.width / 30,
+                  top: screenSize.height * 0.002,
+                ),
+                child: Text(
+                    widget.documentSnapshot.data()['time'] != null
+                        ? timeago.format(
+                            widget.documentSnapshot.data()['time'].toDate())
+                        : '',
+                    style: TextStyle(
+                        fontFamily: FontNameDefault,
+                        //   fontSize: textbody2(context),
+                        color: Colors.grey)),
+              ),
               trailing: widget.currentuser.uid ==
                           widget.documentSnapshot.data()['ownerUid'] ||
                       widget.group != null &&
@@ -1097,6 +1059,30 @@ class _ListPostForumState extends State<ListPostForum> {
                           image: widget.documentSnapshot['imgUrl'],
                         ),
                       ),
+            widget.documentSnapshot.data()['location'] != '' &&
+                    widget.documentSnapshot.data()['location'] != null
+                ? Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          color: Colors.black45,
+                        ),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        new Text(
+                          widget.documentSnapshot.data()['location'],
+                          style: TextStyle(
+                              fontFamily: FontNameDefault,
+                              //    fontSize: textBody1(context),
+                              color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
             widget.documentSnapshot.data()['postType'] == 'poll'
                 ? Container()
                 : Padding(
@@ -1112,14 +1098,70 @@ class _ListPostForumState extends State<ListPostForum> {
                           bottom: screenSize.height * 0.01,
                           top: screenSize.height * 0.01,
                           left: screenSize.width * 0.05),
-                      child: Text(
-                        widget.documentSnapshot.data()['caption'],
-                        style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textSubTitle(context)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          seeMore
+                              ? Linkify(
+                                  onOpen: (link) async {
+                                    if (await canLaunch(link.url)) {
+                                      await launch(link.url);
+                                    } else {
+                                      throw 'Could not launch $link';
+                                    }
+                                  },
+                                  text:
+                                      widget.documentSnapshot.data()['caption'],
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    // fontWeight: FontWeight.bold
+                                  ),
+                                )
+                              : Linkify(
+                                  onOpen: (link) async {
+                                    if (await canLaunch(link.url)) {
+                                      await launch(link.url);
+                                    } else {
+                                      throw 'Could not launch $link';
+                                    }
+                                  },
+                                  text:
+                                      widget.documentSnapshot.data()['caption'],
+                                  maxLines: 6,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    // fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                          widget.documentSnapshot
+                                      .data()['caption']
+                                      .toString()
+                                      .length >
+                                  250
+                              ? InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      seeMore = !seeMore;
+                                    });
+                                  },
+                                  child: Text(
+                                    !seeMore ? 'Read more...' : 'See less',
+                                    style: TextStyle(
+                                      fontFamily: FontNameDefault,
+                                      //  fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: textSubTitle(context),
+                                    ),
+                                  ))
+                              : Container()
+                        ],
                       ),
                     ),
                   ),
+
             ListTile(
               leading: GestureDetector(
                   child: _isLiked
