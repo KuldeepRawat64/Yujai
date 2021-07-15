@@ -10,8 +10,10 @@ import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../style.dart';
 
@@ -140,8 +142,15 @@ class _ListItemTaskState extends State<ListItemTask> {
                             }),
                         Container(
                           width: screenSize.width * 0.5,
-                          child: Text(
-                            widget.documentSnapshot['taskName'],
+                          child: Linkify(
+                            onOpen: (link) async {
+                              if (await canLaunch(link.url)) {
+                                await launch(link.url);
+                              } else {
+                                throw 'Could not launch $link';
+                              }
+                            },
+                            text: widget.documentSnapshot['taskName'],
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: FontNameDefault,

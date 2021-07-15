@@ -23,9 +23,11 @@ import 'package:Yujai/pages/friend_info.dart';
 import 'package:Yujai/pages/friend_activity_applications.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FriendProfileScreen extends StatefulWidget {
   final String name;
@@ -1817,20 +1819,19 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                           fontSize: textSubTitle(context),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyWebView(
-                                    title: 'Company Website',
-                                    selectedUrl: _user.website,
-                                  )));
+                      Linkify(
+                        onOpen: (link) async {
+                          if (await canLaunch(link.url)) {
+                            await launch(link.url);
+                          } else {
+                            throw 'Could not launch $link';
+                          }
                         },
-                        child: Text(
-                          _user.website,
-                          style: TextStyle(
-                            fontFamily: FontNameDefault,
-                            fontSize: textBody1(context),
-                          ),
+                        text: _user.website,
+                        style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          fontSize: textSubTitle(context),
+                          // fontWeight: FontWeight.bold
                         ),
                       ),
                     ],
@@ -2344,12 +2345,19 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                               left: screenSize.width / 30,
                               top: screenSize.height * 0.012,
                             ),
-                            child: Text(
-                              _user.website,
+                            child: Linkify(
+                              onOpen: (link) async {
+                                if (await canLaunch(link.url)) {
+                                  await launch(link.url);
+                                } else {
+                                  throw 'Could not launch $link';
+                                }
+                              },
+                              text: _user.website,
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black54,
+                                fontSize: textSubTitle(context),
+                                // fontWeight: FontWeight.bold
                               ),
                             ),
                           ),
@@ -2380,12 +2388,19 @@ class _FriendProfileScreenState extends State<FriendProfileScreen>
                               left: screenSize.width / 30,
                               top: screenSize.height * 0.012,
                             ),
-                            child: Text(
-                              _user.email,
+                            child: Linkify(
+                              onOpen: (link) async {
+                                if (await canLaunch(link.url)) {
+                                  await launch(link.url);
+                                } else {
+                                  throw 'Could not launch $link';
+                                }
+                              },
+                              text: _user.email,
                               style: TextStyle(
                                 fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black54,
+                                fontSize: textSubTitle(context),
+                                // fontWeight: FontWeight.bold
                               ),
                             ),
                           ),

@@ -35,6 +35,7 @@ import 'package:Yujai/widgets/skill_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:share/share.dart';
@@ -44,6 +45,7 @@ import 'package:Yujai/pages/edit_interests.dart';
 import 'package:Yujai/pages/army_info.dart';
 import 'package:Yujai/pages/airforce_info.dart';
 import 'package:Yujai/pages/navy_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool backButton;
@@ -1497,12 +1499,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: EdgeInsets.only(
                                   //  left: screenSize.width / 30,
                                   bottom: screenSize.height * 0.01),
-                              child: Text(
-                                _user.website,
+                              child: Linkify(
+                                onOpen: (link) async {
+                                  if (await canLaunch(link.url)) {
+                                    await launch(link.url);
+                                  } else {
+                                    throw 'Could not launch $link';
+                                  }
+                                },
+                                text: _user.website,
                                 style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    color: Colors.black54,
-                                    fontSize: textBody1(context)),
+                                  fontFamily: FontNameDefault,
+                                  fontSize: textSubTitle(context),
+                                  // fontWeight: FontWeight.bold
+                                ),
                               ),
                             ),
                           ],

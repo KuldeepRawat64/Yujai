@@ -4,6 +4,7 @@ import 'package:Yujai/pages/login_page.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/main.dart';
 import 'package:Yujai/models/comment.dart';
@@ -27,6 +28,7 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:select_dialog/select_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -148,14 +150,29 @@ class _TaskDetailState extends State<TaskDetail> {
           stream: widget.documentSnapshot.reference.snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData)
-              return Text(
-                snapshot.data['taskName'],
+              return Linkify(
+                onOpen: (link) async {
+                  if (await canLaunch(link.url)) {
+                    await launch(link.url);
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
+                text: snapshot.data['taskName'],
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontWeight: FontWeight.bold,
                   fontSize: textHeader(context),
                 ),
               );
+            //  Text(
+            //   snapshot.data['taskName'],
+            //   style: TextStyle(
+            //     fontFamily: FontNameDefault,
+            //     fontWeight: FontWeight.bold,
+            //     fontSize: textHeader(context),
+            //   ),
+            // );
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -276,8 +293,15 @@ class _TaskDetailState extends State<TaskDetail> {
           stream: widget.documentSnapshot.reference.snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData)
-              return Text(
-                snapshot.data['description'] != '' &&
+              return Linkify(
+                onOpen: (link) async {
+                  if (await canLaunch(link.url)) {
+                    await launch(link.url);
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
+                text: snapshot.data['description'] != '' &&
                         snapshot.data['description'] != null
                     ? snapshot.data['description']
                     : 'Add description',
@@ -287,6 +311,17 @@ class _TaskDetailState extends State<TaskDetail> {
                   fontSize: textBody1(context),
                 ),
               );
+            //  Text(
+            //   snapshot.data['description'] != '' &&
+            //           snapshot.data['description'] != null
+            //       ? snapshot.data['description']
+            //       : 'Add description',
+            //   style: TextStyle(
+            //     fontFamily: FontNameDefault,
+            //     color: Colors.black,
+            //     fontSize: textBody1(context),
+            //   ),
+            // );
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -1123,8 +1158,15 @@ class _TaskDetailState extends State<TaskDetail> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          snapshot['comment'],
+                        child: Linkify(
+                          onOpen: (link) async {
+                            if (await canLaunch(link.url)) {
+                              await launch(link.url);
+                            } else {
+                              throw 'Could not launch $link';
+                            }
+                          },
+                          text: snapshot['comment'],
                           style: TextStyle(
                             fontFamily: FontNameDefault,
                             color: Colors.black,
