@@ -603,74 +603,14 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Padding(
-                                padding: EdgeInsets.only(
-                                    top: screenSize.height * 0.01,
-                                    left: screenSize.width / 30),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    seeMore
-                                        ? Linkify(
-                                            onOpen: (link) async {
-                                              if (await canLaunch(link.url)) {
-                                                await launch(link.url);
-                                              } else {
-                                                throw 'Could not launch $link';
-                                              }
-                                            },
-                                            text: widget.documentSnapshot
-                                                .data()['caption'],
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textSubTitle(context),
-                                              // fontWeight: FontWeight.bold
-                                            ),
-                                          )
-                                        : Linkify(
-                                            onOpen: (link) async {
-                                              if (await canLaunch(link.url)) {
-                                                await launch(link.url);
-                                              } else {
-                                                throw 'Could not launch $link';
-                                              }
-                                            },
-                                            text: widget.documentSnapshot
-                                                .data()['caption'],
-                                            maxLines: 6,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textSubTitle(context),
-                                              // fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                    widget.documentSnapshot
-                                                .data()['caption']
-                                                .toString()
-                                                .length >
-                                            250
-                                        ? InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                seeMore = !seeMore;
-                                              });
-                                            },
-                                            child: Text(
-                                              !seeMore
-                                                  ? 'Read more...'
-                                                  : 'See less',
-                                              style: TextStyle(
-                                                fontFamily: FontNameDefault,
-                                                //  fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                fontSize: textSubTitle(context),
-                                              ),
-                                            ))
-                                        : Container()
-                                  ],
-                                ),
-                              ),
+                                  padding: EdgeInsets.only(
+                                      top: screenSize.height * 0.01,
+                                      left: screenSize.width / 30),
+                                  child: Text(
+                                      widget.documentSnapshot.data()['caption'],
+                                      style: TextStyle(
+                                          fontFamily: FontNameDefault,
+                                          fontSize: textSubTitle(context)))),
                               // commentWidget(widget.documentSnapshot.reference)
                             ],
                           ),
@@ -1320,21 +1260,39 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   seeMore
-                                      ? Text(
-                                          widget.documentSnapshot
+                                      ? Linkify(
+                                          onOpen: (link) async {
+                                            if (await canLaunch(link.url)) {
+                                              await launch(link.url);
+                                            } else {
+                                              throw 'Could not launch $link';
+                                            }
+                                          },
+                                          text: widget.documentSnapshot
                                               .data()['caption'],
                                           style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textSubTitle(context)),
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textSubTitle(context),
+                                            // fontWeight: FontWeight.bold
+                                          ),
                                         )
-                                      : Text(
-                                          widget.documentSnapshot
+                                      : Linkify(
+                                          onOpen: (link) async {
+                                            if (await canLaunch(link.url)) {
+                                              await launch(link.url);
+                                            } else {
+                                              throw 'Could not launch $link';
+                                            }
+                                          },
+                                          text: widget.documentSnapshot
                                               .data()['caption'],
                                           maxLines: 6,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                              fontFamily: FontNameDefault,
-                                              fontSize: textSubTitle(context)),
+                                            fontFamily: FontNameDefault,
+                                            fontSize: textSubTitle(context),
+                                            // fontWeight: FontWeight.bold
+                                          ),
                                         ),
                                   widget.documentSnapshot
                                               .data()['caption']
@@ -1353,7 +1311,7 @@ class _ListItemDiscussionsState extends State<ListItemDiscussions> {
                                                 : 'See less',
                                             style: TextStyle(
                                               fontFamily: FontNameDefault,
-                                              fontWeight: FontWeight.bold,
+                                              //  fontWeight: FontWeight.bold,
                                               color: Theme.of(context)
                                                   .primaryColor,
                                               fontSize: textSubTitle(context),
