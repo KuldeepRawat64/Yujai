@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_activity_request.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -90,23 +91,30 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
           .doc(_user.uid)
           .collection('requests')
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          return SizedBox(
-              height: screenSize.height,
-              child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: ((context, index) => ListItemActivityRequest(
-                        documentSnapshot: snapshot.data.docs[index],
-                        index: index,
-                        user: _user,
-                        currentuser: _user,
-                      ))));
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return ListView.builder(
+                // controller: _scrollController,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: ((context, index) => ListItemActivityRequest(
+                      documentSnapshot: snapshot.data.docs[index],
+                      index: index,
+                      user: _user,
+                      currentuser: _user,
+                    )));
+          } else {
+            return NoContent('No requests or invites yet',
+                'assets/images/notification.png', '', '');
+          }
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );

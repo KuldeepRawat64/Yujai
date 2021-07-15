@@ -3,6 +3,7 @@ import 'package:Yujai/pages/notification_requests.dart';
 import 'dart:async';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
+import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -94,102 +95,112 @@ class _ActivityFeedState extends State<ActivityFeed> {
           .orderBy('timestamp', descending: true)
           .limit(50)
           .snapshots(),
-      builder: ((context, snapshot) {
-        if (snapshot.hasData) {
-          return SizedBox(
-              height: screenSize.height,
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
+      builder: ((context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          } else if (snapshot.hasData && snapshot.data.docs.length > 0) {
+            return SizedBox(
+                height: screenSize.height,
+                child: ListView(
+                  children: [
+                    Padding(
                       padding: const EdgeInsets.all(8.0),
-                      decoration: ShapeDecoration(
-                          color: const Color(0xffffffff),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0))),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ActivityFeedRequests()));
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Stack(
-                              overflow: Overflow.visible,
-                              alignment: Alignment.topRight,
-                              children: [
-                                CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    backgroundImage: AssetImage(
-                                        'assets/images/group_no-image.png')),
-                                Positioned(
-                                  right: -10.0,
-                                  top: -10.0,
-                                  child: InkResponse(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ActivityFeedRequests()));
-                                    },
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Theme.of(context).accentColor,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: ShapeDecoration(
+                            color: const Color(0xffffffff),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0))),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ActivityFeedRequests()));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Stack(
+                                overflow: Overflow.visible,
+                                alignment: Alignment.topRight,
+                                children: [
+                                  CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/group_no-image.png')),
+                                  Positioned(
+                                    right: -10.0,
+                                    top: -10.0,
+                                    child: InkResponse(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ActivityFeedRequests()));
+                                      },
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Theme.of(context).accentColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: screenSize.width / 30,
-                            ),
-                            Expanded(
-                                child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Requests and Invites',
-                                    style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      // color: Colors.black54,
-                                      fontSize: textBody1(context),
+                                ],
+                              ),
+                              SizedBox(
+                                width: screenSize.width / 30,
+                              ),
+                              Expanded(
+                                  child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Requests and Invites',
+                                      style: TextStyle(
+                                        fontFamily: FontNameDefault,
+                                        // color: Colors.black54,
+                                        fontSize: textBody1(context),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.keyboard_arrow_right,
-                                  size: screenSize.height * 0.045,
-                                  color: Colors.black54,
-                                )
-                              ],
-                            )),
-                          ],
+                                  Icon(
+                                    Icons.keyboard_arrow_right,
+                                    size: screenSize.height * 0.045,
+                                    color: Colors.black54,
+                                  )
+                                ],
+                              )),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  ListView.builder(
-                      controller: _scrollController,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.docs.length,
-                      itemBuilder: ((context, index) => ListItemActivityFeed(
-                            documentSnapshot: snapshot.data.docs[index],
-                            index: index,
-                          ))),
-                ],
-              ));
+                    ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: ((context, index) => ListItemActivityFeed(
+                              documentSnapshot: snapshot.data.docs[index],
+                              index: index,
+                            ))),
+                  ],
+                ));
+          } else {
+            return NoContent(
+                'No notifications', 'assets/images/notification.png', '', '');
+          }
         } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Text('State: ${snapshot.connectionState}');
         }
       }),
     );
