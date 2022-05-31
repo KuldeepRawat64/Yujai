@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class PromotionDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
@@ -204,10 +203,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              RaisedButton(
-                                splashColor: Colors.yellow,
-                                shape: StadiumBorder(),
-                                color: Colors.deepPurple,
+                              ElevatedButton(
                                 child: Text(
                                   'Portfolio',
                                   style: TextStyle(
@@ -482,10 +478,7 @@ class _PromotionDetailScreenState extends State<PromotionDetailScreen> {
                         ),
                         Row(
                           children: [
-                            RaisedButton(
-                              splashColor: Colors.yellow,
-                              shape: StadiumBorder(),
-                              color: Colors.deepPurple,
+                            ElevatedButton(
                               child: Text(
                                 'Contact',
                                 style: TextStyle(

@@ -33,13 +33,18 @@ class _EditCompanyAboutState extends State<EditCompanyAbout> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     _firestore.collection('users').doc(currentUser.uid).update({
       "bio": _controller.text,
     });
     Navigator.pop(context);
-    SnackBar snackbar = SnackBar(content: Text("Profile updated!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
+    const snackBar = SnackBar(
+      content: Text('Profile Updated'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override

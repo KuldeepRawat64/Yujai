@@ -7,7 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
@@ -37,10 +36,6 @@ class _NewEventFormState extends State<NewEventForm> {
   File imageFile;
   var _locationController;
   var _captionController;
-  var _dateStartController;
-  var _timeStartController;
-  var _dateEndController;
-  var _timeEndController;
   var _descriptionController;
   var _hostController;
   var _eventWebsiteController;
@@ -84,10 +79,6 @@ class _NewEventFormState extends State<NewEventForm> {
     super.initState();
     _captionController = TextEditingController();
     _locationController = TextEditingController();
-    _dateStartController = TextEditingController();
-    _timeStartController = TextEditingController();
-    _dateEndController = TextEditingController();
-    _timeEndController = TextEditingController();
     _descriptionController = TextEditingController();
     _hostController = TextEditingController();
     _eventWebsiteController = TextEditingController();
@@ -111,7 +102,7 @@ class _NewEventFormState extends State<NewEventForm> {
                 decoration: BoxDecoration(color: Colors.grey[200]),
                 child: imageFile != null
                     ? Stack(
-                        overflow: Overflow.visible,
+                        clipBehavior: Clip.none,
                         children: [
                           Image.file(
                             imageFile,
@@ -306,9 +297,7 @@ class _NewEventFormState extends State<NewEventForm> {
                                               ? Center(
                                                   child:
                                                       CircularProgressIndicator())
-                                              : RaisedButton(
-                                                  color:
-                                                      Colors.deepPurpleAccent,
+                                              : ElevatedButton(
                                                   child: Text(
                                                     "Pick Here",
                                                     style: TextStyle(
@@ -1077,7 +1066,7 @@ class _NewEventFormState extends State<NewEventForm> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -1090,10 +1079,7 @@ class _NewEventFormState extends State<NewEventForm> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              TextButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -1123,7 +1109,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

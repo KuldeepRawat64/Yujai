@@ -3,7 +3,6 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/friend_activity.dart';
 import 'package:Yujai/pages/friend_following.dart';
 import 'package:Yujai/pages/friend_follower.dart';
 
@@ -24,7 +23,6 @@ class _FriendInformationDetailState extends State<FriendInformationDetail> {
   bool isUser = false;
 
   Widget detailsWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         // Navigator.of(context).push(MaterialPageRoute(
@@ -78,7 +76,6 @@ class _FriendInformationDetailState extends State<FriendInformationDetail> {
   }
 
   Widget detailsFollowingWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
@@ -131,7 +128,6 @@ class _FriendInformationDetailState extends State<FriendInformationDetail> {
   }
 
   Widget detailsFollowerWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(

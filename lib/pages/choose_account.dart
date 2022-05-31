@@ -52,7 +52,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        User currentUser = await _auth.currentUser;
+                        User currentUser = _auth.currentUser;
                         setState(() {
                           isSelected = true;
                           isSelected2 = false;
@@ -95,7 +95,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      User currentUser = await _auth.currentUser;
+                      User currentUser = _auth.currentUser;
                       setState(() {
                         isSelected2 = true;
                         isSelected = false;
@@ -139,7 +139,7 @@ class _ChooseAccountState extends State<ChooseAccount> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        User currentUser = await _auth.currentUser;
+                        User currentUser = _auth.currentUser;
                         setState(() {
                           isSelected3 = true;
                           isSelected = false;

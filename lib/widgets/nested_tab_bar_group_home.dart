@@ -2,14 +2,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/pages/group_members.dart';
 import 'package:Yujai/pages/group_settings.dart';
-import 'package:Yujai/widgets/no_event.dart';
-import 'package:empty_widget/empty_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/edit_photoUrl.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/pages/group_post_review.dart';
@@ -17,8 +12,6 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_post_forum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:async';
@@ -51,16 +44,16 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel _user = UserModel();
   Group _group = Group();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -69,7 +62,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   ScrollController _scrollController4 = ScrollController();
   ScrollController _scrollController5 = ScrollController();
   ScrollController _scrollController6 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;
@@ -339,7 +332,6 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   }
 
   Widget forumWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
@@ -385,7 +377,6 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   }
 
   Widget eventWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')
@@ -428,7 +419,6 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
   }
 
   Widget marketPlaceWidget() {
-    var screenSize = MediaQuery.of(context).size;
     // return StreamBuilder(
     //   stream: FirebaseFirestore.instance
     //       .collection('groups')
@@ -616,11 +606,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: FlatButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0)),
-                                //   disabledColor: Theme.of(context).accentColor,
-                                color: Theme.of(context).accentColor,
+                            child: TextButton(
                                 onPressed: () {
                                   Navigator.push(
                                       context,
@@ -641,11 +627,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: FlatButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60.0)),
-                                disabledColor: Theme.of(context).accentColor,
-                                color: Theme.of(context).accentColor,
+                            child: TextButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => GroupPostReview(
@@ -668,12 +650,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: FlatButton(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(60.0)),
-                                    //       disabledColor: Theme.of(context).accentColor,
-                                    color: Theme.of(context).accentColor,
+                                child: TextButton(
                                     onPressed: () {
                                       Navigator.push(
                                           context,
@@ -981,7 +958,7 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
                                 fontSize: textSubTitle(context)),
                           ),
                     _group.description.length > 250
-                        ? FlatButton(
+                        ? TextButton(
                             onPressed: () {
                               setState(() {
                                 seeMore = !seeMore;
@@ -1243,67 +1220,57 @@ class _NestedTabBarGroupHomeState extends State<NestedTabBarGroupHome>
     );
   }
 
-  _showImageDialog() {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text('Choose from Gallery'),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    compressImage();
-                    _repository.uploadImageToStorage(imageFile).then((url) {
-                      _repository.updatePhoto(url, _group.uid).then((v) {
-                        Navigator.pop(context);
-                      });
-                    });
-                  });
-                },
-              ),
-              // SimpleDialogOption(
-              //   child: Text('Take Photo'),
-              //   onPressed: () {
-              //     _pickImage('Camera').then((selectedImage) {
-              //       setState(() {
-              //         imageFile = selectedImage;
-              //       });
-              //       compressImage();
-              //       _repository.uploadImageToStorage(imageFile).then((url) {
-              //         _repository.updatePhoto(url, _group.uid).then((v) {
-              //           Navigator.pop(context);
-              //         });
-              //       });
-              //     });
-              //   },
-              // ),
-              SimpleDialogOption(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialog() {
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text('Choose from Gallery'),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   compressImage();
+  //                   _repository.uploadImageToStorage(imageFile).then((url) {
+  //                     _repository.updatePhoto(url, _group.uid).then((v) {
+  //                       Navigator.pop(context);
+  //                     });
+  //                   });
+  //                 });
+  //               },
+  //             ),
+  //             // SimpleDialogOption(
+  //             //   child: Text('Take Photo'),
+  //             //   onPressed: () {
+  //             //     _pickImage('Camera').then((selectedImage) {
+  //             //       setState(() {
+  //             //         imageFile = selectedImage;
+  //             //       });
+  //             //       compressImage();
+  //             //       _repository.uploadImageToStorage(imageFile).then((url) {
+  //             //         _repository.updatePhoto(url, _group.uid).then((v) {
+  //             //           Navigator.pop(context);
+  //             //         });
+  //             //       });
+  //             //     });
+  //             //   },
+  //             // ),
+  //             SimpleDialogOption(
+  //               child: Text('Cancel'),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
   File imageFile;
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-
-    return File(selectedImage.path);
-  }
 
   void compressImage() async {
     print('starting compression');

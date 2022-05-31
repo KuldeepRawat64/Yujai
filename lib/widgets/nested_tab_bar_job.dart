@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../style.dart';
 import 'list_job.dart';
-import 'package:Yujai/pages/search_data.dart';
 
 class NestedTabBarJob extends StatefulWidget {
   @override
@@ -21,21 +20,21 @@ class _NestedTabBarJobState extends State<NestedTabBarJob>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   Future<List<DocumentSnapshot>> _listFuture;
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   ScrollController _scrollController;
   ScrollController _scrollController1 = ScrollController();
   ScrollController _scrollController2 = ScrollController();
   ScrollController _scrollController3 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;

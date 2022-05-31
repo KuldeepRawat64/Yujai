@@ -1,6 +1,5 @@
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/department.dart';
-import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';

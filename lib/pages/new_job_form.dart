@@ -1,38 +1,24 @@
 import 'dart:convert';
-import 'package:Yujai/blocs/location_bloc.dart';
 import 'package:Yujai/models/designation.dart';
 import 'package:Yujai/models/place_search.dart';
 import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/pages/places_location.dart';
 import 'package:Yujai/services/places_services.dart';
-import 'package:Yujai/widgets/custom_drop_down.dart';
-import 'package:Yujai/widgets/custom_radio_button.dart';
-import 'package:Yujai/widgets/education_widget.dart';
-import 'package:Yujai/widgets/flow_widget.dart';
-import 'package:Yujai/widgets/skill_widgets.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 import '../style.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:date_field/date_field.dart';
 
 class NewJobForm extends StatefulWidget {
   final UserModel currentUser;
@@ -77,7 +63,7 @@ class _NewJobFormState extends State<NewJobForm> {
   bool skillFirst = false;
   bool skillSecond = false;
   bool skillThird = false;
-  UserModel _user;
+  // UserModel _user;
   List<dynamic> selectedSkills = [];
   String valueEmpType;
   String valueIndustry;
@@ -87,13 +73,13 @@ class _NewJobFormState extends State<NewJobForm> {
   String latitude;
   String longitude;
   var locationMessage = "";
-  Position _currentPosition;
+  // Position _currentPosition;
   List<PlaceSearch> searchResults = [];
   final placesService = PlacesService();
   AutoCompleteTextField placesTextField;
   GlobalKey<AutoCompleteTextFieldState<PlaceSearch>> placeSearchkey =
       new GlobalKey();
-  static List<PlaceSearch> places = new List<PlaceSearch>();
+  // static List<PlaceSearch> places = [];
   bool isEnabled = false;
   String _formatNumber(String s) =>
       NumberFormat.decimalPattern(_locale).format(int.parse(s));
@@ -155,7 +141,7 @@ class _NewJobFormState extends State<NewJobForm> {
   @override
   void initState() {
     super.initState();
-    retrieveUserDetails();
+    // retrieveUserDetails();
     getDesignation();
     workingDaysController = TextEditingController(text: 'Monday to Saturday');
     workTimingsController = TextEditingController(text: '9 AM to 5 PM');
@@ -217,14 +203,14 @@ class _NewJobFormState extends State<NewJobForm> {
     }
   }
 
-  retrieveUserDetails() async {
-    User currentUser = await _repository.getCurrentUser();
-    UserModel user = await _repository.retreiveUserDetails(currentUser);
-    if (!mounted) return;
-    setState(() {
-      _user = user;
-    });
-  }
+  // retrieveUserDetails() async {
+  //   User currentUser = await _repository.getCurrentUser();
+  //   UserModel user = await _repository.retreiveUserDetails(currentUser);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _user = user;
+  //   });
+  // }
 
   Widget placeRow(PlaceSearch place) {
     var screenSize = MediaQuery.of(context).size;
@@ -322,7 +308,6 @@ class _NewJobFormState extends State<NewJobForm> {
 
   @override
   Widget build(BuildContext context) {
-    final locationBloc = Provider.of<LocationBloc>(context);
     var screenSize = MediaQuery.of(context).size;
     return Form(
       key: _formKey,
@@ -831,8 +816,7 @@ class _NewJobFormState extends State<NewJobForm> {
                                     child: state == SearchingState.Searching
                                         ? Center(
                                             child: CircularProgressIndicator())
-                                        : RaisedButton(
-                                            color: Colors.deepPurpleAccent,
+                                        : ElevatedButton(
                                             child: Text(
                                               "Pick Here",
                                               style: TextStyle(
@@ -1005,15 +989,6 @@ class _NewJobFormState extends State<NewJobForm> {
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
-
   void compressImage() async {
     print('starting compression');
     final tempDir = await getTemporaryDirectory();
@@ -1081,61 +1056,6 @@ class _NewJobFormState extends State<NewJobForm> {
   }
 
   String selectedEventList = "";
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              "Select Event Category",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: FontNameDefault,
-                fontSize: textHeader(context),
-              ),
-            ),
-            content: MultiSelectChipSingle(
-              categoryList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedEventList = selectedList;
-                });
-              },
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                      fontSize: textSubTitle(context),
-                      fontFamily: FontNameDefault,
-                      color: Colors.black),
-                ),
-                onPressed: () {
-                  //  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  }
 }
 
 class MultiSelectChipSingle extends StatefulWidget {
@@ -1149,7 +1069,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

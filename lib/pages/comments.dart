@@ -1,6 +1,5 @@
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/feed.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';

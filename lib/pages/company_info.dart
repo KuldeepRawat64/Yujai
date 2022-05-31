@@ -1,9 +1,7 @@
-import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/company_add_info.dart';
-import '../models/user.dart';
 import 'home.dart';
 import 'package:intl/intl.dart';
 
@@ -26,8 +24,8 @@ class _CompanyInfoState extends State<CompanyInfo> {
   TextEditingController gstController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final format = DateFormat('yyyy');
-  UserModel _user;
-  final _repository = Repository();
+  // UserModel _user;
+  // final _repository = Repository();
 
   @override
   void initState() {
@@ -38,21 +36,21 @@ class _CompanyInfoState extends State<CompanyInfo> {
   }
 
   getUser() async {
-    currentUser = await _auth.currentUser;
+    currentUser = _auth.currentUser;
   }
 
-  retrieveUserDetails() async {
-    User currentUser = await _repository.getCurrentUser();
-    UserModel user = await _repository.retreiveUserDetails(currentUser);
-    if (!mounted) return;
-    setState(() {
-      _user = user;
-    });
-  }
+  // retrieveUserDetails() async {
+  //   User currentUser = await _repository.getCurrentUser();
+  //   UserModel user = await _repository.retreiveUserDetails(currentUser);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _user = user;
+  //   });
+  // }
 
   List<DropdownMenuItem<CompanySize>> buildDropDownMenuCompanySize(
       List companySizes) {
-    List<DropdownMenuItem<CompanySize>> items = List();
+    List<DropdownMenuItem<CompanySize>> items = [];
     for (CompanySize companySize in companySizes) {
       items.add(
         DropdownMenuItem(
@@ -76,7 +74,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
       return;
     }
     {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       usersRef.doc(currentUser.uid).update({
         "accountType": 'Company',
         "displayName": companyNameController.text,

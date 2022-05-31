@@ -7,13 +7,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
 import '../style.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -102,7 +100,7 @@ class _NewEventFormState extends State<NewEventFormMain> {
                 decoration: BoxDecoration(color: Colors.grey[200]),
                 child: imageFile != null
                     ? Stack(
-                        overflow: Overflow.visible,
+                        clipBehavior: Clip.none,
                         children: [
                           Image.file(
                             imageFile,
@@ -173,7 +171,7 @@ class _NewEventFormState extends State<NewEventFormMain> {
                 bottom: screenSize.height * 0.01,
               ),
               child: TextFormField(
-                  textCapitalization: TextCapitalization.sentences,
+                textCapitalization: TextCapitalization.sentences,
                 style: TextStyle(
                   fontFamily: FontNameDefault,
                   fontSize: textSubTitle(context),
@@ -317,9 +315,7 @@ class _NewEventFormState extends State<NewEventFormMain> {
                                                     ? Center(
                                                         child:
                                                             CircularProgressIndicator())
-                                                    : RaisedButton(
-                                                        color: Colors
-                                                            .deepPurpleAccent,
+                                                    : ElevatedButton(
                                                         child: Text(
                                                           "Pick Here",
                                                           style: TextStyle(
@@ -978,7 +974,7 @@ class _NewEventFormState extends State<NewEventFormMain> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -991,10 +987,7 @@ class _NewEventFormState extends State<NewEventFormMain> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              TextButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -1024,7 +1017,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

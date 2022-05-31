@@ -17,8 +17,8 @@ class ActivityFeed extends StatefulWidget {
 class _ActivityFeedState extends State<ActivityFeed> {
   var _repository = Repository();
   User currentUser, user, followingUser;
-  List<String> followingUIDs = List<String>();
-  List<User> usersList = List<User>();
+  List<String> followingUIDs = [];
+  List<User> usersList = [];
   DocumentReference reference;
   UserModel _user = UserModel();
   StreamSubscription<DocumentSnapshot> subscription;
@@ -128,7 +128,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Stack(
-                                overflow: Overflow.visible,
+                                clipBehavior: Clip.none,
                                 alignment: Alignment.topRight,
                                 children: [
                                   CircleAvatar(
@@ -148,7 +148,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
                                       },
                                       child: Icon(
                                         Icons.add,
-                                        color: Theme.of(context).accentColor,
+                                        color:
+                                            Theme.of(context).primaryColorLight,
                                       ),
                                     ),
                                   ),

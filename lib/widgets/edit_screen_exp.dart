@@ -1,9 +1,6 @@
-import 'package:Yujai/pages/edit_edu_form.dart';
 import 'package:Yujai/pages/edit_exp_form.dart';
-import 'package:Yujai/pages/edit_profile_form.dart';
 import 'package:Yujai/pages/new_experience_form.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/new_post_form.dart';
 import 'package:intl/intl.dart';
 import '../style.dart';
 import 'package:Yujai/models/user.dart';

@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'package:Yujai/models/group.dart';
-import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_activity_feed.dart';
 import 'package:Yujai/widgets/list_inbox.dart';
-import 'package:Yujai/widgets/list_user.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -175,7 +172,6 @@ class _GroupInboxState extends State<GroupInbox> {
   }
 
   Widget postImagesWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')

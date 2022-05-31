@@ -1,35 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/pages/department.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:icon_picker/icon_picker.dart';
-import 'package:image/image.dart' as Im;
-import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/edit_photoUrl.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/group_invite.dart';
-import 'package:Yujai/pages/group_post_review.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_post_forum.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'dart:async';
 import '../style.dart';
-import 'list_ad.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:Yujai/widgets/list_event_forum.dart';
 import 'package:Yujai/widgets/no_content.dart';
-
-//import 'package:Yujai/pages/group_requests.dart';
 
 class NestedTabBarTeamHome extends StatefulWidget {
   final String gid;
@@ -53,16 +32,16 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel _user = UserModel();
   Team _team = Team();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -71,20 +50,12 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
   ScrollController _scrollController4 = ScrollController();
   ScrollController _scrollController5 = ScrollController();
   ScrollController _scrollController6 = ScrollController();
-  List<String> followingUIDs = List<String>();
-  bool _enabled = true;
+  List<String> followingUIDs = [];
   //Offset state <-------------------------------------
   double offset = 0.0;
   String currentUserId, followingUserId;
   StreamSubscription<DocumentSnapshot> subscription;
   bool isPrivate = true;
-  Widget _icon;
-  GlobalKey<FormState> _oFormKey = GlobalKey<FormState>();
-  TextEditingController _controller;
-  //String _initialValue;
-  String _valueChanged = '';
-  String _valueToValidate = '';
-  String _valueSaved = '';
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -149,7 +120,6 @@ class _NestedTabBarTeamHomeState extends State<NestedTabBarTeamHome>
           //force arefresh so the app bar can be updated
         });
       });
-    _controller = TextEditingController(text: 'home');
   }
 
   @override

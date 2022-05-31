@@ -2,44 +2,44 @@ import 'package:Yujai/pages/webview.dart';
 import 'package:Yujai/style.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'agreementDialog.dart' as fullDialog;
-import 'policyDialog.dart' as policyDialog;
+// import 'agreementDialog.dart' as fullDialog;
+// import 'policyDialog.dart' as policyDialog;
 
 class About extends StatelessWidget {
   final String currentUserId;
   About({this.currentUserId});
 
-  Future _openAgreeDialog(context) async {
-    String result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) {
-          return fullDialog.CreateAgreement();
-        },
-        //true to display with a dismiss button rather than a return navigation arrow
-        fullscreenDialog: true));
-    if (result != null) {
-      letsDoSomething(result, context);
-    } else {
-      // print('you could do another action here if they cancel');
-    }
-  }
+  // Future _openAgreeDialog(context) async {
+  //   String result = await Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (BuildContext context) {
+  //         return fullDialog.CreateAgreement();
+  //       },
+  //       //true to display with a dismiss button rather than a return navigation arrow
+  //       fullscreenDialog: true));
+  //   if (result != null) {
+  //     letsDoSomething(result, context);
+  //   } else {
+  //     // print('you could do another action here if they cancel');
+  //   }
+  // }
 
   letsDoSomething(String result, context) {
     // print('');
   }
 
-  Future _openPolicyDialog(context) async {
-    String result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) {
-          return policyDialog.CreateAgreement();
-        },
-        //true to display with a dismiss button rather than a return navigation arrow
-        fullscreenDialog: true));
-    if (result != null) {
-      letsDoSomething(result, context);
-    } else {
-      // print('you could do another action here if they cancel');
-    }
-  }
+  // Future _openPolicyDialog(context) async {
+  //   String result = await Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (BuildContext context) {
+  //         return policyDialog.CreateAgreement();
+  //       },
+  //       //true to display with a dismiss button rather than a return navigation arrow
+  //       fullscreenDialog: true));
+  //   if (result != null) {
+  //     letsDoSomething(result, context);
+  //   } else {
+  //     // print('you could do another action here if they cancel');
+  //   }
+  // }
 
   letsDoNothing(String result, context) {
     // print('');

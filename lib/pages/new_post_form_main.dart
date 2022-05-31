@@ -1,20 +1,16 @@
-import 'package:Yujai/blocs/location_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';
-import 'package:provider/provider.dart';
 
 import '../style.dart';
 
@@ -31,14 +27,14 @@ class NewPostFormMain extends StatefulWidget {
 class _NewPostFormMainState extends State<NewPostFormMain> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
-  LatLng latlong = null;
+  LatLng latlong;
   File imageFile;
-  var _locationController;
+  // var _locationController;
   var _captionController;
   final _repository = Repository();
-  CameraPosition _cameraPosition;
-  GoogleMapController _controller;
-  Set<Marker> _markers = {};
+  // CameraPosition _cameraPosition;
+  // GoogleMapController _controller;
+  // Set<Marker> _markers = {};
   String location = '';
   Position _currentPosition;
   @override
@@ -64,7 +60,7 @@ class _NewPostFormMainState extends State<NewPostFormMain> {
                 decoration: BoxDecoration(color: Colors.grey[200]),
                 child: imageFile != null
                     ? Stack(
-                        overflow: Overflow.visible,
+                        clipBehavior: Clip.none,
                         children: [
                           Image.file(
                             imageFile,

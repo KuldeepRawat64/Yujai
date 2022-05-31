@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:Yujai/pages/following.dart';
 import 'package:Yujai/pages/follower.dart';
-import 'package:Yujai/pages/activity.dart';
-
 import '../style.dart';
 
 class InformationDetail extends StatefulWidget {
@@ -21,27 +19,27 @@ class _InformationDetailState extends State<InformationDetail> {
   UserModel _user;
   IconData icon;
   Color color;
-  List<User> usersList = List<User>();
+  List<User> usersList = [];
   User currentuser, user, followingUser;
-  List<User> userList = List<User>();
-  Future<List<DocumentSnapshot>> _future;
-  bool _isLiked = false;
-  List<String> followingUIDs = List<String>();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  bool _enabled = true;
-  ScrollController _scrollController;
-  ScrollController _scrollController1;
-  ScrollController _scrollController2;
-  ScrollController _scrollController3;
-  ScrollController _scrollController4 = ScrollController();
-  ScrollController _scrollController5 = ScrollController();
-  Future<List<DocumentSnapshot>> _eventFuture;
-  Future<List<DocumentSnapshot>> _newsFuture;
-  Future<List<DocumentSnapshot>> _jobFuture;
+  List<User> userList = [];
+  // Future<List<DocumentSnapshot>> _future;
+  // bool _isLiked = false;
+  List<String> followingUIDs = [];
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
+  // bool _enabled = true;
+  // ScrollController _scrollController;
+  // ScrollController _scrollController1;
+  // ScrollController _scrollController2;
+  // ScrollController _scrollController3;
+  // ScrollController _scrollController4 = ScrollController();
+  // ScrollController _scrollController5 = ScrollController();
+  // Future<List<DocumentSnapshot>> _eventFuture;
+  // Future<List<DocumentSnapshot>> _newsFuture;
+  // Future<List<DocumentSnapshot>> _jobFuture;
   //Offset state <-------------------------------------
   double offset = 0.0;
 
@@ -62,7 +60,6 @@ class _InformationDetailState extends State<InformationDetail> {
   }
 
   Widget detailsWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         // Navigator.of(context)
@@ -99,7 +96,6 @@ class _InformationDetailState extends State<InformationDetail> {
   }
 
   Widget detailsFollowingWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -136,7 +132,6 @@ class _InformationDetailState extends State<InformationDetail> {
   }
 
   Widget detailsFollowerWidget(String count, String label) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -242,7 +237,7 @@ class _InformationDetailState extends State<InformationDetail> {
                               '',
                               style: Theme.of(context)
                                   .textTheme
-                                  .body1
+                                  .bodyText1
                                   .copyWith(fontSize: 12),
                             )
                           ],

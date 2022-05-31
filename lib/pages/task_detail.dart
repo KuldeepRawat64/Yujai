@@ -1,22 +1,16 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:Yujai/pages/login_page.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:image/image.dart' as Im;
-import 'package:Yujai/main.dart';
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/user_model.dart';
 import 'package:Yujai/pages/comments.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/users_page.dart';
-import 'package:Yujai/pages/webview.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,9 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:Yujai/pages/image_detail.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:select_dialog/select_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -69,15 +61,12 @@ class _TaskDetailState extends State<TaskDetail> {
   bool _isEditingText = false;
   bool _isEditingDesc = false;
   bool _isEditingDate = false;
-  bool _isAssigned = false;
-  bool _isEditingReply = false;
   TextEditingController _taskNameController;
   String initialText = "Initial Text";
   TextEditingController _descriptionController;
   TextEditingController _commentTextController;
   String initialDescription = "Initial Text";
   DateTimeRange myDateRange;
-  final _formKey = GlobalKey<FormState>();
   String inputString = "";
   TextFormField input;
   List<Member> memberlist;
@@ -104,11 +93,6 @@ class _TaskDetailState extends State<TaskDetail> {
     _commentTextController = TextEditingController(text: '');
   }
 
-  void _submitForm() {
-    final FormState form = myFormKey.currentState;
-    form.save();
-  }
-
   @override
   void dispose() {
     _taskNameController.dispose();
@@ -117,7 +101,6 @@ class _TaskDetailState extends State<TaskDetail> {
   }
 
   Widget _editTitleTextField() {
-    var screenSize = MediaQuery.of(context).size;
     if (_isEditingText)
       return Center(
         child: TextField(
@@ -186,7 +169,7 @@ class _TaskDetailState extends State<TaskDetail> {
         stream: widget.documentSnapshot.reference.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData)
-            return FlatButton(
+            return TextButton(
               onPressed: () {
                 _showAssignedDialog();
               },
@@ -254,7 +237,6 @@ class _TaskDetailState extends State<TaskDetail> {
   }
 
   Widget _editDescTextField() {
-    var screenSize = MediaQuery.of(context).size;
     if (_isEditingDesc)
       return Expanded(
         child: TextField(
@@ -602,10 +584,6 @@ class _TaskDetailState extends State<TaskDetail> {
                                           'assignedPhoto': snapshot
                                               .data.docs[index]['ownerPhotoUrl']
                                         }).then((value) {
-                                          setState(() {
-                                            _isAssigned = true;
-                                          });
-
                                           Navigator.pop(context);
                                         });
                                       },
@@ -696,7 +674,7 @@ class _TaskDetailState extends State<TaskDetail> {
                     InkWell(
                         onTap: () async {
                           Reference photoref =
-                              await FirebaseStorage.instance.refFromURL(imgurl);
+                              FirebaseStorage.instance.refFromURL(imgurl);
                           await photoref.delete().then((value) {
                             setState(() {
                               imgurl = '';
@@ -840,7 +818,7 @@ class _TaskDetailState extends State<TaskDetail> {
                     InkWell(
                         onTap: () async {
                           Reference photoref =
-                              await FirebaseStorage.instance.refFromURL(imgurl);
+                              FirebaseStorage.instance.refFromURL(imgurl);
                           await photoref.delete().then((value) {
                             setState(() {
                               imgurl = '';

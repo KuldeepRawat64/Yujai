@@ -79,9 +79,13 @@ class MailState extends State<Mail> {
 
     if (!mounted) return;
 
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    var snackBar = SnackBar(
       content: Text(platformResponse),
-    ));
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -91,13 +95,13 @@ class MailState extends State<Mail> {
         backgroundColor: const Color(0xfff6f6f6),
         key: _scaffoldKey,
         appBar: AppBar(
-         // centerTitle: true,
+          // centerTitle: true,
           elevation: 0.5,
           backgroundColor: const Color(0xffffffff),
           leading: IconButton(
             icon: Icon(
               Icons.keyboard_arrow_left,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).primaryColorLight,
               size: 30.0,
             ),
             onPressed: () => Navigator.pop(context),
@@ -116,7 +120,7 @@ class MailState extends State<Mail> {
               onPressed: send,
               icon: Icon(
                 Icons.send,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColorLight,
               ),
             )
           ],

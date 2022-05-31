@@ -1,38 +1,21 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/team.dart';
-import 'package:Yujai/pages/depratment_member.dart';
 import 'package:Yujai/pages/dept_members.dart';
 import 'package:Yujai/pages/project_page.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_discussions_dept.dart';
-import 'package:Yujai/widgets/list_post.dart';
 import 'package:Yujai/widgets/no_content.dart';
-import 'package:Yujai/widgets/no_post.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:icon_picker/icon_picker.dart';
 import 'package:image/image.dart' as Im;
-import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/edit_photoUrl.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/group_invite.dart';
-import 'package:Yujai/pages/group_post_review.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_post_forum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shimmer/shimmer.dart';
 import 'dart:async';
-import 'list_ad.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:Yujai/widgets/list_event_forum.dart';
-//import 'package:Yujai/pages/group_requests.dart';
 
 class NestedTabBarDepartment extends StatefulWidget {
   final String gid;
@@ -58,16 +41,14 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  UserModel _user = UserModel();
-  Team _team = Team();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -76,15 +57,12 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   ScrollController _scrollController4 = ScrollController();
   ScrollController _scrollController5 = ScrollController();
   ScrollController _scrollController6 = ScrollController();
-  List<String> followingUIDs = List<String>();
-  bool _enabled = true;
+  List<String> followingUIDs = [];
   //Offset state <-------------------------------------
   double offset = 0.0;
   String currentUserId, followingUserId;
   StreamSubscription<DocumentSnapshot> subscription;
   bool isPrivate = true;
-  GlobalKey<FormState> _pFormKey = GlobalKey<FormState>();
-  TextEditingController _controller = TextEditingController();
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -92,17 +70,6 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
     if (!mounted) return;
     setState(() {
       followingUserId = uid;
-    });
-    fetchUserDetailsById(uid);
-  }
-
-  fetchUserDetailsById(String userId) async {
-    Team team = await _repository.fetchTeamDetailsById(widget.gid);
-    if (!mounted) return;
-    setState(() {
-      _team = team;
-      // isPrivate = user.isPrivate;
-      print("USER : ${_user.displayName}");
     });
   }
 
@@ -167,7 +134,6 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    var screenSize = MediaQuery.of(context).size;
     return ListView(
       physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
@@ -520,7 +486,6 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   }
 
   Widget discussionsWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
@@ -847,16 +812,6 @@ class _NestedTabBarDepartmentState extends State<NestedTabBarDepartment>
   }
 
   File imageFile;
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-
-    return File(selectedImage.path);
-  }
 
   void compressImage() async {
     print('starting compression');

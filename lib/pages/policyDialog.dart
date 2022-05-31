@@ -97,10 +97,7 @@ If you have any questions or suggestions about our Privacy Policy, do not hesita
                     horizontal: screenSize.width * 0.02,
                     vertical: screenSize.height * 0.012,
                   ),
-                  child: new FlatButton(
-                      color: Theme.of(context).accentColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
+                  child: TextButton(
                       onPressed: () {
                         Navigator.of(context).pop('User Agreed');
                       },

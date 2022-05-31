@@ -6,9 +6,7 @@ import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/vote.dart';
 import 'package:Yujai/pages/comment_group.dart';
-import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/image_detail.dart';
 import 'package:Yujai/pages/likes_screen.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
@@ -18,9 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:transparent_image/transparent_image.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,8 +47,6 @@ class _ListPostForumState extends State<ListPostForum> {
   bool _selected2 = false;
   bool _selected3 = false;
   bool _selected4 = false;
-  bool _selected5 = false;
-  bool _selected6 = false;
   int timeInMillis = 1586348737122;
   int counter = 0;
   String selectedSubject;
@@ -66,12 +60,10 @@ class _ListPostForumState extends State<ListPostForum> {
   List<DocumentSnapshot> listVotes5 = [];
   List<DocumentSnapshot> listVotes6 = [];
   List<DocumentSnapshot> totalVotes = [];
-  bool _displayFront;
   bool _flipXAxis;
   bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
-    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
       future: _repository.fetchPostComments(reference),
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -258,7 +250,6 @@ class _ListPostForumState extends State<ListPostForum> {
     buildPollDetail();
 
     // checkPollLength(widget.documentSnapshot.data()['pollLength']);
-    _displayFront = true;
     _flipXAxis = true;
     _repository
         .checkIfUserLikedOrNot(
@@ -308,7 +299,6 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   Widget option1Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -336,7 +326,6 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   Widget option2Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -365,7 +354,6 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   Widget option3Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -394,7 +382,6 @@ class _ListPostForumState extends State<ListPostForum> {
   }
 
   Widget option4Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(

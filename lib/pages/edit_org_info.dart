@@ -46,12 +46,11 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
   bool loading = true;
   AutoCompleteTextField industryTextField;
   GlobalKey<AutoCompleteTextFieldState<Industry>> industrykey = new GlobalKey();
-  static List<Industry> industries = new List<Industry>();
+  static List<Industry> industries = [];
   final format = DateFormat.y();
   bool isSelected = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   var _gstKey = GlobalKey<FormState>();
 
   @override
@@ -124,7 +123,7 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
         _industryController.text.isNotEmpty &&
         _productController.text.isNotEmpty &&
         _gstValid) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       _firestore.collection('users').doc(currentUser.uid).update({
         "displayName": _companyNameController.text,
         "gst": _gstController.text,
@@ -134,8 +133,13 @@ class _EditOrgInfoState extends State<EditOrgInfo> {
         "products": _productController.text,
       });
       Navigator.pop(context);
-      SnackBar snackbar = SnackBar(content: Text("Profile updated!"));
-      _scaffoldKey.currentState.showSnackBar(snackbar);
+      const snackBar = SnackBar(
+        content: Text('Profile Updated!'),
+      );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       return;
     }

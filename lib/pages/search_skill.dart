@@ -334,7 +334,7 @@ class _SearchSkillState extends State<SearchSkill>
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "skills": _filters,
     });
@@ -444,7 +444,6 @@ class _SearchSkillState extends State<SearchSkill>
   }
 
   Iterable<Widget> get interestWidgets sync* {
-    var screenSize = MediaQuery.of(context).size;
     for (Interest interest in _interests) {
       yield Padding(
         padding: const EdgeInsets.all(6.0),

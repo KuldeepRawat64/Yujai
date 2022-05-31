@@ -4,10 +4,6 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/progress.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:core';
 import 'package:image/image.dart' as Im;
@@ -104,7 +100,6 @@ class _ArticleState extends State<Article> {
   String latitude;
   String longitude;
   var locationMessage = "";
-  Position _currentPosition;
 
   @override
   void initState() {
@@ -129,7 +124,7 @@ class _ArticleState extends State<Article> {
 
   List<DropdownMenuItem<ArticleType>> buildDropDownMenuArticleType(
       List articleTypes) {
-    List<DropdownMenuItem<ArticleType>> items = List();
+    List<DropdownMenuItem<ArticleType>> items = [];
     for (ArticleType articleType in articleTypes) {
       items.add(
         DropdownMenuItem(
@@ -142,7 +137,7 @@ class _ArticleState extends State<Article> {
   }
 
   List<DropdownMenuItem<Capacity>> buildDropDownMenuCapacity(List capacities) {
-    List<DropdownMenuItem<Capacity>> items = List();
+    List<DropdownMenuItem<Capacity>> items = [];
     for (Capacity capacity in capacities) {
       items.add(
         DropdownMenuItem(
@@ -415,36 +410,36 @@ class _ArticleState extends State<Article> {
   //       _currentAddress =
   //           "${place.locality}, ${place.postalCode}, ${place.country}";
   //     });
-  Future<void> _getCurrentPosition() async {
-    // verify permissions
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      await Geolocator.openAppSettings();
-      await Geolocator.openLocationSettings();
-    }
-    // get current position
-    _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  // Future<void> _getCurrentPosition() async {
+  //   // verify permissions
+  //   LocationPermission permission = await Geolocator.requestPermission();
+  //   if (permission == LocationPermission.denied ||
+  //       permission == LocationPermission.deniedForever) {
+  //     await Geolocator.openAppSettings();
+  //     await Geolocator.openLocationSettings();
+  //   }
+  //   // get current position
+  //   _currentPosition = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
 
-    // get address
-    String _currentAddress = await _getGeolocationAddress(_currentPosition);
-    locationController.text = _currentAddress;
-  }
+  //   // get address
+  //   String _currentAddress = await _getGeolocationAddress(_currentPosition);
+  //   locationController.text = _currentAddress;
+  // }
 
   // Method to get Address from position:
 
-  Future<String> _getGeolocationAddress(Position position) async {
-    // geocoding
-    var places = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (places != null && places.isNotEmpty) {
-      final Placemark place = places.first;
-      return "${place.thoroughfare}, ${place.locality}";
-    }
+  // Future<String> _getGeolocationAddress(Position position) async {
+  //   // geocoding
+  //   var places = await placemarkFromCoordinates(
+  //     position.latitude,
+  //     position.longitude,
+  //   );
+  //   if (places != null && places.isNotEmpty) {
+  //     final Placemark place = places.first;
+  //     return "${place.thoroughfare}, ${place.locality}";
+  //   }
 
-    return "No address available";
-  }
+  //   return "No address available";
+  // }
 }

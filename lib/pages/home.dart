@@ -2,15 +2,11 @@ import 'package:Yujai/pages/activity_feed.dart';
 import 'package:Yujai/pages/news_page.dart';
 import 'package:Yujai/pages/profile.dart';
 import 'package:Yujai/pages/search.dart';
-import 'package:Yujai/resources/repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/pages/timeline.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cupertino_tabbar/cupertino_tabbar.dart' as CupertinoTabBar;
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:new_version/new_version.dart';
 
 final usersRef = FirebaseFirestore.instance.collection('users');

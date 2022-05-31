@@ -109,8 +109,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
                                         side: BorderSide(
-                                            color:
-                                                Theme.of(context).accentColor),
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 child: Padding(
@@ -122,8 +122,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.web_asset_outlined,
-                                            color:
-                                                Theme.of(context).accentColor),
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
                                         SizedBox(
                                           width: 10.0,
                                         ),
@@ -132,8 +132,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textAppTitle(context),
-                                            color:
-                                                Theme.of(context).accentColor,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -161,8 +161,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
                                         side: BorderSide(
-                                            color:
-                                                Theme.of(context).accentColor),
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 child: Padding(
@@ -175,7 +175,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                       children: [
                                         Icon(
                                           Icons.location_city_rounded,
-                                          color: Theme.of(context).accentColor,
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                         ),
                                         SizedBox(
                                           width: 10.0,
@@ -185,8 +186,8 @@ class _NewEventScreenState extends State<NewEventScreen> {
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textAppTitle(context),
-                                            color:
-                                                Theme.of(context).accentColor,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

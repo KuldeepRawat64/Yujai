@@ -1,15 +1,7 @@
-import 'package:Yujai/models/member.dart';
-import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/resources/users_provider.dart';
 import 'package:Yujai/widgets/users_listview_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../style.dart';
 
 class UsersPage extends StatelessWidget {
 //   @override

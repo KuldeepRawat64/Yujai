@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/group_invite.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -239,9 +238,7 @@ class _GroupRequestState extends State<GroupRequest> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    FlatButton(
-                                        //disabledColor: Theme.of(context).accentColor,
-                                        color: Theme.of(context).accentColor,
+                                    TextButton(
                                         onPressed: () => joinGroup(
                                             snapshot.data.docs[index]),
                                         child: Text(
@@ -251,9 +248,7 @@ class _GroupRequestState extends State<GroupRequest> {
                                               fontSize: textBody1(context),
                                               color: Colors.white),
                                         )),
-                                    FlatButton(
-                                        // disabledColor: Colors.grey[200],
-                                        color: Colors.grey[200],
+                                    TextButton(
                                         onPressed: () =>
                                             removeInviteToActivityFeed(
                                                 snapshot.data.docs[index]),

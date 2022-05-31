@@ -6,7 +6,6 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/image_detail.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 
@@ -67,7 +66,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         backgroundColor: new Color(0xffffffff),
@@ -171,7 +169,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontFamily: FontNameDefault,
-                                          color: Theme.of(context).accentColor,
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                           fontSize: textSubTitle(context),
                                         ),
                                         maxLines: 1,
@@ -331,72 +330,72 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 bottom: screenSize.height * 0.012,
                 left: screenSize.width / 30,
               ),
-              child:
-                  widget.documentSnapshot['description'].toString().length < 350
-                      ? Text(
-                          widget.documentSnapshot['description'],
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                              fontSize: textSubTitle(context)),
-                        )
-                      : seeMore
-                          ? Wrap(
-                              children: [
-                                Text(
-                                  widget.documentSnapshot['description'],
-                                  style: TextStyle(
-                                      fontFamily: FontNameDefault,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: textSubTitle(context)),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      seeMore = false;
-                                    });
-                                  },
-                                  child: Text(
-                                    'See less',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textSubTitle(context),
-                                        color: Theme.of(context).accentColor),
-                                  ),
-                                )
-                              ],
-                            )
-                          : Wrap(
-                              children: [
-                                Text(
-                                  widget.documentSnapshot['description'],
-                                  maxLines: 5,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontSize: textBody1(context),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      seeMore = true;
-                                    });
-                                  },
-                                  child: Text(
-                                    'See more',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: FontNameDefault,
-                                        fontSize: textSubTitle(context),
-                                        color: Theme.of(context).accentColor),
-                                  ),
-                                )
-                              ],
+              child: widget.documentSnapshot['description'].toString().length <
+                      350
+                  ? Text(
+                      widget.documentSnapshot['description'],
+                      style: TextStyle(
+                          fontFamily: FontNameDefault,
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontSize: textSubTitle(context)),
+                    )
+                  : seeMore
+                      ? Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot['description'],
+                              style: TextStyle(
+                                  fontFamily: FontNameDefault,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: textSubTitle(context)),
                             ),
+                            InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    seeMore = false;
+                                  });
+                                },
+                                child: Text(
+                                  'See less',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                ))
+                          ],
+                        )
+                      : Wrap(
+                          children: [
+                            Text(
+                              widget.documentSnapshot['description'],
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: FontNameDefault,
+                                fontSize: textBody1(context),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  seeMore = true;
+                                });
+                              },
+                              child: Text(
+                                'See more',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: FontNameDefault,
+                                    fontSize: textSubTitle(context),
+                                    color: Theme.of(context).primaryColorLight),
+                              ),
+                            )
+                          ],
+                        ),
             ),
             // Padding(
             //   padding: EdgeInsets.only(
@@ -536,10 +535,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           fontSize: textHeader(context),
                         ),
                       ),
-                      RaisedButton(
-                        splashColor: Colors.yellow,
-                        shape: StadiumBorder(),
-                        color: Colors.deepPurple,
+                      ElevatedButton(
                         child: Text(
                           'Discuss',
                           style: TextStyle(
@@ -581,7 +577,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   Widget eventStack() {
-    String toLaunch = widget.documentSnapshot['website'];
     return Stack(
       fit: StackFit.loose,
       alignment: Alignment.topCenter,
@@ -596,7 +591,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Container(
       color: Colors.grey,
       child: Stack(
-        overflow: Overflow.visible,
+        clipBehavior: Clip.none,
         children: [
           CachedNetworkImage(
             imageUrl: widget.documentSnapshot['imgUrl'],

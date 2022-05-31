@@ -354,7 +354,7 @@ class _EditProfileScreenState extends State<NewEducationForm> {
                         Checkbox(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4.0)),
-                            activeColor: Theme.of(context).accentColor,
+                            activeColor: Theme.of(context).primaryColorLight,
                             value: isChecked,
                             onChanged: (val) {
                               setState(() {

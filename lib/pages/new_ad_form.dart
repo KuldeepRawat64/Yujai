@@ -1,18 +1,11 @@
-import 'package:Yujai/pages/group_upload_ad.dart';
 import 'package:Yujai/pages/keys.dart';
-import 'package:Yujai/pages/login_page.dart';
 import 'package:Yujai/pages/places_location.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:currency_textfield/currency_textfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
@@ -23,8 +16,6 @@ import '../style.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewAdForm extends StatefulWidget {
@@ -37,22 +28,22 @@ class NewAdForm extends StatefulWidget {
 }
 
 class _NewAdFormState extends State<NewAdForm> {
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
-  FileType _pickType;
-  bool _multiPick = true;
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-  List<UploadTask> _tasks = <UploadTask>[];
+  // String _path;
+  // Map<String, String> _paths;
+  // String _extension;
+  // FileType _pickType;
+  // bool _multiPick = true;
+  // GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  // List<UploadTask> _tasks = <UploadTask>[];
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
   var _locationController;
   var _captionController;
   var _descriptionController;
-  var _hostController;
-  var _eventWebsiteController;
-  var _ticketWebsiteController;
+  // var _hostController;
+  // var _eventWebsiteController;
+  // var _ticketWebsiteController;
   final _repository = Repository();
   String location = '';
   final format = DateFormat('yyyy-MM-dd');
@@ -62,7 +53,7 @@ class _NewAdFormState extends State<NewAdForm> {
   int endTime = 0;
   List<String> imgUrls = [];
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<UploadTask> uploadedTasks = [];
   PickResult selectedPlace;
   final CarouselController _controller = CarouselController();
@@ -72,7 +63,7 @@ class _NewAdFormState extends State<NewAdForm> {
   String latitude;
   String longitude;
   var locationMessage = "";
-  Position _currentPosition;
+  // Position _currentPosition;
 
   var _priceController;
 
@@ -99,9 +90,9 @@ class _NewAdFormState extends State<NewAdForm> {
     _captionController = TextEditingController();
     _locationController = TextEditingController();
     _descriptionController = TextEditingController();
-    _hostController = TextEditingController();
-    _eventWebsiteController = TextEditingController();
-    _ticketWebsiteController = TextEditingController();
+    // _hostController = TextEditingController();
+    // _eventWebsiteController = TextEditingController();
+    // _ticketWebsiteController = TextEditingController();
     _priceController = TextEditingController();
   }
 
@@ -436,9 +427,7 @@ class _NewAdFormState extends State<NewAdForm> {
                                               ? Center(
                                                   child:
                                                       CircularProgressIndicator())
-                                              : RaisedButton(
-                                                  color:
-                                                      Colors.deepPurpleAccent,
+                                              : ElevatedButton(
                                                   child: Text(
                                                     "Pick Here",
                                                     style: TextStyle(
@@ -790,14 +779,14 @@ class _NewAdFormState extends State<NewAdForm> {
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
+  // Future<File> _pickImage(String action) async {
+  //   PickedFile selectedImage;
+  //   action == 'Gallery'
+  //       ? selectedImage =
+  //           await ImagePicker().getImage(source: ImageSource.gallery)
+  //       : await ImagePicker().getImage(source: ImageSource.camera);
+  //   return File(selectedImage.path);
+  // }
 
   void compressImage() async {
     print('starting compression');
@@ -814,38 +803,38 @@ class _NewAdFormState extends State<NewAdForm> {
     print('done');
   }
 
-  Future<void> _getCurrentPosition() async {
-    // verify permissions
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      await Geolocator.openAppSettings();
-      await Geolocator.openLocationSettings();
-    }
-    // get current position
-    _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  // Future<void> _getCurrentPosition() async {
+  //   // verify permissions
+  //   LocationPermission permission = await Geolocator.requestPermission();
+  //   if (permission == LocationPermission.denied ||
+  //       permission == LocationPermission.deniedForever) {
+  //     await Geolocator.openAppSettings();
+  //     await Geolocator.openLocationSettings();
+  //   }
+  //   // get current position
+  //   _currentPosition = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
 
-    // get address
-    String _currentAddress = await _getGeolocationAddress(_currentPosition);
-    _locationController.text = _currentAddress;
-  }
+  //   // get address
+  //   String _currentAddress = await _getGeolocationAddress(_currentPosition);
+  //   _locationController.text = _currentAddress;
+  // }
 
   // Method to get Address from position:
 
-  Future<String> _getGeolocationAddress(Position position) async {
-    // geocoding
-    var places = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (places != null && places.isNotEmpty) {
-      final Placemark place = places.first;
-      return "${place.thoroughfare}, ${place.locality}";
-    }
+  // Future<String> _getGeolocationAddress(Position position) async {
+  //   // geocoding
+  //   var places = await placemarkFromCoordinates(
+  //     position.latitude,
+  //     position.longitude,
+  //   );
+  //   if (places != null && places.isNotEmpty) {
+  //     final Placemark place = places.first;
+  //     return "${place.thoroughfare}, ${place.locality}";
+  //   }
 
-    return "No address available";
-  }
+  //   return "No address available";
+  // }
 
   _submitForm(BuildContext context) {
     //
@@ -929,7 +918,7 @@ class _NewAdFormState extends State<NewAdForm> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -942,10 +931,7 @@ class _NewAdFormState extends State<NewAdForm> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              TextButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -975,7 +961,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
@@ -1019,7 +1005,7 @@ class MultiSelectChip extends StatefulWidget {
 class _MultiSelectChipState extends State<MultiSelectChip> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

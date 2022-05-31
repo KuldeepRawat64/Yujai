@@ -70,20 +70,19 @@ If you have any questions or suggestions about our Terms and Conditions, do not 
                     horizontal: screenSize.width * 0.02,
                     vertical: screenSize.height * 0.012,
                   ),
-                  child: new FlatButton(
-                      color: Theme.of(context).accentColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
+                  child: OutlinedButton(
                       onPressed: () {
                         Navigator.of(context).pop('User Agreed');
                       },
-                      child: new Text('AGREE',
-                       style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: FontNameDefault,
-                  fontSize: textButton(context),
-                  color: Colors.white,
-                ),)),
+                      child: new Text(
+                        'AGREE',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: FontNameDefault,
+                          fontSize: textButton(context),
+                          color: Colors.white,
+                        ),
+                      )),
                 )
               ],
             ),
@@ -93,12 +92,12 @@ If you have any questions or suggestions about our Terms and Conditions, do not 
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   pdfText,
-                style: TextStyle(
-                //  fontWeight: FontWeight.bold,
-                  fontFamily: FontNameDefault,
-                  fontSize: textBody1(context),
-               //   color: Colors.black54,
-                ),
+                  style: TextStyle(
+                    //  fontWeight: FontWeight.bold,
+                    fontFamily: FontNameDefault,
+                    fontSize: textBody1(context),
+                    //   color: Colors.black54,
+                  ),
                 ),
               ),
             )));

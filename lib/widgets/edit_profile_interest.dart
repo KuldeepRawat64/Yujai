@@ -1,11 +1,8 @@
 import 'package:Yujai/pages/edit_interest_form.dart';
-import 'package:Yujai/pages/edit_profile_form.dart';
-import 'package:Yujai/pages/edit_skill_form.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/new_post_form.dart';
 import '../style.dart';
 import 'package:Yujai/models/user.dart';
 
@@ -42,7 +39,6 @@ class _EditProfileInterestState extends State<EditProfileInterest> {
   }
 
   Widget getInterestsListView(List<dynamic> interests) {
-    var screenSize = MediaQuery.of(context).size;
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,

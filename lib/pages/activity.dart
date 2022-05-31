@@ -180,7 +180,6 @@ class _ActivityState extends State<Activity> {
   }
 
   Widget postImagesWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')

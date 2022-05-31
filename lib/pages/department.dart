@@ -1,40 +1,20 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/models/department.dart';
-import 'package:Yujai/models/feed.dart';
-import 'package:Yujai/models/group.dart';
-import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/dept_inbox.dart';
-import 'package:Yujai/pages/dept_invite.dart';
 import 'package:Yujai/pages/dept_settings.dart';
-import 'package:Yujai/pages/group_invite.dart';
-import 'package:Yujai/pages/group_upload_ad.dart';
-import 'package:Yujai/pages/group_upload_discussion.dart';
-import 'package:Yujai/pages/group_upload_forum.dart';
-import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
-import 'package:Yujai/pages/team_invite.dart';
-import 'package:Yujai/pages/team_members.dart';
-import 'package:Yujai/pages/team_page.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:Yujai/widgets/nested_tab_department.dart';
-import 'package:Yujai/widgets/nested_tab_team_home.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'dart:async';
-import 'package:Yujai/pages/group_upload_event.dart';
 import 'package:uuid/uuid.dart';
-
-import 'dept_members.dart';
 
 class DepartmentPage extends StatefulWidget {
   final String gid;
@@ -110,11 +90,11 @@ class _DepartmentPageState extends State<DepartmentPage>
   List<DropdownMenuItem<ProjectType>> _dropDownMenuProjectType;
   ProjectType _selectedProjectType;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _value = 1;
+  // int _value = 1;
   TabController _tabController;
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  Group _group;
+  // Group _group;
   Team _team;
   IconData icon;
   Color color;
@@ -138,15 +118,15 @@ class _DepartmentPageState extends State<DepartmentPage>
   TextEditingController _taskNameController = TextEditingController();
   TextEditingController _discussionTitleController = TextEditingController();
   TextEditingController _pollTitleController = TextEditingController();
-  TextEditingController _listNameController = TextEditingController();
+  // TextEditingController _listNameController = TextEditingController();
   TextEditingController _projectNameController = TextEditingController();
   TextEditingController _taskDescriptionController = TextEditingController();
-  List<PollType> _pollType = PollType.getPollType();
-  List<DropdownMenuItem<PollType>> _dropDownMenuPollType;
-  PollType _selectedPollType;
-  List<PollLength> _pollLength = PollLength.getPollLength();
-  List<DropdownMenuItem<PollLength>> _dropDownMenuPollLength;
-  PollLength _selectedPollLength;
+  // List<PollType> _pollType = PollType.getPollType();
+  // List<DropdownMenuItem<PollType>> _dropDownMenuPollType;
+  // PollType _selectedPollType;
+  // List<PollLength> _pollLength = PollLength.getPollLength();
+  // List<DropdownMenuItem<PollLength>> _dropDownMenuPollLength;
+  // PollLength _selectedPollLength;
   bool option1 = false;
   bool option2 = false;
   bool option3 = false;
@@ -168,7 +148,7 @@ class _DepartmentPageState extends State<DepartmentPage>
   var sixHoursFromNow = DateTime.now().add(new Duration(hours: 6));
   var oneDayFromNow = DateTime.now().add(new Duration(days: 1));
   var twoDaysFromNow = DateTime.now().add(new Duration(days: 2));
-  List<RadioModel> sampleData = List<RadioModel>();
+  List<RadioModel> sampleData = [];
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -196,7 +176,7 @@ class _DepartmentPageState extends State<DepartmentPage>
 
   List<DropdownMenuItem<ProjectType>> buildDropDownMenuProjectType(
       List projectTypes) {
-    List<DropdownMenuItem<ProjectType>> items = List();
+    List<DropdownMenuItem<ProjectType>> items = [];
     for (ProjectType projectType in projectTypes) {
       items.add(
         DropdownMenuItem(
@@ -215,7 +195,7 @@ class _DepartmentPageState extends State<DepartmentPage>
   }
 
   List<DropdownMenuItem<PollType>> buildDropDownMenuPollType(List pollTypes) {
-    List<DropdownMenuItem<PollType>> items = List();
+    List<DropdownMenuItem<PollType>> items = [];
     for (PollType pollType in pollTypes) {
       items.add(
         DropdownMenuItem(
@@ -229,7 +209,7 @@ class _DepartmentPageState extends State<DepartmentPage>
 
   List<DropdownMenuItem<PollLength>> buildDropDownMenuPollLength(
       List pollLengths) {
-    List<DropdownMenuItem<PollLength>> items = List();
+    List<DropdownMenuItem<PollLength>> items = [];
     for (PollLength pollLength in pollLengths) {
       items.add(
         DropdownMenuItem(
@@ -314,10 +294,10 @@ class _DepartmentPageState extends State<DepartmentPage>
       });
     _dropDownMenuProjectType = buildDropDownMenuProjectType(_projectType);
     _selectedProjectType = _dropDownMenuProjectType[0].value;
-    _dropDownMenuPollType = buildDropDownMenuPollType(_pollType);
-    _selectedPollType = _dropDownMenuPollType[1].value;
-    _dropDownMenuPollLength = buildDropDownMenuPollLength(_pollLength);
-    _selectedPollLength = _dropDownMenuPollLength[5].value;
+    // _dropDownMenuPollType = buildDropDownMenuPollType(_pollType);
+    // _selectedPollType = _dropDownMenuPollType[1].value;
+    // _dropDownMenuPollLength = buildDropDownMenuPollLength(_pollLength);
+    // _selectedPollLength = _dropDownMenuPollLength[5].value;
     checkPrivateVal();
     sampleData.add(RadioModel(false, '3 h', '3h'));
     sampleData.add(RadioModel(true, '6 h', '6h'));
@@ -940,7 +920,6 @@ class _DepartmentPageState extends State<DepartmentPage>
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
             children: [
               Positioned(
                 top: -18,
@@ -1075,7 +1054,6 @@ class _DepartmentPageState extends State<DepartmentPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -1369,7 +1347,7 @@ class _DepartmentPageState extends State<DepartmentPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -1676,7 +1654,7 @@ class _DepartmentPageState extends State<DepartmentPage>
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,
@@ -1823,7 +1801,7 @@ class _DepartmentPageState extends State<DepartmentPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -2062,7 +2040,7 @@ class _DepartmentPageState extends State<DepartmentPage>
             return AlertDialog(
               content: SingleChildScrollView(
                 child: Stack(
-                  overflow: Overflow.visible,
+                  clipBehavior: Clip.none,
                   children: <Widget>[
                     Positioned(
                       right: -40.0,
@@ -2566,62 +2544,62 @@ class _DepartmentPageState extends State<DepartmentPage>
         }));
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
+  // Future<File> _pickImage(String action) async {
+  //   PickedFile selectedImage;
+  //   action == 'Gallery'
+  //       ? selectedImage =
+  //           await ImagePicker().getImage(source: ImageSource.gallery)
+  //       : await ImagePicker().getImage(source: ImageSource.camera);
+  //   return File(selectedImage.path);
+  // }
 
-  _showImageDialog() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => GroupUploadForum(
-                    //               group: _team,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //               imageFile: imageFile,
-                    //             )));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialog() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Choose from Gallery',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   // Navigator.pushReplacement(
+  //                   //     context,
+  //                   //     MaterialPageRoute(
+  //                   //         builder: (context) => GroupUploadForum(
+  //                   //               group: _team,
+  //                   //               gid: widget.gid,
+  //                   //               name: widget.name,
+  //                   //               imageFile: imageFile,
+  //                   //             )));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
   void addActivityToInbox(UserModel currentUser, String type) {
     if (widget.currentUser.uid == _team.currentUserUid) {

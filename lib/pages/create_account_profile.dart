@@ -4,11 +4,9 @@ import 'package:Yujai/style.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import '../models/location.dart';
 import '../models/user.dart';
 import 'agreementDialog.dart' as fullDialog;
@@ -32,9 +30,9 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
   TextEditingController locationController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   bool isLoading = true;
-  bool _phoneValid = true;
-  bool _displayNameValid = true;
-  bool _dateValid = false;
+  // bool _phoneValid = true;
+  // bool _displayNameValid = true;
+  // bool _dateValid = false;
   final format = DateFormat('yyyy-MM-dd');
   bool loading = true;
   String selectedGender;
@@ -126,17 +124,17 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     setState(() {
-      phoneController.text.trim().length < 10 ||
-              phoneController.text.trim().length > 10 ||
-              phoneController.text.isEmpty
-          ? _phoneValid = false
-          : _phoneValid = true;
-      displayNameController.text.trim().length < 3 ||
-              displayNameController.text.isEmpty
-          ? _displayNameValid = false
-          : _displayNameValid = true;
+      // phoneController.text.trim().length < 10 ||
+      //         phoneController.text.trim().length > 10 ||
+      //         phoneController.text.isEmpty
+      //     ? _phoneValid = false
+      //     : _phoneValid = true;
+      // displayNameController.text.trim().length < 3 ||
+      //         displayNameController.text.isEmpty
+      //     ? _displayNameValid = false
+      //     : _displayNameValid = true;
 
       // locationController.text.isEmpty
       //     ? _locationValid = false
@@ -152,8 +150,13 @@ class _CreateAccountProfileState extends State<CreateAccountProfile> {
       "status": selectedStatus,
     });
 
-    SnackBar snackbar = SnackBar(content: Text("Profile updated!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
+    const snackBar = SnackBar(
+      content: Text("Profile updated!"),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(

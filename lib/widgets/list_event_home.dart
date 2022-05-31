@@ -10,7 +10,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/pages/event_detail_group.dart';
 import 'package:intl/intl.dart';
 import '../style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEventHome extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;

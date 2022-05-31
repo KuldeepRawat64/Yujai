@@ -48,7 +48,7 @@ class ListItemChatRoom extends StatelessWidget {
             ),
             trailing: Icon(
               MdiIcons.circleMedium,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).primaryColorLight,
             ),
           ),
         ),

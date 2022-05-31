@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/progress.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:path_provider/path_provider.dart';
 import 'dart:core';
 import 'package:image/image.dart' as Im;
-import 'home.dart';
 import 'places_location.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
@@ -172,7 +170,6 @@ class _EventUploadState extends State<EventUpload> {
   final format = DateFormat.yMd().add_jm();
   String selectedPrice;
   bool isSelectedPriceFree;
-  final _repository = Repository();
   PickResult selectedPlace;
 
   @override
@@ -201,7 +198,7 @@ class _EventUploadState extends State<EventUpload> {
   }
 
   List<DropdownMenuItem<Category>> buildDropDownMenuCategory(List categories) {
-    List<DropdownMenuItem<Category>> items = List();
+    List<DropdownMenuItem<Category>> items = [];
     for (Category category in categories) {
       items.add(
         DropdownMenuItem(
@@ -221,7 +218,7 @@ class _EventUploadState extends State<EventUpload> {
 
   List<DropdownMenuItem<EventType>> buildDropDownMenuEventType(
       List eventTypes) {
-    List<DropdownMenuItem<EventType>> items = List();
+    List<DropdownMenuItem<EventType>> items = [];
     for (EventType eventType in eventTypes) {
       items.add(
         DropdownMenuItem(
@@ -240,7 +237,7 @@ class _EventUploadState extends State<EventUpload> {
   }
 
   List<DropdownMenuItem<Capacity>> buildDropDownMenuCapacity(List capacities) {
-    List<DropdownMenuItem<Capacity>> items = List();
+    List<DropdownMenuItem<Capacity>> items = [];
     for (Capacity capacity in capacities) {
       items.add(
         DropdownMenuItem(
@@ -260,11 +257,11 @@ class _EventUploadState extends State<EventUpload> {
 
   bool _visibility = true;
 
-  void _changeVisibility(bool visibility) {
-    setState(() {
-      _visibility = visibility;
-    });
-  }
+  // void _changeVisibility(bool visibility) {
+  //   setState(() {
+  //     _visibility = visibility;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -366,7 +363,7 @@ class _EventUploadState extends State<EventUpload> {
                     child: GestureDetector(
                       child: Icon(MdiIcons.send,
                           size: screenSize.height * 0.04,
-                          color: Theme.of(context).accentColor),
+                          color: Theme.of(context).primaryColorLight),
                       //    onTap: submit,
                     ),
                   )
@@ -375,7 +372,7 @@ class _EventUploadState extends State<EventUpload> {
                     child: GestureDetector(
                       child: Icon(MdiIcons.send,
                           size: screenSize.height * 0.04,
-                          color: Theme.of(context).accentColor),
+                          color: Theme.of(context).primaryColorLight),
                       onTap: () {},
                     ),
                   ),
@@ -560,7 +557,7 @@ class _EventUploadState extends State<EventUpload> {
                           Radio(
                             value: 'Onsite',
                             groupValue: selectedStatus,
-                            activeColor: Theme.of(context).accentColor,
+                            activeColor: Theme.of(context).primaryColorLight,
                             onChanged: (val) {
                               //print("Choosen $val");
                               setSelectedStatus(val);
@@ -587,7 +584,7 @@ class _EventUploadState extends State<EventUpload> {
                           Radio(
                             value: 'Online',
                             groupValue: selectedStatus,
-                            activeColor: Theme.of(context).accentColor,
+                            activeColor: Theme.of(context).primaryColorLight,
                             onChanged: (val) {
                               //print("Choosen $val");
                               setSelectedStatus(val);
@@ -694,9 +691,7 @@ class _EventUploadState extends State<EventUpload> {
                                                         ? Center(
                                                             child:
                                                                 CircularProgressIndicator())
-                                                        : RaisedButton(
-                                                            color: Colors
-                                                                .deepPurpleAccent,
+                                                        : ElevatedButton(
                                                             child: Text(
                                                               "Pick Here",
                                                               style: TextStyle(

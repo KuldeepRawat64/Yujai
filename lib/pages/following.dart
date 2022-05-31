@@ -15,8 +15,8 @@ class Following extends StatefulWidget {
 class _FollowingState extends State<Following> {
   var _repository = Repository();
   UserModel _user = UserModel();
-  List<User> usersList = List<User>();
-  List<DocumentSnapshot> listFollowings = List<DocumentSnapshot>();
+  List<User> usersList = [];
+  List<DocumentSnapshot> listFollowings = [];
   Future<List<DocumentSnapshot>> _future;
   ScrollController _scrollController = ScrollController();
 

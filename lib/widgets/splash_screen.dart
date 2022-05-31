@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:Yujai/widgets/future_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../style.dart';
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key key}) : super(key: key);
 

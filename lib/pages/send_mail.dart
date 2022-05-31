@@ -55,9 +55,13 @@ class _SendMailState extends State<SendMail> {
 
     if (!mounted) return;
 
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    var snackBar = SnackBar(
       content: Text(platformResponse),
-    ));
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -95,7 +99,7 @@ class _SendMailState extends State<SendMail> {
                     onPressed: send,
                     icon: Icon(
                       Icons.send,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).primaryColorLight,
                     ),
                   )
                 : Container()

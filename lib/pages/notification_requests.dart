@@ -16,8 +16,8 @@ class ActivityFeedRequests extends StatefulWidget {
 class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
   var _repository = Repository();
   User currentUser, user, followingUser;
-  List<String> followingUIDs = List<String>();
-  List<User> usersList = List<User>();
+  List<String> followingUIDs = [];
+  List<User> usersList = [];
   DocumentReference reference;
   UserModel _user = UserModel();
   StreamSubscription<DocumentSnapshot> subscription;
@@ -84,7 +84,6 @@ class _ActivityFeedRequestsState extends State<ActivityFeedRequests> {
   }
 
   Widget postImagesWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')

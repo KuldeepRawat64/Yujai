@@ -202,7 +202,7 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
               ListTile(
                 leading: Icon(
                   Icons.person,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).primaryColorLight,
                   size: screenSize.height * 0.04,
                 ),
                 title: Container(
@@ -235,7 +235,7 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
                   ListTile(
                     leading: Icon(
                       Icons.location_on,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).primaryColorLight,
                       size: screenSize.height * 0.04,
                     ),
                     title: Container(
@@ -261,20 +261,8 @@ class _GroupUploadForumState extends State<GroupUploadForum> {
                     width: screenSize.width,
                     height: screenSize.height * 0.09,
                     alignment: Alignment.center,
-                    child: RaisedButton.icon(
-                      label: Text(
-                        "Use Current Location",
-                        style: TextStyle(
-                          fontFamily: FontNameDefault,
-                          fontSize: textSubTitle(context),
-                          color: Colors.white,
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(screenSize.height * 0.05),
-                      ),
-                      color: Theme.of(context).accentColor,
+                    child: IconButton(
+                      color: Theme.of(context).primaryColorLight,
                       onPressed: _getCurrentPosition,
                       icon: Icon(
                         Icons.my_location,

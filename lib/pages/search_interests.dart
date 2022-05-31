@@ -77,7 +77,7 @@ class _SearchInterestsState extends State<SearchInterests>
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "interests": FieldValue.arrayUnion(_filters),
     });
@@ -187,7 +187,6 @@ class _SearchInterestsState extends State<SearchInterests>
   }
 
   Iterable<Widget> get interestWidgets sync* {
-    var screenSize = MediaQuery.of(context).size;
     for (Interest interest in _interests) {
       yield Padding(
         padding: const EdgeInsets.all(6.0),

@@ -1,20 +1,15 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/image_detail.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'friend_profile.dart';
 
 class AdDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
@@ -31,7 +26,7 @@ class AdDetailScreen extends StatefulWidget {
 class _AdDetailScreenState extends State<AdDetailScreen> {
   // String selectedSubject;
   final List<String> images = [];
-  TextEditingController _bodyController = TextEditingController(text: '');
+  // TextEditingController _bodyController = TextEditingController(text: '');
   final CarouselController _controller = CarouselController();
   String reason = '';
   int _current = 0;
@@ -56,7 +51,6 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xffffffff),
@@ -731,7 +725,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context),
-                                    color: Theme.of(context).accentColor),
+                                    color: Theme.of(context).primaryColorLight),
                               ),
                             )
                           ],
@@ -759,7 +753,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontFamily: FontNameDefault,
                                     fontSize: textSubTitle(context),
-                                    color: Theme.of(context).accentColor),
+                                    color: Theme.of(context).primaryColorLight),
                               ),
                             )
                           ],
@@ -802,10 +796,8 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: IconButton(
-                        icon: Icon(
-                          Icons.production_quantity_limits,
-                          color: Theme.of(context).accentColor,
-                        ),
+                        icon: Icon(Icons.production_quantity_limits,
+                            color: Theme.of(context).primaryColorLight),
                         onPressed: null,
                       ),
                       title: Text(
@@ -833,7 +825,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                       leading: IconButton(
                         icon: Icon(
                           Icons.category_outlined,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).primaryColorLight,
                         ),
                         onPressed: null,
                       ),

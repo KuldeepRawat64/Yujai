@@ -1,12 +1,9 @@
 import 'dart:io';
 import 'dart:async';
-import 'dart:math';
-//import 'package:Yujai/main.dart';
 import 'package:Yujai/models/chatroom.dart';
 import 'package:Yujai/models/comment.dart';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/discussion.dart';
-import 'package:Yujai/models/education.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/invite.dart';
 import 'package:Yujai/models/like.dart';
@@ -151,7 +148,7 @@ class FirebaseProvider {
 
   Future<User> getCurrentUser() async {
     User currentUser;
-    currentUser = await _auth.currentUser;
+    currentUser = _auth.currentUser;
     print('Email Id : ${currentUser.email}');
     return currentUser;
   }
@@ -1494,8 +1491,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrievePosts(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore
         .collection('users')
@@ -1523,8 +1520,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveGroupPosts(User group) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore
         .collection('groups')
@@ -1552,8 +1549,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveGroupSuggestions(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore
         .collection('groups')
@@ -1581,8 +1578,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveFeeds(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1602,8 +1599,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveEvents(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1627,8 +1624,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveNews(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1652,8 +1649,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveJobs(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1677,8 +1674,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrievePromotion(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1702,8 +1699,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> retrieveFollowers(User user) async {
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
-    List<DocumentSnapshot> updatedList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = [];
+    List<DocumentSnapshot> updatedList = [];
     QuerySnapshot querySnapshot;
     QuerySnapshot snapshot = await _firestore.collection('users').get();
     for (int i = 0; i < snapshot.docs.length; i++) {
@@ -1727,7 +1724,7 @@ class FirebaseProvider {
   }
 
   Future<List<String>> fetchAllUserNames(User user) async {
-    List<String> userNameList = List<String>();
+    List<String> userNameList = [];
     QuerySnapshot querySnapshot = await _firestore.collection('users').get();
     for (var i = 0; i < querySnapshot.docs.length; i++) {
       if (querySnapshot.docs[i].id != user.uid) {
@@ -1740,7 +1737,7 @@ class FirebaseProvider {
 
   Future<String> fetchUidBySearchedName(String name) async {
     String uid;
-    List<DocumentSnapshot> uidList = List<DocumentSnapshot>();
+    List<DocumentSnapshot> uidList = [];
     QuerySnapshot querySnapshot = await _firestore.collection('users').get();
     for (var i = 0; i < querySnapshot.docs.length; i++) {
       uidList.add(querySnapshot.docs[i]);
@@ -2488,8 +2485,8 @@ class FirebaseProvider {
   Future<List<String>> fetchUserNames(User user) async {
     DocumentReference documentReference =
         _firestore.collection('messages').doc(user.uid);
-    List<String> userNameList = List<String>();
-    List<String> chatUsersList = List<String>();
+    List<String> userNameList = [];
+    List<String> chatUsersList = [];
     QuerySnapshot querySnapshot = await _firestore.collection('users').get();
     for (var i = 0; i < querySnapshot.docs.length; i++) {
       if (querySnapshot.docs[i].id != user.uid) {
@@ -2593,7 +2590,7 @@ class FirebaseProvider {
   }
 
   Future<List<Group>> fetchAllGroups(User user) async {
-    List<Group> groupList = List<Group>();
+    List<Group> groupList = [];
     QuerySnapshot querySnapshot = await _firestore
         .collection('groups')
         //   .where('isPrivate', isEqualTo: false)
@@ -2611,7 +2608,7 @@ class FirebaseProvider {
   }
 
   Future<List<Team>> fetchMyTeams(User user) async {
-    List<Team> myTeamList = List<Team>();
+    List<Team> myTeamList = [];
     QuerySnapshot querySnapshot = await _firestore
         .collection('teams')
         .orderBy('timestamp')
@@ -2628,7 +2625,7 @@ class FirebaseProvider {
   }
 
   Future<List<Group>> fetchMyGroups(User user) async {
-    List<Group> myGroupList = List<Group>();
+    List<Group> myGroupList = [];
     QuerySnapshot querySnapshot = await _firestore.collection('groups')
         //   .where('isPrivate', isEqualTo: false)
         .where('members', arrayContainsAny: [user.uid]).get();
@@ -2644,7 +2641,7 @@ class FirebaseProvider {
   }
 
   Future<List<Group>> fetchAllGroupSuggestions(User user) async {
-    List<Group> groupList = List<Group>();
+    List<Group> groupList = [];
     QuerySnapshot querySnapshot = await _firestore
         .collection('groups')
         //   .where('isPrivate', isEqualTo: false)
@@ -2761,7 +2758,6 @@ class FirebaseProvider {
       print('Messages added to db');
       msgId = Uuid().v4();
     });
-    ;
   }
 
   void uploadImageMsgToGroup(
@@ -2822,8 +2818,8 @@ class FirebaseProvider {
   }
 
   Future<List<DocumentSnapshot>> fetchFeed(User user) async {
-    List<String> followingUIDs = List<String>();
-    List<DocumentSnapshot> list = List<DocumentSnapshot>();
+    List<String> followingUIDs = [];
+    List<DocumentSnapshot> list = [];
 
     QuerySnapshot querySnapshot = await _firestore
         .collection('users')
@@ -2857,7 +2853,7 @@ class FirebaseProvider {
   }
 
   Future<List<String>> fetchFollowingUids(User user) async {
-    List<String> followingUIDs = List<String>();
+    List<String> followingUIDs = [];
     QuerySnapshot querySnapshot = await _firestore
         .collection('users')
         .doc(user.uid)

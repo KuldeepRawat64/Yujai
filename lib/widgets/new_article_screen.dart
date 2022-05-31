@@ -1,9 +1,5 @@
 import 'package:Yujai/pages/new_article_form.dart';
-import 'package:Yujai/pages/new_job_form.dart';
-import 'package:Yujai/pages/new_post_form_main.dart';
-import 'package:Yujai/pages/new_work_form.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/new_post_form.dart';
 import '../style.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';

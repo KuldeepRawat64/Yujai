@@ -18,8 +18,8 @@ class FriendFollower extends StatefulWidget {
 class _FriendFollowerState extends State<FriendFollower> {
   var _repository = Repository();
   UserModel _user = UserModel();
-  List<UserModel> usersList = List<UserModel>();
-  List<DocumentSnapshot> listFriendFollowers = List<DocumentSnapshot>();
+  List<UserModel> usersList = [];
+  List<DocumentSnapshot> listFriendFollowers = [];
   Future<List<DocumentSnapshot>> _future;
   ScrollController _scrollController = ScrollController();
 

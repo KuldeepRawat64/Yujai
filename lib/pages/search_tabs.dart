@@ -1,8 +1,6 @@
-import 'package:Yujai/models/event.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/group_page.dart';
-import 'package:Yujai/pages/search_data.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_event.dart';
 import 'package:Yujai/widgets/list_job.dart';
@@ -10,16 +8,10 @@ import 'package:Yujai/widgets/list_news.dart';
 import 'package:Yujai/widgets/list_post.dart';
 import 'package:Yujai/widgets/list_promotion.dart';
 import 'package:Yujai/widgets/nested_tab_bar.dart';
-import 'package:Yujai/widgets/no_content.dart';
-import 'package:Yujai/widgets/no_event.dart';
-import 'package:Yujai/widgets/no_news.dart';
-import 'package:Yujai/widgets/no_post.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../style.dart';
 
@@ -33,21 +25,20 @@ class SearchTabs extends StatefulWidget {
 
 class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   var _repository = Repository();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<User> usersList = List<User>();
-  List<User> companyList = List<User>();
-  List<DocumentSnapshot> resultList = List<DocumentSnapshot>();
-  List<User> suggestionsList = List<User>();
-  List<User> suggestionsListCompany = List<User>();
-  List<DocumentSnapshot> suggestions = List<DocumentSnapshot>();
-  List<String> followingUIDs = List<String>();
+  List<User> usersList = [];
+  List<User> companyList = [];
+  List<DocumentSnapshot> resultList = [];
+  List<User> suggestionsList = [];
+  List<User> suggestionsListCompany = [];
+  List<DocumentSnapshot> suggestions = [];
+  List<String> followingUIDs = [];
   TabController _tabController;
   ScrollController _scrollController;
   //Offset state <-------------------------------------
   double offset = 0.0;
-  bool _enabled = true;
   String _searchTerm = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _filter = TextEditingController();
@@ -340,8 +331,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
-                        List<DocumentSnapshot> tempList =
-                            List<DocumentSnapshot>();
+                        List<DocumentSnapshot> tempList = [];
                         for (int i = 0;
                             i < snapshotResult.data.docs.length;
                             i++) {
@@ -391,8 +381,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
-                        List<DocumentSnapshot> tempList =
-                            List<DocumentSnapshot>();
+                        List<DocumentSnapshot> tempList = [];
                         for (int i = 0;
                             i < snapshotEvents.data.docs.length;
                             i++) {
@@ -424,7 +413,6 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   Widget promoSearch() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
@@ -443,8 +431,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
-                        List<DocumentSnapshot> tempList =
-                            List<DocumentSnapshot>();
+                        List<DocumentSnapshot> tempList = [];
                         for (int i = 0;
                             i < snapshotResult.data.docs.length;
                             i++) {
@@ -500,8 +487,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
-                        List<DocumentSnapshot> tempList =
-                            List<DocumentSnapshot>();
+                        List<DocumentSnapshot> tempList = [];
                         for (int i = 0;
                             i < snapshotResult.data.docs.length;
                             i++) {
@@ -544,7 +530,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
-              List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
+              List<DocumentSnapshot> tempList = [];
               for (int i = 0; i < snapshot.data.docs.length; i++) {
                 if (snapshot.data.docs[i]['displayName']
                     .toString()
@@ -625,7 +611,6 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   Widget groupsSearch() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('groups')
@@ -636,7 +621,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
-              List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
+              List<DocumentSnapshot> tempList = [];
               for (int i = 0; i < snapshot.data.docs.length; i++) {
                 if (snapshot.data.docs[i]['groupName']
                         .toString()
@@ -708,7 +693,6 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   checkLabel(String type) {
-    var screenSize = MediaQuery.of(context).size;
     if (type == 'Student') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),
@@ -782,7 +766,6 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   checkPrivacy(bool isPrivate) {
-    var screenSize = MediaQuery.of(context).size;
     if (isPrivate) {
       return Padding(
         padding: EdgeInsets.only(right: 8.0),
@@ -833,7 +816,6 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
   }
 
   Widget usersSearch() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -846,7 +828,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
             return Center(child: CircularProgressIndicator());
           } else {
             if (_searchTerm.isNotEmpty) {
-              List<DocumentSnapshot> tempList = List<DocumentSnapshot>();
+              List<DocumentSnapshot> tempList = [];
               for (int i = 0; i < snapshot.data.docs.length; i++) {
                 if (snapshot.data.docs[i]['displayName']
                     .toString()
@@ -952,8 +934,7 @@ class _SearchTabsState extends State<SearchTabs> with TickerProviderStateMixin {
                       return Container();
                     } else {
                       if (_searchTerm.isNotEmpty) {
-                        List<DocumentSnapshot> tempList =
-                            List<DocumentSnapshot>();
+                        List<DocumentSnapshot> tempList = [];
                         for (int i = 0;
                             i < snapshotResult.data.docs.length;
                             i++) {

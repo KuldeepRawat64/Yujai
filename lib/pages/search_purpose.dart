@@ -60,7 +60,7 @@ class _SearchPurposeState extends State<SearchPurpose>
   // }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "purpose": _filters,
     });

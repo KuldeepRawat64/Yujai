@@ -5,10 +5,9 @@ import 'package:Yujai/style.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import '../models/location.dart';
 import '../models/user.dart';
-import 'agreementDialog.dart' as fullDialog;
+// import 'agreementDialog.dart' as fullDialog;
 
 class CreateTeam extends StatefulWidget {
   @override
@@ -90,7 +89,7 @@ class _CreateTeamState extends State<CreateTeam> {
     });
   }
 
-  List<String> selectedDepartmentList = List();
+  List<String> selectedDepartmentList = [];
   _showDialog() {
     showDialog(
         context: context,
@@ -113,7 +112,7 @@ class _CreateTeamState extends State<CreateTeam> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -126,10 +125,7 @@ class _CreateTeamState extends State<CreateTeam> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              ElevatedButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -165,19 +161,19 @@ class _CreateTeamState extends State<CreateTeam> {
     );
   }
 
-  Future _openAgreeDialog(context) async {
-    String result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) {
-          return fullDialog.CreateAgreement();
-        },
-        //true to display with a dismiss button rather than a return navigation arrow
-        fullscreenDialog: true));
-    if (result != null) {
-      accept(result, context);
-    } else {
-      decline(result, context);
-    }
-  }
+  // Future _openAgreeDialog(context) async {
+  //   String result = await Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (BuildContext context) {
+  //         return fullDialog.CreateAgreement();
+  //       },
+  //       //true to display with a dismiss button rather than a return navigation arrow
+  //       fullscreenDialog: true));
+  //   if (result != null) {
+  //     accept(result, context);
+  //   } else {
+  //     decline(result, context);
+  //   }
+  // }
 
   accept(String result, context) {
     setState(() {
@@ -215,9 +211,13 @@ class _CreateTeamState extends State<CreateTeam> {
       }
     });
 
-    SnackBar snackbar = SnackBar(content: Text("Team Created!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
-    //Navigator.pop(context);
+    const snackBar = SnackBar(
+      content: Text('Team Created'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Padding buildTitleLine() {
@@ -412,9 +412,9 @@ class MultiSelectChip extends StatefulWidget {
 }
 
 class _MultiSelectChipState extends State<MultiSelectChip> {
-  List<String> selectedChoices = List();
+  List<String> selectedChoices = [];
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

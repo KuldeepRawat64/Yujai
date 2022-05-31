@@ -1,15 +1,10 @@
-import 'package:Yujai/pages/edit_profile_form.dart';
 import 'package:Yujai/pages/edit_skill_form.dart';
-import 'package:Yujai/widgets/skill_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/new_post_form.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../style.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:async';
 import 'package:Yujai/resources/repository.dart';
 
 class EditProfileSkill extends StatefulWidget {

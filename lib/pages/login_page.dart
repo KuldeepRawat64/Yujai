@@ -147,9 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 color: Colors.white,
                               ),
-                              child: OutlineButton(
-                                highlightColor: Colors.grey[100],
-                                splashColor: Colors.grey[200],
+                              child: OutlinedButton(
                                 onPressed: () {
                                   _repository.signIn().then((user) {
                                     if (user != null) {
@@ -159,11 +157,6 @@ class _LoginPageState extends State<LoginPage> {
                                     }
                                   });
                                 },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40.0),
-                                  side: BorderSide(
-                                      color: Colors.grey, width: 1.5),
-                                ),
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -211,9 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 color: Color(0xff251F34),
                               ),
-                              child: OutlineButton(
-                                highlightColor: Colors.grey[100],
-                                splashColor: Colors.grey[200],
+                              child: OutlinedButton(
                                 onPressed: () {
                                   _repository.signIn().then((user) {
                                     if (user != null) {
@@ -223,11 +214,6 @@ class _LoginPageState extends State<LoginPage> {
                                     }
                                   });
                                 },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40.0),
-                                  side: BorderSide(
-                                      color: Colors.grey, width: 1.0),
-                                ),
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 10, 0, 10),

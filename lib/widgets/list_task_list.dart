@@ -5,14 +5,11 @@ import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/event_detail_page.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:uuid/uuid.dart';
 
 import '../style.dart';
@@ -363,7 +360,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -539,7 +536,7 @@ class _ListItemTaskListState extends State<ListItemTaskList> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,

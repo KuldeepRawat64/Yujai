@@ -3,7 +3,6 @@ import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/image_detail.dart';
 import 'package:Yujai/pages/likes_screen.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,9 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../style.dart';
@@ -44,7 +41,6 @@ class _ListItemPostState extends State<ListItemPost> {
   bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
-    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
       future: _repository.fetchPostComments(reference),
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {

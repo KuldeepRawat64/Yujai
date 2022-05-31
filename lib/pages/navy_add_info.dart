@@ -1,7 +1,6 @@
 import 'package:Yujai/style.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/user.dart';
 import 'home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -108,7 +107,7 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
 
   List<DropdownMenuItem<ServiceStatus>> buildDropDownMenuServiceStatus(
       List serviceStats) {
-    List<DropdownMenuItem<ServiceStatus>> items = List();
+    List<DropdownMenuItem<ServiceStatus>> items = [];
     for (ServiceStatus serviceStatus in serviceStats) {
       items.add(
         DropdownMenuItem(
@@ -127,7 +126,7 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
   }
 
   List<DropdownMenuItem<Medal>> buildDropDownMenuMedal(List medals) {
-    List<DropdownMenuItem<Medal>> items = List();
+    List<DropdownMenuItem<Medal>> items = [];
     for (Medal medal in medals) {
       items.add(
         DropdownMenuItem(
@@ -146,7 +145,7 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "startService": _startServiceController.text,
       "endService": _endServiceController.text,
@@ -348,7 +347,7 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
                                 ),
                                 elevation: 1,
                                 icon: Icon(Icons.keyboard_arrow_down,
-                                    color: Theme.of(context).accentColor),
+                                    color: Theme.of(context).primaryColorLight),
                                 iconSize: 30,
                                 isExpanded: true,
                                 value: _selectedServiceStatus,
@@ -431,7 +430,6 @@ class _NavyAddInfoState extends State<NavyAddInfo> {
                               keyboardType: TextInputType.multiline,
                               minLines: 5,
                               maxLines: 5,
-                              maxLengthEnforced: true,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: const Color(0xffffffff),

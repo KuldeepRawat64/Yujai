@@ -122,12 +122,12 @@ class _ListItemUserState extends State<ListItemUser> {
           trailing: _isInvited
               ? IconButton(
                   icon: Icon(Icons.check_circle_outline,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).primaryColorLight,
                       size: screenSize.height * 0.045),
                   onPressed: null)
               : IconButton(
                   icon: Icon(Icons.add_circle,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).primaryColorLight,
                       size: screenSize.height * 0.045),
                   onPressed: () {
                     setState(() {

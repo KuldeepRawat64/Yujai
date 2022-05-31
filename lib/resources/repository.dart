@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-//import 'package:Yujai/models/job.dart';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/member.dart';
@@ -8,14 +7,9 @@ import 'package:Yujai/models/message.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/group_chat.dart';
-//import 'package:Yujai/pages/article_upload.dart';
-//import 'package:Yujai/pages/event_upload.dart';
 import 'package:Yujai/resources/firebase_provider.dart';
-//import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 
 class Repository {
   final _firebaseProvider = FirebaseProvider();

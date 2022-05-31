@@ -1,15 +1,11 @@
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_promotion.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../style.dart';
-import 'list_job.dart';
-import 'package:Yujai/pages/search_data.dart';
 
 class NetstedTabbarWorkApplication extends StatefulWidget {
   @override
@@ -22,21 +18,21 @@ class _NetstedTabbarWorkApplicationState
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   Future<List<DocumentSnapshot>> _listFuture;
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   ScrollController _scrollController;
   ScrollController _scrollController1 = ScrollController();
   ScrollController _scrollController2 = ScrollController();
   ScrollController _scrollController3 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;

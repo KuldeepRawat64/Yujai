@@ -1,21 +1,17 @@
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/create_group.dart';
-import 'package:Yujai/pages/create_team.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/team_page.dart';
 import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_group.dart';
-import 'package:Yujai/widgets/nested_tab_bar_team.dart';
 import 'package:Yujai/widgets/new_group_screen.dart';
 import 'package:Yujai/widgets/new_team_screen.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class NewsPage extends StatefulWidget {
@@ -25,13 +21,13 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   var _repository = Repository();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   // User _user = User();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<String> followingUIDs = List<String>();
-  List<Group> groupList = List<Group>();
-  List<Team> myTeamList = List<Team>();
+  List<UserModel> usersList = [];
+  List<String> followingUIDs = [];
+  List<Group> groupList = [];
+  List<Team> myTeamList = [];
   TabController _tabController;
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -358,7 +354,6 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   }
 
   Widget myTeamsList() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('teams')

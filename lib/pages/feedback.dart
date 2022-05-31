@@ -46,9 +46,13 @@ class _FeedBackState extends State<FeedBack> {
 
     if (!mounted) return;
 
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    var snackBar = SnackBar(
       content: Text(platformResponse),
-    ));
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -84,10 +88,8 @@ class _FeedBackState extends State<FeedBack> {
                     _bodyController.text.isNotEmpty
                 ? IconButton(
                     onPressed: send,
-                    icon: Icon(
-                      Icons.send,
-                      color: Theme.of(context).accentColor,
-                    ),
+                    icon: Icon(Icons.send,
+                        color: Theme.of(context).primaryColorLight),
                   )
                 : Container()
           ],

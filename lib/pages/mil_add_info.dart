@@ -160,7 +160,6 @@ class _MilAddInfoState extends State<MilAddInfo> {
                     minLines: 1,
                     maxLines: 5,
                     maxLength: 5,
-                    maxLengthEnforced: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),

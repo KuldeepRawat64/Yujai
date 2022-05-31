@@ -3,11 +3,10 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import '../models/location.dart';
 import '../models/user.dart';
 import '../style.dart';
-import 'agreementDialog.dart' as fullDialog;
+// import 'agreementDialog.dart' as fullDialog;
 
 class CreateGroup extends StatefulWidget {
   @override
@@ -76,7 +75,7 @@ class _CreateGroupState extends State<CreateGroup> {
     });
   }
 
-  List<String> selectedReportList = List();
+  List<String> selectedReportList = [];
   _showReportDialog() {
     showDialog(
         context: context,
@@ -98,7 +97,7 @@ class _CreateGroupState extends State<CreateGroup> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -111,10 +110,7 @@ class _CreateGroupState extends State<CreateGroup> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              ElevatedButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -150,19 +146,19 @@ class _CreateGroupState extends State<CreateGroup> {
     );
   }
 
-  Future _openAgreeDialog(context) async {
-    String result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) {
-          return fullDialog.CreateAgreement();
-        },
-        //true to display with a dismiss button rather than a return navigation arrow
-        fullscreenDialog: true));
-    if (result != null) {
-      accept(result, context);
-    } else {
-      decline(result, context);
-    }
-  }
+  // Future _openAgreeDialog(context) async {
+  //   String result = await Navigator.of(context).push(MaterialPageRoute(
+  //       builder: (BuildContext context) {
+  //         return fullDialog.CreateAgreement();
+  //       },
+  //       //true to display with a dismiss button rather than a return navigation arrow
+  //       fullscreenDialog: true));
+  //   if (result != null) {
+  //     accept(result, context);
+  //   } else {
+  //     decline(result, context);
+  //   }
+  // }
 
   accept(String result, context) {
     setState(() {
@@ -203,9 +199,13 @@ class _CreateGroupState extends State<CreateGroup> {
       }
     });
 
-    SnackBar snackbar = SnackBar(content: Text("Group Created!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
-    //Navigator.pop(context);
+    const snackBar = SnackBar(
+      content: Text('Group Created'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -655,9 +655,9 @@ class MultiSelectChip extends StatefulWidget {
 }
 
 class _MultiSelectChipState extends State<MultiSelectChip> {
-  List<String> selectedChoices = List();
+  List<String> selectedChoices = [];
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

@@ -3,23 +3,13 @@ import 'dart:io';
 import 'package:Yujai/models/feed.dart';
 import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/article_screen.dart';
-import 'package:Yujai/pages/article_upload.dart';
 import 'package:Yujai/pages/chat_screen.dart';
 import 'package:Yujai/pages/comments.dart';
-import 'package:Yujai/pages/event_upload.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/job_upload.dart';
-import 'package:Yujai/pages/likes_screen.dart';
 import 'package:Yujai/pages/notifications.dart';
-import 'package:Yujai/pages/promotion_post.dart';
 import 'package:Yujai/pages/search_tabs.dart';
-import 'package:Yujai/pages/upload_screen.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/list_event.dart';
-import 'package:Yujai/pages/image_detail.dart';
-import 'package:Yujai/widgets/list_event_home.dart';
 import 'package:Yujai/widgets/list_job.dart';
 import 'package:Yujai/widgets/new_article_screen.dart';
 import 'package:Yujai/widgets/new_event_screen_main.dart';
@@ -29,17 +19,12 @@ import 'package:Yujai/widgets/new_work_screen.dart';
 import 'package:Yujai/widgets/no_job.dart';
 import 'package:Yujai/widgets/no_news.dart';
 import 'package:Yujai/widgets/no_event.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:Yujai/widgets/list_post.dart';
 import '../widgets/list_news.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'package:Yujai/pages/search_data.dart';
 
 class FeedScreen extends StatefulWidget {
   @override
@@ -51,17 +36,16 @@ class _FeedScreenState extends State<FeedScreen> {
   UserModel currentuser, user, followingUser;
   IconData icon;
   Color color;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> userList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> userList = [];
   Future<List<DocumentSnapshot>> _future;
-  bool _isLiked = false;
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   UserModel _user = UserModel();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   bool _enabled = true;
   File imageFile;
   ScrollController _scrollController;
@@ -315,7 +299,7 @@ class _FeedScreenState extends State<FeedScreen> {
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,
@@ -411,7 +395,7 @@ class _FeedScreenState extends State<FeedScreen> {
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,

@@ -239,10 +239,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          RaisedButton(
-                            splashColor: Colors.yellow,
-                            shape: StadiumBorder(),
-                            color: Colors.deepPurple,
+                          ElevatedButton(
                             child: Text(
                               'Apply',
                               style: TextStyle(

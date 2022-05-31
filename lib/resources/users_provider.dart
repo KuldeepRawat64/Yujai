@@ -15,6 +15,7 @@ class UsersProvider extends ChangeNotifier {
   bool get hasNext => _hasNext;
 
   List<UserModel> get users => _usersSnapshot.map((snap) {
+        // ignore: unused_local_variable
         final user = snap.data;
 
         return UserModel(displayName: 'displayName', photoUrl: 'photoUrl');

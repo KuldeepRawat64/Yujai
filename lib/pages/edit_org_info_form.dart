@@ -1,19 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/industry.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class EditOrgInfoForm extends StatefulWidget {
@@ -26,7 +21,6 @@ class EditOrgInfoForm extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditOrgInfoForm> {
-  var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
   UserModel currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -41,10 +35,10 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
   bool loading = true;
   AutoCompleteTextField industryTextField;
   GlobalKey<AutoCompleteTextFieldState<Industry>> industrykey = new GlobalKey();
-  static List<Industry> industries = new List<Industry>();
+  static List<Industry> industries = [];
   DateFormat format = DateFormat.y();
   bool isSelected = false;
-  var _gstKey = GlobalKey<FormState>();
+
   String valueEmployee;
   String formattedString = 'yyyy';
   DateTime estYear;
@@ -117,7 +111,7 @@ class _EditProfileScreenState extends State<EditOrgInfoForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       _firestore.collection('users').doc(currentUser.uid).update({
         "displayName": _companyNameController.text,
         "gst": _gstController.text,

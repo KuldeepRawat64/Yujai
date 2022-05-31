@@ -67,7 +67,7 @@ class _ExperienceEditState extends State<ExperienceEdit> {
   GlobalKey<AutoCompleteTextFieldState<Company>> ikey = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<Company>> cikey = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<Company>> ciikey = new GlobalKey();
-  static List<Company> companies = new List<Company>();
+  static List<Company> companies = [];
   var _repository = Repository();
   User currentUser;
   User user;
@@ -120,7 +120,7 @@ class _ExperienceEditState extends State<ExperienceEdit> {
         _company3Controller.text.isNotEmpty &&
             _startCompany3Controller.text.isNotEmpty &&
             _endCompany3Controller.text.isNotEmpty) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       usersRef.doc(currentUser.uid).update({
         "company1": _company1Controller.text,
         "company2": _company2Controller.text,

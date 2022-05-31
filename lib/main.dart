@@ -59,7 +59,6 @@ class MyAppState extends State<MyApp> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0))),
             primarySwatch: Colors.deepPurple,
-            accentColor: Colors.deepPurpleAccent,
             visualDensity: VisualDensity.standard,
           ),
           home: SplashScreen(),

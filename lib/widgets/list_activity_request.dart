@@ -96,7 +96,7 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
     if (widget.documentSnapshot['type'] == 'request') {
       mediaPreview = Wrap(
         children: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               followUser();
             },
@@ -107,12 +107,11 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                   fontSize: textSubTitle(context),
                   color: Colors.white),
             ),
-            color: Theme.of(context).primaryColor,
           ),
           SizedBox(
             width: 2.0,
           ),
-          FlatButton(
+          TextButton(
             onPressed: () {
               removeRequestFromActivityFeed();
             },
@@ -123,14 +122,13 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                   fontSize: textSubTitle(context),
                   color: Colors.black54),
             ),
-            color: Colors.grey[200],
           )
         ],
       );
     } else if (widget.documentSnapshot['type'] == 'group invite') {
       mediaPreview = Wrap(
         children: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               joinGroup();
             },
@@ -141,12 +139,11 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                   fontSize: textSubTitle(context),
                   color: Colors.white),
             ),
-            color: Theme.of(context).primaryColor,
           ),
           SizedBox(
             width: 2.0,
           ),
-          FlatButton(
+          TextButton(
             onPressed: removeRequestFromActivityFeed,
             child: Text(
               'Ignore',
@@ -155,7 +152,6 @@ class _ListItemActivityRequestState extends State<ListItemActivityRequest> {
                   fontSize: textSubTitle(context),
                   color: Colors.black54),
             ),
-            color: Colors.grey[200],
           )
         ],
       );

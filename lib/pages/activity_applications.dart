@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
@@ -19,7 +18,7 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
   UserModel _user;
   IconData icon;
   Color color;
-  Future<List<DocumentSnapshot>> _future;
+  // Future<List<DocumentSnapshot>> _future;
   final TextStyle style =
       TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -49,7 +48,8 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
     setState(() {
       _user = user;
     });
-    _future = _repository.retreiveUserApplications(_user.uid);
+    // _future =
+    _repository.retreiveUserApplications(_user.uid);
   }
 
   @override
@@ -162,7 +162,6 @@ class _ActivityApplicationsState extends State<ActivityApplications> {
   }
 
   Widget postImagesWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')

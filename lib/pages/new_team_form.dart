@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
 
 import '../style.dart';
 
@@ -24,7 +21,6 @@ class _NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
-  var _locationController;
   var _captionController;
   final _repository = Repository();
   String location = '';
@@ -58,7 +54,7 @@ class _NewTeamFormState extends State<NewTeamForm> {
     _captionController = TextEditingController();
   }
 
-  List<String> selectedDepartmentList = List();
+  List<String> selectedDepartmentList = [];
   _showDialog() {
     showDialog(
         context: context,
@@ -280,15 +276,6 @@ class _NewTeamFormState extends State<NewTeamForm> {
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
-
   void compressImage() async {
     print('starting compression');
     final tempDir = await getTemporaryDirectory();
@@ -404,9 +391,9 @@ class MultiSelectChip extends StatefulWidget {
 }
 
 class _MultiSelectChipState extends State<MultiSelectChip> {
-  List<String> selectedChoices = List();
+  List<String> selectedChoices = [];
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

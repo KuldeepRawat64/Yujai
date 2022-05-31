@@ -42,8 +42,6 @@ class FlowEducationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color dimColor = const Color(0xFFC5C5C5);
-
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Padding(

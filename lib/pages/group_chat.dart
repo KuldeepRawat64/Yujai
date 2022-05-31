@@ -47,11 +47,11 @@ class _GroupChatState extends State<GroupChat> {
   String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
   StreamSubscription<DocumentSnapshot> subscription;
   File imageFile;
-  static UserModel _user, currentuser;
+  static UserModel _user;
   final ScrollController _scrollController = ScrollController();
   // Keep track of whether a scroll is needed.
   bool _needsScroll = true;
-  Timer _timer;
+  // Timer _timer;
   bool isExpanded = false;
   bool seeMore = false;
 
@@ -68,7 +68,7 @@ class _GroupChatState extends State<GroupChat> {
       _repository.fetchUserDetailsById(_senderuid).then((user) {
         if (!mounted) return;
         setState(() {
-          currentuser = user;
+          // currentuser = user;
           senderPhotoUrl = user.photoUrl;
           senderName = user.displayName;
           _user = user;
@@ -99,7 +99,8 @@ class _GroupChatState extends State<GroupChat> {
     print("NAME : $name");
     String uid = await _repository.fetchUidBySearchedName(name);
     //  fetchUserDetailsById(uid);
-    // _future = _repository.retreiveUserPosts(uid);
+    // _future =
+    _repository.retreiveUserPosts(uid);
   }
 
   _scrollToEnd() async {

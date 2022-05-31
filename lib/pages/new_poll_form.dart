@@ -1,9 +1,7 @@
 import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +22,7 @@ class NewPollForm extends StatefulWidget {
 class _NewPollFormState extends State<NewPollForm> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
-  List<RadioModel> sampleData = List<RadioModel>();
+  List<RadioModel> sampleData = [];
   File imageFile;
   var _option1Controller;
   var _captionController;
@@ -431,15 +429,6 @@ class _NewPollFormState extends State<NewPollForm> {
         ),
       ),
     );
-  }
-
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
   }
 
   void compressImage() async {

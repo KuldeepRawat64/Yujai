@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:Yujai/models/department.dart';
-import 'package:Yujai/models/feed.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/like.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/vote.dart';
-import 'package:Yujai/pages/comments.dart';
 import 'package:Yujai/pages/discussion_comment.dart';
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/image_detail.dart';
@@ -61,8 +58,6 @@ class _ListItemDiscussionsProjectState
   bool _selected2 = false;
   bool _selected3 = false;
   bool _selected4 = false;
-  bool _selected5 = false;
-  bool _selected6 = false;
   int timeInMillis = 1586348737122;
   int counter = 0;
   String selectedSubject;
@@ -79,7 +74,6 @@ class _ListItemDiscussionsProjectState
   bool seeMore = false;
 
   Widget commentWidget(DocumentReference reference) {
-    var screenSize = MediaQuery.of(context).size;
     return FutureBuilder(
       future: _repository.fetchPostComments(reference),
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -295,7 +289,6 @@ class _ListItemDiscussionsProjectState
   }
 
   Widget option1Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -323,7 +316,6 @@ class _ListItemDiscussionsProjectState
   }
 
   Widget option2Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -352,7 +344,6 @@ class _ListItemDiscussionsProjectState
   }
 
   Widget option3Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -381,7 +372,6 @@ class _ListItemDiscussionsProjectState
   }
 
   Widget option4Widget() {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {},
       child: Row(
@@ -1625,7 +1615,6 @@ class _ListItemDiscussionsProjectState
   }
 
   showCategory(DocumentSnapshot snapshot, BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     if (snapshot['category'] == 'Entertainment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),

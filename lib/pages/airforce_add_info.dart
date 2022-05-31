@@ -1,7 +1,6 @@
 import 'package:Yujai/style.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/user.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -75,7 +74,7 @@ class _AirforceAddInfoState extends State<AirforceAddInfo> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       usersRef.doc(currentUser.uid).update({
         "startService": _startServiceController.text,
         "endService": _endServiceController.text,
@@ -267,7 +266,7 @@ class _AirforceAddInfoState extends State<AirforceAddInfo> {
                           Checkbox(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0)),
-                              activeColor: Theme.of(context).accentColor,
+                              activeColor: Theme.of(context).primaryColorLight,
                               value: isChecked,
                               onChanged: (val) {
                                 setState(() {

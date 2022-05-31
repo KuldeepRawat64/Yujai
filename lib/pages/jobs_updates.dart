@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/list_job.dart';
@@ -22,7 +21,7 @@ class _JobUpdatesState extends State<JobUpdates> {
   UserModel _user;
   IconData icon;
   Color color;
-  Future<List<DocumentSnapshot>> _future;
+  // Future<List<DocumentSnapshot>> _future;
   final TextStyle style =
       TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal);
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -41,7 +40,7 @@ class _JobUpdatesState extends State<JobUpdates> {
     setState(() {
       _user = user;
     });
-    _future = _repository.retreiveUserJobs(_user.uid);
+    _repository.retreiveUserJobs(_user.uid);
   }
 
   @override
@@ -89,7 +88,6 @@ class _JobUpdatesState extends State<JobUpdates> {
   }
 
   Widget postImagesWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')

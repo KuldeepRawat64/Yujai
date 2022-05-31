@@ -1,6 +1,5 @@
 import 'package:Yujai/pages/new_event_form_main.dart';
 import 'package:flutter/material.dart';
-import 'package:Yujai/pages/new_event_form.dart';
 import '../style.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/models/group.dart';
@@ -107,8 +106,8 @@ class _NewEventScreenMainState extends State<NewEventScreenMain> {
                                     shape: RoundedRectangleBorder(
                                         side: BorderSide(
                                             width: 0.1,
-                                            color:
-                                                Theme.of(context).accentColor),
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 child: Padding(
@@ -129,8 +128,8 @@ class _NewEventScreenMainState extends State<NewEventScreenMain> {
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textAppTitle(context),
-                                            color:
-                                                Theme.of(context).accentColor,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -159,8 +158,8 @@ class _NewEventScreenMainState extends State<NewEventScreenMain> {
                                     shape: RoundedRectangleBorder(
                                         side: BorderSide(
                                             width: 0.1,
-                                            color:
-                                                Theme.of(context).accentColor),
+                                            color: Theme.of(context)
+                                                .primaryColorLight),
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 child: Padding(
@@ -183,8 +182,8 @@ class _NewEventScreenMainState extends State<NewEventScreenMain> {
                                           style: TextStyle(
                                             fontFamily: FontNameDefault,
                                             fontSize: textAppTitle(context),
-                                            color:
-                                                Theme.of(context).accentColor,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

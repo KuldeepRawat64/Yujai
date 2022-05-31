@@ -1,14 +1,10 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'home.dart';
 
@@ -31,14 +27,9 @@ class _EditProfileScreenState extends State<EditInterestForm>
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
   User currentUser;
-  final _skillController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _websiteController = TextEditingController();
   double number = 5;
   int index = 0;
-  GlobalKey<ScaffoldState> _key;
+  // GlobalKey<ScaffoldState> _key;
   List<Interest> _interests;
   List<String> _filters;
   bool isLoading = false;
@@ -54,7 +45,7 @@ class _EditProfileScreenState extends State<EditInterestForm>
         currentUser = user;
       });
     });
-    _key = GlobalKey<ScaffoldState>();
+    // _key = GlobalKey<ScaffoldState>();
     _filters = <String>[];
     _interests = <Interest>[
       const Interest('Computers'),
@@ -125,7 +116,7 @@ class _EditProfileScreenState extends State<EditInterestForm>
   // }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "interests": FieldValue.arrayUnion(_filters),
     });
@@ -203,7 +194,6 @@ class _EditProfileScreenState extends State<EditInterestForm>
   }
 
   Iterable<Widget> get interestWidgets sync* {
-    var screenSize = MediaQuery.of(context).size;
     for (Interest interest in _interests) {
       yield Padding(
         padding: const EdgeInsets.all(6.0),

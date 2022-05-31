@@ -94,7 +94,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
 
   @override
   void initState() {
-      super.initState();
+    super.initState();
     _dropDownMenuOfficerRank = buildDropDownMenuOfficerRank(_officerRank);
     _selectedOfficerRank = _dropDownMenuOfficerRank[0].value;
     _dropDownMenuCommand = buildDropDownMenuCommand(_command);
@@ -107,7 +107,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
 
   List<DropdownMenuItem<OfficerRank>> buildDropDownMenuOfficerRank(
       List officerRanks) {
-    List<DropdownMenuItem<OfficerRank>> items = List();
+    List<DropdownMenuItem<OfficerRank>> items = [];
     for (OfficerRank officerRank in officerRanks) {
       items.add(
         DropdownMenuItem(
@@ -126,7 +126,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
   }
 
   List<DropdownMenuItem<Command>> buildDropDownMenuCommand(List commands) {
-    List<DropdownMenuItem<Command>> items = List();
+    List<DropdownMenuItem<Command>> items = [];
     for (Command command in commands) {
       items.add(
         DropdownMenuItem(
@@ -145,7 +145,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
   }
 
   List<DropdownMenuItem<Regiment>> buildDropDownMenuRegiment(List regiments) {
-    List<DropdownMenuItem<Regiment>> items = List();
+    List<DropdownMenuItem<Regiment>> items = [];
     for (Regiment regiment in regiments) {
       items.add(
         DropdownMenuItem(
@@ -165,7 +165,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
 
   List<DropdownMenuItem<Department>> buildDropDownMenuDepartment(
       List departments) {
-    List<DropdownMenuItem<Department>> items = List();
+    List<DropdownMenuItem<Department>> items = [];
     for (Department department in departments) {
       items.add(
         DropdownMenuItem(
@@ -177,7 +177,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
     return items;
   }
 
-  onChangeDropDownDepartment(Department selectedDepartment){
+  onChangeDropDownDepartment(Department selectedDepartment) {
     setState(() {
       _selectedDepartment = selectedDepartment;
     });
@@ -186,7 +186,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-          child: Scaffold(
+      child: Scaffold(
         body: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,12 +196,12 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                 child: Center(
                   child: Text(
                     'Basic Info',
-                   style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        fontSize: textSubTitle(context),
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    style: TextStyle(
+                      fontFamily: FontNameDefault,
+                      fontSize: textSubTitle(context),
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -210,7 +210,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                   SizedBox(width: 12.0),
                   CircleAvatar(
                     radius: 50.0,
-                    backgroundColor: Theme.of(context).accentColor,
+                    backgroundColor: Theme.of(context).primaryColorLight,
                     backgroundImage: AssetImage('assets/images/images.png'),
                   ),
                   Expanded(
@@ -223,17 +223,18 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                           children: <Widget>[
                             GestureDetector(
                               onTap: () {
-                              //  print('Upload a logo');
+                                //  print('Upload a logo');
                               },
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () {
-                               //   print('Upload a logo');
+                                  //   print('Upload a logo');
                                 },
                                 child: Text(
                                   'Upload a Picture',
                                   style: TextStyle(
                                       fontSize: textBody1(context),
-                                      color: Theme.of(context).accentColor),
+                                      color:
+                                          Theme.of(context).primaryColorLight),
                                 ),
                               ),
                             ),
@@ -262,7 +263,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                 'Selected : ${_selectedOfficerRank.name}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).primaryColorLight),
               ),
               SizedBox(height: 15.0),
               Text(' * Select a Command'),
@@ -282,7 +283,7 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                 'Selected : ${_selectedCommand.name}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).primaryColorLight),
               ),
               SizedBox(height: 15.0),
               Text(' * Select a Regiment'),
@@ -302,9 +303,9 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                 'Selected : ${_selectedRegiment.name}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).primaryColorLight),
               ),
-               SizedBox(height: 15.0),
+              SizedBox(height: 15.0),
               Text(' * Select a Department'),
               // SizedBox(height: 0.0),
               Padding(
@@ -322,33 +323,33 @@ class _MilitaryInfoState extends State<MilitaryInfo> {
                 'Selected : ${_selectedDepartment.name}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).primaryColorLight),
               ),
-              SizedBox(height:55.0),
+              SizedBox(height: 55.0),
               GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => MilAddInfo()));
-                  },
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    height: 50.0,
-                    width: 350.0,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Next",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold),
-                      ),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MilAddInfo()));
+                },
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  height: 50.0,
+                  width: 350.0,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Next",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         ),

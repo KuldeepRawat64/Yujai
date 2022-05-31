@@ -1,13 +1,9 @@
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/search_data.dart';
 import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/nested_tab_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../style.dart';
 
@@ -19,11 +15,11 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with TickerProviderStateMixin {
   var _repository = Repository();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<String> followingUIDs = List<String>();
+  List<UserModel> usersList = [];
+  List<String> followingUIDs = [];
   TabController _tabController;
   ScrollController _scrollController;
   //Offset state <-------------------------------------

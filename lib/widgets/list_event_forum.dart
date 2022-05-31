@@ -1,4 +1,3 @@
-import 'package:Yujai/models/event.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/friend_profile.dart';
@@ -10,7 +9,6 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:Yujai/pages/event_detail_group.dart';
 import 'package:intl/intl.dart';
 import '../style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEventForum extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;

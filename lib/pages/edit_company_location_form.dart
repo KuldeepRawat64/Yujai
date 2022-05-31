@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/pages/places_location.dart';
@@ -8,11 +7,8 @@ import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 class EditCompanyLocationForm extends StatefulWidget {
   final UserModel currentUser;
@@ -49,7 +45,7 @@ class _EditProfileScreenState extends State<EditCompanyLocationForm> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       _firestore.collection('users').doc(currentUser.uid).update({
         "location": locationController.text,
       });
@@ -167,9 +163,7 @@ class _EditProfileScreenState extends State<EditCompanyLocationForm> {
                                                   ? Center(
                                                       child:
                                                           CircularProgressIndicator())
-                                                  : RaisedButton(
-                                                      color: Colors
-                                                          .deepPurpleAccent,
+                                                  : ElevatedButton(
                                                       child: Text(
                                                         "Pick Here",
                                                         style: TextStyle(

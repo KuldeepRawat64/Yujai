@@ -40,13 +40,18 @@ class _EditCompanyLocationState extends State<EditCompanyLocation> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     _firestore.collection('users').doc(currentUser.uid).update({
       "location": locationController.text,
     });
     Navigator.pop(context);
-    SnackBar snackbar = SnackBar(content: Text("Profile updated!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
+    const snackBar = SnackBar(
+      content: Text('Profile Updated'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -171,9 +176,7 @@ class _EditCompanyLocationState extends State<EditCompanyLocation> {
                                               ? Center(
                                                   child:
                                                       CircularProgressIndicator())
-                                              : RaisedButton(
-                                                  color:
-                                                      Colors.deepPurpleAccent,
+                                              : ElevatedButton(
                                                   child: Text(
                                                     "Pick Here",
                                                     style: TextStyle(

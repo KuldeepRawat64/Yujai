@@ -1,13 +1,11 @@
 import 'dart:core';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/user.dart';
-import 'army_add_info.dart';
 import 'home.dart';
 
 class ArmyInfo extends StatefulWidget {
@@ -140,7 +138,7 @@ class _ArmyInfoState extends State<ArmyInfo> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       usersRef.doc(currentUser.uid).update({
         "rank": selectedRank,
         "command": selectedCommand,
@@ -568,7 +566,7 @@ class _ArmyInfoState extends State<ArmyInfo> {
                   Checkbox(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.0)),
-                      activeColor: Theme.of(context).accentColor,
+                      activeColor: Theme.of(context).primaryColorLight,
                       value: isChecked,
                       onChanged: (val) {
                         setState(() {

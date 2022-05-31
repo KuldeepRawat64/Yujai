@@ -1,9 +1,7 @@
 import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/post_screen.dart';
 import 'package:Yujai/pages/post_screen_dept.dart';
-import 'package:Yujai/pages/post_screen_group.dart';
 import 'package:Yujai/pages/post_screen_project.dart';
-import 'package:Yujai/pages/team_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

@@ -5,7 +5,6 @@ import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/app_localizations.dart';
 import 'package:Yujai/widgets/date_formatter.dart';
 import 'package:Yujai/widgets/list_chat_room.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

@@ -8,7 +8,6 @@ import 'package:date_field/date_field.dart';
 import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class NewExperienceForm extends StatefulWidget {
@@ -23,12 +22,6 @@ class NewExperienceForm extends StatefulWidget {
 class _EditProfileScreenState extends State<NewExperienceForm> {
   var _repository = Repository();
   final _formKey = GlobalKey<FormState>();
-  List<EmploymentType> _employmentType = EmploymentType.getEmploymentType();
-  List<DropdownMenuItem<EmploymentType>> _dropDownMenuEmploymentType;
-  EmploymentType _selectedEmploymentType;
-  List<Industry> _industry = Industry.getIndustry();
-  List<DropdownMenuItem<Industry>> _dropDownMenuIndustry;
-  Industry _selectedIndustry;
   User currentUser;
   final _companyController = TextEditingController();
   final _designationController = TextEditingController();
@@ -162,7 +155,7 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
   // }
   List<DropdownMenuItem<EmploymentType>> buildDropDownMenuEmploymentType(
       List employmentTypes) {
-    List<DropdownMenuItem<EmploymentType>> items = List();
+    List<DropdownMenuItem<EmploymentType>> items = [];
     for (EmploymentType employmentType in employmentTypes) {
       items.add(
         DropdownMenuItem(
@@ -174,14 +167,8 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
     return items;
   }
 
-  onChangeDropDownEmploymentType(EmploymentType selectedEmploymentType) {
-    setState(() {
-      _selectedEmploymentType = selectedEmploymentType;
-    });
-  }
-
   List<DropdownMenuItem<Industry>> buildDropDownMenuIndustry(List industrys) {
-    List<DropdownMenuItem<Industry>> items = List();
+    List<DropdownMenuItem<Industry>> items = [];
     for (Industry industry in industrys) {
       items.add(
         DropdownMenuItem(
@@ -191,12 +178,6 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
       );
     }
     return items;
-  }
-
-  onChangeDropDownIndustry(Industry selectedIndustry) {
-    setState(() {
-      _selectedIndustry = selectedIndustry;
-    });
   }
 
   File imageFile;
@@ -954,7 +935,8 @@ class _EditProfileScreenState extends State<NewExperienceForm> {
                             Checkbox(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0)),
-                                activeColor: Theme.of(context).accentColor,
+                                activeColor:
+                                    Theme.of(context).primaryColorLight,
                                 value: isChecked,
                                 onChanged: (val) {
                                   setState(() {

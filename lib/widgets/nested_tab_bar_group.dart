@@ -10,7 +10,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NestedTabBarGroup extends StatefulWidget {
@@ -27,23 +26,23 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<Group> groupList = List<Group>();
-  List<Group> myGroupList = List<Group>();
-  List<Team> myTeamList = List<Team>();
-  List<User> companyList = List<User>();
+  List<Group> groupList = [];
+  List<Group> myGroupList = [];
+  List<Team> myTeamList = [];
+  List<User> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
   ScrollController _scrollController2;
   ScrollController _scrollController3 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;
@@ -133,7 +132,6 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    var screenSize = MediaQuery.of(context).size;
     return ListView(
       controller: _scrollController,
       physics: NeverScrollableScrollPhysics(),
@@ -183,7 +181,6 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   }
 
   Widget myGroupsList() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('groups')
             //  .orderBy('timestamp')
@@ -325,7 +322,6 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   }
 
   Widget myTeamsList() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('teams')
@@ -478,7 +474,6 @@ class _NestedTabBarGroupState extends State<NestedTabBarGroup>
   }
 
   Widget groupsList() {
-    var screenSize = MediaQuery.of(context).size;
     return groupList.length > 0
         ? ListView.builder(
             controller: _scrollController3,

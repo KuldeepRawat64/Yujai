@@ -1,5 +1,3 @@
-import 'package:Yujai/models/education.dart';
-import 'package:Yujai/models/experience.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {

@@ -6,9 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../style.dart';
 
 class NestedTabBarTeam extends StatefulWidget {
@@ -21,21 +19,21 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<Group> groupList = List<Group>();
-  List<UserModel> companyList = List<UserModel>();
+  List<Group> groupList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
   ScrollController _scrollController2;
   ScrollController _scrollController3 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;
@@ -113,7 +111,6 @@ class _NestedTabBarTeamState extends State<NestedTabBarTeam>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    var screenSize = MediaQuery.of(context).size;
     return ListView(
       controller: _scrollController,
       physics: NeverScrollableScrollPhysics(),

@@ -1,30 +1,19 @@
-import 'package:Yujai/pages/keys.dart';
-import 'package:Yujai/pages/places_location.dart';
-import 'package:Yujai/widgets/custom_drop_down.dart';
-import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:Yujai/widgets/education_widget.dart';
 import 'package:Yujai/widgets/flow_widget.dart';
-import 'package:Yujai/widgets/skill_widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../style.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:date_field/date_field.dart';
 
 class NewWorkForm extends StatefulWidget {
   final UserModel currentUser;
@@ -45,14 +34,8 @@ class _NewWorkFormState extends State<NewWorkForm> {
   File imageFile;
   var _locationController;
   var _captionController;
-  var _dateStartController;
-  var _timeStartController;
-  var _dateEndController;
-  var _timeEndController;
   var _descriptionController;
-  var _hostController;
   var _portfolioController;
-  var _ticketWebsiteController;
   final _repository = Repository();
   String location = '';
   final format = DateFormat('yyyy-MM-dd');
@@ -102,16 +85,10 @@ class _NewWorkFormState extends State<NewWorkForm> {
     _captionController = TextEditingController();
     _locationController = TextEditingController();
     _locationController.text = widget.currentUser.location;
-    _dateStartController = TextEditingController();
-    _timeStartController = TextEditingController();
-    _dateEndController = TextEditingController();
-    _timeEndController = TextEditingController();
     _descriptionController = TextEditingController();
     _descriptionController.text = widget.currentUser.bio;
-    _hostController = TextEditingController();
     _portfolioController = TextEditingController();
     _portfolioController.text = widget.currentUser.website;
-    _ticketWebsiteController = TextEditingController();
   }
 
   getPercent(double level) {
@@ -643,15 +620,6 @@ class _NewWorkFormState extends State<NewWorkForm> {
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
-
   void compressImage() async {
     print('starting compression');
     final tempDir = await getTemporaryDirectory();
@@ -716,61 +684,6 @@ class _NewWorkFormState extends State<NewWorkForm> {
   }
 
   String selectedEventList = "";
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              "Select Event Category",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: FontNameDefault,
-                fontSize: textHeader(context),
-              ),
-            ),
-            content: MultiSelectChipSingle(
-              categoryList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedEventList = selectedList;
-                });
-              },
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                      fontSize: textSubTitle(context),
-                      fontFamily: FontNameDefault,
-                      color: Colors.black),
-                ),
-                onPressed: () {
-                  //  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  }
 }
 
 class MultiSelectChipSingle extends StatefulWidget {
@@ -784,7 +697,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

@@ -3,7 +3,6 @@ import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/event_detail_page.dart';
 import 'package:Yujai/pages/task_detail.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/no_content.dart';
@@ -11,8 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../style.dart';
@@ -476,7 +473,7 @@ class _ListItemTaskState extends State<ListItemTask> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -595,8 +592,7 @@ class _ListItemTaskState extends State<ListItemTask> {
                                                   widget.project.uid,
                                                   _currentList)
                                               .then((value) async {
-                                            List<DocumentSnapshot> uidList =
-                                                List<DocumentSnapshot>();
+                                            List<DocumentSnapshot> uidList = [];
                                             QuerySnapshot<Map<String, dynamic>>
                                                 commentSnapshot = await widget
                                                     .documentSnapshot.reference

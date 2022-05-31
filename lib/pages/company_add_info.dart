@@ -64,7 +64,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
   GlobalKey<AutoCompleteTextFieldState<Industry>> inkey = new GlobalKey();
   AutoCompleteTextField industryTextField;
   //bool _industryValid = true;
-  static List<Industry> industries = new List<Industry>();
+  static List<Industry> industries = [];
   bool onPressed;
   bool loading = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -82,7 +82,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
 
   List<DropdownMenuItem<CompanySize>> buildDropDownMenuCompanySize(
       List companySizes) {
-    List<DropdownMenuItem<CompanySize>> items = List();
+    List<DropdownMenuItem<CompanySize>> items = [];
     for (CompanySize companySize in companySizes) {
       items.add(
         DropdownMenuItem(
@@ -102,7 +102,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
 
   List<DropdownMenuItem<CompanyType>> buildDropDownMenuCompanyType(
       List companyTypes) {
-    List<DropdownMenuItem<CompanyType>> items = List();
+    List<DropdownMenuItem<CompanyType>> items = [];
     for (CompanyType companyType in companyTypes) {
       items.add(
         DropdownMenuItem(
@@ -167,7 +167,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "industry": _industryController.text,
       "companySize": _selectedCompanySize.name,
@@ -246,7 +246,6 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
                             keyboardType: TextInputType.multiline,
                             minLines: 5,
                             maxLines: 5,
-                            maxLengthEnforced: true,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: const Color(0xffffffff),
@@ -353,7 +352,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
                               ),
                               elevation: 1,
                               icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Theme.of(context).accentColor),
+                                  color: Theme.of(context).primaryColorLight),
                               iconSize: 30,
                               isExpanded: true,
                               value: _selectedCompanySize,
@@ -397,7 +396,7 @@ class _CompanyAddInfoState extends State<CompanyAddInfo> {
                               ),
                               elevation: 1,
                               icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Theme.of(context).accentColor),
+                                  color: Theme.of(context).primaryColorLight),
                               iconSize: 30,
                               isExpanded: true,
                               value: _selectedCompanyType,

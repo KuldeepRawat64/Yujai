@@ -76,7 +76,7 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
 
   submit() async {
     if (_formKey.currentState.validate()) {
-      User currentUser = await _auth.currentUser;
+      User currentUser = _auth.currentUser;
       usersRef.doc(currentUser.uid).update({
         "startService": _startServiceController.text,
         "endService": _endServiceController.text,
@@ -267,7 +267,7 @@ class _ArmyAddInfoState extends State<ArmyAddInfo> {
                           Checkbox(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0)),
-                              activeColor: Theme.of(context).accentColor,
+                              activeColor: Theme.of(context).primaryColorLight,
                               value: isChecked,
                               onChanged: (val) {
                                 setState(() {

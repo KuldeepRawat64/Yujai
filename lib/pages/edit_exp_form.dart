@@ -1,15 +1,10 @@
-import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_field/date_field.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 class EditExperienceForm extends StatefulWidget {
   final UserModel currentUser;
@@ -524,7 +519,8 @@ class _EditProfileScreenState extends State<EditExperienceForm> {
                             Checkbox(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4.0)),
-                                activeColor: Theme.of(context).accentColor,
+                                activeColor:
+                                    Theme.of(context).primaryColorLight,
                                 value: isChecked,
                                 onChanged: (val) {
                                   setState(() {

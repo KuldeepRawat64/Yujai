@@ -35,8 +35,6 @@ class ListItemMember extends StatefulWidget {
 
 class _ListItemMemberState extends State<ListItemMember> {
   var _repository = Repository();
-  bool _isInvited;
-  final _formKey = GlobalKey<FormState>();
   var _currentDept;
   Department _department;
 
@@ -73,16 +71,11 @@ class _ListItemMemberState extends State<ListItemMember> {
   @override
   void initState() {
     super.initState();
-    _isInvited = false;
     _repository
         .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid,
             widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
-      if (!mounted) return;
-      setState(() {
-        _isInvited = value;
-      });
     });
   }
 
@@ -136,7 +129,7 @@ class _ListItemMemberState extends State<ListItemMember> {
                   ? InkWell(
                       onTap: optionTeam,
                       child: Icon(Icons.more_vert,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).primaryColorLight,
                           size: screenSize.height * 0.035))
                   : Icon(
                       Icons.security_outlined,
@@ -147,7 +140,6 @@ class _ListItemMemberState extends State<ListItemMember> {
   }
 
   optionTeam() {
-    var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: ((context) {
@@ -155,7 +147,7 @@ class _ListItemMemberState extends State<ListItemMember> {
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,
@@ -233,7 +225,7 @@ class _ListItemMemberState extends State<ListItemMember> {
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,
@@ -549,7 +541,7 @@ class _ListItemMemberState extends State<ListItemMember> {
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,

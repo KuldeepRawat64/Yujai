@@ -1,4 +1,3 @@
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/event_detail_page.dart';
 import 'package:Yujai/pages/friend_profile.dart';
@@ -7,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:Yujai/pages/event_detail_group.dart';
 import 'package:intl/intl.dart';
 import '../style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ListItemEvent extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> documentSnapshot;

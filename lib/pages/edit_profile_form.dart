@@ -3,20 +3,16 @@ import 'dart:math';
 import 'package:Yujai/blocs/location_bloc.dart';
 import 'package:Yujai/models/place_search.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/keys.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/services/places_services.dart';
 import 'package:Yujai/style.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileForm extends StatefulWidget {
@@ -41,13 +37,11 @@ class _EditProfileScreenState extends State<EditProfileForm> {
   String latitude;
   String longitude;
   var locationMessage = "";
-  Position _currentPosition;
   List<PlaceSearch> searchResults = [];
   final placesService = PlacesService();
   AutoCompleteTextField placesTextField;
   GlobalKey<AutoCompleteTextFieldState<PlaceSearch>> placeSearchkey =
       new GlobalKey();
-  static List<PlaceSearch> places = new List<PlaceSearch>();
   bool isEnabled = false;
 
   @override
@@ -433,14 +427,14 @@ class _EditProfileScreenState extends State<EditProfileForm> {
   Future<Null> displayPrediction(Prediction p) async {
     if (p != null) {
       // get detail (lat/lng)
-      GoogleMapsPlaces _places = GoogleMapsPlaces(
-        apiKey: APIKeys.apiKey,
-        //apiHeaders: await GoogleApiHeaders().getHeaders(),
-      );
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
-      final lat = detail.result.geometry.location.lat;
-      final lng = detail.result.geometry.location.lng;
+      // GoogleMapsPlaces _places = GoogleMapsPlaces(
+      //   apiKey: APIKeys.apiKey,
+      //   //apiHeaders: await GoogleApiHeaders().getHeaders(),
+      // );
+      // PlacesDetailsResponse detail =
+      //     await _places.getDetailsByPlaceId(p.placeId);
+      // final lat = detail.result.geometry.location.lat;
+      // final lng = detail.result.geometry.location.lng;
 
       // scaffold.showSnackBar(
       //   SnackBar(content: Text("${p.description} - $lat/$lng")),

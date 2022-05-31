@@ -1,31 +1,20 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:Yujai/models/department.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/project.dart';
 import 'package:Yujai/models/task_list.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/team_feed.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/group_upload_ad.dart';
-import 'package:Yujai/pages/group_upload_discussion.dart';
-import 'package:Yujai/pages/group_upload_forum.dart';
-import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/pages/project_inbox.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/widgets/custom_radio_button.dart';
 import 'package:Yujai/widgets/nested_tab_bar_project.dart';
-import 'package:Yujai/widgets/nested_tab_department.dart';
-import 'package:Yujai/widgets/nested_tab_team_home.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'dart:async';
-import 'package:Yujai/pages/group_upload_event.dart';
 import 'package:uuid/uuid.dart';
 
 import '../style.dart';
@@ -110,7 +99,7 @@ class _ProjectPageState extends State<ProjectPage>
   List<DropdownMenuItem<ProjectType>> _dropDownMenuProjectType;
   ProjectType _selectedProjectType;
   final _formKey = GlobalKey<FormState>();
-  Group _group;
+  // Group _group;
   Team _team;
   IconData icon;
   Color color;
@@ -140,14 +129,7 @@ class _ProjectPageState extends State<ProjectPage>
   TextEditingController _projectNameController = TextEditingController();
   TextEditingController _taskDescriptionController = TextEditingController();
   List<String> projectList;
-  var _currentProject;
   var _currentList;
-  List<PollType> _pollType = PollType.getPollType();
-  List<DropdownMenuItem<PollType>> _dropDownMenuPollType;
-  PollType _selectedPollType;
-  List<PollLength> _pollLength = PollLength.getPollLength();
-  List<DropdownMenuItem<PollLength>> _dropDownMenuPollLength;
-  PollLength _selectedPollLength;
   bool option1 = false;
   bool option2 = false;
   bool option3 = false;
@@ -163,13 +145,12 @@ class _ProjectPageState extends State<ProjectPage>
   String newPId = Uuid().v4();
   String actId = Uuid().v4();
   String discuddId = Uuid().v4();
-  final GlobalKey<ScaffoldState> _scaffold1Key = new GlobalKey<ScaffoldState>();
   var _currentDate = DateTime.now();
   var threeHoursFromNow = DateTime.now().add(new Duration(hours: 3));
   var sixHoursFromNow = DateTime.now().add(new Duration(hours: 6));
   var oneDayFromNow = DateTime.now().add(new Duration(days: 1));
   var twoDaysFromNow = DateTime.now().add(new Duration(days: 2));
-  List<RadioModel> sampleData = List<RadioModel>();
+  List<RadioModel> sampleData = [];
 
   fetchUidBySearchedName(String name) async {
     print("NAME : $name");
@@ -183,7 +164,7 @@ class _ProjectPageState extends State<ProjectPage>
 
   List<DropdownMenuItem<ProjectType>> buildDropDownMenuProjectType(
       List projectTypes) {
-    List<DropdownMenuItem<ProjectType>> items = List();
+    List<DropdownMenuItem<ProjectType>> items = [];
     for (ProjectType projectType in projectTypes) {
       items.add(
         DropdownMenuItem(
@@ -202,7 +183,7 @@ class _ProjectPageState extends State<ProjectPage>
   }
 
   List<DropdownMenuItem<PollType>> buildDropDownMenuPollType(List pollTypes) {
-    List<DropdownMenuItem<PollType>> items = List();
+    List<DropdownMenuItem<PollType>> items = [];
     for (PollType pollType in pollTypes) {
       items.add(
         DropdownMenuItem(
@@ -214,23 +195,9 @@ class _ProjectPageState extends State<ProjectPage>
     return items;
   }
 
-  onChangeDropDownPollType(PollType selectedPollType) {
-    setState(() {
-      _selectedPollType = selectedPollType;
-    });
-  }
-
-  bool _visibility = true;
-
-  void _changeVisibility(bool visibility) {
-    setState(() {
-      _visibility = visibility;
-    });
-  }
-
   List<DropdownMenuItem<PollLength>> buildDropDownMenuPollLength(
       List pollLengths) {
-    List<DropdownMenuItem<PollLength>> items = List();
+    List<DropdownMenuItem<PollLength>> items = [];
     for (PollLength pollLength in pollLengths) {
       items.add(
         DropdownMenuItem(
@@ -240,12 +207,6 @@ class _ProjectPageState extends State<ProjectPage>
       );
     }
     return items;
-  }
-
-  onChangeDropDownPollLength(PollLength selectedPollLength) {
-    setState(() {
-      _selectedPollLength = selectedPollLength;
-    });
   }
 
   func() {
@@ -361,10 +322,6 @@ class _ProjectPageState extends State<ProjectPage>
           //force arefresh so the app bar can be updated
         });
       });
-    _dropDownMenuPollType = buildDropDownMenuPollType(_pollType);
-    _selectedPollType = _dropDownMenuPollType[1].value;
-    _dropDownMenuPollLength = buildDropDownMenuPollLength(_pollLength);
-    _selectedPollLength = _dropDownMenuPollLength[5].value;
     _dropDownMenuProjectType = buildDropDownMenuProjectType(_projectType);
     _selectedProjectType = _dropDownMenuProjectType[0].value;
     //_projectList();
@@ -512,7 +469,6 @@ class _ProjectPageState extends State<ProjectPage>
   }
 
   optionProject() {
-    var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: ((context) {
@@ -520,7 +476,7 @@ class _ProjectPageState extends State<ProjectPage>
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,
@@ -698,264 +654,264 @@ class _ProjectPageState extends State<ProjectPage>
         });
   }
 
-  void _onButtonPressedJoin() {
-    var screenSize = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            height: screenSize.height * 0.18,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    MdiIcons.receipt,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Report Group',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: _showImageDialogAd,
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.cancel,
-                    size: screenSize.height * 0.04,
-                  ),
-                  title: Text(
-                    'Cancel',
-                    style: TextStyle(
-                        fontFamily: FontNameDefault,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: textSubTitle(context)),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  // void _onButtonPressedJoin() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   showModalBottomSheet(
+  //       context: context,
+  //       builder: (context) {
+  //         return Container(
+  //           height: screenSize.height * 0.18,
+  //           child: Column(
+  //             children: [
+  //               ListTile(
+  //                 leading: Icon(
+  //                   MdiIcons.receipt,
+  //                   size: screenSize.height * 0.04,
+  //                 ),
+  //                 title: Text(
+  //                   'Report Group',
+  //                   style: TextStyle(
+  //                       fontFamily: FontNameDefault,
+  //                       color: Colors.black54,
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: textSubTitle(context)),
+  //                 ),
+  //                 onTap: _showImageDialogAd,
+  //               ),
+  //               ListTile(
+  //                 leading: Icon(
+  //                   Icons.cancel,
+  //                   size: screenSize.height * 0.04,
+  //                 ),
+  //                 title: Text(
+  //                   'Cancel',
+  //                   style: TextStyle(
+  //                       fontFamily: FontNameDefault,
+  //                       color: Colors.black54,
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: textSubTitle(context)),
+  //                 ),
+  //                 onTap: () {
+  //                   Navigator.pop(context);
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       });
+  // }
 
-  _showProjectDialog() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        builder: ((BuildContext context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-              content: Stack(
-                overflow: Overflow.visible,
-                children: <Widget>[
-                  Positioned(
-                    right: -40.0,
-                    top: -40.0,
-                    child: InkResponse(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: CircleAvatar(
-                        child: Icon(Icons.close),
-                        backgroundColor: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Wrap(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                'New Project',
-                                style: TextStyle(
-                                    fontFamily: FontNameDefault,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: textHeader(context)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: screenSize.height * 0.09,
-                          child: TextField(
-                            style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              fontSize: textBody1(context),
-                            ),
-                            decoration: InputDecoration(
-                              border: UnderlineInputBorder(),
-                              hintText: 'Project name',
-                            ),
-                            onChanged: (val) {
-                              if (_projectNameController.text.isNotEmpty) {
-                                setState(() {
-                                  valueFirst = true;
-                                });
-                              } else {
-                                setState(() {
-                                  valueFirst = false;
-                                });
-                              }
-                            },
-                            controller: _projectNameController,
-                          ),
-                        ),
-                        Text(
-                          'Privacy',
-                          style: TextStyle(
-                              fontFamily: FontNameDefault,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                              fontSize: textSubTitle(context)),
-                        ),
-                        Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: DropdownButton(
-                              underline: Container(color: Colors.white),
-                              style: TextStyle(
-                                fontFamily: FontNameDefault,
-                                fontSize: textBody1(context),
-                                color: Colors.black87,
-                              ),
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Theme.of(context).primaryColor),
-                              //iconSize: 30,
-                              isExpanded: true,
-                              value: _selectedProjectType,
-                              items: _dropDownMenuProjectType,
-                              onChanged: (ProjectType selectedProjectType) {
-                                setState(() {
-                                  _selectedProjectType = selectedProjectType;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                        valueFirst
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenSize.height * 0.015,
-                                  horizontal: screenSize.width * 0.01,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // Navigator.pop(context);
-                                    _repository
-                                        .getCurrentUser()
-                                        .then((currentuser) {
-                                      if (currentuser != null) {
-                                        _repository
-                                            .retreiveUserDetails(currentuser)
-                                            .then((user) {
-                                          _repository
-                                              .addProjectToDept(
-                                                  user,
-                                                  _team.uid,
-                                                  _department.uid,
-                                                  _projectNameController.text,
-                                                  isPrivate,
-                                                  Colors
-                                                      .primaries[Random()
-                                                          .nextInt(Colors
-                                                              .primaries
-                                                              .length)]
-                                                      .value,
-                                                  newPId)
-                                              .then((value) {
-                                            newPId = Uuid().v4();
-                                            _projectNameController.text = '';
-                                            valueFirst = false;
-                                            print(
-                                                'Project added to department');
-                                            Navigator.pop(context);
-                                          }).catchError((e) => print(
-                                                  'Error adding project: $e'));
-                                        });
-                                      } else {
-                                        print('Current User is null');
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    height: screenSize.height * 0.055,
-                                    width: screenSize.width * 0.4,
-                                    child: Center(
-                                      child: Text(
-                                        'Create project',
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.white,
-                                          fontSize: textSubTitle(context),
-                                        ),
-                                      ),
-                                    ),
-                                    decoration: ShapeDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenSize.height * 0.015,
-                                  horizontal: screenSize.width * 0.01,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    height: screenSize.height * 0.055,
-                                    width: screenSize.width * 0.4,
-                                    child: Center(
-                                      child: Text(
-                                        'Create project',
-                                        style: TextStyle(
-                                          fontFamily: FontNameDefault,
-                                          color: Colors.grey[600],
-                                          fontSize: textSubTitle(context),
-                                        ),
-                                      ),
-                                    ),
-                                    decoration: ShapeDecoration(
-                                      color: Colors.grey[100],
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        side: BorderSide(
-                                            width: 0.2, color: Colors.grey),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          });
-        }));
-  }
+  // _showProjectDialog() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       builder: ((BuildContext context) {
+  //         return StatefulBuilder(builder: (context, setState) {
+  //           return AlertDialog(
+  //             content: Stack(
+  //               clipBehavior: Clip.none,
+  //               children: <Widget>[
+  //                 Positioned(
+  //                   right: -40.0,
+  //                   top: -40.0,
+  //                   child: InkResponse(
+  //                     onTap: () {
+  //                       Navigator.pop(context);
+  //                     },
+  //                     child: CircleAvatar(
+  //                       child: Icon(Icons.close),
+  //                       backgroundColor: Colors.grey,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Form(
+  //                   key: _formKey,
+  //                   child: Wrap(
+  //                     children: <Widget>[
+  //                       Padding(
+  //                         padding: EdgeInsets.only(bottom: 10.0),
+  //                         child: Column(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               'New Project',
+  //                               style: TextStyle(
+  //                                   fontFamily: FontNameDefault,
+  //                                   fontWeight: FontWeight.bold,
+  //                                   fontSize: textHeader(context)),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       Container(
+  //                         height: screenSize.height * 0.09,
+  //                         child: TextField(
+  //                           style: TextStyle(
+  //                             fontFamily: FontNameDefault,
+  //                             fontSize: textBody1(context),
+  //                           ),
+  //                           decoration: InputDecoration(
+  //                             border: UnderlineInputBorder(),
+  //                             hintText: 'Project name',
+  //                           ),
+  //                           onChanged: (val) {
+  //                             if (_projectNameController.text.isNotEmpty) {
+  //                               setState(() {
+  //                                 valueFirst = true;
+  //                               });
+  //                             } else {
+  //                               setState(() {
+  //                                 valueFirst = false;
+  //                               });
+  //                             }
+  //                           },
+  //                           controller: _projectNameController,
+  //                         ),
+  //                       ),
+  //                       Text(
+  //                         'Privacy',
+  //                         style: TextStyle(
+  //                             fontFamily: FontNameDefault,
+  //                             color: Colors.black54,
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: textSubTitle(context)),
+  //                       ),
+  //                       Card(
+  //                         shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(12.0)),
+  //                         child: Padding(
+  //                           padding:
+  //                               const EdgeInsets.symmetric(horizontal: 5.0),
+  //                           child: DropdownButton(
+  //                             underline: Container(color: Colors.white),
+  //                             style: TextStyle(
+  //                               fontFamily: FontNameDefault,
+  //                               fontSize: textBody1(context),
+  //                               color: Colors.black87,
+  //                             ),
+  //                             icon: Icon(Icons.keyboard_arrow_down,
+  //                                 color: Theme.of(context).primaryColor),
+  //                             //iconSize: 30,
+  //                             isExpanded: true,
+  //                             value: _selectedProjectType,
+  //                             items: _dropDownMenuProjectType,
+  //                             onChanged: (ProjectType selectedProjectType) {
+  //                               setState(() {
+  //                                 _selectedProjectType = selectedProjectType;
+  //                               });
+  //                             },
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       valueFirst
+  //                           ? Padding(
+  //                               padding: EdgeInsets.symmetric(
+  //                                 vertical: screenSize.height * 0.015,
+  //                                 horizontal: screenSize.width * 0.01,
+  //                               ),
+  //                               child: GestureDetector(
+  //                                 onTap: () {
+  //                                   // Navigator.pop(context);
+  //                                   _repository
+  //                                       .getCurrentUser()
+  //                                       .then((currentuser) {
+  //                                     if (currentuser != null) {
+  //                                       _repository
+  //                                           .retreiveUserDetails(currentuser)
+  //                                           .then((user) {
+  //                                         _repository
+  //                                             .addProjectToDept(
+  //                                                 user,
+  //                                                 _team.uid,
+  //                                                 _department.uid,
+  //                                                 _projectNameController.text,
+  //                                                 isPrivate,
+  //                                                 Colors
+  //                                                     .primaries[Random()
+  //                                                         .nextInt(Colors
+  //                                                             .primaries
+  //                                                             .length)]
+  //                                                     .value,
+  //                                                 newPId)
+  //                                             .then((value) {
+  //                                           newPId = Uuid().v4();
+  //                                           _projectNameController.text = '';
+  //                                           valueFirst = false;
+  //                                           print(
+  //                                               'Project added to department');
+  //                                           Navigator.pop(context);
+  //                                         }).catchError((e) => print(
+  //                                                 'Error adding project: $e'));
+  //                                       });
+  //                                     } else {
+  //                                       print('Current User is null');
+  //                                     }
+  //                                   });
+  //                                 },
+  //                                 child: Container(
+  //                                   height: screenSize.height * 0.055,
+  //                                   width: screenSize.width * 0.4,
+  //                                   child: Center(
+  //                                     child: Text(
+  //                                       'Create project',
+  //                                       style: TextStyle(
+  //                                         fontFamily: FontNameDefault,
+  //                                         color: Colors.white,
+  //                                         fontSize: textSubTitle(context),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   decoration: ShapeDecoration(
+  //                                     color: Theme.of(context).primaryColor,
+  //                                     shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(12.0),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             )
+  //                           : Padding(
+  //                               padding: EdgeInsets.symmetric(
+  //                                 vertical: screenSize.height * 0.015,
+  //                                 horizontal: screenSize.width * 0.01,
+  //                               ),
+  //                               child: GestureDetector(
+  //                                 onTap: () {},
+  //                                 child: Container(
+  //                                   height: screenSize.height * 0.055,
+  //                                   width: screenSize.width * 0.4,
+  //                                   child: Center(
+  //                                     child: Text(
+  //                                       'Create project',
+  //                                       style: TextStyle(
+  //                                         fontFamily: FontNameDefault,
+  //                                         color: Colors.grey[600],
+  //                                         fontSize: textSubTitle(context),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   decoration: ShapeDecoration(
+  //                                     color: Colors.grey[100],
+  //                                     shape: RoundedRectangleBorder(
+  //                                       borderRadius:
+  //                                           BorderRadius.circular(8.0),
+  //                                       side: BorderSide(
+  //                                           width: 0.2, color: Colors.grey),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         });
+  //       }));
+  // }
 
   _showListDialog() {
     var screenSize = MediaQuery.of(context).size;
@@ -965,7 +921,7 @@ class _ProjectPageState extends State<ProjectPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -1192,7 +1148,7 @@ class _ProjectPageState extends State<ProjectPage>
             return AlertDialog(
               content: SingleChildScrollView(
                 child: Stack(
-                  overflow: Overflow.visible,
+                  clipBehavior: Clip.none,
                   children: <Widget>[
                     Positioned(
                       right: -40.0,
@@ -1636,7 +1592,7 @@ class _ProjectPageState extends State<ProjectPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -1900,7 +1856,7 @@ class _ProjectPageState extends State<ProjectPage>
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -2233,7 +2189,7 @@ class _ProjectPageState extends State<ProjectPage>
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,
@@ -2397,118 +2353,109 @@ class _ProjectPageState extends State<ProjectPage>
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
+  // _showImageDialogEvent() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Upload event cover photo',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     color: Colors.black54,
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   // Navigator.pushReplacement(
+  //                   //     context,
+  //                   //     MaterialPageRoute(
+  //                   //         builder: ((context) => GroupUploadEvent(
+  //                   //               group: _team,
+  //                   //               gid: widget.gid,
+  //                   //               name: widget.name,
+  //                   //               imageFile: imageFile,
+  //                   //             ))));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     color: Colors.black54,
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  _showImageDialogEvent() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Upload event cover photo',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: ((context) => GroupUploadEvent(
-                    //               group: _team,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //               imageFile: imageFile,
-                    //             ))));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
-
-  _showImageDialogAd() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => GroupUploadAd(
-                    //               group: _team,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //               imageFile: imageFile,
-                    //             )));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialogAd() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Choose from Gallery',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     color: Colors.black54,
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   // Navigator.pushReplacement(
+  //                   //     context,
+  //                   //     MaterialPageRoute(
+  //                   //         builder: (context) => GroupUploadAd(
+  //                   //               group: _team,
+  //                   //               gid: widget.gid,
+  //                   //               name: widget.name,
+  //                   //               imageFile: imageFile,
+  //                   //             )));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     color: Colors.black54,
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
   void addInbox(String type, UserModel currentUser) {
     // bool ownerId = widget.user.uid == widget.currentuser.uid;

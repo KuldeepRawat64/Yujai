@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +28,7 @@ class _NewPostFormState extends State<NewPostForm> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
-  var _locationController;
+  // var _locationController;
   var _captionController;
   final _repository = Repository();
   String location = '';
@@ -63,7 +62,7 @@ class _NewPostFormState extends State<NewPostForm> {
                 decoration: BoxDecoration(color: Colors.grey[200]),
                 child: imageFile != null
                     ? Stack(
-                        overflow: Overflow.visible,
+                        clipBehavior: Clip.none,
                         children: [
                           Image.file(
                             imageFile,

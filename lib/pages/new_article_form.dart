@@ -1,31 +1,17 @@
-import 'package:Yujai/pages/keys.dart';
-import 'package:Yujai/pages/places_location.dart';
-import 'package:Yujai/widgets/custom_drop_down.dart';
-import 'package:Yujai/widgets/custom_radio_button.dart';
-import 'package:Yujai/widgets/education_widget.dart';
-import 'package:Yujai/widgets/flow_widget.dart';
-import 'package:Yujai/widgets/skill_widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker/google_maps_place_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../style.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:date_field/date_field.dart';
 
 class NewArticleForm extends StatefulWidget {
   final UserModel currentUser;
@@ -44,8 +30,6 @@ class _NewJobFormState extends State<NewArticleForm> {
   final _formKey = GlobalKey<FormState>();
   Post post = new Post();
   File imageFile;
-  var _locationController;
-  var _captionController;
   TextEditingController articleTitleController = TextEditingController();
   TextEditingController designationController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
@@ -65,14 +49,13 @@ class _NewJobFormState extends State<NewArticleForm> {
   bool skillFirst = false;
   bool skillSecond = false;
   bool skillThird = false;
-  UserModel _user;
   List<dynamic> selectedSkills = [];
   String valueEmpType;
   String valueIndustry;
   String latitude;
   String longitude;
   var locationMessage = "";
-  Position _currentPosition;
+  // Position _currentPosition;
 
   List<String> categoryList = [
     'Conference',
@@ -126,7 +109,7 @@ class _NewJobFormState extends State<NewArticleForm> {
   void initState() {
     super.initState();
     super.initState();
-    retrieveUserDetails();
+    // retrieveUserDetails();
   }
 
   getPercent(double level) {
@@ -137,14 +120,14 @@ class _NewJobFormState extends State<NewArticleForm> {
     }
   }
 
-  retrieveUserDetails() async {
-    User currentUser = await _repository.getCurrentUser();
-    UserModel user = await _repository.retreiveUserDetails(currentUser);
-    if (!mounted) return;
-    setState(() {
-      _user = user;
-    });
-  }
+  // retrieveUserDetails() async {
+  //   User currentUser = await _repository.getCurrentUser();
+  //   UserModel user = await _repository.retreiveUserDetails(currentUser);
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _user = user;
+  //   });
+  // }
 
   Widget getSkillsListView(List<dynamic> skills) {
     var screenSize = MediaQuery.of(context).size;
@@ -236,7 +219,7 @@ class _NewJobFormState extends State<NewArticleForm> {
                 decoration: BoxDecoration(color: Colors.grey[200]),
                 child: imageFile != null
                     ? Stack(
-                        overflow: Overflow.visible,
+                        clipBehavior: Clip.none,
                         children: [
                           Image.file(
                             imageFile,
@@ -488,38 +471,38 @@ class _NewJobFormState extends State<NewArticleForm> {
     print('done');
   }
 
-  Future<void> _getCurrentPosition() async {
-    // verify permissions
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      await Geolocator.openAppSettings();
-      await Geolocator.openLocationSettings();
-    }
-    // get current position
-    _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  // Future<void> _getCurrentPosition() async {
+  //   // verify permissions
+  //   LocationPermission permission = await Geolocator.requestPermission();
+  //   if (permission == LocationPermission.denied ||
+  //       permission == LocationPermission.deniedForever) {
+  //     await Geolocator.openAppSettings();
+  //     await Geolocator.openLocationSettings();
+  //   }
+  //   // get current position
+  //   _currentPosition = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
 
-    // get address
-    String _currentAddress = await _getGeolocationAddress(_currentPosition);
-    locationController.text = _currentAddress;
-  }
+  //   // get address
+  //   String _currentAddress = await _getGeolocationAddress(_currentPosition);
+  //   locationController.text = _currentAddress;
+  // }
 
   // Method to get Address from position:
 
-  Future<String> _getGeolocationAddress(Position position) async {
-    // geocoding
-    var places = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    if (places != null && places.isNotEmpty) {
-      final Placemark place = places.first;
-      return "${place.thoroughfare}, ${place.locality}";
-    }
+  // Future<String> _getGeolocationAddress(Position position) async {
+  //   // geocoding
+  //   var places = await placemarkFromCoordinates(
+  //     position.latitude,
+  //     position.longitude,
+  //   );
+  //   if (places != null && places.isNotEmpty) {
+  //     final Placemark place = places.first;
+  //     return "${place.thoroughfare}, ${place.locality}";
+  //   }
 
-    return "No address available";
-  }
+  //   return "No address available";
+  // }
 
   _submitForm(BuildContext context) {
     if (_formKey.currentState.validate()) {
@@ -554,61 +537,6 @@ class _NewJobFormState extends State<NewArticleForm> {
   }
 
   String selectedEventList = "";
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              "Select Event Category",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: FontNameDefault,
-                fontSize: textHeader(context),
-              ),
-            ),
-            content: MultiSelectChipSingle(
-              categoryList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedEventList = selectedList;
-                });
-              },
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                      fontSize: textSubTitle(context),
-                      fontFamily: FontNameDefault,
-                      color: Colors.black),
-                ),
-                onPressed: () {
-                  //  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context),
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  print('$selectedEventList');
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
-  }
 }
 
 class MultiSelectChipSingle extends StatefulWidget {
@@ -622,7 +550,7 @@ class MultiSelectChipSingle extends StatefulWidget {
 class _MultiSelectChipSingleState extends State<MultiSelectChipSingle> {
   String selectedChoice = "";
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.categoryList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image/image.dart' as Im;
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/style.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +10,6 @@ import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'create_group.dart';
 
 class TeamSettings extends StatefulWidget {
   final String gid;
@@ -37,7 +33,7 @@ class _TeamSettingsState extends State<TeamSettings> {
   //Team _team;
   bool isPrivate = false;
   bool isHidden = false;
-  UserModel _user;
+  // UserModel _user;
   File imageFile;
   var _repository = Repository();
   final _nameController = TextEditingController();

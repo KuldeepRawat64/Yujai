@@ -6,14 +6,11 @@ import 'package:Yujai/widgets/no_post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import '../style.dart';
 import 'list_post.dart';
 import 'list_event.dart';
 import 'list_news.dart';
-import 'list_promotion.dart';
 
 class NestedTabBar extends StatefulWidget {
   @override
@@ -25,25 +22,24 @@ class _NestedTabBarState extends State<NestedTabBar>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   Future<List<DocumentSnapshot>> _listFuture;
   Future<List<DocumentSnapshot>> _eventFuture;
   Future<List<DocumentSnapshot>> _newsFuture;
-  Future<List<DocumentSnapshot>> _promotionFuture;
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel _user = UserModel();
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
   ScrollController _scrollController2;
   ScrollController _scrollController3;
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;
@@ -171,7 +167,6 @@ class _NestedTabBarState extends State<NestedTabBar>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    var screenSize = MediaQuery.of(context).size;
     return ListView(
       physics: NeverScrollableScrollPhysics(),
       children: <Widget>[

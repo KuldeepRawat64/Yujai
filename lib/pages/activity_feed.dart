@@ -1,15 +1,11 @@
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/friend_profile.dart';
 import 'package:Yujai/pages/search_tabs.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_job.dart';
 import 'package:Yujai/widgets/nested_tab_bar_promotion.dart';
-import 'package:Yujai/widgets/search_company.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ActivityScreen extends StatefulWidget {
   @override
@@ -19,11 +15,11 @@ class ActivityScreen extends StatefulWidget {
 class _ActivityScreenState extends State<ActivityScreen>
     with TickerProviderStateMixin {
   var _repository = Repository();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   UserModel _user = UserModel();
   UserModel currentUser;
   List<UserModel> usersList = [];
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   TabController _tabController;
   List<UserModel> companyList = [];
   ScrollController _scrollController;

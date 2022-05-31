@@ -1,14 +1,10 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 class EditSkillForm extends StatefulWidget {
   final UserModel currentUser;
@@ -24,10 +20,6 @@ class _EditProfileScreenState extends State<EditSkillForm> {
   final _formKey = GlobalKey<FormState>();
   User currentUser;
   final _skillController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _websiteController = TextEditingController();
   double number = 5;
   int index = 0;
 

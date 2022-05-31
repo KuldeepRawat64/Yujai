@@ -3,44 +3,22 @@ import 'dart:math';
 import 'package:Yujai/models/department.dart';
 import 'package:Yujai/models/member.dart';
 import 'package:Yujai/models/project.dart';
-import 'package:Yujai/models/subscriber_series.dart';
-import 'package:Yujai/models/task.dart';
-import 'package:Yujai/models/task_list.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/pages/project_members.dart';
-import 'package:Yujai/pages/task_detail.dart';
-import 'package:Yujai/widgets/list_discussions_dept.dart';
 import 'package:Yujai/widgets/list_discussions_project.dart';
 import 'package:Yujai/widgets/list_task_list.dart';
 import 'package:Yujai/widgets/no_content.dart';
-import 'package:Yujai/widgets/no_post.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image/image.dart' as Im;
-import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/pages/edit_photoUrl.dart';
-import 'package:Yujai/pages/friend_profile.dart';
-import 'package:Yujai/pages/group_invite.dart';
-import 'package:Yujai/pages/group_post_review.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_post_forum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
 import '../style.dart';
-import 'list_ad.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:Yujai/widgets/list_event_forum.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:Yujai/widgets/subscriber_chart.dart';
-// import 'package:charts_flutter/flutter.dart' as chart;
-// import 'package:fl_chart/fl_chart.dart';
-//import 'package:Yujai/pages/group_requests.dart';
 
 class NestedTabBarProject extends StatefulWidget {
   final String gid;
@@ -71,16 +49,14 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   TabController _nestedTabController;
   var _repository = Repository();
   UserModel currentuser, user, followingUser;
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listEvent = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listNews = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listJob = List<DocumentSnapshot>();
-  List<DocumentSnapshot> listPromotion = List<DocumentSnapshot>();
-  UserModel _user = UserModel();
-  Team _team = Team();
+  List<DocumentSnapshot> list = [];
+  List<DocumentSnapshot> listEvent = [];
+  List<DocumentSnapshot> listNews = [];
+  List<DocumentSnapshot> listJob = [];
+  List<DocumentSnapshot> listPromotion = [];
   UserModel currentUser;
-  List<UserModel> usersList = List<UserModel>();
-  List<UserModel> companyList = List<UserModel>();
+  List<UserModel> usersList = [];
+  List<UserModel> companyList = [];
   String query = '';
   ScrollController _scrollController;
   ScrollController _scrollController1;
@@ -89,7 +65,7 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   ScrollController _scrollController4 = ScrollController();
   ScrollController _scrollController5 = ScrollController();
   ScrollController _scrollController6 = ScrollController();
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
   bool _enabled = true;
   //Offset state <-------------------------------------
   double offset = 0.0;
@@ -98,17 +74,10 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   bool isPrivate = true;
   Color currentColor = Colors.deepPurple;
   void changeColor(Color color) => setState(() => currentColor = color);
-  final _formKey = GlobalKey<FormState>();
   bool valueFirst = false;
-  TextEditingController _taskNameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _listNameController = TextEditingController();
   List<String> projectList;
-  var _currentProject;
-  var _currentList;
   String newTaskId = Uuid().v4();
   String newListId = Uuid().v4();
-  bool _isEditingDesc = false;
   // final List<SubscriberSeries> data = [
   //   SubscriberSeries(
   //     year: "2011",
@@ -179,17 +148,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
     setState(() {
       followingUserId = uid;
     });
-    fetchUserDetailsById(uid);
-  }
-
-  fetchUserDetailsById(String userId) async {
-    Team team = await _repository.fetchTeamDetailsById(widget.gid);
-    if (!mounted) return;
-    setState(() {
-      _team = team;
-      // isPrivate = user.isPrivate;
-      print("USER : ${_user.displayName}");
-    });
   }
 
   @override
@@ -253,7 +211,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    var screenSize = MediaQuery.of(context).size;
     return Wrap(
       // physics: NeverScrollableScrollPhysics(),
       children: <Widget>[
@@ -304,7 +261,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   }
 
   Widget discussionsWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('teams')
@@ -374,7 +330,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   }
 
   Widget forumWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('teams')
@@ -528,7 +483,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   }
 
   Widget chip(String label, Color color) {
-    var screenSize = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         //   Navigator.push(context, MaterialPageRoute(builder: (context)=>Department));
@@ -857,16 +811,6 @@ class _NestedTabBarProjectState extends State<NestedTabBarProject>
   }
 
   File imageFile;
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-
-    return File(selectedImage.path);
-  }
 
   void compressImage() async {
     print('starting compression');

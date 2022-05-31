@@ -3,7 +3,6 @@ import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
-import 'package:Yujai/widgets/list_post.dart';
 import 'package:Yujai/widgets/list_post_forum.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -197,7 +196,6 @@ class _GroupActivityState extends State<GroupActivity> {
   }
 
   Widget forumWidget() {
-    var screenSize = MediaQuery.of(context).size;
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('groups')

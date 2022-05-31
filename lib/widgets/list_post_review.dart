@@ -239,9 +239,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(0.0),
-                                      child: FlatButton(
-                                          //disabledColor: Theme.of(context).accentColor,
-                                          color: Theme.of(context).accentColor,
+                                      child: TextButton(
                                           onPressed: () => approval,
                                           child: Text(
                                             'Approve',
@@ -253,9 +251,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(0.0),
-                                      child: FlatButton(
-                                          // disabledColor: Colors.grey[200],
-                                          color: Colors.grey[200],
+                                      child: TextButton(
                                           onPressed: () {
                                             deletePost(widget.documentSnapshot);
                                           },
@@ -720,9 +716,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(0.0),
-                        child: FlatButton(
-                            //disabledColor: Theme.of(context).accentColor,
-                            color: Theme.of(context).accentColor,
+                        child: TextButton(
                             onPressed: approval,
                             child: Text(
                               'Approve',
@@ -734,9 +728,7 @@ class _ListPostReviewState extends State<ListPostReview> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(0.0),
-                        child: FlatButton(
-                            // disabledColor: Colors.grey[200],
-                            color: Colors.grey[200],
+                        child: TextButton(
                             onPressed: () {
                               deletePost(widget.documentSnapshot);
                             },
@@ -791,7 +783,6 @@ class _ListPostReviewState extends State<ListPostReview> {
   }
 
   showCategory(DocumentSnapshot snapshot, BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     if (snapshot['category'] == 'Entertainment') {
       return Padding(
         padding: EdgeInsets.only(left: 8.0),

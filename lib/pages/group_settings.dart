@@ -5,7 +5,6 @@ import 'package:image/image.dart' as Im;
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Yujai/pages/home.dart';
@@ -43,7 +42,7 @@ class _GroupSettingsState extends State<GroupSettings> {
   Group _group;
   bool isPrivate = false;
   bool isHidden = false;
-  UserModel _user;
+  // UserModel _user;
   var _repository = Repository();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -59,7 +58,7 @@ class _GroupSettingsState extends State<GroupSettings> {
     "Confidentiality"
   ];
 
-  List<dynamic> selectedReportList = List();
+  List<dynamic> selectedReportList = [];
 
   _showReportDialog() {
     showDialog(
@@ -82,7 +81,7 @@ class _GroupSettingsState extends State<GroupSettings> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -95,10 +94,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              TextButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -217,7 +213,6 @@ class _GroupSettingsState extends State<GroupSettings> {
   }
 
   Widget chip(String label, Color color) {
-    var screenSize = MediaQuery.of(context).size;
     return Chip(
       // labelPadding: EdgeInsets.all(screenSize.height * 0.005),
       label: Text(
@@ -474,7 +469,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                                   },
                                                 ),
                                                 actions: <Widget>[
-                                                  FlatButton(
+                                                  TextButton(
                                                     child: Text(
                                                       "Cancel",
                                                       style: TextStyle(
@@ -490,15 +485,7 @@ class _GroupSettingsState extends State<GroupSettings> {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  FlatButton(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        40.0)),
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
+                                                  TextButton(
                                                     child: Text(
                                                       "Submit",
                                                       style: TextStyle(

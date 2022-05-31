@@ -1,6 +1,3 @@
-import 'package:Yujai/models/department.dart';
-import 'package:Yujai/models/feed.dart';
-import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/comments.dart';
@@ -9,8 +6,6 @@ import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-
 import '../style.dart';
 
 class ListItemMemberGroup extends StatefulWidget {
@@ -38,10 +33,6 @@ class ListItemMemberGroup extends StatefulWidget {
 
 class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
   var _repository = Repository();
-  bool _isInvited;
-  final _formKey = GlobalKey<FormState>();
-  var _currentDept;
-  Department _department;
 
   Widget commentWidget(DocumentReference reference) {
     return FutureBuilder(
@@ -76,25 +67,11 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
   @override
   void initState() {
     super.initState();
-    _isInvited = false;
     _repository
         .checkIsMember(widget.documentSnapshot['ownerUid'], widget.gid,
             widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
-      if (!mounted) return;
-      setState(() {
-        _isInvited = value;
-      });
-    });
-  }
-
-  fetchUserDetailsById(String deptId) async {
-    Department department =
-        await _repository.fetchDepartmentDetailsById(widget.gid, deptId);
-    if (!mounted) return;
-    setState(() {
-      _department = department;
     });
   }
 
@@ -144,7 +121,7 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
                           optionGroup();
                         },
                         child: Icon(Icons.more_vert,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).primaryColorLight,
                             size: screenSize.height * 0.035),
                       )
                     : Text('')
@@ -154,7 +131,6 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
   }
 
   optionGroup() {
-    var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: ((context) {
@@ -162,7 +138,7 @@ class _ListItemMemberGroupState extends State<ListItemMemberGroup> {
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,

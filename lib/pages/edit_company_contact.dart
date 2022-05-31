@@ -23,7 +23,7 @@ class _EditCompanyContactState extends State<EditCompanyContact> {
   final _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  // final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -39,15 +39,20 @@ class _EditCompanyContactState extends State<EditCompanyContact> {
   }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     _firestore.collection('users').doc(currentUser.uid).update({
       "email": _emailController.text,
       "phone": _phoneController.text,
       "portfolio": _websiteController.text,
     });
     Navigator.pop(context);
-    SnackBar snackbar = SnackBar(content: Text("Profile updated!"));
-    _scaffoldKey.currentState.showSnackBar(snackbar);
+    const snackBar = SnackBar(
+      content: Text('Yay! A SnackBar!'),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override

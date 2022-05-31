@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:Yujai/models/group.dart';
-import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/resources/repository.dart';
-import 'package:Yujai/widgets/list_member.dart';
 import 'package:Yujai/widgets/list_member_group.dart';
-import 'package:Yujai/widgets/list_user.dart';
 import 'package:Yujai/widgets/no_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,9 +76,7 @@ class _GroupMembersState extends State<GroupMembers> {
                 vertical: screenSize.height * 0.015,
                 horizontal: screenSize.width / 50,
               ),
-              child: FlatButton(
-                  //disabledColor: Theme.of(context).accentColor,
-                  color: Theme.of(context).accentColor,
+              child: TextButton(
                   onPressed: () {
                     Navigator.push(
                         context,

@@ -7,12 +7,7 @@ import 'package:Yujai/pages/group_chat.dart';
 import 'package:Yujai/pages/group_inbox.dart';
 import 'package:Yujai/pages/group_invite.dart';
 import 'package:Yujai/pages/group_settings.dart';
-import 'package:Yujai/pages/group_upload_ad.dart';
-import 'package:Yujai/pages/group_upload_discussion.dart';
-import 'package:Yujai/pages/group_upload_forum.dart';
-import 'package:Yujai/pages/group_upload_poll.dart';
 import 'package:Yujai/pages/home.dart';
-import 'package:Yujai/pages/new_poll_form.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:Yujai/widgets/nested_tab_bar_group_home.dart';
@@ -25,9 +20,7 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'dart:async';
-import 'package:Yujai/pages/group_upload_event.dart';
 import 'package:Yujai/widgets/new_post_screen.dart';
-import 'package:flutter_fab_dialer/flutter_fab_dialer.dart';
 import 'package:flutter_boom_menu/flutter_boom_menu.dart';
 import 'package:Yujai/widgets/new_event_screen.dart';
 
@@ -381,11 +374,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         ? Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 6.0),
-                            child: FlatButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(60.0),
-                              ),
-                              color: Theme.of(context).primaryColor,
+                            child: TextButton(
                               onPressed: () {
                                 //     _showFormDialog();
                               },
@@ -402,11 +391,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
                         : Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 6.0),
-                            child: FlatButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(60.0),
-                              ),
-                              color: Theme.of(context).primaryColor,
+                            child: TextButton(
                               onPressed: () {
                                 _showFormDialog();
                               },
@@ -1142,7 +1127,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,
@@ -1315,7 +1300,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: <Widget>[
                   Positioned(
                     right: -40.0,
@@ -1535,7 +1520,7 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
         context: context,
         builder: (context) {
           return Stack(
-            overflow: Overflow.visible,
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 top: -18,
@@ -1713,104 +1698,103 @@ class _GroupPageState extends State<GroupPage> with TickerProviderStateMixin {
     return File(selectedImage.path);
   }
 
-  _showImageDialog() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroupUploadForum(
-                                  group: _group,
-                                  gid: widget.gid,
-                                  name: widget.name,
-                                  imageFile: imageFile,
-                                )));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialog() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Choose from Gallery',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   Navigator.pushReplacement(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: (context) => GroupUploadForum(
+  //                                 group: _group,
+  //                                 gid: widget.gid,
+  //                                 name: widget.name,
+  //                                 imageFile: imageFile,
+  //                               )));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
-  _showImageDialogEvent() {
-    var screenSize = MediaQuery.of(context).size;
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: ((context) {
-          return SimpleDialog(
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Text(
-                  'Upload event cover photo',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  _pickImage('Gallery').then((selectedImage) {
-                    setState(() {
-                      imageFile = selectedImage;
-                    });
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: ((context) => GroupUploadEvent(
-                    //               group: _group,
-                    //               gid: widget.gid,
-                    //               name: widget.name,
-                    //               imageFile: imageFile,
-                    //             ))));
-                  });
-                },
-              ),
-              SimpleDialogOption(
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                      fontFamily: FontNameDefault,
-                      fontSize: textSubTitle(context)),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            ],
-          );
-        }));
-  }
+  // _showImageDialogEvent() {
+  //   var screenSize = MediaQuery.of(context).size;
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: ((context) {
+  //         return SimpleDialog(
+  //           children: <Widget>[
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Upload event cover photo',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 _pickImage('Gallery').then((selectedImage) {
+  //                   setState(() {
+  //                     imageFile = selectedImage;
+  //                   });
+  //                   // Navigator.pushReplacement(
+  //                   //     context,
+  //                   //     MaterialPageRoute(
+  //                   //         builder: ((context) => GroupUploadEvent(
+  //                   //               group: _group,
+  //                   //               gid: widget.gid,
+  //                   //               name: widget.name,
+  //                   //               imageFile: imageFile,
+  //                   //             ))));
+  //                 });
+  //               },
+  //             ),
+  //             SimpleDialogOption(
+  //               child: Text(
+  //                 'Cancel',
+  //                 style: TextStyle(
+  //                     fontFamily: FontNameDefault,
+  //                     fontSize: textSubTitle(context)),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //             )
+  //           ],
+  //         );
+  //       }));
+  // }
 
   _showImageDialogAd() {
-    var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         barrierDismissible: false,

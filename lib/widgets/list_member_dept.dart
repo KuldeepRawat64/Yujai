@@ -4,7 +4,6 @@ import 'package:Yujai/models/group.dart';
 import 'package:Yujai/models/team.dart';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/pages/comments.dart';
-import 'package:Yujai/pages/home.dart';
 import 'package:Yujai/pages/team_page.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -40,10 +39,6 @@ class ListItemMemberDept extends StatefulWidget {
 
 class _ListItemMemberDeptState extends State<ListItemMemberDept> {
   var _repository = Repository();
-  bool _isInvited;
-  final _formKey = GlobalKey<FormState>();
-  var _currentDept;
-  var _currentProject;
 
   Widget commentWidget(DocumentReference reference) {
     return FutureBuilder(
@@ -78,16 +73,11 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
   @override
   void initState() {
     super.initState();
-    _isInvited = false;
     _repository
         .checkIsMember(widget.documentSnapshot.data()['ownerUid'], widget.gid,
             widget.group != null ? true : false)
         .then((value) {
       print("value:$value");
-      if (!mounted) return;
-      setState(() {
-        _isInvited = value;
-      });
     });
   }
 
@@ -138,7 +128,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
                           optionDept();
                         },
                         child: Icon(Icons.more_vert,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).primaryColorLight,
                             size: screenSize.height * 0.035),
                       )
                     : Text('')
@@ -148,7 +138,6 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
   }
 
   optionDept() {
-    var screenSize = MediaQuery.of(context).size;
     return showDialog(
         context: context,
         builder: ((context) {
@@ -156,7 +145,7 @@ class _ListItemMemberDeptState extends State<ListItemMemberDept> {
             builder: ((context, setState) {
               return AlertDialog(
                   content: Stack(
-                overflow: Overflow.visible,
+                clipBehavior: Clip.none,
                 children: [
                   Positioned(
                     right: -40.0,

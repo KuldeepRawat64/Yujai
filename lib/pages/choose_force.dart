@@ -72,7 +72,7 @@ class _ChooseForceState extends State<ChooseForce> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        User currentUser = await _auth.currentUser;
+                        User currentUser = _auth.currentUser;
                         setState(() {
                           selectedFirst = true;
                           selectedSecond = false;
@@ -111,7 +111,7 @@ class _ChooseForceState extends State<ChooseForce> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      User currentUser = await _auth.currentUser;
+                      User currentUser = _auth.currentUser;
                       setState(() {
                         selectedSecond = true;
                         selectedFirst = false;
@@ -152,7 +152,7 @@ class _ChooseForceState extends State<ChooseForce> {
                         vertical: screenSize.height * 0.05),
                     child: GestureDetector(
                       onTap: () async {
-                        User currentUser = await _auth.currentUser;
+                        User currentUser = _auth.currentUser;
                         setState(() {
                           selectedThird = true;
                           selectedFirst = false;

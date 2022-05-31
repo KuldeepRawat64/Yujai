@@ -1,14 +1,10 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:Yujai/models/user.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image/image.dart' as Im;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'home.dart';
 
@@ -33,14 +29,8 @@ class _EditProfileScreenState extends State<EditPurposeForm>
   User currentUser;
   List<Purpose> _purposes;
   List<String> _filters;
-  final _skillController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _websiteController = TextEditingController();
   double number = 5;
   int index = 0;
-  GlobalKey<ScaffoldState> _key;
   bool isLoading = false;
   bool isSelected = false;
   User user;
@@ -54,7 +44,6 @@ class _EditProfileScreenState extends State<EditPurposeForm>
         currentUser = user;
       });
     });
-    _key = GlobalKey<ScaffoldState>();
     _filters = <String>[];
     _purposes = <Purpose>[
       const Purpose('Full-time jobs'),
@@ -96,7 +85,7 @@ class _EditProfileScreenState extends State<EditPurposeForm>
   // }
 
   submit() async {
-    User currentUser = await _auth.currentUser;
+    User currentUser = _auth.currentUser;
     usersRef.doc(currentUser.uid).update({
       "purpose": FieldValue.arrayUnion(_filters),
     });
@@ -174,7 +163,6 @@ class _EditProfileScreenState extends State<EditPurposeForm>
   }
 
   Iterable<Widget> get purposeWidgets sync* {
-    var screenSize = MediaQuery.of(context).size;
     for (Purpose purpose in _purposes) {
       yield Padding(
         padding: const EdgeInsets.all(6.0),

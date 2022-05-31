@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:Yujai/models/post.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as Im;
 import 'dart:math';
 import 'package:path_provider/path_provider.dart';
 import 'package:Yujai/resources/repository.dart';
 import 'package:Yujai/models/user.dart';
-import 'package:Yujai/models/group.dart';
-import 'agreementDialog.dart' as fullDialog;
 import '../style.dart';
 
 class NewGroupForm extends StatefulWidget {
@@ -56,20 +52,6 @@ class _NewGroupFormState extends State<NewGroupForm> {
     _agendaController = TextEditingController();
   }
 
-  Future _openAgreeDialog(context) async {
-    String result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) {
-          return fullDialog.CreateAgreement();
-        },
-        //true to display with a dismiss button rather than a return navigation arrow
-        fullscreenDialog: true));
-    if (result != null) {
-      accept(result, context);
-    } else {
-      decline(result, context);
-    }
-  }
-
   setselectedPrivacy(bool val) {
     setState(() {
       selectedPrivacy = val;
@@ -82,7 +64,7 @@ class _NewGroupFormState extends State<NewGroupForm> {
     });
   }
 
-  List<String> selectedReportList = List();
+  List<String> selectedReportList = [];
   _showReportDialog() {
     showDialog(
         context: context,
@@ -104,7 +86,7 @@ class _NewGroupFormState extends State<NewGroupForm> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text(
                   "Cancel",
                   style: TextStyle(
@@ -117,10 +99,7 @@ class _NewGroupFormState extends State<NewGroupForm> {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                color: Theme.of(context).primaryColor,
+              TextButton(
                 child: Text(
                   "Submit",
                   style: TextStyle(
@@ -150,79 +129,7 @@ class _NewGroupFormState extends State<NewGroupForm> {
     });
   }
 
-  List<String> selectedDepartmentList = List();
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Select Departments",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontFamily: FontNameDefault,
-                    fontSize: textHeader(context),
-                  ),
-                ),
-                // SizedBox(
-                //   width: 10.0,
-                // ),
-                InkResponse(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    child: Icon(Icons.close),
-                  ),
-                )
-              ],
-            ),
-            content: MultiSelectChip(
-              reportList,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  selectedDepartmentList = selectedList;
-                });
-              },
-            ),
-            // actions: <Widget>[
-            //   FlatButton(
-            //     child: Text(
-            //       "Cancel",
-            //       style: TextStyle(
-            //           fontSize: textSubTitle(context),
-            //           fontFamily: FontNameDefault,
-            //           color: Colors.black),
-            //     ),
-            //     onPressed: () {
-            //       //  print('$selectedDepartmentList');
-            //       Navigator.of(context).pop();
-            //     },
-            //   ),
-            //   FlatButton(
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(40.0)),
-            //     color: Theme.of(context).primaryColor,
-            //     child: Text(
-            //       "Submit",
-            //       style: TextStyle(
-            //           fontFamily: FontNameDefault,
-            //           fontSize: textSubTitle(context),
-            //           color: Colors.white),
-            //     ),
-            //     onPressed: () {
-            //       print('$selectedDepartmentList');
-            //       Navigator.of(context).pop();
-            //     },
-            //   )
-            // ],
-          );
-        });
-  }
+  List<String> selectedDepartmentList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -596,15 +503,6 @@ class _NewGroupFormState extends State<NewGroupForm> {
     );
   }
 
-  Future<File> _pickImage(String action) async {
-    PickedFile selectedImage;
-    action == 'Gallery'
-        ? selectedImage =
-            await ImagePicker().getImage(source: ImageSource.gallery)
-        : await ImagePicker().getImage(source: ImageSource.camera);
-    return File(selectedImage.path);
-  }
-
   void compressImage() async {
     print('starting compression');
     final tempDir = await getTemporaryDirectory();
@@ -723,9 +621,9 @@ class MultiSelectChip extends StatefulWidget {
 }
 
 class _MultiSelectChipState extends State<MultiSelectChip> {
-  List<String> selectedChoices = List();
+  List<String> selectedChoices = [];
   _buildChoiceList() {
-    List<Widget> choices = List();
+    List<Widget> choices = [];
     widget.reportList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),

@@ -10,16 +10,7 @@ import 'package:Yujai/style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_10.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_2.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_3.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_6.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_7.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_8.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_9.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:image/image.dart' as Im;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,7 +45,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   // Keep track of whether a scroll is needed.
   bool _needsScroll = true;
-  Timer _timer;
+  // Timer _timer;
   bool isExpanded = false;
   bool seeMore = false;
 
@@ -603,7 +594,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   Widget receiverLayout(DocumentSnapshot snapshot) {
-    var screenSize = MediaQuery.of(context).size;
     return Container(
       child: Padding(
         padding: const EdgeInsets.all(0.0),
