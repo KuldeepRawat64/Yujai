@@ -51,7 +51,6 @@
 ![Screen](assets/yujai-ss3.jpg)
 ![Screen](assets/yujai-ss4.jpg)
 ![Screen](assets/yujai-ss6.jpg)
-![Screen](assets/yujai-ss7.jpg)
 
 ---
 
